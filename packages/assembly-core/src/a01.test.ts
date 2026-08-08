@@ -26,7 +26,15 @@ describe('G3D A01 assembly gate', () => {
   });
 
   it('contains no geometry-kernel imports in assembly-core sources', () => {
-    const srcFiles = ['types.ts', 'registry.ts', 'fixture-a01.ts', 'index.ts'];
+    const srcFiles = [
+      'types.ts',
+      'registry.ts',
+      'fixture-a01.ts',
+      'index.ts',
+      'connections.ts',
+      'fasteners.ts',
+      'connection-validation.ts',
+    ];
     for (const file of srcFiles) {
       const importLines = readFileSync(join(here, file), 'utf8')
         .split(/\r?\n/)
