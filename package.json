@@ -16,7 +16,7 @@
     "test": "turbo run test",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "licence:check": "node scripts/check-licence-stub.mjs",
+    "licence:check": "node scripts/check-licence.mjs",
     "boundary:check": "pnpm --filter @spds/boundary-check test",
     "verify": "pnpm licence:check && pnpm boundary:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
   },

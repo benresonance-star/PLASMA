@@ -53,7 +53,17 @@ importers:
 
   packages/coordinate-frames: {}
 
-  packages/dependency-governance: {}
+  packages/dependency-governance:
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)
 
   packages/dependency-graph: {}
 
@@ -63,7 +73,17 @@ importers:
 
   packages/fabrication-core: {}
 
-  packages/failure-taxonomy: {}
+  packages/failure-taxonomy:
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)
 
   packages/geometry-client: {}
 
@@ -85,7 +105,17 @@ importers:
 
   packages/representation-core: {}
 
-  packages/reproducibility: {}
+  packages/reproducibility:
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)
 
   packages/selectors: {}
 
