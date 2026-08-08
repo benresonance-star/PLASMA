@@ -49,7 +49,14 @@ importers:
 
   packages/concurrency-core: {}
 
-  packages/constraint-contracts: {}
+  packages/constraint-contracts:
+    dependencies:
+      '@spds/semantic-core':
+        specifier: workspace:^
+        version: link:../semantic-core
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
 
   packages/coordinate-frames: {}
 
@@ -123,6 +130,9 @@ importers:
 
   packages/semantic-core:
     dependencies:
+      '@spds/shared-units':
+        specifier: workspace:^
+        version: link:../shared-units
       zod:
         specifier: ^4.4.3
         version: 4.4.3
