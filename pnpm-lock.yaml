@@ -117,7 +117,17 @@ importers:
 
   packages/analysis-core: {}
 
-  packages/artifact-core: {}
+  packages/artifact-core:
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/assembly-core:
     dependencies:
@@ -441,7 +451,21 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/release-core: {}
+  packages/release-core:
+    dependencies:
+      '@spds/reproducibility':
+        specifier: workspace:*
+        version: link:../reproducibility
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/representation-core:
     dependencies:
@@ -675,7 +699,21 @@ importers:
 
   services/analysis-worker: {}
 
-  services/artifact-store: {}
+  services/artifact-store:
+    dependencies:
+      '@spds/artifact-core':
+        specifier: workspace:*
+        version: link:../../packages/artifact-core
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   services/geometry-occt:
     dependencies:
