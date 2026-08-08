@@ -99,6 +99,9 @@ importers:
       '@spds/validation-core':
         specifier: workspace:*
         version: link:../../packages/validation-core
+      '@spds/version-core':
+        specifier: workspace:*
+        version: link:../../packages/version-core
     devDependencies:
       eslint:
         specifier: ^9.22.0

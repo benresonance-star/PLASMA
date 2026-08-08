@@ -85,3 +85,15 @@ export {
   navigateToIssue,
   type ValidationNavigatorView,
 } from './validation-navigator.js';
+
+export {
+  buildCompareView,
+  buildTimelineView,
+  forkAction,
+  nameSnapshotNotes,
+  restoreAction,
+  type CompareViewModel,
+  type HistoryTimelineView,
+  type RestoreForkAction,
+  type TimelineEntry,
+} from './history-view.js';

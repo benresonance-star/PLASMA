@@ -18,7 +18,8 @@
   },
   "dependencies": {
     "@spds/transaction-core": "workspace:*",
-    "@spds/validation-core": "workspace:*"
+    "@spds/validation-core": "workspace:*",
+    "@spds/version-core": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.8.2",
