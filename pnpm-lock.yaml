@@ -470,7 +470,27 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/topology-operators: {}
+  packages/topology-operators:
+    dependencies:
+      '@spds/operator-core':
+        specifier: workspace:*
+        version: link:../operator-core
+      '@spds/reproducibility':
+        specifier: workspace:*
+        version: link:../reproducibility
+      '@spds/shared-units':
+        specifier: workspace:*
+        version: link:../shared-units
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/topology-provenance:
     dependencies:
