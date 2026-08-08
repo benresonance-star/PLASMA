@@ -58,3 +58,30 @@ export {
   type MeasurementResult,
   type SemanticAnchor,
 } from './measurement-overlays.js';
+
+export {
+  buildPipelineView,
+  drillInStage,
+  type PipelineStageStatus,
+  type PipelineStageView,
+  type PipelineViewModel,
+} from './pipeline-view.js';
+
+export {
+  buildPatternInspector,
+  updateDraftParameter,
+  type PatternInspectorView,
+  type PatternNodeView,
+} from './pattern-inspector.js';
+
+export {
+  buildDependencyExplorer,
+  type DependencyEdgeView,
+  type DependencyExplorerView,
+} from './dependency-explorer.js';
+
+export {
+  buildValidationNavigator,
+  navigateToIssue,
+  type ValidationNavigatorView,
+} from './validation-navigator.js';
