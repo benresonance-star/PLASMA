@@ -281,9 +281,40 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/geometry-client: {}
+  packages/geometry-client:
+    dependencies:
+      '@spds/geometry-contracts':
+        specifier: workspace:*
+        version: link:../geometry-contracts
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/geometry-contracts: {}
+  packages/geometry-contracts:
+    dependencies:
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/import-core: {}
 
@@ -586,7 +617,45 @@ importers:
 
   services/artifact-store: {}
 
-  services/geometry-occt: {}
+  services/geometry-occt:
+    dependencies:
+      '@fastify/cors':
+        specifier: ^11.3.0
+        version: 11.3.0
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../../packages/failure-taxonomy
+      '@spds/geometry-contracts':
+        specifier: workspace:*
+        version: link:../../packages/geometry-contracts
+      '@spds/reproducibility':
+        specifier: workspace:*
+        version: link:../../packages/reproducibility
+      '@spds/shared-units':
+        specifier: workspace:*
+        version: link:../../packages/shared-units
+      '@spds/topology-operators':
+        specifier: workspace:*
+        version: link:../../packages/topology-operators
+      fastify:
+        specifier: ^5.11.3
+        version: 5.11.3
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      '@types/node':
+        specifier: ^22.13.10
+        version: 22.20.1
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   services/import-worker: {}
 

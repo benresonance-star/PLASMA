@@ -1,2 +1,3 @@
-﻿/** Stub package @spds/geometry-occt — populated in later checkpoints. */
-export const packageId = '@spds/geometry-occt' as const;
+﻿export { ExactKernelAdapter } from './exact-kernel.js';
+export { buildGeometryServer } from './server.js';
+export { generateYBrep, generateD01YFixtureSet } from './y-brep.js';

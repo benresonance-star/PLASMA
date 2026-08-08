@@ -1,2 +1,16 @@
-﻿/** Stub package @spds/geometry-contracts — populated in later checkpoints. */
-export const packageId = '@spds/geometry-contracts' as const;
+﻿export {
+  GeometryErrorSchema,
+  Vec3Schema,
+  SweepRequestSchema,
+  TessellateRequestSchema,
+  ShellRequestSchema,
+  MassPropsSchema,
+  MeshSchema,
+  GeometryRepresentationSchema,
+  type GeometryError,
+  type SweepRequest,
+  type TessellateRequest,
+  type ShellRequest,
+  type GeometryRepresentation,
+  type Mesh,
+} from './dto.js';

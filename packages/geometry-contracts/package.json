@@ -9,13 +9,20 @@
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --max-warnings 0",
-    "test": "node -e process.exit(0)"
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@spds/failure-taxonomy": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8",
+    "eslint": "^9.22.0"
   }
 }

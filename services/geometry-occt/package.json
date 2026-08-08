@@ -9,13 +9,28 @@
       "import": "./dist/index.js"
     }
   },
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --max-warnings 0",
-    "test": "node -e process.exit(0)"
+    "test": "vitest run",
+    "start": "node dist/server-main.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "@spds/failure-taxonomy": "workspace:*",
+    "@spds/geometry-contracts": "workspace:*",
+    "@spds/reproducibility": "workspace:*",
+    "@spds/shared-units": "workspace:*",
+    "@spds/topology-operators": "workspace:*",
+    "fastify": "^5.11.3",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8",
+    "eslint": "^9.22.0"
   }
 }
