@@ -7,6 +7,7 @@ import { buildSceneFromDisplayMeshes, pickSemanticFromIntersection } from './thr
 export interface ViewportCanvasProps {
   readonly meshes: readonly DisplayMeshInput[];
   readonly chrome?: PublicationChrome;
+  readonly selectedSemanticId?: string | null;
   readonly onPickSemantic?: (semanticId: string) => void;
 }
 
@@ -14,6 +15,7 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
   const chrome = props.chrome ?? 'candidate';
   const hostRef = useRef<HTMLDivElement | null>(null);
   const [picked, setPicked] = useState<string | null>(null);
+  const selected = props.selectedSemanticId ?? picked;
 
   useEffect(() => {
     const host = hostRef.current;
@@ -73,7 +75,7 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
     <div className="spds-viewport" data-chrome={chrome}>
       <div className="spds-viewport-chrome" aria-live="polite">
         {publicationChromeLabel(chrome)}
-        {picked ? ` · selected ${picked}` : ''}
+        {selected ? ` · selected ${selected}` : ''}
       </div>
       <div className="spds-viewport-canvas" ref={hostRef} />
     </div>

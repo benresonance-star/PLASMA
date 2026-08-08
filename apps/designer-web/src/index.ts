@@ -51,6 +51,19 @@ export {
 } from './ui/three-scene.js';
 
 export {
+  createG8Session,
+  g8CommitExactLength,
+  g8ExplorerIds,
+  g8PreviewLength,
+  g8PrimarySemanticId,
+  g8Select,
+  g8SelectionSynced,
+  g8SetChrome,
+  g8SetPanel,
+  type G8Session,
+} from './g8-session.js';
+
+export {
   createSelectionStore,
   preserveSelectionAfterRegen,
   selectSemantic,
