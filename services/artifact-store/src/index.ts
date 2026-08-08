@@ -3,17 +3,19 @@
   verifyArtifactIntegrity,
   type ArtifactObject,
 } from '@spds/artifact-core';
+import type { ObjectStorePutResult } from './minio-store.js';
+
+export type { ObjectStorePutResult } from './minio-store.js';
+export {
+  MinioObjectStore,
+  minioConfigFromEnv,
+  type MinioStoreConfig,
+} from './minio-store.js';
 
 /**
- * G12A.2 Object-store adapter stub (MinIO-shaped).
+ * G12A.2 In-memory object-store (tests + offline).
  * Large blobs stay out of the DB by default.
  */
-
-export interface ObjectStorePutResult {
-  readonly objectKey: string;
-  readonly contentHash: string;
-}
-
 export class InMemoryObjectStore {
   private readonly blobs = new Map<string, string>();
   private readonly meta = new Map<string, ArtifactObject>();
@@ -45,7 +47,10 @@ export class InMemoryObjectStore {
     };
   }
 
-  restoreBackup(backup: { readonly blobs: Record<string, string>; readonly meta: ArtifactObject[] }): void {
+  restoreBackup(backup: {
+    readonly blobs: Record<string, string>;
+    readonly meta: ArtifactObject[];
+  }): void {
     this.blobs.clear();
     this.meta.clear();
     for (const [k, v] of Object.entries(backup.blobs)) this.blobs.set(k, v);

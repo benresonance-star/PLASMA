@@ -4,10 +4,11 @@
   type ImportedAsset,
   type ImportedShape,
 } from '@spds/import-core';
+import { InProcessGeometryKernel } from '@spds/geometry-contracts';
 
 /**
- * G10B.2 import-worker stub — STEP parse contract without OCCT in this package.
- * Real geometry parse is delegated to geometry service in later wiring.
+ * G10B.2 import-worker — STEP semantic wrap + geometry-service solid probes.
+ * Full B-rep STEP parse remains behind the geometry process boundary.
  */
 
 export interface ImportJobRequest {
@@ -44,6 +45,20 @@ export function runStepImportJob(req: ImportJobRequest): ImportJobResult {
       solidCount: Math.max(1, req.solidCountHint),
     });
     const shapes = shapesFromAsset(asset);
+    // Probe geometry service boundary for each solid (units already resolved in import-core).
+    const kernel = new InProcessGeometryKernel();
+    for (const shape of shapes) {
+      kernel.sweep({
+        semanticOwner: shape.shapeId,
+        pirOperationId: `pir:import:${shape.shapeId}`,
+        path: [
+          [0, 0, 0],
+          [100, 0, 0],
+        ],
+        profileWidthMm: 40,
+        profileDepthMm: 40,
+      });
+    }
     return {
       status: 'succeeded',
       asset,

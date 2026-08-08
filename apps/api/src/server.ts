@@ -11,6 +11,8 @@ import {
 } from '@spds/semantic-query';
 import { DesignCommandSchema, TransactionEngine } from '@spds/transaction-core';
 import { buildA01AssemblyFixture } from '@spds/assembly-core';
+import { InMemoryObjectStore } from '@spds/artifact-store';
+import { runD01ReferencePipeline } from '@spds/reference-pipeline';
 
 export function buildServer(store = new InMemoryVersionStore()) {
   const app = Fastify({ logger: false });
@@ -18,6 +20,7 @@ export function buildServer(store = new InMemoryVersionStore()) {
   const g3b = buildG3bFixture();
   const txEngine = new TransactionEngine(store);
   const a01 = buildA01AssemblyFixture();
+  const artifacts = new InMemoryObjectStore();
 
   app.get('/health', async () => ({ status: 'ok', service: 'spds-api' }));
 
@@ -170,5 +173,21 @@ export function buildServer(store = new InMemoryVersionStore()) {
     });
   });
 
-  return { app, store, txEngine };
+  app.post<{ Body: { yLimit?: number } }>('/references/d01/publish', async (req, reply) => {
+    const pipeline = await runD01ReferencePipeline({ yLimit: req.body?.yLimit ?? 5 });
+    const stored = pipeline.fabrication.artifacts.map((art) => {
+      const put = artifacts.put(JSON.stringify(art), 'application/json', ['d01', 'release']);
+      return { artifactId: art.artifactId, contentHash: put.contentHash, verified: artifacts.verify(put.contentHash) };
+    });
+    return reply.code(201).send({
+      release: pipeline.release,
+      pipelineHash: pipeline.pipelineHash,
+      pirHash: pipeline.pirHash,
+      dagHash: pipeline.dagHash,
+      stored,
+      allVerified: stored.every((s) => s.verified),
+    });
+  });
+
+  return { app, store, txEngine, artifacts };
 }

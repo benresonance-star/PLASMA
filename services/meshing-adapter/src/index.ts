@@ -1,4 +1,5 @@
 ﻿import { createHash } from 'node:crypto';
+import { runGmshOrFallback } from './gmsh-runner.js';
 
 /**
  * G10A.4–5 Meshing adapter contract — Gmsh stays behind this service boundary.
@@ -60,8 +61,7 @@ function assertBudgets(req: MeshRequest): void {
 }
 
 /**
- * Deterministic mock mesher — replaces Gmsh in unit tests.
- * Production wire-up may shell out to a containerized Gmsh binary.
+ * Meshing job — tries Gmsh CLI for frontal/delaunay; mock/fallback remains deterministic.
  */
 export function runMeshJob(req: MeshRequest, currentHeadHash?: string): MeshJobResult {
   assertBudgets(req);
@@ -75,21 +75,29 @@ export function runMeshJob(req: MeshRequest, currentHeadHash?: string): MeshJobR
   for (const g of req.physicalGroups) {
     groupMapping[g.name] = g.semanticIds;
   }
-  const elementCount = Math.max(1, Math.round(1000 / req.settings.elementSizeMm));
+  const gmsh = runGmshOrFallback({
+    geometryArtifactHash: req.geometryArtifactHash,
+    elementSizeMm: req.settings.elementSizeMm,
+    algorithm: req.settings.algorithm,
+  });
   const payload = JSON.stringify({
     geometry: req.geometryArtifactHash,
     settings: req.settings,
     groups: groupMapping,
+    mode: gmsh.mode,
   });
-  const artifactHash = createHash('sha256').update(payload).digest('hex');
+  const artifactHash =
+    gmsh.mode === 'gmsh-cli'
+      ? gmsh.artifactHash
+      : createHash('sha256').update(payload).digest('hex');
   return {
     status: 'succeeded',
     artifact: {
       artifactHash,
-      elementCount,
+      elementCount: gmsh.elementCount,
       groupMapping,
       quality: {
-        elementCount,
+        elementCount: gmsh.elementCount,
         minQuality: 0.4,
         meanQuality: 0.75,
       },
@@ -107,3 +115,5 @@ export function meshHashStable(req: MeshRequest): string {
   }
   return a.artifact!.artifactHash;
 }
+
+export { runGmshOrFallback } from './gmsh-runner.js';

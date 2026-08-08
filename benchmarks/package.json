@@ -1,0 +1,24 @@
+{
+  "name": "@spds/benchmarks",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src --max-warnings 0"
+  },
+  "dependencies": {
+    "@spds/package-core": "workspace:*",
+    "@spds/reference-pipeline": "workspace:*",
+    "@spds/reproducibility": "workspace:*",
+    "@spds/semantic-query": "workspace:*",
+    "@spds/topology-operators": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8",
+    "eslint": "^9.22.0"
+  }
+}

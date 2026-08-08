@@ -17,11 +17,16 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.787.0",
     "@spds/artifact-core": "workspace:*"
   },
   "devDependencies": {
+    "@spds/reference-pipeline": "workspace:*",
+    "@spds/release-core": "workspace:*",
+    "@types/node": "^22.13.10",
     "typescript": "^5.8.2",
     "vitest": "^3.0.8",
     "eslint": "^9.22.0"
   }
 }
+
