@@ -45,6 +45,12 @@ export {
 } from './analysis-mesh-view.js';
 
 export {
+  buildSceneFromDisplayMeshes,
+  pickSemanticFromIntersection,
+  type ScenePickHit,
+} from './ui/three-scene.js';
+
+export {
   createSelectionStore,
   preserveSelectionAfterRegen,
   selectSemantic,

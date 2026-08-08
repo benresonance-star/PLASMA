@@ -7,10 +7,7 @@ describe('E6 §30A evidence matrix', () => {
     const assessment = assessSection30AEvidence();
     expect(assessment.ids).toEqual(Array.from({ length: 23 }, (_, i) => i + 34));
     expect(assessment.blocked).toBe(0);
-    expect(assessment.met + assessment.partial).toBe(23);
-    // Only known environment-bound gap: live OCCT STEP B-rep.
-    expect(SECTION_30A_EVIDENCE.filter((r) => r.status === 'partial').map((r) => r.id)).toEqual([
-      39,
-    ]);
+    expect(assessment.met).toBe(23);
+    expect(assessment.partial).toBe(0);
   });
 });

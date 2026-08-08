@@ -18,3 +18,5 @@ tmp/
 .artifacts/
 .data/
 *.local
+
+apps/designer-web/dist-app/

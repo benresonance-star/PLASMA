@@ -1,5 +1,14 @@
 ﻿export { ExactKernelAdapter } from './exact-kernel.js';
-export { createGeometryKernel, type GeometryKernelBinding } from './kernel-factory.js';
+export {
+  createGeometryKernel,
+  type GeometryKernel,
+  type GeometryKernelBinding,
+} from './kernel-factory.js';
+export {
+  OcctWasmKernel,
+  type OcctStepImportResult,
+  type OcctStepImportSolid,
+} from './occt-wasm-kernel.js';
 export { buildGeometryServer } from './server.js';
 export { generateYBrep, generateD01YFixtureSet } from './y-brep.js';
 export {

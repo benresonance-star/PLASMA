@@ -4,15 +4,17 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
 
+export type GmshRunMode = 'gmsh-cli' | 'gmsh-docker' | 'deterministic-fallback';
+
 export interface GmshRunResult {
-  readonly mode: 'gmsh-cli' | 'deterministic-fallback';
+  readonly mode: GmshRunMode;
   readonly elementCount: number;
   readonly artifactHash: string;
   readonly stdout: string;
 }
 
 /**
- * Attempt container/host Gmsh CLI; fall back to deterministic mesh when unavailable.
+ * Attempt host Gmsh CLI, then Docker image, else deterministic fallback.
  * Keeps Gmsh behind the meshing-adapter boundary (no core package imports).
  */
 export function runGmshOrFallback(input: {
@@ -23,7 +25,6 @@ export function runGmshOrFallback(input: {
   if (input.algorithm === 'mock') {
     return deterministicFallback(input);
   }
-  const gmsh = process.env.SPDS_GMSH_BIN ?? 'gmsh';
   const dir = mkdtempSync(join(tmpdir(), 'spds-gmsh-'));
   try {
     const geoPath = join(dir, 'box.geo');
@@ -38,21 +39,14 @@ export function runGmshOrFallback(input: {
       ].join('\n'),
       'utf8',
     );
-    const proc = spawnSync(gmsh, ['-3', geoPath, '-o', mshPath, '-format', 'msh22'], {
-      encoding: 'utf8',
-      timeout: 15_000,
-    });
-    if (proc.status === 0) {
-      const msh = readFileSync(mshPath, 'utf8');
-      const elementCount = (msh.match(/\$Elements/g) ? countMshElements(msh) : 0) || 1;
-      return {
-        mode: 'gmsh-cli',
-        elementCount,
-        artifactHash: createHash('sha256').update(msh).digest('hex'),
-        stdout: proc.stdout ?? '',
-      };
-    }
-    return deterministicFallback(input, proc.stderr ?? proc.error?.message ?? 'gmsh-unavailable');
+
+    const cli = tryGmshCli(dir, geoPath, mshPath);
+    if (cli) return cli;
+
+    const docker = tryGmshDocker(dir);
+    if (docker) return docker;
+
+    return deterministicFallback(input, 'gmsh-cli-and-docker-unavailable');
   } catch (err) {
     return deterministicFallback(
       input,
@@ -61,6 +55,53 @@ export function runGmshOrFallback(input: {
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+}
+
+function tryGmshCli(dir: string, geoPath: string, mshPath: string): GmshRunResult | null {
+  const gmsh = process.env.SPDS_GMSH_BIN ?? 'gmsh';
+  const proc = spawnSync(gmsh, ['-3', geoPath, '-o', mshPath, '-format', 'msh22'], {
+    encoding: 'utf8',
+    timeout: 30_000,
+  });
+  if (proc.status !== 0) return null;
+  return readMshResult(mshPath, 'gmsh-cli', proc.stdout ?? '');
+}
+
+function tryGmshDocker(dir: string): GmshRunResult | null {
+  if (process.env.SPDS_GMSH_DOCKER === '0') return null;
+  // Prefer locally built image from services/meshing-adapter/Dockerfile.gmsh
+  // (`docker build -t spds-gmsh -f services/meshing-adapter/Dockerfile.gmsh .`).
+  const image = process.env.SPDS_GMSH_IMAGE ?? 'spds-gmsh';
+  const proc = spawnSync(
+    'docker',
+    [
+      'run',
+      '--rm',
+      '-v',
+      `${dir}:/data`,
+      image,
+      '-3',
+      '/data/box.geo',
+      '-o',
+      '/data/out.msh',
+      '-format',
+      'msh22',
+    ],
+    { encoding: 'utf8', timeout: 120_000 },
+  );
+  if (proc.status !== 0) return null;
+  return readMshResult(join(dir, 'out.msh'), 'gmsh-docker', proc.stdout ?? '');
+}
+
+function readMshResult(mshPath: string, mode: 'gmsh-cli' | 'gmsh-docker', stdout: string): GmshRunResult {
+  const msh = readFileSync(mshPath, 'utf8');
+  const elementCount = (msh.match(/\$Elements/g) ? countMshElements(msh) : 0) || 1;
+  return {
+    mode,
+    elementCount,
+    artifactHash: createHash('sha256').update(msh).digest('hex'),
+    stdout,
+  };
 }
 
 function countMshElements(msh: string): number {

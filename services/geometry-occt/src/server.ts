@@ -5,11 +5,11 @@ import {
   SweepRequestSchema,
   TessellateRequestSchema,
 } from '@spds/geometry-contracts';
-import type { ExactKernelAdapter } from './exact-kernel.js';
-import { createGeometryKernel } from './kernel-factory.js';
+import { createGeometryKernel, type GeometryKernel } from './kernel-factory.js';
+import { OcctWasmKernel } from './occt-wasm-kernel.js';
 import { generateD01YFixtureSet } from './y-brep.js';
 
-export function buildGeometryServer(kernel: ExactKernelAdapter = createGeometryKernel()) {
+export function buildGeometryServer(kernel: GeometryKernel = createGeometryKernel()) {
   const app = Fastify({ logger: false });
   void app.register(cors, { origin: true });
 
@@ -66,7 +66,7 @@ export function buildGeometryServer(kernel: ExactKernelAdapter = createGeometryK
     });
   });
 
-  /** STEP text probe — entity counts only; full B-rep parse remains WASM/OCCT-bound. */
+  /** STEP text probe — entity counts (always available). */
   app.post<{ Body: { stepText?: string; headerText?: string } }>(
     '/v1/import/step/probe',
     async (req, reply) => {
@@ -83,8 +83,48 @@ export function buildGeometryServer(kernel: ExactKernelAdapter = createGeometryK
         unitsHint,
         parametricClaim: 'reference-only',
         kernelBinding: kernel.kernelId,
-        note: 'Text probe only — OCCT WASM B-rep parse not claimed',
+        note:
+          kernel instanceof OcctWasmKernel
+            ? 'Text probe; use /v1/import/step for OCCT WASM B-rep mesh'
+            : 'Text probe only — set GEOMETRY_KERNEL=occt-wasm for WASM STEP',
       });
+    },
+  );
+
+  /** Live OCCT WASM STEP import (requires OcctWasmKernel). */
+  app.post<{ Body: { stepText?: string; semanticOwnerPrefix?: string } }>(
+    '/v1/import/step',
+    async (req, reply) => {
+      if (!(kernel instanceof OcctWasmKernel)) {
+        return reply.code(501).send({
+          code: 'OPERATOR_UNAVAILABLE',
+          summary: 'OCCT WASM STEP import requires GEOMETRY_KERNEL=occt-wasm',
+          recoverable: true,
+          affectedSemanticIds: [],
+        });
+      }
+      try {
+        const imported = await kernel.importStep({
+          bytes: req.body?.stepText ?? '',
+          ...(req.body?.semanticOwnerPrefix !== undefined
+            ? { semanticOwnerPrefix: req.body.semanticOwnerPrefix }
+            : {}),
+        });
+        return reply.code(201).send(imported);
+      } catch (err) {
+        const e = err as {
+          code?: string;
+          summary?: string;
+          recoverable?: boolean;
+          affectedSemanticIds?: string[];
+        };
+        return reply.code(422).send({
+          code: e.code ?? 'GEOMETRY_INVALID',
+          summary: e.summary ?? 'STEP import failed',
+          recoverable: e.recoverable ?? true,
+          affectedSemanticIds: e.affectedSemanticIds ?? [],
+        });
+      }
     },
   );
 

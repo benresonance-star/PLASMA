@@ -12,9 +12,10 @@ SPDS requires exact B-rep operations via an OCCT-backed geometry service with a 
 
 1. All generic packages talk to geometry only through `@spds/geometry-contracts` DTOs and `@spds/geometry-client`.
 2. `services/geometry-occt` is the sole geometry process boundary (Compose service on `:7080`).
-3. **Current CI/runtime adapter:** deterministic `ExactKernelAdapter` implementing sweep/tessellate/shell/Y fixture generation behind the same HTTP API.
-4. **Target production adapter:** OCCT WASM (`opencascade.js`) or native OCCT inside the same service image, selected by env `GEOMETRY_KERNEL=occt-wasm|exact-adapter` without changing contracts.
-5. Shell/Boolean failures return structured `SpdsFailure` payloads; `fabricationReady` stays false.
+3. **Default CI adapter:** deterministic `ExactKernelAdapter` implementing sweep/tessellate/shell/Y fixture generation behind the same HTTP API.
+4. **OCCT WASM adapter:** `OcctWasmKernel` via `occt-import-js` (LGPL) for live STEP→mesh (`POST /v1/import/step`), selected by `GEOMETRY_KERNEL=occt-wasm`. Constructive sweep/shell still delegate to the exact adapter until a fuller OCCT API surface is wired.
+5. Shell/Boolean failures return structured `SpdsFailure` payloads; imported STEP solids stay `fabricationReady: false` (reference-only).
+
 
 ## Consequences
 

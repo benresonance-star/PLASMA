@@ -10,9 +10,11 @@ Engineering governance record (not legal advice). Unresolved distribution questi
 | turbo | 2.x | task runner | MPL-2.0 | toolchain | none (dev) | no | no | n/a | npm audit / pin | npm |
 | postgres | 16-alpine | persistence | PostgreSQL | container | server deploy | yes | no | yes (other SQL) | image digests | Docker Hub |
 | minio | RELEASE.2025-04-22 | artifact store | AGPL-3.0 | container | **server-only; review if redistributing** | yes | no | yes (S3 API) | image pin | Docker Hub |
-| OpenCascade / OCCT | TBD at G6.1 | exact geometry | LGPL-2.1 (typical) | native/container | **server-only adapter; distribution review required** | yes | no | yes (`geometry-occt`) | pin + advisories | upstream / image |
-| Gmsh | TBD at G10A | analysis mesh | GPL-2.0 (typical) | container adapter | **must remain optional; not core-domain** | yes | yes | yes (`meshing-adapter`) | pin + advisories | upstream / image |
-| three / R3F | TBD at G8 | viewport | MIT | client | client bundle | no | no | yes (other renderer) | npm audit / pin | npm |
+| OpenCascade / OCCT | via occt-import-js 0.0.23 | exact geometry / STEP | LGPL-2.1 | WASM in geometry service | **server-only adapter; distribution review required** | yes | no | yes (`geometry-occt`) | pin + advisories | npm / OCCT |
+| occt-import-js | 0.0.23 | OCCT WASM STEP import | LGPL-2.1 | WASM runtime | **server-only (`geometry-occt`)** | yes | no | yes | npm audit / pin | npm |
+| Gmsh | Debian bookworm package / host CLI | analysis mesh | GPL-2.0 | CLI or `spds-gmsh` Docker adapter | **must remain optional; not core-domain** | yes | yes | yes (`meshing-adapter`) | pin + advisories | Debian / host |
+| three | 0.185.x | viewport renderer | MIT | client | client bundle | no | no | yes (other renderer) | npm audit / pin | npm |
+| react / react-dom | 19.2.x | designer UI | MIT | client | client bundle | no | no | yes | npm audit / pin | npm |
 
 ## Policy
 

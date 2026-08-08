@@ -5,10 +5,10 @@ import {
   generateD01Topology,
   type YComponent,
 } from '@spds/topology-operators';
-import type { ExactKernelAdapter } from './exact-kernel.js';
+import type { GeometryKernel } from './kernel-factory.js';
 
 export function generateYBrep(
-  kernel: ExactKernelAdapter,
+  kernel: GeometryKernel,
   component: YComponent,
   profile = {
     armWidthMm: 60,
@@ -35,7 +35,7 @@ export function generateYBrep(
 }
 
 export function generateD01YFixtureSet(
-  kernel: ExactKernelAdapter,
+  kernel: GeometryKernel,
   limit = 10,
 ): GeometryRepresentation[] {
   const topo = generateD01Topology();

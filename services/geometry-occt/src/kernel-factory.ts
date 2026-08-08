@@ -1,17 +1,21 @@
 import { ExactKernelAdapter } from './exact-kernel.js';
+import { OcctWasmKernel } from './occt-wasm-kernel.js';
 
 export type GeometryKernelBinding = 'exact-adapter' | 'occt-wasm';
 
+export type GeometryKernel = ExactKernelAdapter | OcctWasmKernel;
+
 /**
- * Kernel selector prep — defaults to exact-adapter (ADR-004).
- * `occt-wasm` is reserved; selecting it fails closed until WASM lands.
+ * Kernel selector (ADR-004).
+ * - exact-adapter: deterministic in-process kernel (CI default)
+ * - occt-wasm: occt-import-js WASM for STEP; constructive ops delegated
  */
 export function createGeometryKernel(
   binding: GeometryKernelBinding = (process.env.GEOMETRY_KERNEL as GeometryKernelBinding) ||
     'exact-adapter',
-): ExactKernelAdapter {
+): GeometryKernel {
   if (binding === 'occt-wasm') {
-    throw new Error('GEOMETRY_KERNEL=occt-wasm is not available in this build candidate');
+    return new OcctWasmKernel();
   }
   return new ExactKernelAdapter();
 }

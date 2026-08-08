@@ -34,9 +34,9 @@ export const SECTION_30A_EVIDENCE: readonly EvidenceCriterion[] = [
   {
     id: 39,
     summary: 'STEP import with provenance/units/wrapping',
-    evidence: 'import-core solid/unit parse + import-worker GeometryClient probe',
-    status: 'partial',
-    note: 'Header/entity text parse + HTTP geometry probe live; OCCT WASM B-rep parse not live',
+    evidence: 'occt-import-js WASM STEP in geometry-occt + import-core units/wrapping',
+    status: 'met',
+    note: 'Live OCCT WASM mesh import; constructive sweep/shell still exact-adapter delegated',
   },
   {
     id: 40,

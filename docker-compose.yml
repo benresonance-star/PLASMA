@@ -35,7 +35,7 @@ services:
       retries: 10
       start_period: 10s
 
-geometry:
+  geometry:
     build:
       context: .
       dockerfile: services/geometry-occt/Dockerfile
@@ -43,6 +43,7 @@ geometry:
     environment:
       PORT: "7080"
       GEOMETRY_KERNEL: exact-adapter
+      # Set GEOMETRY_KERNEL=occt-wasm for live occt-import-js STEP
     ports:
       - "7080:7080"
     healthcheck:
@@ -52,6 +53,18 @@ geometry:
       retries: 10
       start_period: 20s
 
+  gmsh:
+    build:
+      context: .
+      dockerfile: services/meshing-adapter/Dockerfile.gmsh
+    image: spds-gmsh
+    container_name: spds-gmsh
+    profiles: ["gmsh"]
+    entrypoint: ["sleep", "infinity"]
+    volumes:
+      - spds_gmsh_work:/work
+
 volumes:
   spds_pg_data:
   spds_minio_data:
+  spds_gmsh_work:
