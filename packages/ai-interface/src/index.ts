@@ -15,6 +15,12 @@
   type ChangeSetCommand,
 } from './tools.js';
 export {
+  enqueueJob,
+  runCompileValidateCompare,
+  runScriptedAgentFixture,
+  type AgentFixtureResult,
+} from './agent-fixture.js';
+export {
   buildFeedbackPacket,
   createRepairSession,
   recordAiAudit,

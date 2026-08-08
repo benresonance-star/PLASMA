@@ -64,6 +64,25 @@ export {
 } from './g8-session.js';
 
 export {
+  F01_PANEL_SEMANTIC_ID,
+  appAnalysisIndicative,
+  appApplyAiChange,
+  appCommitExactLength,
+  appExplorerIds,
+  appNavigateIssue,
+  appPreviewLength,
+  appPrimarySemanticId,
+  appSelect,
+  appSelectionSynced,
+  appSetChrome,
+  appSetPanel,
+  appSwitchModelKind,
+  createAppSession,
+  type AiChangesPanelItem,
+  type AppSession,
+} from './app-session.js';
+
+export {
   createSelectionStore,
   preserveSelectionAfterRegen,
   selectSemantic,

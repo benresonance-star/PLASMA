@@ -24,3 +24,11 @@ export {
   type ScaleTier,
   type ScaleTierPolicy,
 } from './reference-suite.js';
+export {
+  DEFAULT_FORCED_FAILURE_CASES,
+  diagnoseForcedFailure,
+  runForcedFailureSuite,
+  type ForcedFailureCase,
+  type ForcedFailureKind,
+  type ForcedFailureOutcome,
+} from './forced-failure-suite.js';

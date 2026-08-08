@@ -1,49 +1,77 @@
 import { useState } from 'react';
 import {
-  createG8Session,
-  g8CommitExactLength,
-  g8ExplorerIds,
-  g8PreviewLength,
-  g8PrimarySemanticId,
-  g8Select,
-  g8SelectionSynced,
-  g8SetChrome,
-  g8SetPanel,
-  type G8Session,
-} from '../g8-session.js';
+  appAnalysisIndicative,
+  appApplyAiChange,
+  appCommitExactLength,
+  appExplorerIds,
+  appNavigateIssue,
+  appPreviewLength,
+  appPrimarySemanticId,
+  appSelect,
+  appSelectionSynced,
+  appSetChrome,
+  appSetPanel,
+  appSwitchModelKind,
+  createAppSession,
+  type AppSession,
+} from '../app-session.js';
+import type { PanelId } from '../shell.js';
 import { publicationChromeLabel } from '../viewport.js';
 import { ViewportCanvas } from './ViewportCanvas.js';
 
-export function App() {
-  const [session, setSession] = useState(() => createG8Session(Date.now()));
-  const explorerIds = g8ExplorerIds();
-  const selected = session.selection.selectedSemanticId;
-  const synced = g8SelectionSynced(session);
+const PANELS: readonly PanelId[] = [
+  'explorer',
+  'viewport',
+  'inspector',
+  'pipeline',
+  'validation',
+  'history',
+  'ai',
+  'analysis-mesh',
+];
 
-  const update = (fn: (s: G8Session) => G8Session) => setSession((s) => fn(s));
+export function App() {
+  const [session, setSession] = useState(() => createAppSession());
+  const update = (fn: (s: AppSession) => AppSession) => setSession((s) => fn(s));
+  const selected = session.g8.selection.selectedSemanticId;
+  const active = session.g8.shell.activePanel;
 
   return (
-    <main className="spds-app" data-layout={session.shell.layoutMode}>
+    <main className="spds-app" data-model={session.modelKind}>
       <header className="spds-header">
         <div>
           <h1>SPDS</h1>
           <p>
-            {session.shell.context.modelId} · {session.shell.context.branchName} — viewport shows
-            derived geometry only.
+            {session.g8.shell.context.modelId} · {session.modelKind.toUpperCase()} ·{' '}
+            {session.g8.shell.context.branchName}
           </p>
         </div>
         <div className="spds-actions">
           <button
             type="button"
-            className={session.chrome === 'candidate' ? 'is-active' : undefined}
-            onClick={() => update((s) => g8SetChrome(s, 'candidate'))}
+            className={session.modelKind === 'd01' ? 'is-active' : undefined}
+            onClick={() => update((s) => appSwitchModelKind(s, 'd01', Date.now()))}
+          >
+            D01
+          </button>
+          <button
+            type="button"
+            className={session.modelKind === 'f01' ? 'is-active' : undefined}
+            onClick={() => update((s) => appSwitchModelKind(s, 'f01', Date.now()))}
+          >
+            F01
+          </button>
+          <button
+            type="button"
+            className={session.g8.chrome === 'candidate' ? 'is-active' : undefined}
+            onClick={() => update((s) => appSetChrome(s, 'candidate'))}
           >
             Candidate
           </button>
           <button
             type="button"
-            className={session.chrome === 'published' ? 'is-active' : undefined}
-            onClick={() => update((s) => g8SetChrome(s, 'published'))}
+            className={session.g8.chrome === 'published' ? 'is-active' : undefined}
+            onClick={() => update((s) => appSetChrome(s, 'published'))}
           >
             Published
           </button>
@@ -51,12 +79,12 @@ export function App() {
       </header>
 
       <nav className="spds-tabs" aria-label="Panels">
-        {(['explorer', 'viewport', 'inspector'] as const).map((panel) => (
+        {PANELS.map((panel) => (
           <button
             key={panel}
             type="button"
-            className={session.shell.activePanel === panel ? 'is-active' : undefined}
-            onClick={() => update((s) => g8SetPanel(s, panel))}
+            className={active === panel ? 'is-active' : undefined}
+            onClick={() => update((s) => appSetPanel(s, panel))}
           >
             {panel}
           </button>
@@ -64,88 +92,208 @@ export function App() {
       </nav>
 
       <div className="spds-shell">
-        {(session.shell.openPanels.includes('explorer') ||
-          session.shell.activePanel === 'explorer') && (
-          <aside className="spds-panel spds-explorer" aria-label="Explorer">
-            <h2>Explorer</h2>
-            <ul>
-              {explorerIds.map((id) => (
-                <li key={id}>
-                  <button
-                    type="button"
-                    className={selected === id ? 'is-selected' : undefined}
-                    onClick={() => update((s) => g8Select(s, id, 'explorer', Date.now()))}
-                  >
-                    {id}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </aside>
-        )}
+        <aside className="spds-panel spds-explorer" aria-label="Explorer">
+          <h2>Explorer</h2>
+          <ul>
+            {appExplorerIds(session).map((id) => (
+              <li key={id}>
+                <button
+                  type="button"
+                  className={selected === id ? 'is-selected' : undefined}
+                  onClick={() => update((s) => appSelect(s, id, 'explorer', Date.now()))}
+                >
+                  {id}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </aside>
 
         <section className="spds-panel spds-viewport-panel" aria-label="Viewport">
-          <ViewportCanvas
-            meshes={session.meshes}
-            chrome={session.chrome}
-            selectedSemanticId={selected}
-            onPickSemantic={(id) => update((s) => g8Select(s, id, 'viewport', Date.now()))}
-          />
+          {(active === 'viewport' ||
+            active === 'explorer' ||
+            active === 'inspector' ||
+            session.g8.shell.openPanels.includes('viewport')) && (
+            <ViewportCanvas
+              meshes={session.g8.meshes}
+              chrome={session.g8.chrome}
+              selectedSemanticId={selected}
+              onPickSemantic={(id) => update((s) => appSelect(s, id, 'viewport', Date.now()))}
+            />
+          )}
         </section>
 
-        {(session.shell.openPanels.includes('inspector') ||
-          session.shell.activePanel === 'inspector') && (
-          <aside className="spds-panel spds-inspector" aria-label="Inspector">
-            <h2>Inspector</h2>
-            <p className="spds-meta">
-              Chrome: {publicationChromeLabel(session.chrome)}
-              <br />
-              Selection: {selected ?? 'none'}
-              <br />
-              Sync: {synced ? 'ok' : 'drift'}
-              <br />
-              Regen: {session.regenGeneration}
-            </p>
-
-            <label className="spds-field">
-              <span>
-                {session.lengthEdit.spec.name} ({session.lengthEdit.spec.unit})
-              </span>
-              <input
-                type="range"
-                min={session.lengthEdit.spec.min}
-                max={session.lengthEdit.spec.max}
-                step={1}
-                value={session.lengthEdit.draftValue}
-                onChange={(ev) => update((s) => g8PreviewLength(s, Number(ev.target.value)))}
-              />
-              <span>
-                {session.lengthEdit.draftValue} — {session.lengthEdit.statusLabel}
-              </span>
-            </label>
-
-            <div className="spds-actions">
-              <button type="button" onClick={() => update((s) => g8CommitExactLength(s, Date.now()))}>
-                Exact regen
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  update((s) => g8Select(s, g8PrimarySemanticId(), 'inspector', Date.now()))
-                }
-              >
-                Select Y
-              </button>
-            </div>
-
-            {session.measurement ? (
+        <aside className="spds-panel spds-inspector" aria-label="Side panel">
+          {active === 'inspector' || active === 'viewport' || active === 'explorer' ? (
+            <>
+              <h2>Inspector</h2>
               <p className="spds-meta">
-                Measure {session.measurement.anchorA} → {session.measurement.anchorB}:{' '}
-                {session.measurement.quantity.toFixed(1)} {session.measurement.unit}
+                Chrome: {publicationChromeLabel(session.g8.chrome)}
+                <br />
+                Selection: {selected ?? 'none'}
+                <br />
+                Sync: {appSelectionSynced(session) ? 'ok' : 'drift'}
+                <br />
+                Why: {session.whyLine}
               </p>
-            ) : null}
-          </aside>
-        )}
+              <label className="spds-field">
+                <span>
+                  {session.g8.lengthEdit.spec.name} ({session.g8.lengthEdit.spec.unit})
+                </span>
+                <input
+                  type="range"
+                  min={session.g8.lengthEdit.spec.min}
+                  max={session.g8.lengthEdit.spec.max}
+                  step={1}
+                  value={session.g8.lengthEdit.draftValue}
+                  onChange={(ev) => update((s) => appPreviewLength(s, Number(ev.target.value)))}
+                />
+                <span>
+                  {session.g8.lengthEdit.draftValue} — {session.g8.lengthEdit.statusLabel}
+                </span>
+              </label>
+              <div className="spds-actions">
+                <button
+                  type="button"
+                  onClick={() => update((s) => appCommitExactLength(s, Date.now()))}
+                >
+                  Exact regen
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    update((s) => appSelect(s, appPrimarySemanticId(), 'inspector', Date.now()))
+                  }
+                >
+                  Select primary
+                </button>
+              </div>
+              {session.g8.measurement ? (
+                <p className="spds-meta">
+                  Measure: {session.g8.measurement.quantity.toFixed(1)}{' '}
+                  {session.g8.measurement.unit}
+                </p>
+              ) : null}
+              <h3>Pattern</h3>
+              <p className="spds-meta">
+                {session.pattern.name} · params {JSON.stringify(session.pattern.parameters)}
+              </p>
+              <h3>Dependencies</h3>
+              <p className="spds-meta">
+                ↑ {session.deps.upstream.join(', ') || '—'}
+                <br />↓ {session.deps.downstream.join(', ') || '—'}
+              </p>
+            </>
+          ) : null}
+
+          {active === 'pipeline' ? (
+            <>
+              <h2>Pipeline</h2>
+              <p className="spds-meta">
+                DAG {session.pipeline.dagId} · {session.pipeline.totalTimingMs}ms
+              </p>
+              <ul className="spds-list">
+                {session.pipeline.stages.map((stage) => (
+                  <li key={stage.id}>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        update((s) => appSelect(s, stage.semanticOwner, 'inspector', Date.now()))
+                      }
+                    >
+                      {stage.operator} · {stage.status} · {stage.semanticOwner}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+
+          {active === 'validation' ? (
+            <>
+              <h2>Validation</h2>
+              <ul className="spds-list">
+                {session.validation.issues.map((issue) => (
+                  <li key={issue.id}>
+                    <button
+                      type="button"
+                      onClick={() => update((s) => appNavigateIssue(s, issue.id, Date.now()))}
+                    >
+                      {issue.severity}: {issue.summary}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <p className="spds-meta">
+                Focused: {session.validation.focusedSemanticId ?? 'none'}
+              </p>
+            </>
+          ) : null}
+
+          {active === 'history' ? (
+            <>
+              <h2>History</h2>
+              <ul className="spds-list">
+                {session.history.entries.map((e) => (
+                  <li key={e.id}>
+                    {e.kind}: {e.label} ({e.timestamp})
+                  </li>
+                ))}
+              </ul>
+              <p className="spds-meta">
+                Compare changed: {session.compare.changedIds.join(', ')}
+                <br />
+                {session.restore.label}
+                <br />
+                {session.fork.label}
+              </p>
+            </>
+          ) : null}
+
+          {active === 'ai' ? (
+            <>
+              <h2>AI changes</h2>
+              <ul className="spds-list">
+                {session.aiChanges.map((c) => (
+                  <li key={c.changeSetId}>
+                    {c.changeSetId} · {c.disposition} · {c.commandCount} cmds · {c.attribution}
+                  </li>
+                ))}
+              </ul>
+              <button type="button" onClick={() => update((s) => appApplyAiChange(s))}>
+                Apply proposed
+              </button>
+              <p className="spds-meta">{session.whyLine}</p>
+            </>
+          ) : null}
+
+          {active === 'analysis-mesh' ? (
+            <>
+              <h2>Analysis mesh</h2>
+              <p className="spds-meta">
+                {session.analysis.chromeNote}
+                <br />
+                Elements: {session.analysis.elementCount}
+                <br />
+                Indicative: {appAnalysisIndicative(session) ? 'yes' : 'no'}
+              </p>
+              <ul className="spds-list">
+                {session.analysis.groups.map((g) => (
+                  <li key={g.name}>
+                    {g.role}: {g.name} → {g.semanticIds.join(', ')}
+                  </li>
+                ))}
+              </ul>
+              <ul className="spds-list">
+                {session.analysis.labels.map((l) => (
+                  <li key={l.entityId}>
+                    {l.text} (indicative)
+                  </li>
+                ))}
+              </ul>
+            </>
+          ) : null}
+        </aside>
       </div>
     </main>
   );

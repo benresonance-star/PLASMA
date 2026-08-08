@@ -43,6 +43,7 @@ describe('G10 fabrication-core', () => {
     });
     expect(a.contentHash).toHaveLength(64);
     expect(a.provenance.modelId).toBe('m');
+    expect(a.payloadEncoding).toBe('utf8-placeholder');
     expect(() =>
       exportArtifact({
         format: 'STL',
@@ -53,6 +54,19 @@ describe('G10 fabrication-core', () => {
         relativePath: '../escape.stl',
       }),
     ).toThrow(/Path restriction/);
+  });
+
+  it('accepts adapter-supplied binary CAD payloads', async () => {
+    const { exportBinaryArtifact } = await import('./index.js');
+    const bin = exportBinaryArtifact({
+      format: 'STL',
+      snapshotId: 'snap:1',
+      modelId: 'm',
+      branchId: 'b',
+      bytes: new Uint8Array([115, 111, 108, 105, 100]),
+      relativePath: 'artifacts/out.stl',
+    });
+    expect(bin.payloadEncoding).toBe('binary');
   });
 
   it('compiles BOM with semantic ids and quantities', () => {

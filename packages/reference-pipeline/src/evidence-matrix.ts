@@ -131,7 +131,7 @@ export const SECTION_30A_EVIDENCE: readonly EvidenceCriterion[] = [
   {
     id: 55,
     summary: 'UI distinguishes candidate/validated/published',
-    evidence: 'designer-web viewport chrome + transaction-status',
+    evidence: 'designer-web App shell chrome + app-session + transaction-status',
     status: 'met',
   },
   {

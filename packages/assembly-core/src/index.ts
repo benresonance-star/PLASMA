@@ -37,3 +37,10 @@ export {
   type ConnectionValidationIssue,
   type ConnectionValidationSeverity,
 } from './connection-validation.js';
+export {
+  applyConnectionChange,
+  emptyConnectionEffectState,
+  removeConnection,
+  type BomLine,
+  type ConnectionEffectState,
+} from './connection-effects.js';

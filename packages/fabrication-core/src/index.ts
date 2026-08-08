@@ -17,6 +17,8 @@ export interface FabricationArtifact {
   readonly contentHash: string;
   readonly byteLength: number;
   readonly path: string;
+  /** utf8-placeholder until geometry-occt emits real CAD bytes; binary when adapter-supplied. */
+  readonly payloadEncoding: 'utf8-placeholder' | 'binary';
   readonly provenance: {
     readonly modelId: string;
     readonly branchId: string;
@@ -103,6 +105,7 @@ export function exportArtifact(input: {
   readonly branchId: string;
   readonly payload: string;
   readonly relativePath: string;
+  readonly payloadEncoding?: 'utf8-placeholder' | 'binary';
 }): FabricationArtifact {
   if (!input.relativePath.startsWith(ALLOWED_PATH_PREFIX)) {
     throw new Error(`Path restriction: exports must be under ${ALLOWED_PATH_PREFIX}`);
@@ -118,12 +121,34 @@ export function exportArtifact(input: {
     contentHash,
     byteLength: Buffer.byteLength(input.payload, 'utf8'),
     path: input.relativePath,
+    payloadEncoding: input.payloadEncoding ?? 'utf8-placeholder',
     provenance: {
       modelId: input.modelId,
       branchId: input.branchId,
       producedAt: new Date().toISOString(),
     },
   };
+}
+
+/** Prefer this when geometry-occt supplies real STEP/STL/GLB bytes. */
+export function exportBinaryArtifact(input: {
+  readonly format: 'STEP' | 'STL' | 'GLB';
+  readonly snapshotId: string;
+  readonly modelId: string;
+  readonly branchId: string;
+  readonly bytes: Uint8Array;
+  readonly relativePath: string;
+}): FabricationArtifact {
+  const payload = Buffer.from(input.bytes).toString('base64');
+  return exportArtifact({
+    format: input.format,
+    snapshotId: input.snapshotId,
+    modelId: input.modelId,
+    branchId: input.branchId,
+    payload: `binary:${payload}`,
+    relativePath: input.relativePath,
+    payloadEncoding: 'binary',
+  });
 }
 
 export function compileBom(

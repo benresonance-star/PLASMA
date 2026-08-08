@@ -4,6 +4,8 @@ export interface DemoMemberParams {
   readonly lengthMm: number;
   readonly widthMm: number;
   readonly depthMm: number;
+  readonly semanticOwner?: string;
+  readonly representationId?: string;
 }
 
 export const DEMO_Y_SEMANTIC_ID = 'y:demo:01';
@@ -38,8 +40,8 @@ export function demoDisplayMeshes(params: Partial<DemoMemberParams> = {}): Displ
   ];
   return [
     {
-      representationId: 'repr:demo:y01',
-      semanticOwner: DEMO_Y_SEMANTIC_ID,
+      representationId: params.representationId ?? 'repr:demo:y01',
+      semanticOwner: params.semanticOwner ?? DEMO_Y_SEMANTIC_ID,
       vertices,
       indices,
     },
