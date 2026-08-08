@@ -96,6 +96,9 @@ importers:
       '@spds/transaction-core':
         specifier: workspace:*
         version: link:../../packages/transaction-core
+      '@spds/validation-core':
+        specifier: workspace:*
+        version: link:../../packages/validation-core
     devDependencies:
       eslint:
         specifier: ^9.22.0
@@ -592,7 +595,17 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/validation-core: {}
+  packages/validation-core:
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/version-core:
     dependencies:
