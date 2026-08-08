@@ -13,9 +13,29 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node ./scripts/copy-sql.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --max-warnings 0",
-    "test": "node -e process.exit(0)"
+    "test": "vitest run",
+    "migrate": "tsx src/db/migrate-cli.ts"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.3.0",
+    "@spds/failure-taxonomy": "workspace:*",
+    "@spds/reproducibility": "workspace:*",
+    "@spds/semantic-core": "workspace:*",
+    "@spds/version-core": "workspace:*",
+    "drizzle-orm": "^0.45.2",
+    "fastify": "^5.11.3",
+    "postgres": "^3.4.9",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "drizzle-kit": "^0.31.10",
+    "eslint": "^9.22.0",
+    "tsx": "^4.23.11",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
   }
 }

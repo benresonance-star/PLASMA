@@ -1,2 +1,11 @@
-﻿/** Stub package @spds/version-core — populated in later checkpoints. */
-export const packageId = '@spds/version-core' as const;
+﻿export type {
+  Actor,
+  ActorType,
+  Branch,
+  ChangeEvent,
+  ModelRecord,
+  SemanticDiff,
+  Snapshot,
+} from './types.js';
+export { hashState } from './hash.js';
+export { InMemoryVersionStore } from './memory-store.js';
