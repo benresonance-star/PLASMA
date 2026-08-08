@@ -1,7 +1,13 @@
 /**
- * Shared units / quantities - G0.1 smoke surface.
- * Full tolerance policy lands in G0.2 (spec section 31).
+ * Shared units / quantities and documented tolerance policy (spec section 31).
  */
+
+export {
+  DEFAULT_TOLERANCE_POLICY,
+  TOLERANCE_POLICY_VERSION,
+  assertNamedTolerance,
+  type TolerancePolicy,
+} from './tolerance.js';
 
 export type LengthUnit = 'mm' | 'm' | 'in';
 

@@ -28,6 +28,9 @@ jobs:
       - name: Licence check
         run: pnpm licence:check
 
+      - name: Boundary check
+        run: pnpm boundary:check
+
       - name: Lint
         run: pnpm lint
 

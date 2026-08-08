@@ -1,0 +1,12 @@
+{
+  "name": "@spds/boundary-check",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node -e \"import('node:fs').then(fs=>fs.mkdirSync('dist',{recursive:true}))\"",
+    "typecheck": "node -e process.exit(0)",
+    "lint": "node -e process.exit(0)",
+    "test": "node ./check.mjs"
+  }
+}
