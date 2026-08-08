@@ -37,6 +37,14 @@ export {
 } from './mesh-bridge.js';
 
 export {
+  analysisLabelIsIndicative,
+  buildAnalysisMeshView,
+  type AnalysisMeshGroupView,
+  type AnalysisMeshViewModel,
+  type AnalysisResultLabelView,
+} from './analysis-mesh-view.js';
+
+export {
   createSelectionStore,
   preserveSelectionAfterRegen,
   selectSemantic,

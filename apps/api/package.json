@@ -25,9 +25,11 @@
     "@spds/reproducibility": "workspace:*",
     "@spds/semantic-core": "workspace:*",
     "@spds/semantic-query": "workspace:*",
+    "@spds/analysis-worker": "workspace:*",
     "@spds/artifact-store": "workspace:*",
     "@spds/assembly-core": "workspace:*",
     "@spds/reference-pipeline": "workspace:*",
+
     "@spds/transaction-core": "workspace:*",
     "@spds/version-core": "workspace:*",
     "drizzle-orm": "^0.45.2",

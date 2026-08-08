@@ -20,6 +20,32 @@ describe('E1/E6 API reference publish', () => {
     expect(body.stored).toHaveLength(3);
   });
 
+  it('reports live completeness and runs D01 analyze (indicative)', async () => {
+    const { app } = buildServer();
+    const completeness = await app.inject({ method: 'GET', url: '/references/completeness' });
+    expect(completeness.statusCode).toBe(200);
+    const cBody = completeness.json() as { allClear: boolean; models: unknown[] };
+    expect(cBody.allClear).toBe(true);
+    expect(cBody.models).toHaveLength(3);
+
+    const analyze = await app.inject({
+      method: 'POST',
+      url: '/references/d01/analyze',
+      payload: { yLimit: 2 },
+    });
+    expect(analyze.statusCode).toBe(201);
+    const aBody = analyze.json() as {
+      status: string;
+      labelPolicy: string;
+      stored: { verified: boolean };
+      viewportLabels: { indicative: boolean }[];
+    };
+    expect(aBody.status).toBe('succeeded');
+    expect(aBody.labelPolicy).toBe('computational-indicative');
+    expect(aBody.stored.verified).toBe(true);
+    expect(aBody.viewportLabels.every((l) => l.indicative)).toBe(true);
+  });
+
   it('publishes A01 and F01 through the same API surface', async () => {
     const { app } = buildServer();
     const a01 = await app.inject({ method: 'POST', url: '/references/a01/publish' });

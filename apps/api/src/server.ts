@@ -12,7 +12,9 @@ import {
 import { DesignCommandSchema, TransactionEngine } from '@spds/transaction-core';
 import { buildA01AssemblyFixture } from '@spds/assembly-core';
 import { InMemoryObjectStore } from '@spds/artifact-store';
+import { runAnalysisJob } from '@spds/analysis-worker';
 import {
+  buildLiveReferenceCompletenessSuite,
   runA01ReferencePipeline,
   runD01ReferencePipeline,
   runF01ReferencePipeline,
@@ -222,6 +224,76 @@ export function buildServer(store = new InMemoryVersionStore()) {
       usesDomeImports: pipeline.usesDomeImports,
       stored,
       allVerified: stored.every((s) => s.verified),
+    });
+  });
+
+  app.get('/references/completeness', async (_req, reply) => {
+    const suite = await buildLiveReferenceCompletenessSuite();
+    return reply.send({
+      models: suite,
+      allClear: suite.every((r) => !r.bypassDetected),
+    });
+  });
+
+  app.post<{ Body: { yLimit?: number } }>('/references/d01/analyze', async (req, reply) => {
+    const pipeline = await runD01ReferencePipeline({ yLimit: req.body?.yLimit ?? 3 });
+    const yMembers = pipeline.yNetwork.components
+      .filter((c) => c.trim === 'retained')
+      .slice(0, req.body?.yLimit ?? 3)
+      .map((c) => {
+        const origin = c.frame.origin;
+        const arm = c.arms[0]!;
+        return {
+          id: c.id,
+          a: origin,
+          b: [
+            origin[0] + c.frame.tangent[0] * arm.lengthMmPlaceholder,
+            origin[1] + c.frame.tangent[1] * arm.lengthMmPlaceholder,
+            origin[2] + c.frame.tangent[2] * arm.lengthMmPlaceholder,
+          ] as [number, number, number],
+        };
+      });
+    const analysis = runAnalysisJob({
+      requestId: `analysis:${pipeline.pipelineHash.slice(0, 12)}`,
+      currentHeadHash: pipeline.pipelineHash,
+      yMembers,
+      mesh: {
+        requestId: `mesh:${pipeline.pipelineHash.slice(0, 12)}`,
+        geometryArtifactHash: pipeline.pipelineHash,
+        settings: {
+          elementSizeMm: 25,
+          algorithm: 'mock',
+          determinismClass: 'D1',
+        },
+        physicalGroups: [
+          {
+            name: 'material',
+            semanticIds: yMembers.map((y) => y.id),
+            role: 'material',
+          },
+        ],
+        timeoutMs: 30_000,
+        resourceBudgetMb: 256,
+        expectedHeadHash: pipeline.pipelineHash,
+      },
+    });
+    if (analysis.status !== 'succeeded' || !analysis.exportFixture) {
+      return reply.code(422).send({
+        status: analysis.status,
+        failureCode: analysis.failureCode ?? 'ANALYSIS_FAILED',
+      });
+    }
+    const stored = artifacts.put(analysis.exportFixture.payload, 'application/json', [
+      'd01',
+      'analysis',
+      'indicative',
+    ]);
+    return reply.code(201).send({
+      status: analysis.status,
+      meshArtifactHash: analysis.meshArtifact?.artifactHash,
+      labelPolicy: analysis.exportFixture.labelPolicy,
+      viewportLabels: analysis.results?.viewportLabels ?? [],
+      stored: { contentHash: stored.contentHash, verified: artifacts.verify(stored.contentHash) },
     });
   });
 

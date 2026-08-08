@@ -101,7 +101,7 @@ export const SECTION_30A_EVIDENCE: readonly EvidenceCriterion[] = [
   {
     id: 50,
     summary: 'Worker timeout/cancel/stale rejection',
-    evidence: 'meshing-adapter + import-worker job contracts',
+    evidence: 'meshing-adapter + import-worker + analysis-worker job contracts',
     status: 'met',
   },
   {

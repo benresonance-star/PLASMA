@@ -7,7 +7,8 @@ export type PanelId =
   | 'pipeline'
   | 'validation'
   | 'history'
-  | 'ai';
+  | 'ai'
+  | 'analysis-mesh';
 
 export type LayoutMode = 'desktop' | 'mobile-tabs';
 

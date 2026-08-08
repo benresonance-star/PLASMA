@@ -66,5 +66,27 @@ export function buildGeometryServer(kernel: ExactKernelAdapter = createGeometryK
     });
   });
 
+  /** STEP text probe — entity counts only; full B-rep parse remains WASM/OCCT-bound. */
+  app.post<{ Body: { stepText?: string; headerText?: string } }>(
+    '/v1/import/step/probe',
+    async (req, reply) => {
+      const stepText = req.body?.stepText ?? '';
+      const headerText = req.body?.headerText ?? '';
+      const solidMatches = stepText.match(/MANIFOLD_SOLID_BREP\s*\(/gi) ?? [];
+      const unitsHint = /\.milli\./i.test(headerText)
+        ? 'mm'
+        : /\.inch\./i.test(headerText)
+          ? 'inch'
+          : 'ambiguous';
+      return reply.send({
+        solidCountHint: solidMatches.length,
+        unitsHint,
+        parametricClaim: 'reference-only',
+        kernelBinding: kernel.kernelId,
+        note: 'Text probe only — OCCT WASM B-rep parse not claimed',
+      });
+    },
+  );
+
   return { app, kernel };
 }
