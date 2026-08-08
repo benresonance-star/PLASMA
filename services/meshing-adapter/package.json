@@ -17,6 +17,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
+    "@spds/package-core": "workspace:*",
     "@spds/reference-pipeline": "workspace:*",
     "typescript": "^5.8.2",
     "vitest": "^3.0.8",

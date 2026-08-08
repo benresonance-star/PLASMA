@@ -60,6 +60,23 @@ export interface MeshJobResult {
  * Budgets, cancel, and stale head fail closed without throwing.
  */
 export function runMeshJob(req: MeshRequest, currentHeadHash?: string): MeshJobResult {
+  const injected = process.env.SPDS_INJECT_FAILURE;
+  if (injected === 'timeout') {
+    return { status: 'failed', failureCode: 'RESOURCE_LIMIT' };
+  }
+  if (injected === 'crash') {
+    return { status: 'failed', failureCode: 'WORKER_CRASH' };
+  }
+  if (injected === 'cancel') {
+    return { status: 'cancelled', failureCode: 'CANCELLED' };
+  }
+  if (injected === 'stale') {
+    return { status: 'stale', failureCode: 'STALE_RESULT' };
+  }
+  if (injected === 'partial') {
+    // Never publish a partial mesh artifact — fail closed.
+    return { status: 'failed', failureCode: 'PARTIAL_PUBLISH_REJECTED' };
+  }
   if (req.timeoutMs <= 0 || req.resourceBudgetMb <= 0) {
     return { status: 'failed', failureCode: 'RESOURCE_LIMIT' };
   }

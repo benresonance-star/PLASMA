@@ -6,6 +6,9 @@ import { buildExecutionDag, runOperatorDag } from '@spds/execution-dag';
 import { buildFabricationFromRepresentations, type FabricationSnapshotOutputs } from '@spds/fabrication-core';
 import {
   InProcessGeometryKernel,
+  meshToAsciiStl,
+  meshToGlbJson,
+  representationsToStepText,
   type GeometryRepresentation,
 } from '@spds/geometry-contracts';
 import { compilePirFromEffectiveState } from '@spds/parametric-ir';
@@ -169,11 +172,40 @@ export async function runD01ReferencePipeline(options?: {
   }
 
   const snapshotId = `snapshot:d01:${compiled.pirHash.slice(0, 12)}`;
+  const meshParts = representations.map((rep) => {
+    const mesh = kernel.tessellate({
+      representationId: rep.id,
+      chordDeviationMm: 1,
+      angleDeviationDeg: 20,
+    });
+    return { rep, mesh };
+  });
+  const stlChunks = meshParts.flatMap(({ rep, mesh }) =>
+    Array.from(
+      meshToAsciiStl({
+        name: rep.semanticOwner.replace(/[^a-zA-Z0-9_-]/g, '_'),
+        vertices: mesh.vertices,
+        indices: mesh.indices,
+      }),
+    ),
+  );
+  const glb = meshParts[0]
+    ? meshToGlbJson({
+        name: 'd01',
+        vertices: meshParts[0].mesh.vertices,
+        indices: meshParts[0].mesh.indices,
+      })
+    : new Uint8Array();
   const fabrication = buildFabricationFromRepresentations({
     snapshotId,
     modelId: 'model:D01',
     branchId: 'branch:main',
     representations,
+    binaryExports: {
+      step: representationsToStepText(representations.map((r) => r.semanticOwner)),
+      stl: new Uint8Array(stlChunks),
+      glb,
+    },
   });
 
   const manifest = {

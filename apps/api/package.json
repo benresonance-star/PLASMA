@@ -25,6 +25,7 @@
     "@spds/reproducibility": "workspace:*",
     "@spds/semantic-core": "workspace:*",
     "@spds/semantic-query": "workspace:*",
+    "@spds/ai-interface": "workspace:*",
     "@spds/analysis-worker": "workspace:*",
     "@spds/artifact-store": "workspace:*",
     "@spds/assembly-core": "workspace:*",

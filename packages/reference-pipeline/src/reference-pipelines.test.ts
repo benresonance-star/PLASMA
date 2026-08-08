@@ -15,6 +15,12 @@ describe('E4 A01/F01 pipelines + live adversarial', () => {
     expect(a.mateCount).toBeGreaterThan(0);
     expect(a.release.status).toBe('published');
     expect(a.pipelineHash).toBe(b.pipelineHash);
+    expect(a.connectionHoleCount).toBeGreaterThan(0);
+    expect(a.bomLineCount).toBeGreaterThan(0);
+    expect(a.geometryDirtyIds.length).toBeGreaterThan(0);
+    expect(a.representations.every((r) => r.subElementPaths.some((p) => p.includes('/hole:')))).toBe(
+      true,
+    );
   });
 
   it('runs F01 freeform through shared layers without dome imports', async () => {

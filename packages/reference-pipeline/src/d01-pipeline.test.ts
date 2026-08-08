@@ -27,6 +27,7 @@ describe('E0 D01 reference pipeline', () => {
     expect(a.representations).toHaveLength(8);
     expect(a.representations.every((r) => r.mass.volumeMm3 > 0)).toBe(true);
     expect(a.fabrication.artifacts).toHaveLength(3);
+    expect(a.fabrication.artifacts.every((art) => art.payloadEncoding === 'binary')).toBe(true);
     expect(a.release.status).toBe('published');
     expect(a.pipelineHash).toBe(b.pipelineHash);
     expect(a.pirHash).toBe(b.pirHash);

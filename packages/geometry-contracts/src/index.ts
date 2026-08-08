@@ -15,3 +15,8 @@
   type Mesh,
 } from './dto.js';
 export { InProcessGeometryKernel } from './kernel.js';
+export {
+  meshToAsciiStl,
+  meshToGlbJson,
+  representationsToStepText,
+} from './export-buffers.js';

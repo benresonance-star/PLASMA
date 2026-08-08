@@ -61,6 +61,29 @@ export async function runStepImportJob(
     let probeMode: ImportJobResult['probeMode'] = 'in-process';
     if (options?.geometryClient) {
       probeMode = 'geometry-client';
+      // Prefer live OCCT WASM STEP import when the geometry service supports it.
+      try {
+        const imported = await (options.geometryClient as GeometryClient & {
+          importStep?: (body: {
+            stepText: string;
+            semanticOwnerPrefix?: string;
+          }) => Promise<unknown>;
+        }).importStep?.({
+          stepText: req.bytes,
+          semanticOwnerPrefix: 'import',
+        });
+        if (imported) {
+          return {
+            status: 'succeeded',
+            asset,
+            shapes,
+            viewportReady: true,
+            probeMode: 'geometry-client',
+          };
+        }
+      } catch {
+        /* fall through to sweep probe */
+      }
       for (const shape of shapes) {
         await options.geometryClient.sweep({
           semanticOwner: shape.shapeId,

@@ -152,6 +152,49 @@ export class InProcessGeometryKernel {
   get(representationId: string): GeometryRepresentation | undefined {
     return this.solids.get(representationId)?.representation;
   }
+
+  /**
+   * G11.4 — apply derived hole cuts as volume deltas on exact-adapter solids.
+   * Full OCCT Booleans remain optional behind the geometry service.
+   */
+  applyHoleCuts(input: {
+    readonly representationId: string;
+    readonly holeIds: readonly string[];
+    readonly diameterMm: number;
+  }): GeometryRepresentation {
+    const solid = this.solids.get(input.representationId);
+    if (!solid) {
+      throw createSpdsError({
+        code: 'GEOMETRY_INVALID',
+        summary: `Unknown representation ${input.representationId}`,
+        affectedSemanticIds: [input.representationId],
+        recoverable: true,
+      });
+    }
+    const holeVolume =
+      input.holeIds.length *
+      Math.PI *
+      (input.diameterMm / 2) ** 2 *
+      Math.min(solid.profileDepthMm, solid.profileWidthMm);
+    const volumeMm3 = Math.max(1, solid.representation.mass.volumeMm3 - holeVolume);
+    const next: GeometryRepresentation = {
+      ...solid.representation,
+      id: `repr:geom:holes:${sha256Canonical({
+        base: solid.representation.id,
+        holes: input.holeIds,
+      }).slice(0, 16)}`,
+      mass: { ...solid.representation.mass, volumeMm3 },
+      subElementPaths: [
+        ...solid.representation.subElementPaths,
+        ...input.holeIds.map((h) => `${solid.representation.semanticOwner}/hole:${h}`),
+      ],
+      validationState: 'geometry-generated',
+      fabricationReady: volumeMm3 > 0,
+    };
+    this.solids.set(next.id, { ...solid, representation: next });
+    this.solids.delete(input.representationId);
+    return next;
+  }
 }
 
 function polylineLength(path: ReadonlyArray<readonly [number, number, number]>): number {

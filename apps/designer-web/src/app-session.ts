@@ -16,6 +16,9 @@ import {
   g8SetPanel,
   type G8Session,
 } from './g8-session.js';
+import { preserveSelectionAfterRegen } from './selection-sync.js';
+import { commitExact, markValidated } from './parameter-editing.js';
+import type { DisplayMeshInput } from './mesh-bridge.js';
 import { buildPipelineView, type PipelineViewModel } from './pipeline-view.js';
 import { buildPatternInspector, type PatternInspectorView } from './pattern-inspector.js';
 import { buildDependencyExplorer, type DependencyExplorerView } from './dependency-explorer.js';
@@ -304,6 +307,24 @@ export function appCommitExactLength(session: AppSession, nowMs: number): AppSes
     ),
     history: buildHistory(g8.regenGeneration),
   });
+}
+
+/** RC-01 — replace demo meshes with live D01 tessellation (API). Selection preserved when ids survive. */
+export function appApplyLiveDisplayMeshes(
+  session: AppSession,
+  meshes: readonly DisplayMeshInput[],
+  nowMs: number,
+): AppSession {
+  const surviving = new Set(meshes.map((m) => m.semanticOwner));
+  const selection = preserveSelectionAfterRegen(session.g8.selection, surviving, nowMs);
+  const g8 = {
+    ...session.g8,
+    meshes,
+    selection,
+    regenGeneration: session.g8.regenGeneration + 1,
+    lengthEdit: markValidated(commitExact(session.g8.lengthEdit)),
+  };
+  return refreshDerived({ ...session, g8, modelKind: 'd01' });
 }
 
 export function appNavigateIssue(session: AppSession, issueId: string, nowMs: number): AppSession {

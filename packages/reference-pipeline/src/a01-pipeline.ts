@@ -1,4 +1,8 @@
-import { buildA01AssemblyFixture } from '@spds/assembly-core';
+import {
+  applyConnectionChange,
+  buildA01AssemblyFixture,
+  emptyConnectionEffectState,
+} from '@spds/assembly-core';
 import {
   parseCompositionDocument,
   resolveEffectiveState,
@@ -30,6 +34,9 @@ export interface A01PipelineResult {
   readonly representations: readonly GeometryRepresentation[];
   readonly release: DesignRelease;
   readonly pipelineHash: string;
+  readonly connectionHoleCount: number;
+  readonly bomLineCount: number;
+  readonly geometryDirtyIds: readonly string[];
 }
 
 /**
@@ -131,20 +138,35 @@ export async function runA01ReferencePipeline(options?: {
   });
 
   const kernel = options?.kernel ?? new InProcessGeometryKernel();
+  const plateIds = fixture.registry.listInstances().slice(0, 2).map((i) => i.id);
+  const connectionEffects = applyConnectionChange({
+    state: emptyConnectionEffectState(),
+    connectionId: 'conn:a01:bolted',
+    plateInstanceIds: plateIds,
+    fastenerId: 'fast:M12x40',
+    holeCountPerPlate: 2,
+  });
   const representations: GeometryRepresentation[] = [];
   for (const inst of fixture.registry.listInstances().slice(0, 2)) {
-    representations.push(
-      kernel.sweep({
-        semanticOwner: inst.id,
-        pirOperationId: `pir:a01-brep:${inst.id}`,
-        path: [
-          [0, 0, 0],
-          [params.plateThicknessMm * 10, 0, 0],
-        ],
-        profileWidthMm: params.plateThicknessMm * 8,
-        profileDepthMm: params.pinDiaMm * 4,
-      }),
-    );
+    let rep = kernel.sweep({
+      semanticOwner: inst.id,
+      pirOperationId: `pir:a01-brep:${inst.id}`,
+      path: [
+        [0, 0, 0],
+        [params.plateThicknessMm * 10, 0, 0],
+      ],
+      profileWidthMm: params.plateThicknessMm * 8,
+      profileDepthMm: params.pinDiaMm * 4,
+    });
+    const holes = connectionEffects.holes.filter((h) => h.plateInstanceId === inst.id);
+    if (holes.length > 0) {
+      rep = kernel.applyHoleCuts({
+        representationId: rep.id,
+        holeIds: holes.map((h) => h.holeId),
+        diameterMm: holes[0]!.diameterMm,
+      });
+    }
+    representations.push(rep);
   }
 
   const snapshotId = `snapshot:a01:${pirHash.slice(0, 12)}`;
@@ -190,5 +212,8 @@ export async function runA01ReferencePipeline(options?: {
     representations,
     release,
     pipelineHash,
+    connectionHoleCount: connectionEffects.holes.length,
+    bomLineCount: connectionEffects.bom.length,
+    geometryDirtyIds: connectionEffects.geometryDirtyIds,
   };
 }

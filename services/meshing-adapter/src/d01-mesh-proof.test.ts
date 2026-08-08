@@ -45,5 +45,10 @@ describe('E5 D01 geometry → analysis mesh proof', () => {
       resourceBudgetMb: 512,
     });
     expect(again.artifact?.artifactHash).toBe(job.artifact?.artifactHash);
+
+    if (process.env.SPDS_REQUIRE_LIVE_GMSH === '1') {
+      expect(job.artifact?.artifactHash).toMatch(/^[a-f0-9]{64}$/i);
+      // Live mode must leave deterministic-fallback (enforced in gmsh-live.test).
+    }
   });
 });

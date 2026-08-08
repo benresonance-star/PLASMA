@@ -67,6 +67,7 @@ export {
   F01_PANEL_SEMANTIC_ID,
   appAnalysisIndicative,
   appApplyAiChange,
+  appApplyLiveDisplayMeshes,
   appCommitExactLength,
   appExplorerIds,
   appNavigateIssue,

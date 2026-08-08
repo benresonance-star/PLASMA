@@ -4,6 +4,9 @@ import {
   ShellRequestSchema,
   SweepRequestSchema,
   TessellateRequestSchema,
+  meshToAsciiStl,
+  meshToGlbJson,
+  representationsToStepText,
 } from '@spds/geometry-contracts';
 import { createGeometryKernel, type GeometryKernel } from './kernel-factory.js';
 import { OcctWasmKernel } from './occt-wasm-kernel.js';
@@ -90,6 +93,51 @@ export function buildGeometryServer(kernel: GeometryKernel = createGeometryKerne
       });
     },
   );
+
+  /** RC-02 — export tessellated CAD buffers (STL/GLB/STEP text). */
+  app.post<{
+    Body: {
+      representationId?: string;
+      format?: 'stl' | 'glb' | 'step';
+      chordDeviationMm?: number;
+      angleDeviationDeg?: number;
+      semanticOwners?: string[];
+    };
+  }>('/v1/export/mesh', async (req, reply) => {
+    const format = req.body?.format ?? 'stl';
+    if (format === 'step') {
+      const owners = req.body?.semanticOwners ?? ['part:export'];
+      const bytes = representationsToStepText(owners);
+      return reply.send({
+        format,
+        encoding: 'binary',
+        bytesBase64: Buffer.from(bytes).toString('base64'),
+        byteLength: bytes.byteLength,
+      });
+    }
+    const representationId = req.body?.representationId;
+    if (!representationId) {
+      return reply.code(400).send({
+        code: 'SEMANTIC_INVALID',
+        summary: 'representationId required for mesh export',
+      });
+    }
+    const mesh = kernel.tessellate({
+      representationId,
+      chordDeviationMm: req.body?.chordDeviationMm ?? 1,
+      angleDeviationDeg: req.body?.angleDeviationDeg ?? 20,
+    });
+    const bytes =
+      format === 'glb'
+        ? meshToGlbJson({ name: representationId, vertices: mesh.vertices, indices: mesh.indices })
+        : meshToAsciiStl({ name: representationId, vertices: mesh.vertices, indices: mesh.indices });
+    return reply.send({
+      format,
+      encoding: 'binary',
+      bytesBase64: Buffer.from(bytes).toString('base64'),
+      byteLength: bytes.byteLength,
+    });
+  });
 
   /** Live OCCT WASM STEP import (requires OcctWasmKernel). */
   app.post<{ Body: { stepText?: string; semanticOwnerPrefix?: string } }>(

@@ -38,6 +38,9 @@ importers:
       '@fastify/cors':
         specifier: ^11.3.0
         version: 11.3.0
+      '@spds/ai-interface':
+        specifier: workspace:*
+        version: link:../../packages/ai-interface
       '@spds/analysis-worker':
         specifier: workspace:*
         version: link:../../services/analysis-worker

@@ -48,6 +48,33 @@ export class GeometryClient {
     return GeometryRepresentationSchema.parse(json);
   }
 
+  async importStep(
+    body: { readonly stepText: string; readonly semanticOwnerPrefix?: string },
+    signal?: AbortSignal,
+  ): Promise<unknown> {
+    return this.request(
+      '/v1/import/step',
+      { method: 'POST', body: JSON.stringify(body) },
+      signal,
+    );
+  }
+
+  async exportMesh(
+    body: {
+      readonly representationId: string;
+      readonly format: 'stl' | 'glb' | 'step';
+      readonly chordDeviationMm?: number;
+      readonly angleDeviationDeg?: number;
+    },
+    signal?: AbortSignal,
+  ): Promise<{ readonly format: string; readonly bytesBase64: string; readonly encoding: string }> {
+    return (await this.request(
+      '/v1/export/mesh',
+      { method: 'POST', body: JSON.stringify(body) },
+      signal,
+    )) as { format: string; bytesBase64: string; encoding: string };
+  }
+
   private async request(path: string, init: RequestInit, outer?: AbortSignal): Promise<unknown> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.timeoutMs);

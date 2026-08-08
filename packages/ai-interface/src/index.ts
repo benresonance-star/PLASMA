@@ -21,6 +21,11 @@ export {
   type AgentFixtureResult,
 } from './agent-fixture.js';
 export {
+  runCompileValidateCompareLive,
+  runScriptedAgentWithLiveCompile,
+  type LiveCompileResult,
+} from './live-compile.js';
+export {
   buildFeedbackPacket,
   createRepairSession,
   recordAiAudit,

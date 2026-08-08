@@ -298,6 +298,12 @@ export function buildFabricationFromRepresentations(input: {
       };
     };
   }>;
+  /** When provided, emit integrity-addressable binary CAD payloads (RC-02). */
+  readonly binaryExports?: {
+    readonly step: Uint8Array;
+    readonly stl: Uint8Array;
+    readonly glb: Uint8Array;
+  };
 }): FabricationSnapshotOutputs {
   const densityKgPerMm3 = 7.85e-6;
   const measurements = input.representations.map((r) => {
@@ -320,20 +326,35 @@ export function buildFabricationFromRepresentations(input: {
       densityKgPerMm3,
     });
   });
-  const artifacts = (['STEP', 'STL', 'GLB'] as const).map((format) =>
-    exportArtifact({
-      format,
-      snapshotId: input.snapshotId,
-      modelId: input.modelId,
-      branchId: input.branchId,
-      payload: JSON.stringify({
-        format,
-        snapshotId: input.snapshotId,
-        owners: input.representations.map((r) => r.semanticOwner),
-      }),
-      relativePath: `artifacts/${input.modelId}/${input.snapshotId}.${format.toLowerCase()}`,
-    }),
-  );
+  const artifacts = input.binaryExports
+    ? ([
+        ['STEP', input.binaryExports.step],
+        ['STL', input.binaryExports.stl],
+        ['GLB', input.binaryExports.glb],
+      ] as const).map(([format, bytes]) =>
+        exportBinaryArtifact({
+          format,
+          snapshotId: input.snapshotId,
+          modelId: input.modelId,
+          branchId: input.branchId,
+          bytes,
+          relativePath: `artifacts/${input.modelId}/${input.snapshotId}.${format.toLowerCase()}`,
+        }),
+      )
+    : (['STEP', 'STL', 'GLB'] as const).map((format) =>
+        exportArtifact({
+          format,
+          snapshotId: input.snapshotId,
+          modelId: input.modelId,
+          branchId: input.branchId,
+          payload: JSON.stringify({
+            format,
+            snapshotId: input.snapshotId,
+            owners: input.representations.map((r) => r.semanticOwner),
+          }),
+          relativePath: `artifacts/${input.modelId}/${input.snapshotId}.${format.toLowerCase()}`,
+        }),
+      );
   const bom = compileBom(
     measurements.map((m) => ({
       semanticId: m.partId,

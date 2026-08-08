@@ -19,11 +19,13 @@ import {
 import { buildA01AssemblyFixture } from '@spds/assembly-core';
 import { runStepImportJob } from '@spds/import-worker';
 import {
+  buildD01DisplayMeshes,
   buildLiveReferenceCompletenessSuite,
   runA01ReferencePipeline,
   runD01ReferencePipeline,
   runF01ReferencePipeline,
 } from '@spds/reference-pipeline';
+import { runScriptedAgentWithLiveCompile } from '@spds/ai-interface';
 import {
   acceptSemanticCommand,
   parseSemanticCommand,
@@ -191,6 +193,24 @@ export function buildServer(store = new InMemoryVersionStore()) {
     });
   });
 
+  app.post<{ Body: { yLimit?: number } }>('/references/d01/display-meshes', async (req, reply) => {
+    const result = await buildD01DisplayMeshes({ yLimit: req.body?.yLimit ?? 5 });
+    return reply.code(201).send(result);
+  });
+
+  app.post('/ai/agent/run', async (_req, reply) => {
+    const result = await runScriptedAgentWithLiveCompile(async () => {
+      const pipeline = await runD01ReferencePipeline({ yLimit: 2 });
+      return {
+        ok: pipeline.release.status === 'published',
+        pirHash: pipeline.pirHash,
+        pipelineHash: pipeline.pipelineHash,
+        issueCount: 0,
+      };
+    });
+    return reply.code(201).send(result);
+  });
+
   app.post<{ Body: { yLimit?: number } }>('/references/d01/publish', async (req, reply) => {
     const pipeline = await runD01ReferencePipeline({ yLimit: req.body?.yLimit ?? 5 });
     const stored = [];
@@ -291,7 +311,7 @@ export function buildServer(store = new InMemoryVersionStore()) {
         geometryArtifactHash: pipeline.pipelineHash,
         settings: {
           elementSizeMm: 25,
-          algorithm: 'mock',
+          algorithm: 'frontal',
           determinismClass: 'D1',
         },
         physicalGroups: [
@@ -320,8 +340,11 @@ export function buildServer(store = new InMemoryVersionStore()) {
     return reply.code(201).send({
       status: analysis.status,
       meshArtifactHash: analysis.meshArtifact?.artifactHash,
+      elementCount: analysis.meshArtifact?.elementCount ?? 0,
+      groupMapping: analysis.meshArtifact?.groupMapping ?? {},
       labelPolicy: analysis.exportFixture.labelPolicy,
       viewportLabels: analysis.results?.viewportLabels ?? [],
+      meshMode: analysis.meshArtifact ? 'live-or-fallback' : 'none',
       stored: { contentHash: stored.contentHash, verified: artifacts.verify(stored.contentHash) },
     });
   });

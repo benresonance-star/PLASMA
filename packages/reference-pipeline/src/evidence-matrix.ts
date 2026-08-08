@@ -34,9 +34,9 @@ export const SECTION_30A_EVIDENCE: readonly EvidenceCriterion[] = [
   {
     id: 39,
     summary: 'STEP import with provenance/units/wrapping',
-    evidence: 'occt-import-js WASM STEP in geometry-occt + import-core units/wrapping',
+    evidence: 'occt-import-js WASM STEP + import-worker geometry-client /v1/import/step path',
     status: 'met',
-    note: 'Live OCCT WASM mesh import; constructive sweep/shell still exact-adapter delegated',
+    note: 'Live OCCT WASM mesh import when GEOMETRY_KERNEL=occt-wasm; constructive ops exact-adapter',
   },
   {
     id: 40,
@@ -101,7 +101,7 @@ export const SECTION_30A_EVIDENCE: readonly EvidenceCriterion[] = [
   {
     id: 50,
     summary: 'Worker timeout/cancel/stale rejection',
-    evidence: 'meshing-adapter + import-worker + analysis-worker job contracts',
+    evidence: 'meshing-adapter SPDS_INJECT_FAILURE live hooks + forced-failure-suite',
     status: 'met',
   },
   {

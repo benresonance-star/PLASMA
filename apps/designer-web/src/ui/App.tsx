@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { fetchD01Analyze, fetchD01DisplayMeshes } from '../api-client.js';
 import {
   appAnalysisIndicative,
   appApplyAiChange,
+  appApplyLiveDisplayMeshes,
   appCommitExactLength,
   appExplorerIds,
   appNavigateIssue,
@@ -32,9 +34,27 @@ const PANELS: readonly PanelId[] = [
 
 export function App() {
   const [session, setSession] = useState(() => createAppSession());
+  const [liveStatus, setLiveStatus] = useState<string>('offline-demo');
   const update = (fn: (s: AppSession) => AppSession) => setSession((s) => fn(s));
   const selected = session.g8.selection.selectedSemanticId;
   const active = session.g8.shell.activePanel;
+
+  const exactRegen = async () => {
+    update((s) => appCommitExactLength(s, Date.now()));
+    try {
+      const live = await fetchD01DisplayMeshes(3);
+      update((s) => appApplyLiveDisplayMeshes(s, live.meshes, Date.now()));
+      setLiveStatus(`live:${live.source}:${live.pipelineHash.slice(0, 8)}`);
+      try {
+        const analysis = await fetchD01Analyze(2);
+        update((s) => ({ ...s, analysis }));
+      } catch {
+        /* analysis optional */
+      }
+    } catch {
+      setLiveStatus('offline-demo');
+    }
+  };
 
   return (
     <main className="spds-app" data-model={session.modelKind}>
@@ -134,6 +154,8 @@ export function App() {
                 <br />
                 Sync: {appSelectionSynced(session) ? 'ok' : 'drift'}
                 <br />
+                Source: {liveStatus}
+                <br />
                 Why: {session.whyLine}
               </p>
               <label className="spds-field">
@@ -153,10 +175,7 @@ export function App() {
                 </span>
               </label>
               <div className="spds-actions">
-                <button
-                  type="button"
-                  onClick={() => update((s) => appCommitExactLength(s, Date.now()))}
-                >
+                <button type="button" onClick={() => void exactRegen()}>
                   Exact regen
                 </button>
                 <button
