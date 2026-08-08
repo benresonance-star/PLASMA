@@ -24,7 +24,11 @@ import {
   runD01ReferencePipeline,
   runF01ReferencePipeline,
 } from '@spds/reference-pipeline';
-import { acceptSemanticCommand } from '@spds/semantic-commands';
+import {
+  acceptSemanticCommand,
+  parseSemanticCommand,
+  toDesignCommandPayload,
+} from '@spds/semantic-commands';
 
 export function buildServer(store = new InMemoryVersionStore()) {
   const app = Fastify({ logger: false });
@@ -326,6 +330,60 @@ export function buildServer(store = new InMemoryVersionStore()) {
     const result = acceptSemanticCommand(req.body);
     return reply.code(result.status === 'accepted' ? 202 : 422).send(result);
   });
+
+  app.post<{ Params: { modelId: string }; Body: unknown }>(
+    '/models/:modelId/commands/apply',
+    async (req, reply) => {
+      try {
+        const env = parseSemanticCommand({
+          ...(req.body as Record<string, unknown>),
+          modelId: req.params.modelId,
+        });
+        const design = toDesignCommandPayload(env);
+        if (!design) {
+          return reply.code(202).send({
+            status: 'accepted',
+            mode: 'non-mutating-or-non-transactional',
+            command: env.command,
+          });
+        }
+        if (!env.expectedHeadHash || !env.idempotencyKey) {
+          return reply.code(422).send({
+            status: 'rejected',
+            failureCode: 'HEAD_CONFLICT',
+            summary: 'APPLY into transaction requires expectedHeadHash and idempotencyKey',
+          });
+        }
+        const txn = txEngine.begin({
+          modelId: env.modelId,
+          branchId: env.branchId,
+          actorId: env.actorId,
+          actorType: env.actorType,
+          expectedHeadHash: env.expectedHeadHash,
+          idempotencyKey: env.idempotencyKey,
+        });
+        const updated = txEngine.appendCommand(txn.id, {
+          id: design.id,
+          type: design.type,
+          targetIds: [...design.targetIds],
+          payload: design.payload,
+        });
+        return reply.code(201).send({
+          status: 'accepted',
+          mode: 'transaction',
+          transaction: updated,
+          designCommandType: design.type,
+        });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'SEMANTIC_INVALID';
+        return reply.code(422).send({
+          status: 'rejected',
+          failureCode: message.startsWith('HEAD_CONFLICT') ? 'HEAD_CONFLICT' : 'SEMANTIC_INVALID',
+          summary: message,
+        });
+      }
+    },
+  );
 
   app.post<{
     Body: {

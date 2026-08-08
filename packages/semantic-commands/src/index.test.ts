@@ -4,6 +4,7 @@ import {
   acceptSemanticCommand,
   isMutatingCommand,
   parseSemanticCommand,
+  toDesignCommandPayload,
   toDesignCommandType,
 } from './index.js';
 
@@ -53,5 +54,16 @@ describe('E10 semantic-commands vocabulary', () => {
     });
     expect(rejected.status).toBe('rejected');
     expect(rejected.failureCode).toBe('HEAD_CONFLICT');
+
+    const env = parseSemanticCommand({
+      commandId: 'cmd:u',
+      command: 'UPDATE',
+      modelId: 'model:1',
+      branchId: 'branch:main',
+      expectedHeadHash: 'h',
+      actorId: 'user:1',
+      payload: { id: 'param:x', value: 2 },
+    });
+    expect(toDesignCommandPayload(env)?.type).toBe('SET_PARAMETER');
   });
 });

@@ -125,4 +125,26 @@ export function acceptSemanticCommand(input: unknown): SemanticCommandResult {
   }
 }
 
+/** Lower semantic envelope into a transaction DesignCommand shape when mappable. */
+export function toDesignCommandPayload(env: SemanticCommandEnvelope): {
+  readonly id: string;
+  readonly type: 'SET_PARAMETER' | 'CREATE_OBJECT' | 'DELETE_OBJECT' | 'APPLY_PATTERN';
+  readonly targetIds: readonly string[];
+  readonly payload: Record<string, unknown>;
+} | null {
+  const type = toDesignCommandType(env.command);
+  if (!type) return null;
+  const targetIds = Array.isArray(env.payload['targetIds'])
+    ? (env.payload['targetIds'] as string[])
+    : typeof env.payload['id'] === 'string'
+      ? [env.payload['id']]
+      : [];
+  return {
+    id: env.commandId,
+    type,
+    targetIds,
+    payload: { ...env.payload, semanticCommand: env.command },
+  };
+}
+
 export const packageId = '@spds/semantic-commands' as const;

@@ -2,16 +2,23 @@ import { describe, expect, it } from 'vitest';
 import { buildServer } from './server.js';
 
 describe('E9/E10 API STEP import + semantic commands', () => {
-  it('accepts VALIDATE and rejects headless DELETE', async () => {
+  it('accepts VALIDATE, rejects headless DELETE, and applies CREATE into a txn', async () => {
     const { app } = buildServer();
+    const created = await app.inject({
+      method: 'POST',
+      url: '/models',
+      payload: { name: 'cmd-model' },
+    });
+    const model = created.json() as { model: { modelId: string }; branchId: string; headHash: string };
+
     const ok = await app.inject({
       method: 'POST',
       url: '/commands/accept',
       payload: {
         commandId: 'cmd:v',
         command: 'VALIDATE',
-        modelId: 'model:1',
-        branchId: 'branch:main',
+        modelId: model.model.modelId,
+        branchId: model.branchId,
         actorId: 'user:1',
       },
     });
@@ -22,13 +29,37 @@ describe('E9/E10 API STEP import + semantic commands', () => {
       payload: {
         commandId: 'cmd:d',
         command: 'DELETE',
-        modelId: 'model:1',
-        branchId: 'branch:main',
+        modelId: model.model.modelId,
+        branchId: model.branchId,
         actorId: 'user:1',
       },
     });
     expect(bad.statusCode).toBe(422);
     expect(bad.json()).toMatchObject({ failureCode: 'HEAD_CONFLICT' });
+
+    const apply = await app.inject({
+      method: 'POST',
+      url: `/models/${model.model.modelId}/commands/apply`,
+      payload: {
+        commandId: 'cmd:create',
+        command: 'CREATE',
+        modelId: model.model.modelId,
+        branchId: model.branchId,
+        expectedHeadHash: model.headHash,
+        idempotencyKey: 'idem:create-1',
+        actorId: 'user:1',
+        payload: { id: 'obj:new', object: { id: 'obj:new', kind: 'param' } },
+      },
+    });
+    expect(apply.statusCode).toBe(201);
+    const body = apply.json() as {
+      mode: string;
+      designCommandType: string;
+      transaction: { commands: unknown[] };
+    };
+    expect(body.mode).toBe('transaction');
+    expect(body.designCommandType).toBe('CREATE_OBJECT');
+    expect(body.transaction.commands).toHaveLength(1);
   });
 
   it('imports STEP text, stores asset wrap, reports viewportReady', async () => {
