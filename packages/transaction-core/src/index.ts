@@ -1,2 +1,16 @@
-﻿/** Stub package @spds/transaction-core — populated in later checkpoints. */
-export const packageId = '@spds/transaction-core' as const;
+﻿export {
+  TransactionStatusSchema,
+  DesignCommandSchema,
+  DesignTransactionSchema,
+  type TransactionStatus,
+  type DesignCommand,
+  type DesignTransaction,
+  type CandidateRevision,
+  type PublicationManifest,
+  type PublicationGateResult,
+} from './types.js';
+export {
+  TransactionEngine,
+  type CompileStage,
+  type MockCompileResult,
+} from './engine.js';

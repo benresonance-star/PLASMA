@@ -25,7 +25,9 @@
     "@spds/reproducibility": "workspace:*",
     "@spds/semantic-core": "workspace:*",
     "@spds/semantic-query": "workspace:*",
+    "@spds/transaction-core": "workspace:*",
     "@spds/version-core": "workspace:*",
+
 
     "drizzle-orm": "^0.45.2",
     "fastify": "^5.11.3",

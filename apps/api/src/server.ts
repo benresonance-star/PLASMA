@@ -9,11 +9,13 @@ import {
   explainObject,
   traceLineage,
 } from '@spds/semantic-query';
+import { DesignCommandSchema, TransactionEngine } from '@spds/transaction-core';
 
 export function buildServer(store = new InMemoryVersionStore()) {
   const app = Fastify({ logger: false });
   void app.register(cors, { origin: true });
   const g3b = buildG3bFixture();
+  const txEngine = new TransactionEngine(store);
 
   app.get('/health', async () => ({ status: 'ok', service: 'spds-api' }));
 
@@ -111,5 +113,51 @@ export function buildServer(store = new InMemoryVersionStore()) {
     },
   );
 
-  return { app, store };
+  app.post<{
+    Params: { modelId: string };
+    Body: {
+      branchId: string;
+      actorId: string;
+      actorType: 'user' | 'ai' | 'system';
+      expectedHeadHash: string;
+      idempotencyKey: string;
+    };
+  }>('/models/:modelId/transactions', async (req, reply) => {
+    const txn = txEngine.begin({
+      modelId: req.params.modelId,
+      branchId: req.body.branchId,
+      actorId: req.body.actorId,
+      actorType: req.body.actorType,
+      expectedHeadHash: req.body.expectedHeadHash,
+      idempotencyKey: req.body.idempotencyKey,
+    });
+    return reply.code(201).send({ transaction: txn });
+  });
+
+  app.post<{
+    Params: { modelId: string; txnId: string };
+    Body: unknown;
+  }>('/models/:modelId/transactions/:txnId/commands', async (req, reply) => {
+    const command = DesignCommandSchema.parse(req.body);
+    const txn = txEngine.appendCommand(req.params.txnId, command);
+    return reply.code(201).send({ transaction: txn });
+  });
+
+  app.post<{ Params: { modelId: string; txnId: string } }>(
+    '/models/:modelId/transactions/:txnId/abort',
+    async (req, reply) => {
+      const txn = txEngine.abort(req.params.txnId);
+      return reply.send({ transaction: txn });
+    },
+  );
+
+  app.post<{ Params: { modelId: string; txnId: string } }>(
+    '/models/:modelId/transactions/:txnId/validate',
+    async (req, reply) => {
+      const candidate = txEngine.buildCandidate(req.params.txnId);
+      return reply.send({ candidate, transaction: txEngine.getTransaction(req.params.txnId) });
+    },
+  );
+
+  return { app, store, txEngine };
 }

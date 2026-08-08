@@ -1,2 +1,2 @@
 ﻿export { FAILURE_CODES, isFailureCode, type FailureCode } from './codes.js';
-export { createSpdsError, type SpdsError } from './error.js';
+export { createSpdsError, SpdsFailure, type SpdsError, type SpdsErrorFields } from './error.js';

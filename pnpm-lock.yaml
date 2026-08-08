@@ -50,6 +50,9 @@ importers:
       '@spds/semantic-query':
         specifier: workspace:*
         version: link:../../packages/semantic-query
+      '@spds/transaction-core':
+        specifier: workspace:*
+        version: link:../../packages/transaction-core
       '@spds/version-core':
         specifier: workspace:*
         version: link:../../packages/version-core
@@ -85,7 +88,21 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  apps/designer-web: {}
+  apps/designer-web:
+    dependencies:
+      '@spds/transaction-core':
+        specifier: workspace:*
+        version: link:../../packages/transaction-core
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/ai-interface: {}
 
@@ -117,7 +134,21 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/concurrency-core: {}
+  packages/concurrency-core:
+    dependencies:
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/constraint-contracts:
     devDependencies:
@@ -420,9 +451,52 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/transaction-core: {}
+  packages/transaction-core:
+    dependencies:
+      '@spds/concurrency-core':
+        specifier: workspace:*
+        version: link:../concurrency-core
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
+      '@spds/reproducibility':
+        specifier: workspace:*
+        version: link:../reproducibility
+      '@spds/version-core':
+        specifier: workspace:*
+        version: link:../version-core
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/undo-redo: {}
+  packages/undo-redo:
+    dependencies:
+      '@spds/transaction-core':
+        specifier: workspace:*
+        version: link:../transaction-core
+      '@spds/version-core':
+        specifier: workspace:*
+        version: link:../version-core
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/validation-core: {}
 
