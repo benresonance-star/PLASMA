@@ -68,7 +68,8 @@ export function compilePirFromEffectiveState(input: CompilePirInput): {
       {
         id: 'pir:topology.goldberg',
         op: 'generate-topology',
-        operator: 'topology.goldberg.mock@1.0.0',
+        operator: 'topology.goldberg.class-i@1.0.0',
+
         semanticOwner: owner,
         inputs: {
           frequency: { value: params.frequency },
@@ -105,6 +106,22 @@ export function compilePirFromEffectiveState(input: CompilePirInput): {
           compositionHash: input.effective.effectiveHash,
         },
         dependsOn: ['pir:topology.goldberg'],
+      },
+      {
+        id: 'pir:y-network',
+        op: 'extract-y-network',
+        operator: 'topology.y-network@1.0.0',
+        semanticOwner: owner,
+        inputs: {
+          topology: { pirRef: 'pir:topology.goldberg' },
+          diameterMm: { value: params.diameterMm },
+        },
+        produces: { role: 'network:y' },
+        provenance: {
+          patternInstance: input.patternInstanceId,
+          compositionHash: input.effective.effectiveHash,
+        },
+        dependsOn: ['pir:cells.bind'],
       },
     ],
   });

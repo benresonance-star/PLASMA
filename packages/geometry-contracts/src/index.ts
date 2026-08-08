@@ -14,3 +14,4 @@
   type GeometryRepresentation,
   type Mesh,
 } from './dto.js';
+export { InProcessGeometryKernel } from './kernel.js';

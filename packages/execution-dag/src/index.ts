@@ -3,11 +3,13 @@
   buildExecutionDag,
   planIncrementalInvalidation,
   runMockDag,
+  runOperatorDag,
   type CacheStatus,
   type CompilerConfig,
   type DagNode,
   type ExecutionDag,
   type NodeStatus,
+  type OperatorExecutor,
 } from './dag.js';
 export {
   buildG3aCompositionFixture,

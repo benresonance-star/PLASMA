@@ -1,5 +1,5 @@
 {
-  "name": "@spds/geometry-contracts",
+  "name": "@spds/reference-pipeline",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -17,11 +17,19 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@spds/failure-taxonomy": "workspace:*",
+    "@spds/assembly-core": "workspace:*",
+    "@spds/composition-core": "workspace:*",
+    "@spds/execution-dag": "workspace:*",
+    "@spds/fabrication-core": "workspace:*",
+    "@spds/geometry-contracts": "workspace:*",
+    "@spds/package-core": "workspace:*",
+    "@spds/parametric-ir": "workspace:*",
+    "@spds/release-core": "workspace:*",
     "@spds/reproducibility": "workspace:*",
-    "zod": "^4.4.3"
+    "@spds/semantic-core": "workspace:*",
+    "@spds/shared-units": "workspace:*",
+    "@spds/topology-operators": "workspace:*"
   },
-
   "devDependencies": {
     "typescript": "^5.8.2",
     "vitest": "^3.0.8",

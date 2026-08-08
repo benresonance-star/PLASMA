@@ -113,9 +113,29 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/ai-interface: {}
+  packages/ai-interface:
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/analysis-core: {}
+  packages/analysis-core:
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/artifact-core:
     devDependencies:
@@ -338,6 +358,9 @@ importers:
       '@spds/failure-taxonomy':
         specifier: workspace:*
         version: link:../failure-taxonomy
+      '@spds/reproducibility':
+        specifier: workspace:*
+        version: link:../reproducibility
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -384,7 +407,17 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/package-core: {}
+  packages/package-core:
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/parametric-ir:
     dependencies:
@@ -440,6 +473,55 @@ importers:
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/product-definition:
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
+
+  packages/reference-pipeline:
+    dependencies:
+      '@spds/assembly-core':
+        specifier: workspace:*
+        version: link:../assembly-core
+      '@spds/composition-core':
+        specifier: workspace:*
+        version: link:../composition-core
+      '@spds/execution-dag':
+        specifier: workspace:*
+        version: link:../execution-dag
+      '@spds/fabrication-core':
+        specifier: workspace:*
+        version: link:../fabrication-core
+      '@spds/geometry-contracts':
+        specifier: workspace:*
+        version: link:../geometry-contracts
+      '@spds/package-core':
+        specifier: workspace:*
+        version: link:../package-core
+      '@spds/parametric-ir':
+        specifier: workspace:*
+        version: link:../parametric-ir
+      '@spds/release-core':
+        specifier: workspace:*
+        version: link:../release-core
+      '@spds/reproducibility':
+        specifier: workspace:*
+        version: link:../reproducibility
+      '@spds/semantic-core':
+        specifier: workspace:*
+        version: link:../semantic-core
+      '@spds/shared-units':
+        specifier: workspace:*
+        version: link:../shared-units
+      '@spds/topology-operators':
+        specifier: workspace:*
+        version: link:../topology-operators
     devDependencies:
       eslint:
         specifier: ^9.22.0

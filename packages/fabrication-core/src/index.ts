@@ -257,6 +257,101 @@ export function applyFamilyRationalisation(input: {
   return { applied: true, reason: 'Applied on branch via ChangeSet' };
 }
 
+/** Build fabrication outputs from live geometry representations (reference pipeline). */
+export function buildFabricationFromRepresentations(input: {
+  readonly snapshotId: string;
+  readonly modelId: string;
+  readonly branchId: string;
+  readonly representations: ReadonlyArray<{
+    readonly id: string;
+    readonly semanticOwner: string;
+    readonly mass: { readonly volumeMm3: number };
+    readonly solid: {
+      readonly extentsMm: {
+        readonly min: readonly [number, number, number];
+        readonly max: readonly [number, number, number];
+      };
+    };
+  }>;
+}): FabricationSnapshotOutputs {
+  const densityKgPerMm3 = 7.85e-6;
+  const measurements = input.representations.map((r) => {
+    const e = r.solid.extentsMm;
+    const lengthMm = Math.hypot(
+      e.max[0] - e.min[0],
+      e.max[1] - e.min[1],
+      e.max[2] - e.min[2],
+    );
+    return measurePart({
+      partId: r.semanticOwner,
+      lengthMm: Math.max(lengthMm, 1),
+      angleDeg: 60,
+      boundingBoxMm: [
+        e.max[0] - e.min[0],
+        e.max[1] - e.min[1],
+        e.max[2] - e.min[2],
+      ],
+      volumeMm3: Math.max(r.mass.volumeMm3, 1),
+      densityKgPerMm3,
+    });
+  });
+  const artifacts = (['STEP', 'STL', 'GLB'] as const).map((format) =>
+    exportArtifact({
+      format,
+      snapshotId: input.snapshotId,
+      modelId: input.modelId,
+      branchId: input.branchId,
+      payload: JSON.stringify({
+        format,
+        snapshotId: input.snapshotId,
+        owners: input.representations.map((r) => r.semanticOwner),
+      }),
+      relativePath: `artifacts/${input.modelId}/${input.snapshotId}.${format.toLowerCase()}`,
+    }),
+  );
+  const bom = compileBom(
+    measurements.map((m) => ({
+      semanticId: m.partId,
+      description: `Member ${m.partId}`,
+      familyId: `family:L${Math.round(m.lengthMm)}`,
+    })),
+  );
+  const cutList = compileCutList(
+    measurements.map((m) => ({
+      semanticId: m.partId,
+      lengthMm: m.lengthMm,
+      angleADeg: 30,
+      angleBDeg: 30,
+    })),
+  );
+  const known = new Set(
+    measurements.flatMap((m) => [
+      `semantic:${m.partId}/start`,
+      `semantic:${m.partId}/end`,
+    ]),
+  );
+  const dimensions = measurements.slice(0, 3).map((m, i) =>
+    createDimension({
+      id: `dim:${i}`,
+      kind: 'linear',
+      quantity: m.lengthMm,
+      unit: 'mm',
+      anchorPathA: `semantic:${m.partId}/start`,
+      anchorPathB: `semantic:${m.partId}/end`,
+      knownPaths: known,
+    }),
+  );
+  return {
+    snapshotId: input.snapshotId,
+    measurements,
+    artifacts,
+    bom,
+    cutList,
+    dimensions,
+    families: clusterPartFamilies(measurements, 0.5),
+  };
+}
+
 export function buildD01FabricationOutputs(snapshotId: string): FabricationSnapshotOutputs {
   const measurements = [
     measurePart({

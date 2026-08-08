@@ -12,7 +12,7 @@ export function buildGeometryServer(kernel = new ExactKernelAdapter()) {
   const app = Fastify({ logger: false });
   void app.register(cors, { origin: true });
 
-  app.get('/health', async () => kernel.health());
+  app.get('/health', async () => ({ ...kernel.health(), service: 'geometry-occt' }));
   app.get('/version', async () => ({
     service: 'geometry-occt',
     kernel: kernel.kernelId,

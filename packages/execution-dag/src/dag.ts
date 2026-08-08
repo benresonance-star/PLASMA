@@ -185,3 +185,47 @@ export function runMockDag(
     nodes: dag.topoOrder.map((id) => byId.get(id)!),
   };
 }
+
+export type OperatorExecutor = (node: DagNode) => Promise<unknown> | unknown;
+
+/**
+ * Execute registered operators in topo order with cache keys.
+ * Used by reference pipelines; unit tests may keep using runMockDag.
+ */
+export async function runOperatorDag(
+  dag: ExecutionDag,
+  cache: Map<string, unknown>,
+  execute: OperatorExecutor,
+): Promise<{ readonly dag: ExecutionDag; readonly outputs: ReadonlyMap<string, unknown> }> {
+  const byId = new Map(dag.nodes.map((n) => [n.id, { ...n, diagnostics: [...n.diagnostics] }]));
+  const outputs = new Map<string, unknown>();
+  for (const id of dag.topoOrder) {
+    const node = byId.get(id)!;
+    const start = Date.now();
+    node.status = 'running';
+    if (cache.has(node.cacheKey)) {
+      node.cacheStatus = 'hit';
+      node.status = 'cached';
+      outputs.set(id, cache.get(node.cacheKey));
+      node.diagnostics.push('cache-hit');
+    } else {
+      try {
+        const out = await execute(node);
+        node.cacheStatus = 'miss';
+        node.status = 'succeeded';
+        cache.set(node.cacheKey, out);
+        outputs.set(id, out);
+        node.diagnostics.push('cache-miss-computed');
+      } catch (err) {
+        node.status = 'failed';
+        node.diagnostics.push(err instanceof Error ? err.message : 'operator-failed');
+        throw err;
+      }
+    }
+    node.timingMs = Math.max(0, Date.now() - start);
+  }
+  return {
+    dag: { ...dag, nodes: dag.topoOrder.map((id) => byId.get(id)!) },
+    outputs,
+  };
+}
