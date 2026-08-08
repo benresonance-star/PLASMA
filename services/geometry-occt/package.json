@@ -19,11 +19,13 @@
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",
+    "@spds/coordinate-frames": "workspace:*",
     "@spds/failure-taxonomy": "workspace:*",
     "@spds/geometry-contracts": "workspace:*",
     "@spds/reproducibility": "workspace:*",
     "@spds/shared-units": "workspace:*",
     "@spds/topology-operators": "workspace:*",
+
     "fastify": "^5.11.3",
     "zod": "^4.4.3"
   },
