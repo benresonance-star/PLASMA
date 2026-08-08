@@ -55,31 +55,40 @@ export interface MeshJobResult {
   readonly failureCode?: string;
 }
 
-function assertBudgets(req: MeshRequest): void {
-  if (req.timeoutMs <= 0) throw new Error('RESOURCE_LIMIT: timeoutMs must be positive');
-  if (req.resourceBudgetMb <= 0) throw new Error('RESOURCE_LIMIT: budget must be positive');
-}
-
 /**
  * Meshing job — tries Gmsh CLI for frontal/delaunay; mock/fallback remains deterministic.
+ * Budgets, cancel, and stale head fail closed without throwing.
  */
 export function runMeshJob(req: MeshRequest, currentHeadHash?: string): MeshJobResult {
-  assertBudgets(req);
+  if (req.timeoutMs <= 0 || req.resourceBudgetMb <= 0) {
+    return { status: 'failed', failureCode: 'RESOURCE_LIMIT' };
+  }
   if (req.cancelToken?.cancelled) {
     return { status: 'cancelled', failureCode: 'CANCELLED' };
   }
   if (req.expectedHeadHash && currentHeadHash && req.expectedHeadHash !== currentHeadHash) {
     return { status: 'stale', failureCode: 'STALE_RESULT' };
   }
+  // Soft budget: absurdly small memory budgets fail closed before work.
+  if (req.resourceBudgetMb < 8) {
+    return { status: 'failed', failureCode: 'RESOURCE_LIMIT' };
+  }
   const groupMapping: Record<string, readonly string[]> = {};
   for (const g of req.physicalGroups) {
     groupMapping[g.name] = g.semanticIds;
   }
+  const started = Date.now();
   const gmsh = runGmshOrFallback({
     geometryArtifactHash: req.geometryArtifactHash,
     elementSizeMm: req.settings.elementSizeMm,
     algorithm: req.settings.algorithm,
   });
+  if (Date.now() - started > req.timeoutMs) {
+    return { status: 'failed', failureCode: 'RESOURCE_LIMIT' };
+  }
+  if (req.cancelToken?.cancelled) {
+    return { status: 'cancelled', failureCode: 'CANCELLED' };
+  }
   const payload = JSON.stringify({
     geometry: req.geometryArtifactHash,
     settings: req.settings,

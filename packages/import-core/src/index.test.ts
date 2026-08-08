@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   addAssertion,
+  countStepSolids,
   createImportedAsset,
+  detectStepUnits,
   openSemanticisationSession,
   placeImportedInAssembly,
   shapesFromAsset,
@@ -27,6 +29,25 @@ describe('G10B import-core', () => {
         solidCount: 1,
       }),
     ).toThrow(/IMPORT_UNIT_AMBIGUOUS|ambiguous/i);
+  });
+
+  it('parses solid counts and conversion-based millimetre units from STEP text', () => {
+    const step = `
+ISO-10303-21;
+HEADER;FILE_DESCRIPTION(('x'),'2;1');ENDSEC;
+DATA;
+#10=MANIFOLD_SOLID_BREP('A',#11);
+#20=MANIFOLD_SOLID_BREP('B',#21);
+#30=CONVERSION_BASED_UNIT('MILLIMETRE',#31);
+ENDSEC;END-ISO-10303-21;
+`;
+    expect(countStepSolids(step)).toBe(2);
+    expect(detectStepUnits("#30=CONVERSION_BASED_UNIT('MILLIMETRE',#31);")).toBe('mm');
+    const asset = createImportedAsset({
+      sourceBytes: step,
+      headerText: "#30=CONVERSION_BASED_UNIT('MILLIMETRE',#31);",
+    });
+    expect(asset.solidCount).toBe(2);
   });
 
   it('records assertions and assembly placement without inventing history', () => {

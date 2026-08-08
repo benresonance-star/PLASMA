@@ -99,6 +99,9 @@ importers:
 
   apps/designer-web:
     dependencies:
+      '@spds/geometry-contracts':
+        specifier: workspace:*
+        version: link:../../packages/geometry-contracts
       '@spds/transaction-core':
         specifier: workspace:*
         version: link:../../packages/transaction-core
@@ -121,12 +124,18 @@ importers:
 
   benchmarks:
     dependencies:
+      '@spds/artifact-store':
+        specifier: workspace:*
+        version: link:../services/artifact-store
       '@spds/package-core':
         specifier: workspace:*
         version: link:../packages/package-core
       '@spds/reference-pipeline':
         specifier: workspace:*
         version: link:../packages/reference-pipeline
+      '@spds/release-core':
+        specifier: workspace:*
+        version: link:../packages/release-core
       '@spds/reproducibility':
         specifier: workspace:*
         version: link:../packages/reproducibility
@@ -562,6 +571,9 @@ importers:
       '@spds/topology-operators':
         specifier: workspace:*
         version: link:../topology-operators
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       eslint:
         specifier: ^9.22.0
@@ -819,7 +831,27 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  services/analysis-worker: {}
+  services/analysis-worker:
+    dependencies:
+      '@spds/analysis-core':
+        specifier: workspace:*
+        version: link:../../packages/analysis-core
+      '@spds/meshing-adapter':
+        specifier: workspace:*
+        version: link:../meshing-adapter
+    devDependencies:
+      '@spds/reference-pipeline':
+        specifier: workspace:*
+        version: link:../../packages/reference-pipeline
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   services/artifact-store:
     dependencies:
@@ -879,6 +911,9 @@ importers:
         specifier: ^4.4.3
         version: 4.4.3
     devDependencies:
+      '@spds/geometry-client':
+        specifier: workspace:*
+        version: link:../../packages/geometry-client
       '@types/node':
         specifier: ^22.13.10
         version: 22.20.1
@@ -894,6 +929,9 @@ importers:
 
   services/import-worker:
     dependencies:
+      '@spds/geometry-client':
+        specifier: workspace:*
+        version: link:../../packages/geometry-client
       '@spds/geometry-contracts':
         specifier: workspace:*
         version: link:../../packages/geometry-contracts

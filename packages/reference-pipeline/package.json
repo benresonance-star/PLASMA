@@ -30,7 +30,8 @@
     "@spds/selectors": "workspace:*",
     "@spds/semantic-core": "workspace:*",
     "@spds/shared-units": "workspace:*",
-    "@spds/topology-operators": "workspace:*"
+    "@spds/topology-operators": "workspace:*",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "typescript": "^5.8.2",

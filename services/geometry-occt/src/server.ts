@@ -5,10 +5,11 @@ import {
   SweepRequestSchema,
   TessellateRequestSchema,
 } from '@spds/geometry-contracts';
-import { ExactKernelAdapter } from './exact-kernel.js';
+import type { ExactKernelAdapter } from './exact-kernel.js';
+import { createGeometryKernel } from './kernel-factory.js';
 import { generateD01YFixtureSet } from './y-brep.js';
 
-export function buildGeometryServer(kernel = new ExactKernelAdapter()) {
+export function buildGeometryServer(kernel: ExactKernelAdapter = createGeometryKernel()) {
   const app = Fastify({ logger: false });
   void app.register(cors, { origin: true });
 

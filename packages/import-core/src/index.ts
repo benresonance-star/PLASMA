@@ -46,11 +46,18 @@ export function detectStepUnits(headerText: string): ImportedAsset['units'] {
   // STEP often uses SI_UNIT(.MILLI.,.METRE.) for millimetres.
   const hasMm =
     /\.milli\.\s*,\s*\.metr[e]?\./.test(lower) ||
+    /conversion_based_unit\s*\(\s*'millimetre'/i.test(headerText) ||
     /milli\s*metr[e]?/.test(lower) ||
     /\bmm\b/.test(lower);
-  const hasInch = /\.inch\.|\binch\b/.test(lower);
+  const hasInch =
+    /\.inch\./.test(lower) ||
+    /conversion_based_unit\s*\(\s*'inch'/i.test(headerText) ||
+    /\binch\b/.test(lower);
   const hasM =
-    !hasMm && (/\.metr[e]?\./.test(lower) || /\bmetr[e]?\b/.test(lower));
+    !hasMm &&
+    (/\.metr[e]?\./.test(lower) ||
+      /si_unit\s*\(\s*\*\s*,\s*\.metr[e]?\./.test(lower) ||
+      /\bmetr[e]?\b/.test(lower));
   const hits = [hasMm, hasInch, hasM].filter(Boolean).length;
   if (hits === 0 || hits > 1) return 'ambiguous';
   if (hasMm) return 'mm';
@@ -58,10 +65,25 @@ export function detectStepUnits(headerText: string): ImportedAsset['units'] {
   return 'm';
 }
 
+/** Count solids from STEP text entities — no OCCT required. */
+export function countStepSolids(stepText: string): number {
+  const patterns = [
+    /MANIFOLD_SOLID_BREP\s*\(/gi,
+    /CLOSED_SHELL\s*\(/gi,
+    /ADVANCED_BREP_SHAPE_REPRESENTATION\s*\(/gi,
+  ];
+  let max = 0;
+  for (const re of patterns) {
+    const matches = stepText.match(re);
+    if (matches) max = Math.max(max, matches.length);
+  }
+  return max;
+}
+
 export function createImportedAsset(input: {
   readonly sourceBytes: string;
   readonly headerText: string;
-  readonly solidCount: number;
+  readonly solidCount?: number;
   readonly frameId?: string;
 }): ImportedAsset {
   const units = detectStepUnits(input.headerText);
@@ -73,7 +95,9 @@ export function createImportedAsset(input: {
       recoverable: true,
     });
   }
-  if (input.solidCount < 1) {
+  const parsedSolids = countStepSolids(input.sourceBytes);
+  const solidCount = Math.max(input.solidCount ?? 0, parsedSolids);
+  if (solidCount < 1) {
     throw createSpdsError({
       code: 'SEMANTIC_INVALID',
       summary: 'STEP import produced no solids',
@@ -88,7 +112,7 @@ export function createImportedAsset(input: {
     sourceHash,
     units,
     frameId: input.frameId ?? null,
-    solidCount: input.solidCount,
+    solidCount,
     parametricClaim: 'reference-only',
   };
 }

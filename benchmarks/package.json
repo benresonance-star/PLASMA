@@ -10,8 +10,10 @@
     "lint": "eslint src --max-warnings 0"
   },
   "dependencies": {
+    "@spds/artifact-store": "workspace:*",
     "@spds/package-core": "workspace:*",
     "@spds/reference-pipeline": "workspace:*",
+    "@spds/release-core": "workspace:*",
     "@spds/reproducibility": "workspace:*",
     "@spds/semantic-query": "workspace:*",
     "@spds/topology-operators": "workspace:*"

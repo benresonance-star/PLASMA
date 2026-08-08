@@ -1,14 +1,16 @@
 ﻿import {
+  countStepSolids,
   createImportedAsset,
   shapesFromAsset,
   type ImportedAsset,
   type ImportedShape,
 } from '@spds/import-core';
 import { InProcessGeometryKernel } from '@spds/geometry-contracts';
+import type { GeometryClient } from '@spds/geometry-client';
 
 /**
- * G10B.2 import-worker — STEP semantic wrap + geometry-service solid probes.
- * Full B-rep STEP parse remains behind the geometry process boundary.
+ * G10B.2 / E7 import-worker — STEP text parse + geometry-service solid probes.
+ * Full B-rep STEP parse remains behind the geometry process boundary (no WASM claim).
  */
 
 export interface ImportJobRequest {
@@ -16,19 +18,28 @@ export interface ImportJobRequest {
   readonly filename: string;
   readonly bytes: string;
   readonly headerText: string;
-  readonly solidCountHint: number;
+  /** Optional hint; text parse of MANIFOLD_SOLID_BREP wins when higher. */
+  readonly solidCountHint?: number;
   readonly timeoutMs: number;
+  readonly cancelToken?: { readonly cancelled: boolean };
 }
 
 export interface ImportJobResult {
-  readonly status: 'succeeded' | 'failed';
+  readonly status: 'succeeded' | 'failed' | 'cancelled';
   readonly asset?: ImportedAsset;
   readonly shapes?: readonly ImportedShape[];
   readonly failureCode?: string;
   readonly viewportReady: boolean;
+  readonly probeMode?: 'in-process' | 'geometry-client';
 }
 
-export function runStepImportJob(req: ImportJobRequest): ImportJobResult {
+export async function runStepImportJob(
+  req: ImportJobRequest,
+  options?: { readonly geometryClient?: GeometryClient },
+): Promise<ImportJobResult> {
+  if (req.cancelToken?.cancelled) {
+    return { status: 'cancelled', failureCode: 'CANCELLED', viewportReady: false };
+  }
   if (req.timeoutMs <= 0) {
     return { status: 'failed', failureCode: 'RESOURCE_LIMIT', viewportReady: false };
   }
@@ -39,31 +50,50 @@ export function runStepImportJob(req: ImportJobRequest): ImportJobResult {
     return { status: 'failed', failureCode: 'SEMANTIC_INVALID', viewportReady: false };
   }
   try {
+    const parsed = countStepSolids(req.bytes);
+    const solidCount = Math.max(1, req.solidCountHint ?? 0, parsed);
     const asset = createImportedAsset({
       sourceBytes: req.bytes,
       headerText: req.headerText,
-      solidCount: Math.max(1, req.solidCountHint),
+      solidCount,
     });
     const shapes = shapesFromAsset(asset);
-    // Probe geometry service boundary for each solid (units already resolved in import-core).
-    const kernel = new InProcessGeometryKernel();
-    for (const shape of shapes) {
-      kernel.sweep({
-        semanticOwner: shape.shapeId,
-        pirOperationId: `pir:import:${shape.shapeId}`,
-        path: [
-          [0, 0, 0],
-          [100, 0, 0],
-        ],
-        profileWidthMm: 40,
-        profileDepthMm: 40,
-      });
+    let probeMode: ImportJobResult['probeMode'] = 'in-process';
+    if (options?.geometryClient) {
+      probeMode = 'geometry-client';
+      for (const shape of shapes) {
+        await options.geometryClient.sweep({
+          semanticOwner: shape.shapeId,
+          pirOperationId: `pir:import:${shape.shapeId}`,
+          path: [
+            [0, 0, 0],
+            [100, 0, 0],
+          ],
+          profileWidthMm: 40,
+          profileDepthMm: 40,
+        });
+      }
+    } else {
+      const kernel = new InProcessGeometryKernel();
+      for (const shape of shapes) {
+        kernel.sweep({
+          semanticOwner: shape.shapeId,
+          pirOperationId: `pir:import:${shape.shapeId}`,
+          path: [
+            [0, 0, 0],
+            [100, 0, 0],
+          ],
+          profileWidthMm: 40,
+          profileDepthMm: 40,
+        });
+      }
     }
     return {
       status: 'succeeded',
       asset,
       shapes,
       viewportReady: shapes.every((s) => s.displayReady),
+      probeMode,
     };
   } catch (err) {
     const code =

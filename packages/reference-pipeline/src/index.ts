@@ -15,3 +15,8 @@ export {
   assessSection30AEvidence,
   type EvidenceCriterion,
 } from './evidence-matrix.js';
+export {
+  loadFixtureManifests,
+  parseFixtureManifest,
+  type FixtureManifest,
+} from './fixture-manifest.js';

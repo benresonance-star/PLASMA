@@ -1,4 +1,5 @@
 ﻿export { ExactKernelAdapter } from './exact-kernel.js';
+export { createGeometryKernel, type GeometryKernelBinding } from './kernel-factory.js';
 export { buildGeometryServer } from './server.js';
 export { generateYBrep, generateD01YFixtureSet } from './y-brep.js';
 export {

@@ -17,6 +17,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@spds/geometry-client": "workspace:*",
     "@spds/geometry-contracts": "workspace:*",
     "@spds/import-core": "workspace:*"
   },

@@ -17,6 +17,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@spds/geometry-contracts": "workspace:*",
     "@spds/transaction-core": "workspace:*",
     "@spds/validation-core": "workspace:*",
     "@spds/version-core": "workspace:*"
