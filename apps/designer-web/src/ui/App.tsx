@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { fetchD01Analyze, fetchD01DisplayMeshes } from '../api-client.js';
+import { fetchD01Analyze, fetchD01DisplayMeshes, runAiAgent } from '../api-client.js';
 import {
   appAnalysisIndicative,
   appApplyAiChange,
   appApplyLiveDisplayMeshes,
+  appBindAgentRun,
   appCommitExactLength,
   appExplorerIds,
   appNavigateIssue,
@@ -35,9 +36,29 @@ const PANELS: readonly PanelId[] = [
 export function App() {
   const [session, setSession] = useState(() => createAppSession());
   const [liveStatus, setLiveStatus] = useState<string>('offline-demo');
+  const [aiIntent, setAiIntent] = useState('Propose a safe lengthMm update for y:demo:01');
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
   const update = (fn: (s: AppSession) => AppSession) => setSession((s) => fn(s));
   const selected = session.g8.selection.selectedSemanticId;
   const active = session.g8.shell.activePanel;
+
+  const runAgent = async () => {
+    if (aiBusy) return;
+    setAiBusy(true);
+    setAiError(null);
+    try {
+      const result = await runAiAgent({ intent: aiIntent, mode: 'auto' });
+      update((s) => appBindAgentRun(s, result));
+      if (result.status === 'failed') {
+        setAiError(result.error ?? 'Agent run failed');
+      }
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : 'Agent unreachable (is API on :3001?)');
+    } finally {
+      setAiBusy(false);
+    }
+  };
 
   const exactRegen = async () => {
     update((s) => appCommitExactLength(s, Date.now()));
@@ -271,7 +292,31 @@ export function App() {
 
           {active === 'ai' ? (
             <>
-              <h2>AI changes</h2>
+              <h2>AI agent</h2>
+              <label className="spds-meta" htmlFor="ai-intent">
+                Intent (mode=auto: LLM if SPDS_AI_API_KEY set, else scripted)
+              </label>
+              <textarea
+                id="ai-intent"
+                className="spds-textarea"
+                rows={3}
+                value={aiIntent}
+                disabled={aiBusy}
+                onChange={(e) => setAiIntent(e.target.value)}
+              />
+              <div className="spds-actions">
+                <button type="button" disabled={aiBusy} onClick={() => void runAgent()}>
+                  {aiBusy ? 'Running…' : 'Run agent'}
+                </button>
+                <button
+                  type="button"
+                  disabled={aiBusy}
+                  onClick={() => update((s) => appApplyAiChange(s))}
+                >
+                  Accept in UI
+                </button>
+              </div>
+              {aiError ? <p className="spds-meta spds-error">{aiError}</p> : null}
               <ul className="spds-list">
                 {session.aiChanges.map((c) => (
                   <li key={c.changeSetId}>
@@ -279,10 +324,7 @@ export function App() {
                   </li>
                 ))}
               </ul>
-              <button type="button" onClick={() => update((s) => appApplyAiChange(s))}>
-                Apply proposed
-              </button>
-              <p className="spds-meta">{session.whyLine}</p>
+              <p className="spds-meta">{session.whyLine || 'No agent run yet.'}</p>
             </>
           ) : null}
 

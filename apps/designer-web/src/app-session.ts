@@ -381,6 +381,49 @@ export function appApplyAiChange(session: AppSession): AppSession {
     aiChanges: session.aiChanges.map((c) =>
       c.disposition === 'proposed' ? { ...c, disposition: 'applied' as const } : c,
     ),
+    whyLine:
+      'Accepted in UI only — local disposition updated; geometry unchanged until /commands/accept.',
+  };
+}
+
+/** Bind a live /ai/agent/run response into the AI panel (honest lineage; no geometry mutation). */
+export function appBindAgentRun(
+  session: AppSession,
+  run: {
+    readonly status: string;
+    readonly mode: string;
+    readonly note: string;
+    readonly error?: string;
+    readonly liveCompile: { readonly ok: boolean; readonly pipelineHash?: string };
+    readonly changesView: readonly {
+      readonly changeSetId: string;
+      readonly disposition: string;
+      readonly commandCount: number;
+      readonly attribution: 'ai';
+    }[];
+    readonly why: { readonly explanation: string };
+    readonly audit: { readonly intent: string; readonly toolCalls: readonly string[] };
+  },
+): AppSession {
+  const pipe = run.liveCompile.pipelineHash
+    ? ` · pipe ${run.liveCompile.pipelineHash.slice(0, 8)}`
+    : '';
+  const err = run.error ? ` · error: ${run.error}` : '';
+  const dispositions = new Set(['proposed', 'applied', 'rejected', 'conflict']);
+  return {
+    ...session,
+    aiChanges:
+      run.changesView.length > 0
+        ? run.changesView.map((c) => ({
+            changeSetId: c.changeSetId,
+            disposition: (dispositions.has(c.disposition)
+              ? c.disposition
+              : 'proposed') as AiChangesPanelItem['disposition'],
+            commandCount: c.commandCount,
+            attribution: 'ai' as const,
+          }))
+        : session.aiChanges,
+    whyLine: `[${run.mode}/${run.status}] liveCompile=${run.liveCompile.ok ? 'ok' : 'fail'}${pipe}${err} — ${run.note} · ${run.why.explanation} · tools: ${run.audit.toolCalls.join(', ') || 'none'}`,
   };
 }
 

@@ -15,6 +15,7 @@ Engineering governance record (not legal advice). Unresolved distribution questi
 | Gmsh | Debian bookworm package / host CLI | analysis mesh | GPL-2.0 | CLI or `spds-gmsh` Docker adapter | **must remain optional; not core-domain** | yes | yes | yes (`meshing-adapter`) | pin + advisories | Debian / host |
 | three | 0.185.x | viewport renderer | MIT | client | client bundle | no | no | yes (other renderer) | npm audit / pin | npm |
 | react / react-dom | 19.2.x | designer UI | MIT | client | client bundle | no | no | yes | npm audit / pin | npm |
+| OpenAI-compatible Chat Completions | HTTP (no SDK) | optional AI agent tools | provider ToS | server HTTP | **optional; keys never in browser; scripted fallback without key** | yes | yes | yes (`@spds/ai-interface` scripted) | pin base URL + model; rotate keys | provider |
 
 ## Policy
 

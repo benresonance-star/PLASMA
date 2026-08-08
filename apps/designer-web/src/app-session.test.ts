@@ -3,6 +3,7 @@ import {
   F01_PANEL_SEMANTIC_ID,
   appAnalysisIndicative,
   appApplyAiChange,
+  appBindAgentRun,
   appCommitExactLength,
   appExplorerIds,
   appNavigateIssue,
@@ -42,7 +43,32 @@ describe('G9–G15 integrated designer session', () => {
     expect(appAnalysisIndicative(session)).toBe(true);
     session = appApplyAiChange(session);
     expect(session.aiChanges[0]?.disposition).toBe('applied');
+    expect(session.whyLine).toMatch(/Accepted in UI only/);
   });
+
+  it('binds live agent run into AI panel without claiming geometry mutation', () => {
+    let session = createAppSession();
+    session = appBindAgentRun(session, {
+      status: 'succeeded',
+      mode: 'scripted',
+      note: 'Scripted fixture',
+      liveCompile: { ok: true, pipelineHash: 'pipe:abcdef12' },
+      changesView: [
+        {
+          changeSetId: 'cs:live:1',
+          disposition: 'applied',
+          commandCount: 1,
+          attribution: 'ai',
+        },
+      ],
+      why: { explanation: 'y:demo:01 produced by pattern' },
+      audit: { intent: 'shorten', toolCalls: ['summary', 'compile'] },
+    });
+    expect(session.aiChanges[0]?.changeSetId).toBe('cs:live:1');
+    expect(session.whyLine).toMatch(/scripted\/succeeded/);
+    expect(session.whyLine).toMatch(/liveCompile=ok/);
+  });
+
 
   it('G14.4: F01 model switches without dome-specific code path', () => {
     let session = createAppSession();

@@ -45,3 +45,53 @@ export async function fetchD01Analyze(yLimit = 3): Promise<AnalysisMeshViewModel
     labels: body.viewportLabels ?? [],
   });
 }
+
+export type AgentRunMode = 'auto' | 'scripted' | 'llm';
+
+export interface AgentRunResponse {
+  readonly mode: 'scripted' | 'llm';
+  readonly status: 'succeeded' | 'failed';
+  readonly llmConfigured: boolean;
+  readonly note: string;
+  readonly error?: string;
+  readonly liveCompile: { readonly ok: boolean; readonly pipelineHash?: string };
+  readonly audit: {
+    readonly intent: string;
+    readonly toolCalls: readonly string[];
+    readonly changeSetIds: readonly string[];
+    readonly repairAttempts: number;
+    readonly disposition: string;
+  };
+  readonly repair: { readonly status: string };
+  readonly changesView: readonly {
+    readonly changeSetId: string;
+    readonly disposition: string;
+    readonly commandCount: number;
+    readonly attribution: 'ai';
+  }[];
+  readonly why: { readonly explanation: string };
+  readonly applied: {
+    readonly changeSetId: string;
+    readonly disposition: string;
+    readonly commands: readonly { readonly targetId?: string }[];
+  };
+}
+
+export async function runAiAgent(input: {
+  readonly intent: string;
+  readonly mode?: AgentRunMode;
+}): Promise<AgentRunResponse> {
+  const res = await fetch(`${apiBaseUrl()}/ai/agent/run`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      intent: input.intent,
+      mode: input.mode ?? 'auto',
+    }),
+  });
+  const body = (await res.json()) as AgentRunResponse;
+  if (!res.ok && res.status !== 503) {
+    throw new Error(body.error ?? `ai/agent/run ${res.status}`);
+  }
+  return body;
+}

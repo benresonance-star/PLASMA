@@ -172,6 +172,21 @@ body,
   width: 100%;
 }
 
+.spds-textarea {
+  width: 100%;
+  margin: 0.35rem 0 0.75rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid #9bb3c5;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  resize: vertical;
+}
+
+.spds-error {
+  color: #8a2f2f;
+}
+
 .spds-viewport {
   position: relative;
   height: 100%;

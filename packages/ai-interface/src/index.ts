@@ -26,6 +26,32 @@ export {
   type LiveCompileResult,
 } from './live-compile.js';
 export {
+  loadLlmConfig,
+  type LlmConfig,
+} from './llm-config.js';
+export {
+  chatWithTools,
+  type LlmChatMessage,
+  type LlmChatResult,
+  type LlmFetch,
+  type LlmToolCall,
+  type LlmToolDefinition,
+} from './llm-client.js';
+export {
+  AI_TOOL_DEFINITIONS,
+  routeAiTool,
+  type ToolRouterContext,
+  type ToolRouterResult,
+} from './tool-router.js';
+export {
+  resolveAgentMode,
+  runAgent,
+  type AgentRunInput,
+  type AgentRunMode,
+  type AgentRunResult,
+  type ResolvedAgentMode,
+} from './agent-runner.js';
+export {
   buildFeedbackPacket,
   createRepairSession,
   recordAiAudit,

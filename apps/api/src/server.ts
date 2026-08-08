@@ -25,7 +25,7 @@ import {
   runD01ReferencePipeline,
   runF01ReferencePipeline,
 } from '@spds/reference-pipeline';
-import { runScriptedAgentWithLiveCompile } from '@spds/ai-interface';
+import { runAgent, type AgentRunMode } from '@spds/ai-interface';
 import {
   acceptSemanticCommand,
   parseSemanticCommand,
@@ -198,16 +198,27 @@ export function buildServer(store = new InMemoryVersionStore()) {
     return reply.code(201).send(result);
   });
 
-  app.post('/ai/agent/run', async (_req, reply) => {
-    const result = await runScriptedAgentWithLiveCompile(async () => {
-      const pipeline = await runD01ReferencePipeline({ yLimit: 2 });
-      return {
-        ok: pipeline.release.status === 'published',
-        pirHash: pipeline.pirHash,
-        pipelineHash: pipeline.pipelineHash,
-        issueCount: 0,
-      };
+  app.post<{
+    Body: { intent?: string; mode?: AgentRunMode };
+  }>('/ai/agent/run', async (req, reply) => {
+    const mode = req.body?.mode ?? 'auto';
+    const intent = req.body?.intent;
+    const result = await runAgent({
+      mode,
+      ...(intent !== undefined ? { intent } : {}),
+      compile: async () => {
+        const pipeline = await runD01ReferencePipeline({ yLimit: 2 });
+        return {
+          ok: pipeline.release.status === 'published',
+          pirHash: pipeline.pirHash,
+          pipelineHash: pipeline.pipelineHash,
+          issueCount: 0,
+        };
+      },
     });
+    if (result.error === 'SPDS_AI_API_KEY not configured (llm mode requires a key)') {
+      return reply.code(503).send(result);
+    }
     return reply.code(201).send(result);
   });
 
