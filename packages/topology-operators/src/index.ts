@@ -20,4 +20,16 @@ export {
   createGoldbergTopologyOperator,
   type GoldbergOperatorInput,
 } from './operator.js';
+export {
+  DEFAULT_Y_PROFILE,
+  computeLocalFrame,
+  extractYNetwork,
+  validateYProfile,
+  clearOpeningMm,
+  type LocalFrame,
+  type YArm,
+  type YComponent,
+  type YProfileParameters,
+  type YNetwork,
+} from './y-network.js';
 export type { Vec3 } from './vec3.js';
