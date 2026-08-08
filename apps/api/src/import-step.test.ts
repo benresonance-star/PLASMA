@@ -1,7 +1,36 @@
 import { describe, expect, it } from 'vitest';
 import { buildServer } from './server.js';
 
-describe('E9 API STEP import', () => {
+describe('E9/E10 API STEP import + semantic commands', () => {
+  it('accepts VALIDATE and rejects headless DELETE', async () => {
+    const { app } = buildServer();
+    const ok = await app.inject({
+      method: 'POST',
+      url: '/commands/accept',
+      payload: {
+        commandId: 'cmd:v',
+        command: 'VALIDATE',
+        modelId: 'model:1',
+        branchId: 'branch:main',
+        actorId: 'user:1',
+      },
+    });
+    expect(ok.statusCode).toBe(202);
+    const bad = await app.inject({
+      method: 'POST',
+      url: '/commands/accept',
+      payload: {
+        commandId: 'cmd:d',
+        command: 'DELETE',
+        modelId: 'model:1',
+        branchId: 'branch:main',
+        actorId: 'user:1',
+      },
+    });
+    expect(bad.statusCode).toBe(422);
+    expect(bad.json()).toMatchObject({ failureCode: 'HEAD_CONFLICT' });
+  });
+
   it('imports STEP text, stores asset wrap, reports viewportReady', async () => {
     const { app } = buildServer();
     const res = await app.inject({

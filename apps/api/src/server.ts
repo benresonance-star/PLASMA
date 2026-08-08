@@ -24,6 +24,7 @@ import {
   runD01ReferencePipeline,
   runF01ReferencePipeline,
 } from '@spds/reference-pipeline';
+import { acceptSemanticCommand } from '@spds/semantic-commands';
 
 export function buildServer(store = new InMemoryVersionStore()) {
   const app = Fastify({ logger: false });
@@ -319,6 +320,11 @@ export function buildServer(store = new InMemoryVersionStore()) {
       viewportLabels: analysis.results?.viewportLabels ?? [],
       stored: { contentHash: stored.contentHash, verified: artifacts.verify(stored.contentHash) },
     });
+  });
+
+  app.post('/commands/accept', async (req, reply) => {
+    const result = acceptSemanticCommand(req.body);
+    return reply.code(result.status === 'accepted' ? 202 : 422).send(result);
   });
 
   app.post<{

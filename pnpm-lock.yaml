@@ -59,6 +59,9 @@ importers:
       '@spds/reproducibility':
         specifier: workspace:*
         version: link:../../packages/reproducibility
+      '@spds/semantic-commands':
+        specifier: workspace:*
+        version: link:../../packages/semantic-commands
       '@spds/semantic-core':
         specifier: workspace:*
         version: link:../../packages/semantic-core
@@ -663,7 +666,21 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/semantic-commands: {}
+  packages/semantic-commands:
+    dependencies:
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/semantic-core:
     dependencies:

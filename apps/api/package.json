@@ -30,6 +30,8 @@
     "@spds/assembly-core": "workspace:*",
     "@spds/import-worker": "workspace:*",
     "@spds/reference-pipeline": "workspace:*",
+    "@spds/semantic-commands": "workspace:*",
+
 
 
     "@spds/transaction-core": "workspace:*",
