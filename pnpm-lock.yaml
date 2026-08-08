@@ -38,6 +38,9 @@ importers:
       '@fastify/cors':
         specifier: ^11.3.0
         version: 11.3.0
+      '@spds/assembly-core':
+        specifier: workspace:*
+        version: link:../../packages/assembly-core
       '@spds/failure-taxonomy':
         specifier: workspace:*
         version: link:../../packages/failure-taxonomy
@@ -110,7 +113,27 @@ importers:
 
   packages/artifact-core: {}
 
-  packages/assembly-core: {}
+  packages/assembly-core:
+    dependencies:
+      '@spds/coordinate-frames':
+        specifier: workspace:*
+        version: link:../coordinate-frames
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/composition-core:
     dependencies:
@@ -162,7 +185,27 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/coordinate-frames: {}
+  packages/coordinate-frames:
+    dependencies:
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
+      '@spds/shared-units':
+        specifier: workspace:*
+        version: link:../shared-units
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/dependency-governance:
     devDependencies:

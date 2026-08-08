@@ -10,12 +10,14 @@ import {
   traceLineage,
 } from '@spds/semantic-query';
 import { DesignCommandSchema, TransactionEngine } from '@spds/transaction-core';
+import { buildA01AssemblyFixture } from '@spds/assembly-core';
 
 export function buildServer(store = new InMemoryVersionStore()) {
   const app = Fastify({ logger: false });
   void app.register(cors, { origin: true });
   const g3b = buildG3bFixture();
   const txEngine = new TransactionEngine(store);
+  const a01 = buildA01AssemblyFixture();
 
   app.get('/health', async () => ({ status: 'ok', service: 'spds-api' }));
 
@@ -158,6 +160,15 @@ export function buildServer(store = new InMemoryVersionStore()) {
       return reply.send({ candidate, transaction: txEngine.getTransaction(req.params.txnId) });
     },
   );
+
+  app.get('/assemblies/a01/inspector', async (_req, reply) => {
+    return reply.send({
+      inspector: a01.registry.inspector(),
+      frames: a01.frames,
+      transforms: a01.transforms,
+      importPlaceholder: a01.importPlaceholder,
+    });
+  });
 
   return { app, store, txEngine };
 }
