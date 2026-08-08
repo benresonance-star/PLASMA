@@ -1,0 +1,17 @@
+{
+  "id": "pattern:FreeformPanelSet",
+  "version": "0.1.0",
+  "name": "Freeform Panel Set",
+  "lifecycle": "published",
+  "intent": [
+    "panelise a freeform surface with local frames",
+    "prove platform is not dome-hardcoded"
+  ],
+  "applicableTo": ["freeform-surface", "nurbs-shell"],
+  "requires": ["trim.surface@1.0.0", "shell.offset@1.0.0"],
+  "parameters": {
+    "shellThicknessMm": { "type": "number", "min": 0.5, "default": 4 },
+    "panelCount": { "type": "integer", "min": 1, "default": 1 }
+  },
+  "operators": ["trim.surface@1.0.0", "shell.offset@1.0.0", "panelise.uv@1.0.0"]
+}

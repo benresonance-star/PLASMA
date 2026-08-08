@@ -4,3 +4,4 @@ packages:
   - "services/*"
   - "tooling/*"
   - "benchmarks"
+  - "patterns/*"

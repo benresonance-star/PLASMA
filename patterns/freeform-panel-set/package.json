@@ -1,0 +1,28 @@
+{
+  "name": "@spds/pattern-freeform-panel-set",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Versioned F01 freeform panel pattern package (non-dome)",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist", "manifest.json"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src --max-warnings 0",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@spds/pattern-engine": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8",
+    "eslint": "^9.22.0"
+  }
+}

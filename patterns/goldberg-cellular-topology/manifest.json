@@ -1,0 +1,22 @@
+{
+  "id": "pattern:goldberg-cellular-topology",
+  "version": "1.0.0",
+  "name": "Goldberg Cellular Topology",
+  "lifecycle": "published",
+  "intent": [
+    "create class-I Goldberg cellular organisation over a spherical surface",
+    "emit retained/boundary Y-network for fabrication"
+  ],
+  "applicableTo": ["dome", "spherical-shell"],
+  "requires": ["topology.goldberg.class-i@1.0.0", "topology.y-network@1.0.0"],
+  "parameters": {
+    "frequency": { "type": "integer", "min": 1, "default": 2 },
+    "diameterMm": { "type": "number", "min": 1, "default": 20000 },
+    "riseRatio": { "type": "number", "min": 0, "max": 1, "default": 0.5 }
+  },
+  "operators": [
+    "topology.goldberg.class-i@1.0.0",
+    "semantic.bind@1.0.0",
+    "topology.y-network@1.0.0"
+  ]
+}
