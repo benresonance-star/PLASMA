@@ -122,7 +122,17 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/dependency-graph: {}
+  packages/dependency-graph:
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/dimension-core: {}
 
@@ -148,13 +158,50 @@ importers:
 
   packages/import-core: {}
 
-  packages/operator-core: {}
+  packages/operator-core:
+    dependencies:
+      '@spds/reproducibility':
+        specifier: workspace:*
+        version: link:../reproducibility
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/package-core: {}
 
   packages/parametric-ir: {}
 
-  packages/pattern-engine: {}
+  packages/pattern-engine:
+    dependencies:
+      '@spds/dependency-graph':
+        specifier: workspace:*
+        version: link:../dependency-graph
+      '@spds/operator-core':
+        specifier: workspace:*
+        version: link:../operator-core
+      '@spds/shared-units':
+        specifier: workspace:*
+        version: link:../shared-units
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/product-definition: {}
 

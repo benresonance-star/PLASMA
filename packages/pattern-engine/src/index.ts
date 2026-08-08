@@ -1,2 +1,8 @@
-﻿/** Stub package @spds/pattern-engine — populated in later checkpoints. */
-export const packageId = '@spds/pattern-engine' as const;
+﻿export {
+  PATTERN_LIFECYCLE,
+  PatternDefinitionSchema,
+  parsePatternDefinition,
+  type PatternDefinition,
+} from './pattern.js';
+export { PatternRegistry } from './registry.js';
+export { compileMockPatternGraph, type CompileResult } from './compile.js';
