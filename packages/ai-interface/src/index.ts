@@ -1,2 +1,30 @@
-﻿/** Stub package @spds/ai-interface — populated in later checkpoints. */
-export const packageId = '@spds/ai-interface' as const;
+﻿export {
+  applyChangeSet,
+  buildAiChangesView,
+  executeReadTool,
+  impactPreview,
+  pollJob,
+  validateChangeSet,
+  type AiChangesViewItem,
+  type AiJob,
+  type AiJobKind,
+  type AiJobStatus,
+  type AiReadToolRequest,
+  type AiReadToolResult,
+  type ChangeSet,
+  type ChangeSetCommand,
+} from './tools.js';
+export {
+  buildFeedbackPacket,
+  createRepairSession,
+  recordAiAudit,
+  runRepairAttempt,
+  whatIfTool,
+  whyTool,
+  type AiAuditRecord,
+  type FeedbackPacket,
+  type RepairAttempt,
+  type RepairSession,
+  type WhatIfResult,
+  type WhyResult,
+} from './repair.js';
