@@ -21,11 +21,13 @@
     "@spds/composition-core": "workspace:*",
     "@spds/execution-dag": "workspace:*",
     "@spds/fabrication-core": "workspace:*",
+    "@spds/failure-taxonomy": "workspace:*",
     "@spds/geometry-contracts": "workspace:*",
     "@spds/package-core": "workspace:*",
     "@spds/parametric-ir": "workspace:*",
     "@spds/release-core": "workspace:*",
     "@spds/reproducibility": "workspace:*",
+    "@spds/selectors": "workspace:*",
     "@spds/semantic-core": "workspace:*",
     "@spds/shared-units": "workspace:*",
     "@spds/topology-operators": "workspace:*"

@@ -532,6 +532,9 @@ importers:
       '@spds/fabrication-core':
         specifier: workspace:*
         version: link:../fabrication-core
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
       '@spds/geometry-contracts':
         specifier: workspace:*
         version: link:../geometry-contracts
@@ -547,6 +550,9 @@ importers:
       '@spds/reproducibility':
         specifier: workspace:*
         version: link:../reproducibility
+      '@spds/selectors':
+        specifier: workspace:*
+        version: link:../selectors
       '@spds/semantic-core':
         specifier: workspace:*
         version: link:../semantic-core
@@ -907,6 +913,9 @@ importers:
 
   services/meshing-adapter:
     devDependencies:
+      '@spds/reference-pipeline':
+        specifier: workspace:*
+        version: link:../../packages/reference-pipeline
       eslint:
         specifier: ^9.22.0
         version: 9.39.5

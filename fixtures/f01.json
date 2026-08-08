@@ -1,0 +1,23 @@
+{
+  "modelId": "F01",
+  "name": "Freeform panel surface reference",
+  "layers": [
+    "semantic",
+    "composition",
+    "pir",
+    "dag",
+    "panelisation",
+    "geometry",
+    "fabrication",
+    "release"
+  ],
+  "publishedBaseId": "pattern:FreeformPanelSet@0.1.0",
+  "packageId": "@spds/ext-freeform-panels",
+  "params": {
+    "shellThicknessMm": 4,
+    "panelCount": 1
+  },
+  "operators": ["trim.surface@1.0.0", "shell.offset@1.0.0"],
+  "usesDomeImports": false,
+  "determinismClass": "D1"
+}

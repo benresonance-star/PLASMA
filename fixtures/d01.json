@@ -1,0 +1,27 @@
+{
+  "modelId": "D01",
+  "name": "Goldberg cellular topology reference",
+  "layers": [
+    "semantic",
+    "composition",
+    "pir",
+    "dag",
+    "topology",
+    "y-network",
+    "geometry",
+    "fabrication",
+    "release"
+  ],
+  "publishedBaseId": "pattern:goldberg-cellular-topology@1.0.0",
+  "params": {
+    "frequency": 2,
+    "diameterMm": 20000,
+    "riseRatio": 0.5
+  },
+  "operators": [
+    "topology.goldberg.class-i@1.0.0",
+    "topology.y-network@1.0.0",
+    "semantic.bind@1.0.0"
+  ],
+  "determinismClass": "D0"
+}

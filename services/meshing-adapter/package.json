@@ -17,6 +17,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
+    "@spds/reference-pipeline": "workspace:*",
     "typescript": "^5.8.2",
     "vitest": "^3.0.8",
     "eslint": "^9.22.0"

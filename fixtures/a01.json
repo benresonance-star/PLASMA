@@ -1,0 +1,22 @@
+{
+  "modelId": "A01",
+  "name": "Parametric assembly reference",
+  "layers": [
+    "semantic",
+    "composition",
+    "pir",
+    "dag",
+    "assembly",
+    "geometry",
+    "fabrication",
+    "release"
+  ],
+  "publishedBaseId": "pattern:parametric-assembly@1.0.0",
+  "params": {
+    "plateThicknessMm": 12,
+    "pinDiaMm": 16
+  },
+  "operators": ["assembly.resolve@1.0.0", "assembly.mates@1.0.0"],
+  "frames": ["WORLD", "ASSEMBLY", "COMPONENT", "IMPORT"],
+  "determinismClass": "D1"
+}

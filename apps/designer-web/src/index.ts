@@ -31,6 +31,12 @@ export {
 } from './viewport.js';
 
 export {
+  applyDisplayMeshesToViewport,
+  displayMeshesToViewportRefs,
+  type DisplayMeshInput,
+} from './mesh-bridge.js';
+
+export {
   createSelectionStore,
   preserveSelectionAfterRegen,
   selectSemantic,
