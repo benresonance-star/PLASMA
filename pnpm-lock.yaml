@@ -47,6 +47,9 @@ importers:
       '@spds/semantic-core':
         specifier: workspace:*
         version: link:../../packages/semantic-core
+      '@spds/semantic-query':
+        specifier: workspace:*
+        version: link:../../packages/semantic-query
       '@spds/version-core':
         specifier: workspace:*
         version: link:../../packages/version-core
@@ -285,7 +288,21 @@ importers:
 
   packages/release-core: {}
 
-  packages/representation-core: {}
+  packages/representation-core:
+    dependencies:
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/reproducibility:
     devDependencies:
@@ -339,7 +356,33 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/semantic-query: {}
+  packages/semantic-query:
+    dependencies:
+      '@spds/dependency-graph':
+        specifier: workspace:*
+        version: link:../dependency-graph
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
+      '@spds/selectors':
+        specifier: workspace:*
+        version: link:../selectors
+      '@spds/topology-provenance':
+        specifier: workspace:*
+        version: link:../topology-provenance
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/shared-units:
     devDependencies:
@@ -355,7 +398,27 @@ importers:
 
   packages/topology-operators: {}
 
-  packages/topology-provenance: {}
+  packages/topology-provenance:
+    dependencies:
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
+      '@spds/selectors':
+        specifier: workspace:*
+        version: link:../selectors
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/transaction-core: {}
 

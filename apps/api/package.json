@@ -24,7 +24,9 @@
     "@spds/failure-taxonomy": "workspace:*",
     "@spds/reproducibility": "workspace:*",
     "@spds/semantic-core": "workspace:*",
+    "@spds/semantic-query": "workspace:*",
     "@spds/version-core": "workspace:*",
+
     "drizzle-orm": "^0.45.2",
     "fastify": "^5.11.3",
     "postgres": "^3.4.9",

@@ -1,2 +1,19 @@
-﻿/** Stub package @spds/representation-core — populated in later checkpoints. */
-export const packageId = '@spds/representation-core' as const;
+﻿export {
+  TOPOLOGY_DOMAINS,
+  DesignTopologyKindSchema,
+  ProductTopologyKindSchema,
+  GeometricTopologyKindSchema,
+  DesignTopologyNodeSchema,
+  ProductTopologyNodeSchema,
+  GeometricTopologyNodeSchema,
+  TopologyNodeSchema,
+  TopologyMappingSchema,
+  parseTopologyNode,
+  parseTopologyMapping,
+  type TopologyDomain,
+  type DesignTopologyNode,
+  type ProductTopologyNode,
+  type GeometricTopologyNode,
+  type TopologyNode,
+  type TopologyMapping,
+} from './domains.js';

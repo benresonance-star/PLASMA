@@ -2,10 +2,18 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { InMemoryVersionStore } from '@spds/version-core';
 import { parseSemanticObject } from '@spds/semantic-core';
+import {
+  QueryAstSchema,
+  buildG3bFixture,
+  executeQuery,
+  explainObject,
+  traceLineage,
+} from '@spds/semantic-query';
 
 export function buildServer(store = new InMemoryVersionStore()) {
   const app = Fastify({ logger: false });
   void app.register(cors, { origin: true });
+  const g3b = buildG3bFixture();
 
   app.get('/health', async () => ({ status: 'ok', service: 'spds-api' }));
 
@@ -69,6 +77,38 @@ export function buildServer(store = new InMemoryVersionStore()) {
   app.get<{ Params: { modelId: string; branchId: string } }>(
     '/models/:modelId/branches/:branchId/head',
     async (req) => ({ branch: store.getBranchHead(req.params.branchId) }),
+  );
+
+  app.post<{ Params: { modelId: string }; Body: unknown }>(
+    '/models/:modelId/query',
+    async (req, reply) => {
+      const ast = QueryAstSchema.parse(req.body);
+      return reply.send({ modelId: req.params.modelId, result: executeQuery(g3b.graph, ast) });
+    },
+  );
+
+  app.post<{
+    Params: { modelId: string };
+    Body: { targetId: string; changedParameters?: string[] };
+  }>('/models/:modelId/explain', async (req, reply) => {
+    const packet = explainObject({
+      targetId: req.body.targetId,
+      graph: g3b.graph,
+      provenance: g3b.provenance,
+      dependencyEdges: g3b.dependencyEdges,
+      ...(req.body.changedParameters !== undefined
+        ? { changedParameters: req.body.changedParameters }
+        : {}),
+    });
+    return reply.send({ modelId: req.params.modelId, explain: packet });
+  });
+
+  app.post<{ Params: { modelId: string }; Body: { semanticAnchor: string } }>(
+    '/models/:modelId/trace',
+    async (req, reply) => {
+      const steps = traceLineage(g3b.provenance, req.body.semanticAnchor);
+      return reply.send({ modelId: req.params.modelId, trace: steps });
+    },
   );
 
   return { app, store };
