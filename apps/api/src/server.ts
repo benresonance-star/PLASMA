@@ -12,7 +12,11 @@ import {
 import { DesignCommandSchema, TransactionEngine } from '@spds/transaction-core';
 import { buildA01AssemblyFixture } from '@spds/assembly-core';
 import { InMemoryObjectStore } from '@spds/artifact-store';
-import { runD01ReferencePipeline } from '@spds/reference-pipeline';
+import {
+  runA01ReferencePipeline,
+  runD01ReferencePipeline,
+  runF01ReferencePipeline,
+} from '@spds/reference-pipeline';
 
 export function buildServer(store = new InMemoryVersionStore()) {
   const app = Fastify({ logger: false });
@@ -184,6 +188,38 @@ export function buildServer(store = new InMemoryVersionStore()) {
       pipelineHash: pipeline.pipelineHash,
       pirHash: pipeline.pirHash,
       dagHash: pipeline.dagHash,
+      stored,
+      allVerified: stored.every((s) => s.verified),
+    });
+  });
+
+  app.post('/references/a01/publish', async (_req, reply) => {
+    const pipeline = await runA01ReferencePipeline();
+    const stored = pipeline.representations.map((rep) => {
+      const put = artifacts.put(JSON.stringify(rep), 'application/json', ['a01', 'release']);
+      return { representationId: rep.id, contentHash: put.contentHash, verified: artifacts.verify(put.contentHash) };
+    });
+    return reply.code(201).send({
+      release: pipeline.release,
+      pipelineHash: pipeline.pipelineHash,
+      instanceCount: pipeline.instanceCount,
+      mateCount: pipeline.mateCount,
+      stored,
+      allVerified: stored.every((s) => s.verified),
+    });
+  });
+
+  app.post('/references/f01/publish', async (_req, reply) => {
+    const pipeline = await runF01ReferencePipeline();
+    const stored = pipeline.representations.map((rep) => {
+      const put = artifacts.put(JSON.stringify(rep), 'application/json', ['f01', 'release']);
+      return { representationId: rep.id, contentHash: put.contentHash, verified: artifacts.verify(put.contentHash) };
+    });
+    return reply.code(201).send({
+      release: pipeline.release,
+      pipelineHash: pipeline.pipelineHash,
+      panelCount: pipeline.panelCount,
+      usesDomeImports: pipeline.usesDomeImports,
       stored,
       allVerified: stored.every((s) => s.verified),
     });

@@ -10,3 +10,8 @@ export {
   type LiveReferenceCompletenessRecord,
 } from './completeness.js';
 export { runLiveAdversarialSuite } from './adversarial.js';
+export {
+  SECTION_30A_EVIDENCE,
+  assessSection30AEvidence,
+  type EvidenceCriterion,
+} from './evidence-matrix.js';
