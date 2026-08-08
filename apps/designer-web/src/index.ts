@@ -3,3 +3,58 @@
   failedPublicationTrace,
   type TransactionStatusView,
 } from './transaction-status.js';
+
+export {
+  createShellState,
+  resizeShell,
+  setActivePanel,
+  switchBranch,
+  switchModel,
+  type LayoutMode,
+  type PanelId,
+  type ShellContext,
+  type ShellState,
+} from './shell.js';
+
+export {
+  createViewportState,
+  loadMeshes,
+  orbitCamera,
+  pickMesh,
+  publicationChromeLabel,
+  setLod,
+  setViewportChrome,
+  type PublicationChrome,
+  type ViewportCamera,
+  type ViewportMeshRef,
+  type ViewportState,
+} from './viewport.js';
+
+export {
+  createSelectionStore,
+  preserveSelectionAfterRegen,
+  selectSemantic,
+  selectionInSync,
+  type SelectionSource,
+  type SelectionStore,
+} from './selection-sync.js';
+
+export {
+  beginPreview,
+  commitExact,
+  createParameterEditState,
+  markValidated,
+  type ParamEditMode,
+  type ParameterEditState,
+  type ParameterSpec,
+} from './parameter-editing.js';
+
+export {
+  assertSemanticAnchors,
+  distanceMm,
+  measureDistance,
+  overlayFromSemanticDimension,
+  type MeasurementOverlay,
+  type MeasurementResult,
+  type SemanticAnchor,
+} from './measurement-overlays.js';
