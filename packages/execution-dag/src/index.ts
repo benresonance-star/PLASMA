@@ -1,2 +1,18 @@
-﻿/** Stub package @spds/execution-dag — populated in later checkpoints. */
-export const packageId = '@spds/execution-dag' as const;
+﻿export {
+  buildCacheKey,
+  buildExecutionDag,
+  planIncrementalInvalidation,
+  runMockDag,
+  type CacheStatus,
+  type CompilerConfig,
+  type DagNode,
+  type ExecutionDag,
+  type NodeStatus,
+} from './dag.js';
+export {
+  buildG3aCompositionFixture,
+  G3A_SELECTABLE_UNIVERSE,
+  resolveG3aFixture,
+  runG3aFixtureTwice,
+  type G3aFixtureResult,
+} from './pipeline.js';

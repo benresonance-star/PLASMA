@@ -92,7 +92,27 @@ importers:
 
   packages/assembly-core: {}
 
-  packages/composition-core: {}
+  packages/composition-core:
+    dependencies:
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
+      '@spds/reproducibility':
+        specifier: workspace:*
+        version: link:../reproducibility
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/concurrency-core: {}
 
@@ -136,7 +156,39 @@ importers:
 
   packages/dimension-core: {}
 
-  packages/execution-dag: {}
+  packages/execution-dag:
+    dependencies:
+      '@spds/composition-core':
+        specifier: workspace:*
+        version: link:../composition-core
+      '@spds/dependency-graph':
+        specifier: workspace:*
+        version: link:../dependency-graph
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
+      '@spds/parametric-ir':
+        specifier: workspace:*
+        version: link:../parametric-ir
+      '@spds/reproducibility':
+        specifier: workspace:*
+        version: link:../reproducibility
+      '@spds/selectors':
+        specifier: workspace:*
+        version: link:../selectors
+      '@spds/shared-units':
+        specifier: workspace:*
+        version: link:../shared-units
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/fabrication-core: {}
 
@@ -176,7 +228,33 @@ importers:
 
   packages/package-core: {}
 
-  packages/parametric-ir: {}
+  packages/parametric-ir:
+    dependencies:
+      '@spds/composition-core':
+        specifier: workspace:*
+        version: link:../composition-core
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
+      '@spds/reproducibility':
+        specifier: workspace:*
+        version: link:../reproducibility
+      '@spds/selectors':
+        specifier: workspace:*
+        version: link:../selectors
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/pattern-engine:
     dependencies:
@@ -221,7 +299,24 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
-  packages/selectors: {}
+  packages/selectors:
+    dependencies:
+      '@spds/failure-taxonomy':
+        specifier: workspace:*
+        version: link:../failure-taxonomy
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
+    devDependencies:
+      eslint:
+        specifier: ^9.22.0
+        version: 9.39.5
+      typescript:
+        specifier: ^5.8.2
+        version: 5.9.3
+      vitest:
+        specifier: ^3.0.8
+        version: 3.2.7(@types/node@22.20.1)(tsx@4.23.11)
 
   packages/semantic-commands: {}
 
