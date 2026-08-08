@@ -18,6 +18,7 @@ import {
   type AiAuditRecord,
   type RepairSession,
 } from './repair.js';
+import { DEMO_Y_SEMANTIC_ID } from './id-map.js';
 
 export interface AgentFixtureResult {
   readonly readSummary: { readonly objectCount: number };
@@ -52,7 +53,9 @@ export function runCompileValidateCompare(input: {
   return {
     compileJob: enqueueJob('compile', input.compileOk, { pirHash: 'pir:1' }),
     validateJob: enqueueJob('validate', input.validateOk, { issueCount: input.validateOk ? 0 : 1 }),
-    compareJob: enqueueJob('compare', input.compareOk ?? true, { changedIds: ['Y:1'] }),
+    compareJob: enqueueJob('compare', input.compareOk ?? true, {
+      changedIds: [DEMO_Y_SEMANTIC_ID],
+    }),
   };
 }
 
@@ -62,7 +65,7 @@ export function runCompileValidateCompare(input: {
 export function runScriptedAgentFixture(): AgentFixtureResult {
   const catalog = {
     objects: [
-      { id: 'Y:1', kind: 'Y' },
+      { id: DEMO_Y_SEMANTIC_ID, kind: 'Y' },
       { id: 'pattern:geodesic', kind: 'Pattern' },
     ],
     patterns: ['geodesic'],
@@ -79,7 +82,7 @@ export function runScriptedAgentFixture(): AgentFixtureResult {
     branchId: agentBranchId,
     expectedHeadHash: head,
     transactionId: 'txn:agent:1',
-    commands: [{ op: 'update', targetId: 'Y:1', payload: { lengthMm: 12 } }],
+    commands: [{ op: 'update', targetId: DEMO_Y_SEMANTIC_ID, payload: { lengthMm: 12 } }],
     actor: 'ai',
     disposition: 'proposed',
   };
@@ -101,7 +104,7 @@ export function runScriptedAgentFixture(): AgentFixtureResult {
       ...proposed,
       changeSetId: 'cs:agent:repair:1',
       expectedHeadHash: head,
-      commands: [{ op: 'update', targetId: 'Y:1', payload: { lengthMm: 10 } }],
+      commands: [{ op: 'update', targetId: DEMO_Y_SEMANTIC_ID, payload: { lengthMm: 10 } }],
       disposition: 'proposed',
     },
     currentHeadHash: head,
@@ -113,7 +116,7 @@ export function runScriptedAgentFixture(): AgentFixtureResult {
         {
           code: 'DOMAIN_VIOLATION',
           summary: 'lengthMm out of fabrication domain',
-          lineage: ['Y:1', 'pattern:geodesic'],
+          lineage: [DEMO_Y_SEMANTIC_ID, 'pattern:geodesic'],
         },
       ],
       constraintResults: [{ id: 'c:length', ok: false }],
@@ -128,7 +131,7 @@ export function runScriptedAgentFixture(): AgentFixtureResult {
       ...proposed,
       changeSetId: 'cs:agent:repair:2',
       expectedHeadHash: head,
-      commands: [{ op: 'update', targetId: 'Y:1', payload: { lengthMm: 8 } }],
+      commands: [{ op: 'update', targetId: DEMO_Y_SEMANTIC_ID, payload: { lengthMm: 8 } }],
       disposition: 'proposed',
     },
     currentHeadHash: head,
@@ -142,7 +145,7 @@ export function runScriptedAgentFixture(): AgentFixtureResult {
     }),
   });
 
-  const why = whyTool('Y:1', ['pattern:geodesic', 'compose', 'y-network']);
+  const why = whyTool(DEMO_Y_SEMANTIC_ID, ['pattern:geodesic', 'compose', 'y-network']);
   const audit = recordAiAudit({
     auditId: 'audit:agent:1',
     intent: 'Add length parameter within domain',

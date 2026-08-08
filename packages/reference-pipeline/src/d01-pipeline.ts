@@ -69,6 +69,8 @@ const D01_UNIVERSE = [
 export async function runD01ReferencePipeline(options?: {
   readonly yLimit?: number;
   readonly kernel?: InProcessGeometryKernel;
+  /** Absolute arm length override (mm) for retained Y sweeps — AI accept / exact regen. */
+  readonly lengthMmOverride?: number;
 }): Promise<D01PipelineResult> {
   const layers = [
     'semantic',
@@ -153,11 +155,15 @@ export async function runD01ReferencePipeline(options?: {
   for (const component of retained) {
     const origin = component.frame.origin;
     const arm = component.arms[0]!;
+    const lengthMm =
+      options?.lengthMmOverride !== undefined && Number.isFinite(options.lengthMmOverride)
+        ? options.lengthMmOverride
+        : arm.lengthMmPlaceholder;
     const start: [number, number, number] = [origin[0], origin[1], origin[2]];
     const end: [number, number, number] = [
-      origin[0] + component.frame.tangent[0] * arm.lengthMmPlaceholder,
-      origin[1] + component.frame.tangent[1] * arm.lengthMmPlaceholder,
-      origin[2] + component.frame.tangent[2] * arm.lengthMmPlaceholder,
+      origin[0] + component.frame.tangent[0] * lengthMm,
+      origin[1] + component.frame.tangent[1] * lengthMm,
+      origin[2] + component.frame.tangent[2] * lengthMm,
     ];
     representations.push(
       kernel.sweep({
@@ -232,6 +238,7 @@ export async function runD01ReferencePipeline(options?: {
     representationIds: representations.map((r) => r.id),
     artifactHashes: manifest.artifactHashes,
     releaseId: release.releaseId,
+    lengthMmOverride: options?.lengthMmOverride ?? null,
   });
 
   return {

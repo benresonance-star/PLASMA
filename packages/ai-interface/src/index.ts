@@ -52,6 +52,19 @@ export {
   type ResolvedAgentMode,
 } from './agent-runner.js';
 export {
+  DEMO_Y_SEMANTIC_ID,
+  D01_FIRST_Y_COMPONENT_ID,
+  mapChangeSetTargetId,
+  type MappedTargetId,
+} from './id-map.js';
+export {
+  changeSetToSemanticCommands,
+  LENGTH_MM_MAX,
+  LENGTH_MM_MIN,
+  type ChangeSetAcceptEnvelope,
+  type ChangeSetLowerResult,
+} from './changeset-accept.js';
+export {
   buildFeedbackPacket,
   createRepairSession,
   recordAiAudit,

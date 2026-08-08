@@ -8,6 +8,7 @@ import {
   type AgentFixtureResult,
 } from './agent-fixture.js';
 import type { AiJob } from './tools.js';
+import { DEMO_Y_SEMANTIC_ID } from './id-map.js';
 
 export interface LiveCompileResult {
   readonly ok: boolean;
@@ -20,6 +21,7 @@ export interface LiveCompileResult {
 export async function runCompileValidateCompareLive(input: {
   readonly compile: () => Promise<LiveCompileResult>;
   readonly validate?: () => Promise<LiveCompileResult>;
+  readonly changedIds?: readonly string[];
 }): Promise<{ readonly compileJob: AiJob; readonly validateJob: AiJob; readonly compareJob: AiJob }> {
   const compiled = await input.compile();
   const validated = input.validate
@@ -34,7 +36,9 @@ export async function runCompileValidateCompareLive(input: {
     validateJob: enqueueJob('validate', validated.ok, {
       issueCount: validated.issueCount ?? (validated.ok ? 0 : 1),
     }),
-    compareJob: enqueueJob('compare', true, { changedIds: ['Y:1'] }),
+    compareJob: enqueueJob('compare', true, {
+      changedIds: input.changedIds ?? [DEMO_Y_SEMANTIC_ID],
+    }),
   };
 }
 

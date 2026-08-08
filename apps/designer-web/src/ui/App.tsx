@@ -1,9 +1,15 @@
 import { useState } from 'react';
-import { fetchD01Analyze, fetchD01DisplayMeshes, runAiAgent } from '../api-client.js';
+import {
+  acceptAiChangeSet,
+  fetchD01Analyze,
+  fetchD01DisplayMeshes,
+  runAiAgent,
+} from '../api-client.js';
 import {
   appAnalysisIndicative,
-  appApplyAiChange,
   appApplyLiveDisplayMeshes,
+  appBindAcceptFailure,
+  appBindAcceptSuccess,
   appBindAgentRun,
   appCommitExactLength,
   appExplorerIds,
@@ -55,6 +61,48 @@ export function App() {
       }
     } catch (err) {
       setAiError(err instanceof Error ? err.message : 'Agent unreachable (is API on :3001?)');
+    } finally {
+      setAiBusy(false);
+    }
+  };
+
+  const acceptRebuild = async () => {
+    if (aiBusy) return;
+    const pending = session.pendingChangeSet;
+    if (!pending) {
+      setAiError('No pending ChangeSet — Run agent first');
+      return;
+    }
+    setAiBusy(true);
+    setAiError(null);
+    try {
+      const result = await acceptAiChangeSet(pending);
+      if (result.status !== 'applied' || !result.meshes || result.lengthMmOverride === undefined) {
+        update((s) =>
+          appBindAcceptFailure(s, {
+            ...(result.failureCode !== undefined ? { failureCode: result.failureCode } : {}),
+            ...(result.reason !== undefined ? { reason: result.reason } : {}),
+          }),
+        );
+        setAiError(result.failureCode ?? result.reason ?? 'Accept rejected');
+        return;
+      }
+      const meshes = result.meshes;
+      const lengthMmOverride = result.lengthMmOverride;
+      update((s) =>
+        appBindAcceptSuccess(
+          s,
+          {
+            pipelineHash: result.pipelineHash ?? 'pipe:unknown',
+            lengthMmOverride,
+            meshes,
+          },
+          Date.now(),
+        ),
+      );
+      setLiveStatus(`accepted:${(result.pipelineHash ?? '').slice(0, 8)}`);
+    } catch (err) {
+      setAiError(err instanceof Error ? err.message : 'Accept unreachable');
     } finally {
       setAiBusy(false);
     }
@@ -310,10 +358,10 @@ export function App() {
                 </button>
                 <button
                   type="button"
-                  disabled={aiBusy}
-                  onClick={() => update((s) => appApplyAiChange(s))}
+                  disabled={aiBusy || !session.pendingChangeSet}
+                  onClick={() => void acceptRebuild()}
                 >
-                  Accept in UI
+                  Accept & rebuild
                 </button>
               </div>
               {aiError ? <p className="spds-meta spds-error">{aiError}</p> : null}
@@ -324,7 +372,13 @@ export function App() {
                   </li>
                 ))}
               </ul>
-              <p className="spds-meta">{session.whyLine || 'No agent run yet.'}</p>
+              <p className="spds-meta">
+                {session.pendingChangeSet
+                  ? `Pending: ${session.pendingChangeSet.changeSetId}`
+                  : 'No pending ChangeSet'}
+                <br />
+                {session.whyLine || 'No agent run yet.'}
+              </p>
             </>
           ) : null}
 

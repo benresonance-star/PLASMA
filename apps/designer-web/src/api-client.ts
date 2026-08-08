@@ -72,8 +72,16 @@ export interface AgentRunResponse {
   readonly why: { readonly explanation: string };
   readonly applied: {
     readonly changeSetId: string;
+    readonly branchId: string;
+    readonly expectedHeadHash: string;
+    readonly transactionId: string;
+    readonly commands: readonly {
+      readonly op: string;
+      readonly targetId?: string;
+      readonly payload?: unknown;
+    }[];
+    readonly actor: 'ai';
     readonly disposition: string;
-    readonly commands: readonly { readonly targetId?: string }[];
   };
 }
 
@@ -92,6 +100,32 @@ export async function runAiAgent(input: {
   const body = (await res.json()) as AgentRunResponse;
   if (!res.ok && res.status !== 503) {
     throw new Error(body.error ?? `ai/agent/run ${res.status}`);
+  }
+  return body;
+}
+
+export interface AcceptChangeSetResponse {
+  readonly status: 'applied' | 'rejected';
+  readonly disposition: 'applied' | 'rejected';
+  readonly failureCode?: string;
+  readonly reason?: string;
+  readonly lengthMmOverride?: number;
+  readonly pipelineHash?: string;
+  readonly pirHash?: string;
+  readonly meshes?: DisplayMeshInput[];
+  readonly mainHeadHash?: string;
+  readonly acceptedCommands?: number;
+}
+
+export async function acceptAiChangeSet(changeSet: AgentRunResponse['applied']): Promise<AcceptChangeSetResponse> {
+  const res = await fetch(`${apiBaseUrl()}/ai/changeset/accept`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ changeSet, yLimit: 2 }),
+  });
+  const body = (await res.json()) as AcceptChangeSetResponse;
+  if (!res.ok && res.status !== 422) {
+    throw new Error(body.reason ?? `ai/changeset/accept ${res.status}`);
   }
   return body;
 }

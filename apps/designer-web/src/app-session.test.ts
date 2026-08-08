@@ -3,6 +3,8 @@ import {
   F01_PANEL_SEMANTIC_ID,
   appAnalysisIndicative,
   appApplyAiChange,
+  appBindAcceptFailure,
+  appBindAcceptSuccess,
   appBindAgentRun,
   appCommitExactLength,
   appExplorerIds,
@@ -43,7 +45,7 @@ describe('G9–G15 integrated designer session', () => {
     expect(appAnalysisIndicative(session)).toBe(true);
     session = appApplyAiChange(session);
     expect(session.aiChanges[0]?.disposition).toBe('applied');
-    expect(session.whyLine).toMatch(/Accepted in UI only/);
+    expect(session.whyLine).toMatch(/Accept & rebuild|Local disposition/i);
   });
 
   it('binds live agent run into AI panel without claiming geometry mutation', () => {
@@ -51,22 +53,63 @@ describe('G9–G15 integrated designer session', () => {
     session = appBindAgentRun(session, {
       status: 'succeeded',
       mode: 'scripted',
-      note: 'Scripted fixture',
+      note: 'Scripted proposal. Geometry changes only after Accept & rebuild.',
       liveCompile: { ok: true, pipelineHash: 'pipe:abcdef12' },
       changesView: [
         {
           changeSetId: 'cs:live:1',
-          disposition: 'applied',
+          disposition: 'proposed',
           commandCount: 1,
           attribution: 'ai',
         },
       ],
       why: { explanation: 'y:demo:01 produced by pattern' },
       audit: { intent: 'shorten', toolCalls: ['summary', 'compile'] },
+      applied: {
+        changeSetId: 'cs:live:1',
+        branchId: 'branch:ai-agent',
+        expectedHeadHash: 'head:1',
+        transactionId: 'txn:1',
+        commands: [{ op: 'update', targetId: 'y:demo:01', payload: { lengthMm: 8 } }],
+        actor: 'ai',
+        disposition: 'applied',
+      },
     });
     expect(session.aiChanges[0]?.changeSetId).toBe('cs:live:1');
+    expect(session.pendingChangeSet?.commands[0]?.payload).toEqual({ lengthMm: 8 });
     expect(session.whyLine).toMatch(/scripted\/succeeded/);
     expect(session.whyLine).toMatch(/liveCompile=ok/);
+  });
+
+  it('accept success swaps meshes; failure leaves meshes', () => {
+    let session = createAppSession();
+    const before = session.g8.meshes[0]?.vertices.length ?? 0;
+    session = appBindAcceptFailure(session, { failureCode: 'HEAD_CONFLICT', reason: 'stale' });
+    expect(session.g8.meshes[0]?.vertices.length).toBe(before);
+    expect(session.whyLine).toMatch(/HEAD_CONFLICT/);
+    session = appBindAcceptSuccess(
+      session,
+      {
+        pipelineHash: 'pipe:accept01',
+        lengthMmOverride: 9,
+        meshes: [
+          {
+            representationId: 'rep:1',
+            semanticOwner: appPrimarySemanticId(),
+            vertices: [
+              [0, 0, 0],
+              [1, 0, 0],
+              [0, 1, 0],
+            ],
+            indices: [0, 1, 2],
+          },
+        ],
+      },
+      99,
+    );
+    expect(session.g8.meshes[0]?.vertices).toHaveLength(3);
+    expect(session.pendingChangeSet).toBeNull();
+    expect(session.pattern.parameters.lengthMm).toBe(9);
   });
 
 

@@ -25,12 +25,13 @@ import {
   runD01ReferencePipeline,
   runF01ReferencePipeline,
 } from '@spds/reference-pipeline';
-import { runAgent, type AgentRunMode } from '@spds/ai-interface';
+import { runAgent, type AgentRunMode, type ChangeSet } from '@spds/ai-interface';
 import {
   acceptSemanticCommand,
   parseSemanticCommand,
   toDesignCommandPayload,
 } from '@spds/semantic-commands';
+import { acceptAiChangeSet } from './ai-changeset-accept.js';
 
 export function buildServer(store = new InMemoryVersionStore()) {
   const app = Fastify({ logger: false });
@@ -363,6 +364,31 @@ export function buildServer(store = new InMemoryVersionStore()) {
   app.post('/commands/accept', async (req, reply) => {
     const result = acceptSemanticCommand(req.body);
     return reply.code(result.status === 'accepted' ? 202 : 422).send(result);
+  });
+
+  app.post<{
+    Body: { changeSet?: ChangeSet; expectedHeadHash?: string; yLimit?: number };
+  }>('/ai/changeset/accept', async (req, reply) => {
+    if (!req.body?.changeSet) {
+      return reply.code(422).send({
+        status: 'rejected',
+        disposition: 'rejected',
+        failureCode: 'MISSING_CHANGESET',
+        reason: 'changeSet required',
+      });
+    }
+    const result = await acceptAiChangeSet({
+      store,
+      txEngine,
+      body: {
+        changeSet: req.body.changeSet,
+        ...(req.body.expectedHeadHash !== undefined
+          ? { expectedHeadHash: req.body.expectedHeadHash }
+          : {}),
+        ...(req.body.yLimit !== undefined ? { yLimit: req.body.yLimit } : {}),
+      },
+    });
+    return reply.code(result.httpStatus).send(result.body);
   });
 
   app.post<{ Params: { modelId: string }; Body: unknown }>(

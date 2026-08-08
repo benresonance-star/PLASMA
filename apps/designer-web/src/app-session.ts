@@ -55,6 +55,20 @@ export interface AiChangesPanelItem {
   readonly attribution: 'ai';
 }
 
+export interface PendingAiChangeSet {
+  readonly changeSetId: string;
+  readonly branchId: string;
+  readonly expectedHeadHash: string;
+  readonly transactionId: string;
+  readonly commands: readonly {
+    readonly op: string;
+    readonly targetId?: string;
+    readonly payload?: unknown;
+  }[];
+  readonly actor: 'ai';
+  readonly disposition: string;
+}
+
 export interface AppSession {
   readonly g8: G8Session;
   readonly modelKind: 'd01' | 'f01';
@@ -68,6 +82,7 @@ export interface AppSession {
   readonly fork: RestoreForkAction;
   readonly analysis: AnalysisMeshViewModel;
   readonly aiChanges: readonly AiChangesPanelItem[];
+  readonly pendingChangeSet: PendingAiChangeSet | null;
   readonly whyLine: string;
 }
 
@@ -251,6 +266,7 @@ export function createAppSession(): AppSession {
         attribution: 'ai',
       },
     ],
+    pendingChangeSet: null,
     whyLine: '',
   };
   return refreshDerived(base);
@@ -382,11 +398,11 @@ export function appApplyAiChange(session: AppSession): AppSession {
       c.disposition === 'proposed' ? { ...c, disposition: 'applied' as const } : c,
     ),
     whyLine:
-      'Accepted in UI only — local disposition updated; geometry unchanged until /commands/accept.',
+      'Local disposition only — use Accept & rebuild to compile and refresh meshes.',
   };
 }
 
-/** Bind a live /ai/agent/run response into the AI panel (honest lineage; no geometry mutation). */
+/** Bind a live /ai/agent/run response into the AI panel (proposal only — no geometry). */
 export function appBindAgentRun(
   session: AppSession,
   run: {
@@ -403,6 +419,7 @@ export function appBindAgentRun(
     }[];
     readonly why: { readonly explanation: string };
     readonly audit: { readonly intent: string; readonly toolCalls: readonly string[] };
+    readonly applied?: PendingAiChangeSet;
   },
 ): AppSession {
   const pipe = run.liveCompile.pipelineHash
@@ -410,8 +427,16 @@ export function appBindAgentRun(
     : '';
   const err = run.error ? ` · error: ${run.error}` : '';
   const dispositions = new Set(['proposed', 'applied', 'rejected', 'conflict']);
+  const pending =
+    run.applied && run.applied.commands.length > 0
+      ? {
+          ...run.applied,
+          disposition: 'proposed',
+        }
+      : session.pendingChangeSet;
   return {
     ...session,
+    pendingChangeSet: pending,
     aiChanges:
       run.changesView.length > 0
         ? run.changesView.map((c) => ({
@@ -424,6 +449,45 @@ export function appBindAgentRun(
           }))
         : session.aiChanges,
     whyLine: `[${run.mode}/${run.status}] liveCompile=${run.liveCompile.ok ? 'ok' : 'fail'}${pipe}${err} — ${run.note} · ${run.why.explanation} · tools: ${run.audit.toolCalls.join(', ') || 'none'}`,
+  };
+}
+
+/** Apply successful /ai/changeset/accept — meshes + disposition. */
+export function appBindAcceptSuccess(
+  session: AppSession,
+  result: {
+    readonly pipelineHash: string;
+    readonly lengthMmOverride: number;
+    readonly meshes: readonly DisplayMeshInput[];
+    readonly audit?: { readonly changeSetId: string };
+  },
+  nowMs: number,
+): AppSession {
+  const withMeshes = appApplyLiveDisplayMeshes(session, result.meshes, nowMs);
+  return {
+    ...withMeshes,
+    pendingChangeSet: null,
+    aiChanges: session.aiChanges.map((c) => ({
+      ...c,
+      disposition: 'applied' as const,
+    })),
+    pattern: buildPatternInspector({
+      patternId: withMeshes.pattern.patternId,
+      name: withMeshes.pattern.name,
+      parameters: { ...withMeshes.pattern.parameters, lengthMm: result.lengthMmOverride },
+      operatorBindings: withMeshes.pattern.operatorBindings,
+    }),
+    whyLine: `Accepted on AI branch — geometry rebuilt (lengthMm=${result.lengthMmOverride}, pipe ${result.pipelineHash.slice(0, 8)}). Main branch untouched.`,
+  };
+}
+
+export function appBindAcceptFailure(
+  session: AppSession,
+  failure: { readonly failureCode?: string; readonly reason?: string },
+): AppSession {
+  return {
+    ...session,
+    whyLine: `Accept failed: ${failure.failureCode ?? 'ERROR'} — ${failure.reason ?? 'unknown'} (meshes unchanged)`,
   };
 }
 

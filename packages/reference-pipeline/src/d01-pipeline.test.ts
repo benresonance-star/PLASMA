@@ -51,4 +51,13 @@ describe('E0 D01 reference pipeline', () => {
     expect(suite.find((r) => r.modelId === 'D01')?.layers).toContain('pir');
     expect(suite.find((r) => r.modelId === 'D01')?.layers).toContain('release');
   });
+
+  it('lengthMmOverride changes pipelineHash and representation volume', async () => {
+    const short = await runD01ReferencePipeline({ yLimit: 2, lengthMmOverride: 8 });
+    const long = await runD01ReferencePipeline({ yLimit: 2, lengthMmOverride: 12 });
+    expect(short.pipelineHash).not.toBe(long.pipelineHash);
+    const vol = (reps: typeof short.representations) =>
+      reps.reduce((sum, r) => sum + r.mass.volumeMm3, 0);
+    expect(vol(long.representations)).toBeGreaterThan(vol(short.representations) * 1.01);
+  });
 });

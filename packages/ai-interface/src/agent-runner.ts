@@ -101,7 +101,7 @@ async function runScriptedPath(input: AgentRunInput, config: LlmConfig): Promise
     status,
     note:
       status === 'succeeded'
-        ? 'Scripted fixture + live D01 compile (no LLM key required). ChangeSets are branch-isolated proposals — Accept in UI does not mutate geometry.'
+        ? 'Scripted proposal + live D01 smoke compile. Geometry changes only after Accept & rebuild (/ai/changeset/accept).'
         : 'Scripted path completed but live compile or repair failed — status truth-gated.',
     ...(status === 'failed'
       ? {
@@ -283,7 +283,7 @@ async function runLlmPath(input: AgentRunInput, config: LlmConfig): Promise<Agen
     llmRounds: rounds,
     note:
       status === 'succeeded'
-        ? 'LLM proposed a validated ChangeSet; live compile succeeded. Accept in UI only updates local disposition — geometry accept requires /commands/accept.'
+        ? 'LLM proposed a validated ChangeSet; smoke compile ok. Accept & rebuild to commit on AI branch and refresh display meshes.'
         : 'LLM ChangeSet proposed but live compile/repair failed — status truth-gated.',
     ...(status === 'failed'
       ? { error: live.ok ? `repair:${repair.status}` : (live.failureCode ?? 'LIVE_COMPILE_FAILED') }
