@@ -50,6 +50,9 @@ importers:
       '@spds/failure-taxonomy':
         specifier: workspace:*
         version: link:../../packages/failure-taxonomy
+      '@spds/import-worker':
+        specifier: workspace:*
+        version: link:../../services/import-worker
       '@spds/reference-pipeline':
         specifier: workspace:*
         version: link:../../packages/reference-pipeline
@@ -115,6 +118,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/version-core
     devDependencies:
+      '@spds/analysis-worker':
+        specifier: workspace:*
+        version: link:../../services/analysis-worker
+      '@spds/reference-pipeline':
+        specifier: workspace:*
+        version: link:../../packages/reference-pipeline
       eslint:
         specifier: ^9.22.0
         version: 9.39.5
@@ -127,6 +136,9 @@ importers:
 
   benchmarks:
     dependencies:
+      '@spds/api':
+        specifier: workspace:*
+        version: link:../apps/api
       '@spds/artifact-store':
         specifier: workspace:*
         version: link:../services/artifact-store

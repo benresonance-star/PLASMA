@@ -10,9 +10,14 @@ import {
   traceLineage,
 } from '@spds/semantic-query';
 import { DesignCommandSchema, TransactionEngine } from '@spds/transaction-core';
-import { buildA01AssemblyFixture } from '@spds/assembly-core';
-import { InMemoryObjectStore } from '@spds/artifact-store';
 import { runAnalysisJob } from '@spds/analysis-worker';
+import {
+  InMemoryObjectStore,
+  MinioObjectStore,
+  minioConfigFromEnv,
+} from '@spds/artifact-store';
+import { buildA01AssemblyFixture } from '@spds/assembly-core';
+import { runStepImportJob } from '@spds/import-worker';
 import {
   buildLiveReferenceCompletenessSuite,
   runA01ReferencePipeline,
@@ -27,6 +32,8 @@ export function buildServer(store = new InMemoryVersionStore()) {
   const txEngine = new TransactionEngine(store);
   const a01 = buildA01AssemblyFixture();
   const artifacts = new InMemoryObjectStore();
+  const minioCfg = minioConfigFromEnv();
+  const remoteArtifacts = minioCfg ? new MinioObjectStore(minioCfg) : undefined;
 
   app.get('/health', async () => ({ status: 'ok', service: 'spds-api' }));
 
@@ -181,10 +188,26 @@ export function buildServer(store = new InMemoryVersionStore()) {
 
   app.post<{ Body: { yLimit?: number } }>('/references/d01/publish', async (req, reply) => {
     const pipeline = await runD01ReferencePipeline({ yLimit: req.body?.yLimit ?? 5 });
-    const stored = pipeline.fabrication.artifacts.map((art) => {
-      const put = artifacts.put(JSON.stringify(art), 'application/json', ['d01', 'release']);
-      return { artifactId: art.artifactId, contentHash: put.contentHash, verified: artifacts.verify(put.contentHash) };
-    });
+    const stored = [];
+    for (const art of pipeline.fabrication.artifacts) {
+      const bytes = JSON.stringify(art);
+      const put = artifacts.put(bytes, 'application/json', ['d01', 'release']);
+      let remoteVerified: boolean | null = null;
+      if (remoteArtifacts) {
+        try {
+          const remote = await remoteArtifacts.put(bytes, 'application/json', ['d01', 'release']);
+          remoteVerified = await remoteArtifacts.verify(remote.contentHash);
+        } catch {
+          remoteVerified = false;
+        }
+      }
+      stored.push({
+        artifactId: art.artifactId,
+        contentHash: put.contentHash,
+        verified: artifacts.verify(put.contentHash),
+        remoteVerified,
+      });
+    }
     return reply.code(201).send({
       release: pipeline.release,
       pipelineHash: pipeline.pipelineHash,
@@ -192,6 +215,7 @@ export function buildServer(store = new InMemoryVersionStore()) {
       dagHash: pipeline.dagHash,
       stored,
       allVerified: stored.every((s) => s.verified),
+      remoteStore: remoteArtifacts ? 'minio' : 'none',
     });
   });
 
@@ -297,5 +321,45 @@ export function buildServer(store = new InMemoryVersionStore()) {
     });
   });
 
-  return { app, store, txEngine, artifacts };
+  app.post<{
+    Body: {
+      filename?: string;
+      bytes?: string;
+      headerText?: string;
+      solidCountHint?: number;
+    };
+  }>('/imports/step', async (req, reply) => {
+    const result = await runStepImportJob({
+      jobId: `import:${Date.now()}`,
+      filename: req.body?.filename ?? 'part.step',
+      bytes: req.body?.bytes ?? '',
+      headerText: req.body?.headerText ?? '',
+      timeoutMs: 30_000,
+      ...(req.body?.solidCountHint !== undefined
+        ? { solidCountHint: req.body.solidCountHint }
+        : {}),
+    });
+    if (result.status !== 'succeeded') {
+      return reply.code(422).send({
+        status: result.status,
+        failureCode: result.failureCode,
+        viewportReady: false,
+      });
+    }
+    const stored = artifacts.put(
+      JSON.stringify({ asset: result.asset, shapes: result.shapes }),
+      'application/json',
+      ['import', 'step'],
+    );
+    return reply.code(201).send({
+      status: result.status,
+      asset: result.asset,
+      shapeCount: result.shapes?.length ?? 0,
+      viewportReady: result.viewportReady,
+      probeMode: result.probeMode,
+      stored: { contentHash: stored.contentHash, verified: artifacts.verify(stored.contentHash) },
+    });
+  });
+
+  return { app, store, txEngine, artifacts, remoteArtifacts };
 }

@@ -10,6 +10,7 @@
     "lint": "eslint src --max-warnings 0"
   },
   "dependencies": {
+    "@spds/api": "workspace:*",
     "@spds/artifact-store": "workspace:*",
     "@spds/package-core": "workspace:*",
     "@spds/reference-pipeline": "workspace:*",
