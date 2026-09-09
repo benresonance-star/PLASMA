@@ -13,4 +13,5 @@ export {
   TransactionEngine,
   type CompileStage,
   type MockCompileResult,
+  type CompileAdapter,
 } from './engine.js';

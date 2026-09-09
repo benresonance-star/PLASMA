@@ -52,8 +52,10 @@ export {
 
 export {
   createG8Session,
+  g8ApplyLiveMeshes,
   g8CommitExactLength,
   g8ExplorerIds,
+  g8FocusGeometry,
   g8PreviewLength,
   g8PrimarySemanticId,
   g8Select,
@@ -68,29 +70,41 @@ export {
   appAnalysisIndicative,
   appApplyAiChange,
   appApplyLiveDisplayMeshes,
+  appBindPipelineRun,
+  appBootstrapFailure,
+  appBootstrapSuccess,
   appCommitExactLength,
   appExplorerIds,
+  appFocusGeometry,
   appNavigateIssue,
   appPreviewLength,
   appPrimarySemanticId,
+  appRecordTransaction,
   appSelect,
   appSelectionSynced,
   appSetChrome,
+  appSetExplorerGraphObjects,
   appSetPanel,
+  appSetParams,
+  appSetPublicationStatus,
   appSwitchModelKind,
   createAppSession,
   type AiChangesPanelItem,
   type AppSession,
+  type ExplorerGraphObject,
 } from './app-session.js';
 
 export {
   createSelectionStore,
+  focusGeometry,
   preserveSelectionAfterRegen,
   selectSemantic,
   selectionInSync,
   type SelectionSource,
   type SelectionStore,
 } from './selection-sync.js';
+
+export { rightPaneForPanel, shouldMountViewport, type RightPaneKind } from './right-pane.js';
 
 export {
   beginPreview,

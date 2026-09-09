@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import {
   parsePatternDefinition,
   type PatternDefinition,
+  type PatternParameterDefinition,
 } from '@spds/pattern-engine';
 
 interface PatternPackageManifest {
@@ -15,9 +16,7 @@ interface PatternPackageManifest {
   readonly applicableTo: readonly string[];
   readonly requires: readonly string[];
   readonly operators: readonly string[];
-  readonly parameters: Readonly<
-    Record<string, { readonly type: string; readonly default?: unknown }>
-  >;
+  readonly parameters: Readonly<Record<string, Omit<PatternParameterDefinition, 'name'>>>;
 }
 
 export function loadGoldbergPatternManifest(

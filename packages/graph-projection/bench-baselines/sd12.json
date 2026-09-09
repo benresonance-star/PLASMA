@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "note": "SD12 absolute baselines for >20% regression gate (nightly). Update deliberately after intentional perf work.",
+  "budgets": {
+    "1000": { "projectMs": 20, "layoutMs": 50, "highlightMs": 50 },
+    "10000": { "projectMs": 50, "layoutMs": 150, "highlightMs": 100 },
+    "100000": { "projectMs": 100, "layoutMs": 300, "highlightMs": 150 },
+    "cacheHitMs": 2
+  },
+  "observed": {
+    "1000": { "projectMs": 12, "layoutMs": 8, "highlightMs": 12 },
+    "10000": { "projectMs": 25, "layoutMs": 12, "highlightMs": 25 },
+    "100000": { "projectMs": 60, "layoutMs": 20, "highlightMs": 60 },
+    "cacheHitMs": 0.05
+  }
+}

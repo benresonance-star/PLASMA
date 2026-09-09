@@ -21,24 +21,24 @@
   },
   "dependencies": {
     "@fastify/cors": "^11.3.0",
-    "@spds/failure-taxonomy": "workspace:*",
-    "@spds/reproducibility": "workspace:*",
-    "@spds/semantic-core": "workspace:*",
-    "@spds/semantic-query": "workspace:*",
     "@spds/ai-interface": "workspace:*",
     "@spds/analysis-worker": "workspace:*",
     "@spds/artifact-store": "workspace:*",
     "@spds/assembly-core": "workspace:*",
+    "@spds/failure-taxonomy": "workspace:*",
+    "@spds/geometry-client": "workspace:*",
+    "@spds/graph-projection": "workspace:*",
     "@spds/import-worker": "workspace:*",
+    "@spds/pattern-goldberg-cellular-topology": "workspace:^",
     "@spds/reference-pipeline": "workspace:*",
+    "@spds/reproducibility": "workspace:*",
     "@spds/semantic-commands": "workspace:*",
-
-
-
+    "@spds/semantic-core": "workspace:*",
+    "@spds/semantic-query": "workspace:*",
+    "@spds/topology-operators": "workspace:^",
     "@spds/transaction-core": "workspace:*",
     "@spds/version-core": "workspace:*",
     "drizzle-orm": "^0.45.2",
-
     "fastify": "^5.11.3",
     "postgres": "^3.4.9",
     "zod": "^4.4.3"

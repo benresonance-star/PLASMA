@@ -14,23 +14,34 @@ export interface LiveCompileResult {
   readonly ok: boolean;
   readonly pirHash?: string;
   readonly pipelineHash?: string;
+  readonly compileHash?: string;
+  readonly parameters?: Readonly<Record<string, number>>;
   readonly issueCount?: number;
   readonly failureCode?: string;
 }
 
+export interface LiveCompileOptions {
+  readonly lengthMm?: number;
+}
+
+export type LiveCompileFn = (opts?: LiveCompileOptions) => Promise<LiveCompileResult>;
+
 export async function runCompileValidateCompareLive(input: {
-  readonly compile: () => Promise<LiveCompileResult>;
-  readonly validate?: () => Promise<LiveCompileResult>;
+  readonly compile: LiveCompileFn;
+  readonly validate?: LiveCompileFn;
   readonly changedIds?: readonly string[];
+  readonly compileOpts?: LiveCompileOptions;
 }): Promise<{ readonly compileJob: AiJob; readonly validateJob: AiJob; readonly compareJob: AiJob }> {
-  const compiled = await input.compile();
+  const compiled = await input.compile(input.compileOpts);
   const validated = input.validate
-    ? await input.validate()
+    ? await input.validate(input.compileOpts)
     : { ok: compiled.ok, issueCount: compiled.ok ? 0 : 1 };
   return {
     compileJob: enqueueJob('compile', compiled.ok, {
       pirHash: compiled.pirHash,
       pipelineHash: compiled.pipelineHash,
+      compileHash: compiled.compileHash,
+      parameters: compiled.parameters,
       failureCode: compiled.failureCode,
     }),
     validateJob: enqueueJob('validate', validated.ok, {
@@ -44,10 +55,13 @@ export async function runCompileValidateCompareLive(input: {
 
 /** Scripted agent fixture with final jobs replaced by live compile results. */
 export async function runScriptedAgentWithLiveCompile(
-  compile: () => Promise<LiveCompileResult>,
+  compile: LiveCompileFn,
 ): Promise<AgentFixtureResult & { readonly liveCompile: LiveCompileResult }> {
   const base = runScriptedAgentFixture();
-  const live = await compile();
+  const repaired = base.repair.attempts.at(-1)?.changeSet ?? base.applied;
+  const lengthMm = extractLengthMmFromChangeSet(repaired);
+  const compileOpts = lengthMm !== undefined ? { lengthMm } : undefined;
+  const live = await compile(compileOpts);
   const jobs = await runCompileValidateCompareLive({
     compile: async () => live,
     validate: async () => {
@@ -66,4 +80,17 @@ export async function runScriptedAgentWithLiveCompile(
     compareJob: jobs.compareJob,
     liveCompile: live,
   };
+}
+
+function extractLengthMmFromChangeSet(cs: {
+  readonly commands: readonly { readonly payload?: unknown }[];
+}): number | undefined {
+  for (const cmd of cs.commands) {
+    const payload = cmd.payload;
+    if (payload && typeof payload === 'object' && 'lengthMm' in payload) {
+      const n = (payload as { lengthMm?: unknown }).lengthMm;
+      if (typeof n === 'number' && Number.isFinite(n)) return n;
+    }
+  }
+  return undefined;
 }

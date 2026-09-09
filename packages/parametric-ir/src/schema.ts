@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { FormProductSchema } from './form-ir.js';
 
 const FORBIDDEN_JS_KEYS = new Set(['js', 'javascript', 'eval', 'script', 'fn', 'function']);
 
@@ -10,7 +11,9 @@ function rejectEmbeddedJs(value: unknown, path: string[]): void {
   if (value && typeof value === 'object') {
     for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
       if (FORBIDDEN_JS_KEYS.has(key.toLowerCase())) {
-        throw new Error(`PIR must not embed arbitrary JavaScript (key: ${[...path, key].join('.')})`);
+        throw new Error(
+          `PIR must not embed arbitrary JavaScript (key: ${[...path, key].join('.')})`,
+        );
       }
       if (typeof child === 'string' && /^\s*(?:function\b|=>)/.test(child)) {
         throw new Error(`PIR must not embed JavaScript source at ${[...path, key].join('.')}`);
@@ -41,6 +44,7 @@ export const PirOperationSchema = z
     produces: z
       .object({
         role: z.string().min(1),
+        form: FormProductSchema.optional(),
       })
       .optional(),
     provenance: z.object({

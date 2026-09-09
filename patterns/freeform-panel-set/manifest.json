@@ -10,8 +10,34 @@
   "applicableTo": ["freeform-surface", "nurbs-shell"],
   "requires": ["trim.surface@1.0.0", "shell.offset@1.0.0"],
   "parameters": {
-    "shellThicknessMm": { "type": "number", "min": 0.5, "default": 4 },
-    "panelCount": { "type": "integer", "min": 1, "default": 1 }
+    "shellThicknessMm": {
+      "semanticId": "param:freeform-panel:shell-thickness",
+      "path": "params.shellThicknessMm",
+      "type": "number",
+      "unit": "mm",
+      "min": 0.5,
+      "max": 100,
+      "default": 4,
+      "role": "fabrication-variable",
+      "editableBy": ["user", "agent"],
+      "aliases": [],
+      "label": "Shell thickness",
+      "group": "Panel"
+    },
+    "panelCount": {
+      "semanticId": "param:freeform-panel:count",
+      "path": "params.panelCount",
+      "type": "integer",
+      "unit": "1",
+      "min": 1,
+      "max": 10000,
+      "default": 1,
+      "role": "design-variable",
+      "editableBy": ["user", "agent"],
+      "aliases": [],
+      "label": "Panel count",
+      "group": "Panel"
+    }
   },
   "operators": ["trim.surface@1.0.0", "shell.offset@1.0.0", "panelise.uv@1.0.0"]
 }

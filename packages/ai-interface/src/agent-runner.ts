@@ -5,19 +5,13 @@
 
 import {
   runScriptedAgentWithLiveCompile,
+  type LiveCompileFn,
   type LiveCompileResult,
 } from './live-compile.js';
-import {
-  enqueueJob,
-  type AgentFixtureResult,
-} from './agent-fixture.js';
+import { enqueueJob, type AgentFixtureResult } from './agent-fixture.js';
 import { chatWithTools, type LlmChatMessage, type LlmFetch } from './llm-client.js';
 import { loadLlmConfig, type LlmConfig } from './llm-config.js';
-import {
-  AI_TOOL_DEFINITIONS,
-  routeAiTool,
-  type ToolRouterContext,
-} from './tool-router.js';
+import { buildAiToolDefinitions, routeAiTool, type ToolRouterContext } from './tool-router.js';
 import {
   buildFeedbackPacket,
   createRepairSession,
@@ -27,17 +21,44 @@ import {
   type RepairSession,
 } from './repair.js';
 import { buildAiChangesView, type ChangeSet } from './tools.js';
+import {
+  buildAgentContextPackage,
+  renderAgentSystemPrompt,
+  type AgentContextPackage,
+  type AgentContextParameter,
+} from './agent-context.js';
 
 export type AgentRunMode = 'auto' | 'scripted' | 'llm';
 export type ResolvedAgentMode = 'scripted' | 'llm';
 
+export type AgentCatalog = ToolRouterContext['catalog'];
+
+/** T0b — live branch/head/txn binding (never hardcode head:1 for model-scoped runs). */
+export interface AgentBranchBinding {
+  readonly modelId: string;
+  readonly branchId: string;
+  readonly sourceBranchId: string;
+  readonly expectedHeadHash: string;
+  readonly transactionId: string;
+}
+
 export interface AgentRunInput {
   readonly intent?: string;
   readonly mode?: AgentRunMode;
-  readonly compile: () => Promise<LiveCompileResult>;
+  /** Smoke compile — must receive proposed lengthMm when available (same mapper as accept). */
+  readonly compile: LiveCompileFn;
   readonly config?: LlmConfig;
   readonly fetchImpl?: LlmFetch;
   readonly maxLlmRounds?: number;
+  /** Live model catalog — when omitted, falls back to DEFAULT_CATALOG (demo-only). */
+  readonly catalog?: AgentCatalog;
+  /** Live head/branch — required for accept-ready proposals. */
+  readonly branchBinding?: AgentBranchBinding;
+  /** Prebuilt context; when omitted and branchBinding present, built automatically. */
+  readonly agentContext?: AgentContextPackage;
+  readonly folderIds?: readonly string[];
+  /** Mutable parameters discovered from installed pattern packages. */
+  readonly parameters?: readonly AgentContextParameter[];
 }
 
 export interface AgentRunResult extends AgentFixtureResult {
@@ -50,6 +71,8 @@ export interface AgentRunResult extends AgentFixtureResult {
   readonly error?: string;
   readonly llmRounds?: number;
   readonly note: string;
+  readonly agentContext?: AgentContextPackage;
+  readonly systemPromptHash?: string;
 }
 
 const DEFAULT_CATALOG = {
@@ -82,23 +105,63 @@ function truthGate(live: LiveCompileResult, repair: RepairSession): 'succeeded' 
   return 'succeeded';
 }
 
+function lengthMmFromChangeSet(cs: ChangeSet): number | undefined {
+  for (const cmd of cs.commands) {
+    const payload = cmd.payload;
+    if (payload && typeof payload === 'object' && 'lengthMm' in payload) {
+      const n = (payload as { lengthMm?: unknown }).lengthMm;
+      if (typeof n === 'number' && Number.isFinite(n)) return n;
+    }
+  }
+  return undefined;
+}
+
+function resolveContext(input: AgentRunInput): AgentContextPackage | undefined {
+  if (input.agentContext) return input.agentContext;
+  const b = input.branchBinding;
+  if (!b) return undefined;
+  return buildAgentContextPackage({
+    modelId: b.modelId,
+    branchId: b.branchId,
+    expectedHeadHash: b.expectedHeadHash,
+    transactionId: b.transactionId,
+    ...(input.catalog ? { catalog: input.catalog } : {}),
+    ...(input.folderIds ? { folderIds: input.folderIds } : {}),
+    ...(input.parameters ? { parameters: input.parameters } : {}),
+  });
+}
+
+function stampBranchBinding(cs: ChangeSet, binding: AgentBranchBinding): ChangeSet {
+  return {
+    ...cs,
+    branchId: binding.branchId,
+    expectedHeadHash: binding.expectedHeadHash,
+    transactionId: binding.transactionId,
+  };
+}
+
 async function runScriptedPath(input: AgentRunInput, config: LlmConfig): Promise<AgentRunResult> {
   const intent = input.intent?.trim() || 'Scripted agent: propose length within domain';
+  const agentContext = resolveContext(input);
   const base = await runScriptedAgentWithLiveCompile(input.compile);
+  const applied = input.branchBinding
+    ? stampBranchBinding(base.applied, input.branchBinding)
+    : base.applied;
   const audit = recordAiAudit({
     ...base.audit,
     intent,
-    disposition:
-      base.liveCompile.ok && base.repair.status === 'succeeded' ? 'applied' : 'rejected',
+    disposition: base.liveCompile.ok && base.repair.status === 'succeeded' ? 'applied' : 'rejected',
   });
   const status = truthGate(base.liveCompile, base.repair);
   return {
     ...base,
+    applied,
     audit,
     mode: 'scripted',
     requestedMode: input.mode ?? 'auto',
     llmConfigured: config.configured,
     status,
+    ...(agentContext ? { agentContext, systemPromptHash: agentContext.promptHash } : {}),
     note:
       status === 'succeeded'
         ? 'Scripted proposal + live D01 smoke compile. Geometry changes only after Accept & rebuild (/ai/changeset/accept).'
@@ -116,25 +179,37 @@ async function runScriptedPath(input: AgentRunInput, config: LlmConfig): Promise
 async function runLlmPath(input: AgentRunInput, config: LlmConfig): Promise<AgentRunResult> {
   const intent = input.intent?.trim() || 'Propose a safe lengthMm update for y:demo:01';
   const maxRounds = input.maxLlmRounds ?? 6;
-  const sourceBranchId = 'branch:main';
-  const agentBranchId = 'branch:ai-agent';
-  const head = 'head:1';
-  const txn = `txn:llm:${Date.now()}`;
+  const binding = input.branchBinding;
+  const sourceBranchId = binding?.sourceBranchId ?? 'branch:main';
+  const agentBranchId = binding?.branchId ?? 'branch:ai-agent';
+  const head = binding?.expectedHeadHash ?? 'head:1';
+  const txn = binding?.transactionId ?? `txn:llm:${Date.now()}`;
+  const agentContext =
+    resolveContext(input) ??
+    buildAgentContextPackage({
+      modelId: binding?.modelId ?? 'model:unbound',
+      branchId: agentBranchId,
+      expectedHeadHash: head,
+      transactionId: txn,
+      ...(input.catalog ? { catalog: input.catalog } : {}),
+      ...(input.folderIds ? { folderIds: input.folderIds } : {}),
+      ...(input.parameters ? { parameters: input.parameters } : {}),
+    });
+  const catalog = input.catalog ?? DEFAULT_CATALOG;
   const ctx: ToolRouterContext = {
-    catalog: DEFAULT_CATALOG,
+    catalog,
     agentBranchId,
     sourceBranchId,
     currentHeadHash: head,
     transactionId: txn,
+    agentContext,
+    acceptOps: agentContext.mutate.acceptOps,
   };
+  const tools = buildAiToolDefinitions(agentContext.mutate.acceptOps);
+  const systemPrompt = renderAgentSystemPrompt(agentContext);
 
   const messages: LlmChatMessage[] = [
-    {
-      role: 'system',
-      content:
-        'You are the SPDS design agent. Use tools only. Propose semantic ChangeSets via propose_changeset. ' +
-        'Never set fabricationReady, brep, or threeJs. Prefer targetId y:demo:01 and lengthMm in 6..12.',
-    },
+    { role: 'system', content: systemPrompt },
     { role: 'user', content: intent },
   ];
 
@@ -148,7 +223,7 @@ async function runLlmPath(input: AgentRunInput, config: LlmConfig): Promise<Agen
     const chat = await chatWithTools({
       config,
       messages,
-      tools: AI_TOOL_DEFINITIONS,
+      tools,
       ...(input.fetchImpl ? { fetchImpl: input.fetchImpl } : {}),
     });
     messages.push(chat.message);
@@ -166,9 +241,7 @@ async function runLlmPath(input: AgentRunInput, config: LlmConfig): Promise<Agen
         role: 'tool',
         tool_call_id: call.id,
         content: JSON.stringify(
-          routed.ok
-            ? { ok: true, data: routed.data }
-            : { ok: false, error: routed.error },
+          routed.ok ? { ok: true, data: routed.data } : { ok: false, error: routed.error },
         ),
       });
       if (!routed.ok) {
@@ -185,7 +258,7 @@ async function runLlmPath(input: AgentRunInput, config: LlmConfig): Promise<Agen
     const live = await input.compile();
     const emptyRepair = createRepairSession('repair:llm:none', 3);
     return {
-      readSummary: { objectCount: DEFAULT_CATALOG.objects.length },
+      readSummary: { objectCount: catalog.objects.length },
       applied: {
         changeSetId: 'cs:llm:none',
         branchId: agentBranchId,
@@ -220,10 +293,17 @@ async function runLlmPath(input: AgentRunInput, config: LlmConfig): Promise<Agen
       error: lastError ?? 'LLM did not propose a ChangeSet',
       llmRounds: rounds,
       note: 'LLM path failed before a valid ChangeSet was proposed.',
+      agentContext,
+      ...(agentContext.promptHash !== undefined
+        ? { systemPromptHash: agentContext.promptHash }
+        : {}),
     };
   }
 
-  const live = await input.compile();
+  const proposedLength = lengthMmFromChangeSet(proposed);
+  const live = await input.compile(
+    proposedLength !== undefined ? { lengthMm: proposedLength } : undefined,
+  );
   let repair = createRepairSession(`repair:llm:${proposed.changeSetId}`, 3);
   repair = runRepairAttempt({
     session: repair,
@@ -253,7 +333,7 @@ async function runLlmPath(input: AgentRunInput, config: LlmConfig): Promise<Agen
     .filter((id): id is string => Boolean(id));
 
   return {
-    readSummary: { objectCount: DEFAULT_CATALOG.objects.length },
+    readSummary: { objectCount: catalog.objects.length },
     applied: proposed,
     compileJob: enqueueJob('compile', live.ok, {
       pirHash: live.pirHash,
@@ -281,6 +361,8 @@ async function runLlmPath(input: AgentRunInput, config: LlmConfig): Promise<Agen
     liveCompile: live,
     status,
     llmRounds: rounds,
+    agentContext,
+    ...(agentContext.promptHash !== undefined ? { systemPromptHash: agentContext.promptHash } : {}),
     note:
       status === 'succeeded'
         ? 'LLM proposed a validated ChangeSet; smoke compile ok. Accept & rebuild to commit on AI branch and refresh display meshes.'
@@ -303,9 +385,9 @@ export async function runAgent(input: AgentRunInput): Promise<AgentRunResult> {
       readSummary: { objectCount: 0 },
       applied: {
         changeSetId: 'cs:none',
-        branchId: 'branch:ai-agent',
-        expectedHeadHash: 'head:0',
-        transactionId: 'txn:none',
+        branchId: input.branchBinding?.branchId ?? 'branch:ai-agent',
+        expectedHeadHash: input.branchBinding?.expectedHeadHash ?? 'head:0',
+        transactionId: input.branchBinding?.transactionId ?? 'txn:none',
         commands: [{ op: 'update', targetId: 'y:demo:01', payload: {} }],
         actor: 'ai',
         disposition: 'rejected',

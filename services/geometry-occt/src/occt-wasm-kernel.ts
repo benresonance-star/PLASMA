@@ -5,6 +5,8 @@ import { createSpdsError } from '@spds/failure-taxonomy';
 import { sha256Canonical } from '@spds/reproducibility';
 import type {
   GeometryRepresentation,
+  MeasureRequest,
+  MeasureResult,
   Mesh,
   ShellRequest,
   SweepRequest,
@@ -111,6 +113,24 @@ export class OcctWasmKernel {
 
   get(representationId: string): GeometryRepresentation | undefined {
     return this.exact.get(representationId);
+  }
+
+  /**
+   * Honest mesh-indicative measure — never claims B-rep for occt-wasm.
+   * Uses AABB taxonomy on delegated constructive solids / imported extents.
+   */
+  measure(req: MeasureRequest): MeasureResult {
+    const exactResult = this.exact.measure(req);
+    return {
+      ...exactResult,
+      provenance: 'mesh-indicative',
+      engine: {
+        layer: req.layer ?? 'geometry-service',
+        kernel: this.kernelId,
+        label: 'OCCT WASM (mesh-indicative)',
+      },
+      meshIndicative: exactResult.quantity,
+    };
   }
 
   async importStep(input: {

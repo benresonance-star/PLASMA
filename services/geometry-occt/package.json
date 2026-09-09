@@ -17,6 +17,7 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint src --max-warnings 0",
     "test": "vitest run",
+    "dev": "tsx src/server-main.ts",
     "start": "node dist/server-main.js"
   },
   "dependencies": {
@@ -29,6 +30,7 @@
     "@spds/topology-operators": "workspace:*",
     "fastify": "^5.11.3",
     "occt-import-js": "0.0.23",
+    "opencascade.js": "2.0.0-beta.b5ff984",
     "zod": "^4.4.3"
   },
   "devDependencies": {

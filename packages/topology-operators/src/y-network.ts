@@ -16,6 +16,7 @@ export interface YArm {
   readonly id: string;
   readonly neighborJunctionIndex: number;
   readonly sharedPrimalEdge: readonly [number, number];
+  readonly target: Vec3;
   readonly lengthMmPlaceholder: number;
 }
 
@@ -45,6 +46,19 @@ export interface YNetwork {
     readonly boundary: number;
     readonly excluded: number;
   };
+}
+
+export const Y_ARM_LABELS = ['A', 'B', 'C'] as const;
+export type YArmLabel = (typeof Y_ARM_LABELS)[number];
+
+export interface YArmSegment {
+  readonly id: string;
+  readonly semanticOwner: string;
+  readonly armId: string;
+  readonly armLabel: YArmLabel;
+  readonly featurePath: `arm:${YArmLabel}`;
+  readonly a: Vec3;
+  readonly b: Vec3;
 }
 
 export const DEFAULT_Y_PROFILE: YProfileParameters = {
@@ -103,12 +117,7 @@ export function extractYNetwork(
   const radiusMm = diameterMm / 2;
 
   const faceCentroids: Vec3[] = geo.faces.map((face) =>
-    normalize(
-      add(
-        add(geo.vertices[face[0]]!, geo.vertices[face[1]]!),
-        geo.vertices[face[2]]!,
-      ),
-    ),
+    normalize(add(add(geo.vertices[face[0]]!, geo.vertices[face[1]]!), geo.vertices[face[2]]!)),
   );
 
   // Map primal edge -> faces that use it
@@ -166,6 +175,7 @@ export function extractYNetwork(
         id: `arm:y:${String(faceIndex).padStart(4, '0')}:${arms.length}`,
         neighborJunctionIndex: neighbor,
         sharedPrimalEdge: a < b ? [a, b] : [b, a],
+        target,
         lengthMmPlaceholder: length(sub(target, origin)) * profile.apertureRatio,
       });
     }
@@ -207,6 +217,43 @@ export function validateYProfile(profile: YProfileParameters): void {
   if (profile.wallThicknessMm * 2 >= profile.armWidthMm) {
     throw new Error('wallThickness too large for armWidth');
   }
+}
+
+export function deriveYComponentArmSegments(
+  component: YComponent,
+  lengthMm?: number,
+): readonly YArmSegment[] {
+  const origin = component.frame.origin;
+  return [...component.arms]
+    .sort((a, b) => a.id.localeCompare(b.id))
+    .map((arm, index) => {
+      const armLabel = Y_ARM_LABELS[index];
+      if (!armLabel) {
+        throw new Error(`Unsupported Y arm index ${index} for ${component.id}`);
+      }
+      const dx = arm.target[0] - origin[0];
+      const dy = arm.target[1] - origin[1];
+      const dz = arm.target[2] - origin[2];
+      const magnitude = Math.hypot(dx, dy, dz);
+      if (!(magnitude > 1e-9)) {
+        throw new Error(`Degenerate Y arm ${arm.id}`);
+      }
+      const segmentLength =
+        lengthMm !== undefined && Number.isFinite(lengthMm) ? lengthMm : arm.lengthMmPlaceholder;
+      return {
+        id: `${component.id}/arm:${armLabel}`,
+        semanticOwner: component.id,
+        armId: arm.id,
+        armLabel,
+        featurePath: `arm:${armLabel}` as const,
+        a: [origin[0], origin[1], origin[2]],
+        b: [
+          origin[0] + (dx / magnitude) * segmentLength,
+          origin[1] + (dy / magnitude) * segmentLength,
+          origin[2] + (dz / magnitude) * segmentLength,
+        ],
+      };
+    });
 }
 
 export function clearOpeningMm(profile: YProfileParameters, armLengthMm: number): number {

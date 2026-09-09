@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import {
+  MeasureRequestSchema,
   ShellRequestSchema,
   SweepRequestSchema,
   TessellateRequestSchema,
@@ -9,7 +10,9 @@ import {
   representationsToStepText,
 } from '@spds/geometry-contracts';
 import { createGeometryKernel, type GeometryKernel } from './kernel-factory.js';
+import { OcctNativeKernel } from './occt-native-kernel.js';
 import { OcctWasmKernel } from './occt-wasm-kernel.js';
+import { compileMeshesDual } from './compile-meshes.js';
 import { generateD01YFixtureSet } from './y-brep.js';
 
 export function buildGeometryServer(kernel: GeometryKernel = createGeometryKernel()) {
@@ -106,11 +109,38 @@ export function buildGeometryServer(kernel: GeometryKernel = createGeometryKerne
   }>('/v1/export/mesh', async (req, reply) => {
     const format = req.body?.format ?? 'stl';
     if (format === 'step') {
+      // Prefer true OCCT STEP from a native solid when representationId is set.
+      if (req.body?.representationId && kernel instanceof OcctNativeKernel) {
+        try {
+          await kernel.ensureReady();
+          const exported = kernel.exportStep(req.body.representationId);
+          return reply.send({
+            format: 'step',
+            encoding: 'utf8',
+            kernel: 'occt-native',
+            contentHash: exported.contentHash,
+            fabricationReady: false,
+            parametricClaim: 'reference-only',
+            stepText: exported.stepText,
+            bytesBase64: Buffer.from(exported.stepText, 'utf8').toString('base64'),
+            byteLength: Buffer.byteLength(exported.stepText, 'utf8'),
+          });
+        } catch (err) {
+          return reply.code(422).send({
+            code: 'GEOMETRY_INVALID',
+            summary: err instanceof Error ? err.message : 'native STEP export failed',
+            recoverable: true,
+            affectedSemanticIds: [],
+          });
+        }
+      }
       const owners = req.body?.semanticOwners ?? ['part:export'];
       const bytes = representationsToStepText(owners);
       return reply.send({
         format,
         encoding: 'binary',
+        kernel: kernel.kernelId,
+        note: 'Placeholder STEP text (owners only) — use occt-native + representationId for true B-rep STEP',
         bytesBase64: Buffer.from(bytes).toString('base64'),
         byteLength: bytes.byteLength,
       });
@@ -137,6 +167,124 @@ export function buildGeometryServer(kernel: GeometryKernel = createGeometryKerne
       bytesBase64: Buffer.from(bytes).toString('base64'),
       byteLength: bytes.byteLength,
     });
+  });
+
+  /** Dual-engine measure: distance / edgeLength / faceArea / angle (edge–edge or face–face). */
+  app.post('/v1/measure', async (req, reply) => {
+    try {
+      const body = MeasureRequestSchema.parse(req.body);
+      if (kernel instanceof OcctNativeKernel) {
+        await kernel.ensureReady();
+      }
+      if (!('measure' in kernel) || typeof kernel.measure !== 'function') {
+        return reply.code(501).send({
+          code: 'OPERATOR_UNAVAILABLE',
+          summary: 'Active kernel does not support measure',
+          recoverable: true,
+          affectedSemanticIds: [],
+        });
+      }
+      return reply.send(
+        kernel.measure({
+          ...body,
+          layer: body.layer ?? 'geometry-service',
+        }),
+      );
+    } catch (err) {
+      const e = err as {
+        code?: string;
+        summary?: string;
+        recoverable?: boolean;
+        affectedSemanticIds?: string[];
+      };
+      if (e.code) {
+        return reply.code(422).send({
+          code: e.code,
+          summary: e.summary,
+          recoverable: e.recoverable ?? true,
+          affectedSemanticIds: e.affectedSemanticIds ?? [],
+        });
+      }
+      return reply.code(400).send({
+        code: 'SEMANTIC_INVALID',
+        summary: err instanceof Error ? err.message : 'Invalid measure request',
+        recoverable: true,
+        affectedSemanticIds: [],
+      });
+    }
+  });
+
+  /**
+   * Schema compile → exact + OCCT meshes.
+   * occt-native = constructive OpenCascade.js B-rep; occt-wasm = STEP-tessellate fallback.
+   */
+  app.post<{
+    Body: { compile?: unknown; kernels?: readonly string[] };
+  }>('/v1/compile/meshes', async (req, reply) => {
+    const kernels = req.body?.kernels ?? ['occt-wasm'];
+    const wantWasm = kernels.includes('occt-wasm');
+    const wantNative = kernels.includes('occt-native');
+    const occtKernel = wantWasm
+      ? kernel instanceof OcctWasmKernel
+        ? kernel
+        : new OcctWasmKernel()
+      : null;
+    const nativeKernel = wantNative
+      ? kernel instanceof OcctNativeKernel
+        ? kernel
+        : new OcctNativeKernel()
+      : null;
+    try {
+      if (nativeKernel) {
+        try {
+          await nativeKernel.ensureReady();
+        } catch {
+          // compileMeshesDual records occtNativeError
+        }
+      }
+      const result = await compileMeshesDual({
+        compile: req.body?.compile,
+        occtKernel,
+        nativeKernel,
+      });
+      return reply.code(201).send({
+        exact: result.exact,
+        ...(result.occt
+          ? {
+              occt: {
+                meshes: result.occt.meshes,
+                stepHashes: result.occt.stepHashes,
+                kernel: result.occt.kernel,
+                label: 'OCCT WASM (STEP-tessellated)',
+              },
+            }
+          : {}),
+        ...(result.occtNative
+          ? {
+              occtNative: {
+                representations: result.occtNative.representations,
+                meshes: result.occtNative.meshes,
+                meshHashes: result.occtNative.meshHashes,
+                stepHashes: result.occtNative.stepHashes,
+                kernel: result.occtNative.kernel,
+                label: 'OCCT native (constructive)',
+                fabricationReady: false,
+              },
+            }
+          : {}),
+        ...(result.occtError !== undefined ? { occtError: result.occtError } : {}),
+        ...(result.occtNativeError !== undefined
+          ? { occtNativeError: result.occtNativeError }
+          : {}),
+      });
+    } catch (err) {
+      return reply.code(422).send({
+        code: 'GEOMETRY_INVALID',
+        summary: err instanceof Error ? err.message : 'compile/meshes failed',
+        recoverable: true,
+        affectedSemanticIds: [],
+      });
+    }
   });
 
   /** Live OCCT WASM STEP import (requires OcctWasmKernel). */

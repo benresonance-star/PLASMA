@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { hashState } from './hash.js';
+import type { VersionStore } from './store.js';
 import type {
   Actor,
   Branch,
@@ -17,7 +18,7 @@ interface BranchState {
   snapshots: Snapshot[];
 }
 
-export class InMemoryVersionStore {
+export class InMemoryVersionStore implements VersionStore {
   private readonly models = new Map<string, ModelRecord>();
   private readonly branches = new Map<string, BranchState>();
 

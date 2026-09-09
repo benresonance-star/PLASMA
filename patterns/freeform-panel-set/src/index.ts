@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import {
   parsePatternDefinition,
   type PatternDefinition,
+  type PatternParameterDefinition,
 } from '@spds/pattern-engine';
 
 export function loadFreeformPanelPatternManifest(
@@ -18,7 +19,7 @@ export function loadFreeformPanelPatternManifest(
     applicableTo: string[];
     requires: string[];
     operators: string[];
-    parameters: Record<string, { type: string; default?: unknown }>;
+    parameters: Record<string, Omit<PatternParameterDefinition, 'name'>>;
   };
   return parsePatternDefinition({
     id: raw.id,

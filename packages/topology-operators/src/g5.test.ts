@@ -3,6 +3,7 @@ import { D01_TOPOLOGY_POLICY, generateD01Topology, generateGoldbergTopology } fr
 import {
   DEFAULT_Y_PROFILE,
   clearOpeningMm,
+  deriveYComponentArmSegments,
   extractYNetwork,
   validateYProfile,
 } from './y-network.js';
@@ -16,9 +17,26 @@ describe('G5 Y semantic network', () => {
     expect(network.components.every((c) => c.arms.length === 3)).toBe(true);
     expect(network.components.every((c) => c.id.startsWith('component:y:'))).toBe(true);
     expect(network.components.some((c) => c.frame.degenerate)).toBe(false);
+    expect(
+      network.components.every((component) =>
+        component.arms.every(
+          (arm) =>
+            Math.hypot(
+              arm.target[0] - component.frame.origin[0],
+              arm.target[1] - component.frame.origin[1],
+              arm.target[2] - component.frame.origin[2],
+            ) > 0,
+        ),
+      ),
+    ).toBe(true);
 
     const again = extractYNetwork(topo, D01_TOPOLOGY_POLICY.diameterMm);
     expect(again.components.map((c) => c.id)).toEqual(network.components.map((c) => c.id));
+    expect(again.components[0]?.arms.map((arm) => arm.target)).toEqual(
+      network.components[0]?.arms.map((arm) => arm.target),
+    );
+    const segments = deriveYComponentArmSegments(network.components[0]!);
+    expect(segments.map((segment) => segment.featurePath)).toEqual(['arm:A', 'arm:B', 'arm:C']);
   });
 
   it('skips excluded topology and validates Y profile parameters', () => {
@@ -29,9 +47,9 @@ describe('G5 Y semantic network', () => {
     const half = extractYNetwork(generateD01Topology(), D01_TOPOLOGY_POLICY.diameterMm);
     expect(half.counts.junctions).toBeLessThan(full.counts.junctions);
     expect(() => validateYProfile(DEFAULT_Y_PROFILE)).not.toThrow();
-    expect(() =>
-      validateYProfile({ ...DEFAULT_Y_PROFILE, apertureRatio: 1.2 }),
-    ).toThrow(/apertureRatio/);
+    expect(() => validateYProfile({ ...DEFAULT_Y_PROFILE, apertureRatio: 1.2 })).toThrow(
+      /apertureRatio/,
+    );
     expect(clearOpeningMm(DEFAULT_Y_PROFILE, 1000)).toBeGreaterThan(0);
   });
 });

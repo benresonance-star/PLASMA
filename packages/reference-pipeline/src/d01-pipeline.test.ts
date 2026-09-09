@@ -24,7 +24,10 @@ describe('E0 D01 reference pipeline', () => {
     expect(a.semanticObjectCount).toBeGreaterThan(0);
     expect(a.topology.counts.cells).toBe(42);
     expect(a.yNetwork.counts.junctions).toBeGreaterThan(0);
-    expect(a.representations).toHaveLength(8);
+    expect(a.representations).toHaveLength(24);
+    expect(
+      new Set(a.representations.flatMap((representation) => representation.subElementPaths)).size,
+    ).toBe(72);
     expect(a.representations.every((r) => r.mass.volumeMm3 > 0)).toBe(true);
     expect(a.fabrication.artifacts).toHaveLength(3);
     expect(a.fabrication.artifacts.every((art) => art.payloadEncoding === 'binary')).toBe(true);
@@ -32,6 +35,12 @@ describe('E0 D01 reference pipeline', () => {
     expect(a.pipelineHash).toBe(b.pipelineHash);
     expect(a.pirHash).toBe(b.pirHash);
     expect(a.dagHash).toBe(b.dagHash);
+    expect(a.compileRequest.snapshotHash).toMatch(/^snapshot:preview:/);
+    expect(a.pir.operations.map((operation) => operation.produces?.form?.kind)).toEqual([
+      'topology',
+      'topology',
+      'topology',
+    ]);
 
     expect(
       assessReproducibility(a.release.manifest, {
@@ -53,11 +62,38 @@ describe('E0 D01 reference pipeline', () => {
   });
 
   it('lengthMmOverride changes pipelineHash and representation volume', async () => {
-    const short = await runD01ReferencePipeline({ yLimit: 2, lengthMmOverride: 8 });
-    const long = await runD01ReferencePipeline({ yLimit: 2, lengthMmOverride: 12 });
+    const short = await runD01ReferencePipeline({ yLimit: 2, lengthMmOverride: 1500 });
+    const long = await runD01ReferencePipeline({ yLimit: 2, lengthMmOverride: 3000 });
     expect(short.pipelineHash).not.toBe(long.pipelineHash);
     const vol = (reps: typeof short.representations) =>
       reps.reduce((sum, r) => sum + r.mass.volumeMm3, 0);
     expect(vol(long.representations)).toBeGreaterThan(vol(short.representations) * 1.01);
+  });
+
+  it('uses effective topology parameters instead of the frozen D01 policy', async () => {
+    const frequency2 = await runD01ReferencePipeline({
+      yLimit: 2,
+      frequency: 2,
+      diameterMm: 20000,
+      riseRatio: 0.5,
+    });
+    const frequency3 = await runD01ReferencePipeline({
+      yLimit: 2,
+      frequency: 3,
+      diameterMm: 17750,
+      riseRatio: 0.5,
+    });
+
+    expect(frequency2.topology.counts.cells).toBe(42);
+    expect(frequency3.topology.counts.cells).toBe(92);
+    expect(frequency3.topology.counts.pentagons).toBe(12);
+    expect(frequency3.topology.counts.hexagons).toBe(80);
+    expect(frequency3.compileRequest.parameters).toMatchObject({
+      frequency: 3,
+      diameterMm: 17750,
+      riseRatio: 0.5,
+    });
+    expect(frequency3.pirHash).not.toBe(frequency2.pirHash);
+    expect(frequency3.pipelineHash).not.toBe(frequency2.pipelineHash);
   });
 });

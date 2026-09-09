@@ -18,9 +18,9 @@ describe('E4 A01/F01 pipelines + live adversarial', () => {
     expect(a.connectionHoleCount).toBeGreaterThan(0);
     expect(a.bomLineCount).toBeGreaterThan(0);
     expect(a.geometryDirtyIds.length).toBeGreaterThan(0);
-    expect(a.representations.every((r) => r.subElementPaths.some((p) => p.includes('/hole:')))).toBe(
-      true,
-    );
+    expect(
+      a.representations.every((r) => r.subElementPaths.some((p) => p.includes('/hole:'))),
+    ).toBe(true);
   });
 
   it('runs F01 freeform through shared layers without dome imports', async () => {
@@ -30,16 +30,28 @@ describe('E4 A01/F01 pipelines + live adversarial', () => {
     expect(f01.layers).toContain('panelisation');
     expect(f01.panelCount).toBe(1);
     expect(f01.representations.length).toBe(1);
+    expect(f01.compileRequest.snapshotHash).toMatch(/^snapshot:preview:/);
+    expect(f01.exactMeshes).toHaveLength(1);
+    const compileOp = f01.compileRequest.ops[0]!;
+    expect(compileOp.op).toBe('geometry.extrude@1.0.0');
+    if (compileOp.op !== 'geometry.extrude@1.0.0') {
+      throw new Error('F01 must lower to planar extrusion');
+    }
+    expect(compileOp.profile).toHaveLength(4);
+    expect(compileOp.vector).toEqual([0, 0, 4]);
+    expect(f01.representations[0]?.mass.volumeMm3).toBe(800 * 600 * 4);
     expect(f01.release.status).toBe('published');
+    expect(f01.pir.operations.map((operation) => operation.produces?.form?.kind)).toEqual([
+      'geometry',
+      'geometry',
+    ]);
   });
 
   it('proves live D01/A01/F01 completeness and adversarial structured fails', async () => {
     const suite = await buildLiveReferenceCompletenessSuite();
     expect(suite.map((r) => r.modelId).sort()).toEqual(['A01', 'D01', 'F01']);
     expect(suite.every((r) => !r.bypassDetected)).toBe(true);
-    expect(suite.every((r) => r.layers.includes('pir') && r.layers.includes('release'))).toBe(
-      true,
-    );
+    expect(suite.every((r) => r.layers.includes('pir') && r.layers.includes('release'))).toBe(true);
 
     const adv = await runLiveAdversarialSuite();
     expect(adv).toHaveLength(5);

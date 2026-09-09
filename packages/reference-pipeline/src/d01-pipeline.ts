@@ -1,17 +1,26 @@
 import {
   parseCompositionDocument,
   resolveEffectiveState,
+  type CompositionDocument,
+  type EffectiveState,
 } from '@spds/composition-core';
 import { buildExecutionDag, runOperatorDag } from '@spds/execution-dag';
-import { buildFabricationFromRepresentations, type FabricationSnapshotOutputs } from '@spds/fabrication-core';
 import {
+  buildFabricationFromRepresentations,
+  type FabricationSnapshotOutputs,
+} from '@spds/fabrication-core';
+import {
+  executeExactCompile,
   InProcessGeometryKernel,
   meshToAsciiStl,
   meshToGlbJson,
   representationsToStepText,
+  type GeometryCompileMesh,
+  type GeometryCompileRequest,
   type GeometryRepresentation,
 } from '@spds/geometry-contracts';
-import { compilePirFromEffectiveState } from '@spds/parametric-ir';
+import { PreviewLowererRegistry, compilePreviewRequest } from '@spds/preview-compiler';
+import { compilePirFromEffectiveState, type PirDocument } from '@spds/parametric-ir';
 import {
   createDesignRelease,
   publishRelease,
@@ -31,12 +40,14 @@ import {
   type GoldbergTopology,
   type YNetwork,
 } from '@spds/topology-operators';
+import { createYNetworkPreviewLowerer } from './y-network-preview.js';
 
 export interface D01PipelineResult {
   readonly layers: readonly string[];
   readonly bypassDetected: false;
   readonly semanticObjectCount: number;
   readonly effectiveHash: string;
+  readonly pir: PirDocument;
   readonly pirHash: string;
   readonly dagHash: string;
   readonly topologyHash: string;
@@ -46,6 +57,38 @@ export interface D01PipelineResult {
   readonly fabrication: FabricationSnapshotOutputs;
   readonly release: DesignRelease;
   readonly pipelineHash: string;
+  readonly compileRequest: GeometryCompileRequest;
+  readonly compileHash: string;
+  readonly exactMeshes: readonly GeometryCompileMesh[];
+}
+
+export interface GoldbergEffectiveParameters {
+  readonly frequency: number;
+  readonly diameterMm: number;
+  readonly riseRatio: number;
+}
+
+export function readGoldbergEffectiveParameters(
+  effective: EffectiveState,
+): GoldbergEffectiveParameters {
+  const raw = effective.objects['params'];
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+    throw new Error('Effective composition is missing params');
+  }
+  const params = raw as Record<string, unknown>;
+  const frequency = Number(params['frequency']);
+  const diameterMm = Number(params['diameterMm']);
+  const riseRatio = Number(params['riseRatio']);
+  if (!Number.isInteger(frequency) || frequency < 1) {
+    throw new Error('frequency must be a positive integer');
+  }
+  if (!(diameterMm > 0)) {
+    throw new Error('diameterMm must be positive');
+  }
+  if (!(riseRatio >= 0 && riseRatio <= 1)) {
+    throw new Error('riseRatio must be between 0 and 1');
+  }
+  return { frequency, diameterMm, riseRatio };
 }
 
 const D01_UNIVERSE = [
@@ -69,8 +112,25 @@ const D01_UNIVERSE = [
 export async function runD01ReferencePipeline(options?: {
   readonly yLimit?: number;
   readonly kernel?: InProcessGeometryKernel;
-  /** Absolute arm length override (mm) for retained Y sweeps — AI accept / exact regen. */
+  /**
+   * Schema lengthMm for Y sweeps (mm). Prefer this over the deprecated alias.
+   * @deprecated lengthMmOverride — same meaning; kept for API compat.
+   */
+  readonly lengthMm?: number;
+  /** @deprecated Use lengthMm — maps into compile parameters. */
   readonly lengthMmOverride?: number;
+  readonly armWidthMm?: number;
+  readonly structuralDepthMm?: number;
+  /** Authoritative pattern composition. Defaults to the frozen D01 fixture. */
+  readonly composition?: CompositionDocument;
+  /** Convenience overrides used to build the default composition. */
+  readonly frequency?: number;
+  readonly diameterMm?: number;
+  readonly riseRatio?: number;
+  /** Optional OCCT WASM STEP content hashes for dual-kernel publish manifest. */
+  readonly occtWasmStepHashes?: readonly string[];
+  /** Optional constructive OCCT native STEP content hashes (N1.7). */
+  readonly occtNativeStepHashes?: readonly string[];
 }): Promise<D01PipelineResult> {
   const layers = [
     'semantic',
@@ -85,29 +145,41 @@ export async function runD01ReferencePipeline(options?: {
   ] as const;
 
   const semantic = buildD01SemanticFixture();
-  const composition = parseCompositionDocument({
-    id: 'composition:d01-reference',
-    publishedBaseId: 'pattern:goldberg-cellular-topology@1.0.0',
-    publishedBaseImmutable: true,
-    layers: [
-      {
-        layer: 'base',
-        overrides: [
-          { path: 'params.frequency', value: D01_TOPOLOGY_POLICY.frequency },
-          { path: 'params.diameterMm', value: D01_TOPOLOGY_POLICY.diameterMm },
-          { path: 'params.riseRatio', value: D01_TOPOLOGY_POLICY.riseRatio },
-        ],
+  const composition =
+    options?.composition ??
+    parseCompositionDocument({
+      id: 'composition:d01-reference',
+      publishedBaseId: 'pattern:goldberg-cellular-topology@1.0.0',
+      publishedBaseImmutable: true,
+      layers: [
+        {
+          layer: 'base',
+          overrides: [
+            {
+              path: 'params.frequency',
+              value: options?.frequency ?? D01_TOPOLOGY_POLICY.frequency,
+            },
+            {
+              path: 'params.diameterMm',
+              value: options?.diameterMm ?? D01_TOPOLOGY_POLICY.diameterMm,
+            },
+            {
+              path: 'params.riseRatio',
+              value: options?.riseRatio ?? D01_TOPOLOGY_POLICY.riseRatio,
+            },
+          ],
+        },
+      ],
+      objects: {
+        params: {
+          frequency: 1,
+          diameterMm: 10000,
+          riseRatio: 1,
+        },
       },
-    ],
-    objects: {
-      params: {
-        frequency: 1,
-        diameterMm: 10000,
-        riseRatio: 1,
-      },
-    },
-  });
+    });
   const effective = resolveEffectiveState(composition);
+  const effectiveParams = readGoldbergEffectiveParameters(effective);
   const compiled = compilePirFromEffectiveState({
     effective,
     patternInstanceId: 'pattern-instance:d01-reference',
@@ -119,15 +191,14 @@ export async function runD01ReferencePipeline(options?: {
   let topology!: GoldbergTopology;
   let yNetwork!: YNetwork;
   const kernel = options?.kernel ?? new InProcessGeometryKernel();
-  const representations: GeometryRepresentation[] = [];
 
-  const { dag: executed } = await runOperatorDag(dag, new Map(), async (node) => {
+  const { dag: executed, outputs } = await runOperatorDag(dag, new Map(), async (node) => {
     if (node.operator.startsWith('topology.goldberg.class-i@')) {
       const result = await topologyOp.execute(
         {
-          frequency: D01_TOPOLOGY_POLICY.frequency,
-          riseRatio: D01_TOPOLOGY_POLICY.riseRatio,
-          diameterMm: D01_TOPOLOGY_POLICY.diameterMm,
+          frequency: effectiveParams.frequency,
+          riseRatio: effectiveParams.riseRatio,
+          diameterMm: effectiveParams.diameterMm,
         },
         {
           correlationId: 'd01-pipeline',
@@ -135,71 +206,59 @@ export async function runD01ReferencePipeline(options?: {
         },
       );
       topology = result.output;
-      assertD01TopologyInvariants(topology);
+      if (effectiveParams.frequency === D01_TOPOLOGY_POLICY.frequency) {
+        assertD01TopologyInvariants(topology);
+      }
       return result.output;
     }
     if (node.operator.startsWith('semantic.bind@')) {
       return { bound: true, cells: topology.counts.cells };
     }
     if (node.operator.startsWith('topology.y-network@')) {
-      yNetwork = extractYNetwork(topology, D01_TOPOLOGY_POLICY.diameterMm);
+      yNetwork = extractYNetwork(topology, effectiveParams.diameterMm);
       return yNetwork;
     }
     throw new Error(`OPERATOR_UNAVAILABLE: ${node.operator}`);
   });
 
-  // Geometry stage (operator boundary): generate Y B-reps from network
-  const retained = yNetwork.components
-    .filter((c) => c.trim === 'retained')
-    .slice(0, options?.yLimit ?? 10);
-  for (const component of retained) {
-    const origin = component.frame.origin;
-    const arm = component.arms[0]!;
-    const lengthMm =
-      options?.lengthMmOverride !== undefined && Number.isFinite(options.lengthMmOverride)
-        ? options.lengthMmOverride
-        : arm.lengthMmPlaceholder;
-    const start: [number, number, number] = [origin[0], origin[1], origin[2]];
-    const end: [number, number, number] = [
-      origin[0] + component.frame.tangent[0] * lengthMm,
-      origin[1] + component.frame.tangent[1] * lengthMm,
-      origin[2] + component.frame.tangent[2] * lengthMm,
-    ];
-    representations.push(
-      kernel.sweep({
-        semanticOwner: component.id,
-        pirOperationId: `pir:y-brep:${component.id}`,
-        path: [start, end],
-        profileWidthMm: yNetwork.profile.armWidthMm,
-        profileDepthMm: yNetwork.profile.structuralDepthMm,
-        wallThicknessMm: yNetwork.profile.wallThicknessMm,
-      }),
-    );
-  }
-
-  const snapshotId = `snapshot:d01:${compiled.pirHash.slice(0, 12)}`;
-  const meshParts = representations.map((rep) => {
-    const mesh = kernel.tessellate({
-      representationId: rep.id,
-      chordDeviationMm: 1,
-      angleDeviationDeg: 20,
-    });
-    return { rep, mesh };
+  // Geometry stage: schema compile request → exact kernel (single entry point)
+  const lengthMm = options?.lengthMm ?? options?.lengthMmOverride;
+  const previewRegistry = new PreviewLowererRegistry();
+  previewRegistry.register(createYNetworkPreviewLowerer({ componentLimit: options?.yLimit ?? 10 }));
+  const compileReq = compilePreviewRequest({
+    pir: compiled.pir,
+    pirHash: compiled.pirHash,
+    dagHash: executed.dagHash,
+    outputs,
+    registry: previewRegistry,
+    parameters: {
+      ...(lengthMm !== undefined ? { lengthMm } : {}),
+      armWidthMm: options?.armWidthMm ?? yNetwork.profile.armWidthMm,
+      structuralDepthMm: options?.structuralDepthMm ?? yNetwork.profile.structuralDepthMm,
+      frequency: effectiveParams.frequency,
+      diameterMm: effectiveParams.diameterMm,
+      riseRatio: effectiveParams.riseRatio,
+    },
+    compilerVersion: 'reference-pipeline@0.0.0',
   });
-  const stlChunks = meshParts.flatMap(({ rep, mesh }) =>
+  const compiledGeom = executeExactCompile(kernel, compileReq);
+  const representations: GeometryRepresentation[] = [...compiledGeom.representations];
+
+  const snapshotId = compileReq.snapshotHash;
+  const stlChunks = compiledGeom.meshes.flatMap((mesh) =>
     Array.from(
       meshToAsciiStl({
-        name: rep.semanticOwner.replace(/[^a-zA-Z0-9_-]/g, '_'),
+        name: mesh.semanticOwner.replace(/[^a-zA-Z0-9_-]/g, '_'),
         vertices: mesh.vertices,
         indices: mesh.indices,
       }),
     ),
   );
-  const glb = meshParts[0]
+  const glb = compiledGeom.meshes[0]
     ? meshToGlbJson({
         name: 'd01',
-        vertices: meshParts[0].mesh.vertices,
-        indices: meshParts[0].mesh.indices,
+        vertices: compiledGeom.meshes[0].vertices,
+        indices: compiledGeom.meshes[0].indices,
       })
     : new Uint8Array();
   const fabrication = buildFabricationFromRepresentations({
@@ -223,7 +282,29 @@ export async function runD01ReferencePipeline(options?: {
     },
     tolerancePolicyVersion: TOLERANCE_POLICY_VERSION,
     determinismClass: 'D0' as const,
-    artifactHashes: fabrication.artifacts.map((a) => a.contentHash),
+    artifactHashes: [
+      ...fabrication.artifacts.map((a) => a.contentHash),
+      ...compiledGeom.artifactHashes,
+    ],
+    compileHash: compiledGeom.compileHash,
+    pirHash: compiled.pirHash,
+    dagHash: executed.dagHash,
+    kernelArtifactHashes: {
+      exact: compiledGeom.artifactHashes,
+      ...(options?.occtWasmStepHashes !== undefined && options.occtWasmStepHashes.length > 0
+        ? { occtWasm: options.occtWasmStepHashes }
+        : {}),
+      ...(options?.occtNativeStepHashes !== undefined && options.occtNativeStepHashes.length > 0
+        ? { occtNative: options.occtNativeStepHashes }
+        : {}),
+      ...((options?.occtWasmStepHashes === undefined || options.occtWasmStepHashes.length === 0) &&
+      (options?.occtNativeStepHashes === undefined || options.occtNativeStepHashes.length === 0)
+        ? {
+            occtNote:
+              'OCCT hashes omitted — dual-kernel publish did not attach OCCT STEP/mesh hashes',
+          }
+        : {}),
+    },
   };
   const release = publishRelease(
     validateRelease(createDesignRelease({ snapshotId, manifest, fabricationProtected: true })),
@@ -237,8 +318,11 @@ export async function runD01ReferencePipeline(options?: {
     yCount: yNetwork.counts.junctions,
     representationIds: representations.map((r) => r.id),
     artifactHashes: manifest.artifactHashes,
+    compileHash: compiledGeom.compileHash,
+    parameters: compileReq.parameters,
+    topologyParameters: effectiveParams,
     releaseId: release.releaseId,
-    lengthMmOverride: options?.lengthMmOverride ?? null,
+    lengthMm: lengthMm ?? null,
   });
 
   return {
@@ -246,6 +330,7 @@ export async function runD01ReferencePipeline(options?: {
     bypassDetected: false,
     semanticObjectCount: semantic.objects.size,
     effectiveHash: effective.effectiveHash,
+    pir: compiled.pir,
     pirHash: compiled.pirHash,
     dagHash: executed.dagHash,
     topologyHash: hashTopology(topology),
@@ -255,6 +340,9 @@ export async function runD01ReferencePipeline(options?: {
     fabrication,
     release,
     pipelineHash,
+    compileRequest: compileReq,
+    compileHash: compiledGeom.compileHash,
+    exactMeshes: compiledGeom.meshes,
   };
 }
 

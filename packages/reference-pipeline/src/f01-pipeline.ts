@@ -1,15 +1,16 @@
-import {
-  parseCompositionDocument,
-  resolveEffectiveState,
-} from '@spds/composition-core';
+import { parseCompositionDocument, resolveEffectiveState } from '@spds/composition-core';
 import { buildExecutionDag, runOperatorDag } from '@spds/execution-dag';
 import { buildFabricationFromRepresentations } from '@spds/fabrication-core';
 import {
+  executeExactCompile,
   InProcessGeometryKernel,
+  type GeometryCompileMesh,
+  type GeometryCompileRequest,
   type GeometryRepresentation,
 } from '@spds/geometry-contracts';
 import { buildF01Fixture } from '@spds/package-core';
-import { parsePirDocument } from '@spds/parametric-ir';
+import { parsePirDocument, type PirDocument } from '@spds/parametric-ir';
+import { PreviewLowererRegistry, compilePreviewRequest } from '@spds/preview-compiler';
 import {
   createDesignRelease,
   publishRelease,
@@ -18,6 +19,11 @@ import {
 } from '@spds/release-core';
 import { sha256Canonical } from '@spds/reproducibility';
 import { TOLERANCE_POLICY_VERSION } from '@spds/shared-units';
+import {
+  PLANAR_PROFILE_EXTRUDE_PREVIEW_CAPABILITY,
+  createPlanarProfileExtrudePreviewLowerer,
+  type PlanarProfileExtrudePreviewOutput,
+} from './planar-extrude-preview.js';
 
 export interface F01PipelineResult {
   readonly layers: readonly string[];
@@ -25,9 +31,13 @@ export interface F01PipelineResult {
   readonly panelCount: number;
   readonly usesDomeImports: false;
   readonly effectiveHash: string;
+  readonly pir: PirDocument;
   readonly pirHash: string;
   readonly dagHash: string;
   readonly representations: readonly GeometryRepresentation[];
+  readonly compileRequest: GeometryCompileRequest;
+  readonly compileHash: string;
+  readonly exactMeshes: readonly GeometryCompileMesh[];
   readonly release: DesignRelease;
   readonly pipelineHash: string;
 }
@@ -88,7 +98,14 @@ export async function runF01ReferencePipeline(options?: {
         inputs: {
           panelCount: { value: params.panelCount },
         },
-        produces: { role: 'surface:trimmed' },
+        produces: {
+          role: 'surface:trimmed',
+          form: {
+            kind: 'geometry',
+            geometryType: 'surface',
+            capabilities: ['trim.surface', 'emit.local-frames'],
+          },
+        },
         provenance: {
           patternInstance: 'pattern-instance:f01-reference',
           compositionHash: effective.effectiveHash,
@@ -104,7 +121,18 @@ export async function runF01ReferencePipeline(options?: {
           surface: { pirRef: 'pir:surface.trim' },
           thicknessMm: { value: params.shellThicknessMm },
         },
-        produces: { role: 'panel:shell' },
+        produces: {
+          role: 'panel:shell',
+          form: {
+            kind: 'geometry',
+            geometryType: 'solid',
+            capabilities: [
+              'shell.offset',
+              'fabrication.part',
+              PLANAR_PROFILE_EXTRUDE_PREVIEW_CAPABILITY,
+            ],
+          },
+        },
         provenance: {
           patternInstance: 'pattern-instance:f01-reference',
           compositionHash: effective.effectiveHash,
@@ -117,41 +145,49 @@ export async function runF01ReferencePipeline(options?: {
   const dag = buildExecutionDag(pir, pirHash);
 
   let panelCount = 0;
-  const { dag: executed } = await runOperatorDag(dag, new Map(), async (node) => {
+  const { dag: executed, outputs } = await runOperatorDag(dag, new Map(), async (node) => {
     if (node.operator.startsWith('trim.surface@')) {
       panelCount = fixture.panels.length;
       return { panels: panelCount, trimCurves: fixture.panels[0]!.trimCurveIds.length };
     }
     if (node.operator.startsWith('shell.offset@')) {
-      return { thicknessMm: params.shellThicknessMm };
+      const output: PlanarProfileExtrudePreviewOutput = {
+        parts: fixture.panels.map((panel) => ({
+          id: panel.id,
+          profile: [
+            [0, 0, 0],
+            [800, 0, 0],
+            [800, 600, 0],
+            [0, 600, 0],
+          ],
+          vector: [0, 0, params.shellThicknessMm],
+          featurePath: 'panel:shell',
+        })),
+      };
+      return output;
     }
     throw new Error(`OPERATOR_UNAVAILABLE: ${node.operator}`);
   });
 
   const kernel = options?.kernel ?? new InProcessGeometryKernel();
-  const representations: GeometryRepresentation[] = [];
-  for (const panel of fixture.panels) {
-    const solid = kernel.sweep({
-      semanticOwner: panel.id,
-      pirOperationId: `pir:f01-solid:${panel.id}`,
-      path: [
-        [0, 0, 0],
-        [800, 0, 0],
-        [800, 600, 0],
-      ],
-      profileWidthMm: 200,
-      profileDepthMm: params.shellThicknessMm * 10,
-    });
-    representations.push(
-      kernel.shell({
-        representationId: solid.id,
-        offsetMm: params.shellThicknessMm,
-        semanticOwner: panel.id,
-      }),
-    );
-  }
+  const previewRegistry = new PreviewLowererRegistry();
+  previewRegistry.register(createPlanarProfileExtrudePreviewLowerer());
+  const compileRequest = compilePreviewRequest({
+    pir,
+    pirHash,
+    dagHash: executed.dagHash,
+    outputs,
+    registry: previewRegistry,
+    parameters: {
+      shellThicknessMm: params.shellThicknessMm,
+      panelCount: params.panelCount,
+    },
+    compilerVersion: 'reference-pipeline@0.0.0',
+  });
+  const compiledGeometry = executeExactCompile(kernel, compileRequest);
+  const representations: GeometryRepresentation[] = [...compiledGeometry.representations];
 
-  const snapshotId = `snapshot:f01:${pirHash.slice(0, 12)}`;
+  const snapshotId = compileRequest.snapshotHash;
   const fabrication = buildFabricationFromRepresentations({
     snapshotId,
     modelId: fixture.modelId,
@@ -167,7 +203,10 @@ export async function runF01ReferencePipeline(options?: {
     },
     tolerancePolicyVersion: TOLERANCE_POLICY_VERSION,
     determinismClass: 'D1' as const,
-    artifactHashes: fabrication.artifacts.map((a) => a.contentHash),
+    artifactHashes: [
+      ...fabrication.artifacts.map((a) => a.contentHash),
+      ...compiledGeometry.artifactHashes,
+    ],
   };
   const release = publishRelease(
     validateRelease(createDesignRelease({ snapshotId, manifest, fabricationProtected: true })),
@@ -181,6 +220,7 @@ export async function runF01ReferencePipeline(options?: {
     packageId: fixture.packageManifest.packageId,
     representationIds: representations.map((r) => r.id),
     releaseId: release.releaseId,
+    compileHash: compiledGeometry.compileHash,
   });
 
   return {
@@ -189,9 +229,13 @@ export async function runF01ReferencePipeline(options?: {
     panelCount,
     usesDomeImports: false,
     effectiveHash: effective.effectiveHash,
+    pir,
     pirHash,
     dagHash: executed.dagHash,
     representations,
+    compileRequest,
+    compileHash: compiledGeometry.compileHash,
+    exactMeshes: compiledGeometry.meshes,
     release,
     pipelineHash,
   };

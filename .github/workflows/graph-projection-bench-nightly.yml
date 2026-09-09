@@ -1,0 +1,33 @@
+# G1c — Nightly SD12 100k + cache hit + >20% regression gate.
+name: graph-projection-bench-nightly
+
+on:
+  schedule:
+    # 05:15 UTC daily
+    - cron: '15 5 * * *'
+  workflow_dispatch:
+
+jobs:
+  sd12-nightly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NODE_OPTIONS: --use-system-ca
+      SPDS_SCALE_NIGHTLY: '1'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install graph-projection workspace
+        run: pnpm install --frozen-lockfile --filter @spds/graph-projection...
+
+      - name: SD12 nightly benches (1k / 10k / 100k + cache)
+        run: pnpm --filter @spds/graph-projection test:scale:nightly

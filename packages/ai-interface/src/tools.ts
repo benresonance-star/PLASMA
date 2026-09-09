@@ -65,8 +65,16 @@ export function executeReadTool(
   }
 }
 
+export type ChangeSetCommandOp =
+  | 'create'
+  | 'update'
+  | 'delete'
+  | 'apply_pattern'
+  | 'create_group'
+  | 'connect';
+
 export interface ChangeSetCommand {
-  readonly op: 'create' | 'update' | 'delete' | 'apply_pattern';
+  readonly op: ChangeSetCommandOp;
   readonly targetId?: string;
   readonly payload?: unknown;
 }
@@ -95,6 +103,19 @@ export function validateChangeSet(cs: ChangeSet): { readonly ok: boolean; readon
         return { ok: false, reason: 'AI cannot mutate B-rep/Three.js directly' };
       }
     }
+    if (c.op === 'connect') {
+      if (!c.targetId) return { ok: false, reason: 'connect requires targetId' };
+      const p = c.payload && typeof c.payload === 'object' ? (c.payload as Record<string, unknown>) : null;
+      const parent =
+        p && (typeof p.parentId === 'string' || typeof p.newParentId === 'string');
+      if (!parent) return { ok: false, reason: 'connect requires parentId' };
+    }
+    if (c.op === 'create_group' || c.op === 'create' || c.op === 'apply_pattern') {
+      const p = c.payload && typeof c.payload === 'object' ? (c.payload as Record<string, unknown>) : {};
+      if (p && (p.brep !== undefined || p.threeJs !== undefined || p.fabricationReady === true)) {
+        return { ok: false, reason: 'AI cannot mutate B-rep/Three.js / fabrication-ready via organise' };
+      }
+    }
   }
   return { ok: true };
 }
@@ -102,10 +123,13 @@ export function validateChangeSet(cs: ChangeSet): { readonly ok: boolean; readon
 export function impactPreview(cs: ChangeSet): {
   readonly commandCount: number;
   readonly targetIds: readonly string[];
+  readonly ops: readonly ChangeSetCommandOp[];
 } {
+  const targetIds = cs.commands.map((c) => c.targetId).filter((id): id is string => !!id);
   return {
     commandCount: cs.commands.length,
-    targetIds: cs.commands.map((c) => c.targetId).filter((id): id is string => !!id),
+    targetIds,
+    ops: cs.commands.map((c) => c.op),
   };
 }
 

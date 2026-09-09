@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { runAnalysisJob } from '@spds/analysis-worker';
 import { runD01ReferencePipeline } from '@spds/reference-pipeline';
+import { deriveYComponentArmSegments } from '@spds/topology-operators';
 import { analysisLabelIsIndicative, buildAnalysisMeshView } from './analysis-mesh-view.js';
 import { setActivePanel, createShellState } from './shell.js';
 
@@ -10,19 +11,13 @@ describe('E8 D01 → analysis → Analysis Mesh View', () => {
     const yMembers = pipeline.yNetwork.components
       .filter((c) => c.trim === 'retained')
       .slice(0, 2)
-      .map((c) => {
-        const origin = c.frame.origin;
-        const arm = c.arms[0]!;
-        return {
-          id: c.id,
-          a: origin,
-          b: [
-            origin[0] + c.frame.tangent[0] * arm.lengthMmPlaceholder,
-            origin[1] + c.frame.tangent[1] * arm.lengthMmPlaceholder,
-            origin[2] + c.frame.tangent[2] * arm.lengthMmPlaceholder,
-          ] as [number, number, number],
-        };
-      });
+      .flatMap((component) =>
+        deriveYComponentArmSegments(component).map((segment) => ({
+          id: segment.id,
+          a: segment.a,
+          b: segment.b,
+        })),
+      );
     const analysis = runAnalysisJob({
       requestId: 'ui:analysis',
       yMembers,
@@ -38,6 +33,7 @@ describe('E8 D01 → analysis → Analysis Mesh View', () => {
       },
     });
     expect(analysis.status).toBe('succeeded');
+    expect(analysis.model?.beams).toHaveLength(6);
     const view = buildAnalysisMeshView({
       meshArtifactHash: analysis.meshArtifact!.artifactHash,
       elementCount: analysis.meshArtifact!.elementCount,

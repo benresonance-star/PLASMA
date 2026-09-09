@@ -9,7 +9,9 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
@@ -25,6 +27,7 @@
     "@spds/geometry-contracts": "workspace:*",
     "@spds/package-core": "workspace:*",
     "@spds/parametric-ir": "workspace:*",
+    "@spds/preview-compiler": "workspace:^",
     "@spds/release-core": "workspace:*",
     "@spds/reproducibility": "workspace:*",
     "@spds/selectors": "workspace:*",
@@ -34,8 +37,8 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "eslint": "^9.22.0",
     "typescript": "^5.8.2",
-    "vitest": "^3.0.8",
-    "eslint": "^9.22.0"
+    "vitest": "^3.0.8"
   }
 }

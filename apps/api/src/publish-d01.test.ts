@@ -11,13 +11,27 @@ describe('E1/E6 API reference publish', () => {
     });
     expect(res.statusCode).toBe(201);
     const body = res.json() as {
-      release: { status: string };
+      release: {
+        status: string;
+        manifest: {
+          compileHash?: string;
+          kernelArtifactHashes?: {
+            exact?: string[];
+            occtNote?: string;
+          };
+        };
+      };
+      compileHash: string;
       allVerified: boolean;
       stored: unknown[];
     };
     expect(body.release.status).toBe('published');
     expect(body.allVerified).toBe(true);
-    expect(body.stored).toHaveLength(3);
+    expect(body.compileHash).toHaveLength(64);
+    expect(body.release.manifest.compileHash).toBe(body.compileHash);
+    expect(body.release.manifest.kernelArtifactHashes?.exact?.length).toBeGreaterThan(0);
+    expect(body.release.manifest.kernelArtifactHashes?.occtNote).toMatch(/OCCT/);
+    expect(body.stored.length).toBeGreaterThanOrEqual(4);
   });
 
   it('reports live completeness and runs D01 analyze (indicative)', async () => {

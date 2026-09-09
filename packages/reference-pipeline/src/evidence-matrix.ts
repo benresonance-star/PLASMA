@@ -36,7 +36,7 @@ export const SECTION_30A_EVIDENCE: readonly EvidenceCriterion[] = [
     summary: 'STEP import with provenance/units/wrapping',
     evidence: 'occt-import-js WASM STEP + import-worker geometry-client /v1/import/step path',
     status: 'met',
-    note: 'Live OCCT WASM mesh import when GEOMETRY_KERNEL=occt-wasm; constructive ops exact-adapter',
+    note: 'Live OCCT WASM mesh import when GEOMETRY_KERNEL=occt-wasm; constructive ops exact-adapter; schema compile → STEP → /v1/compile/meshes for dual viewport',
   },
   {
     id: 40,
@@ -142,6 +142,46 @@ export const SECTION_30A_EVIDENCE: readonly EvidenceCriterion[] = [
   },
 ];
 
+/** Product-layer evidence — separate from package §30A (34–56). */
+export const PRODUCT_UX_EVIDENCE: readonly EvidenceCriterion[] = [
+  {
+    id: 1001,
+    summary: 'Product UX — explorer live binding',
+    evidence: 'designer-web appBootstrapSuccess + liveBinding.explorerFromApi',
+    status: 'met',
+    note: 'package vs product: product path requires API bootstrap',
+  },
+  {
+    id: 1002,
+    summary: 'Product UX — pipeline from run hash',
+    evidence: 'appBindPipelineRun replaces dag:demo happy path',
+    status: 'met',
+  },
+  {
+    id: 1003,
+    summary: 'Product UX — scripted AI without API key',
+    evidence: 'ai-interface scripted mode + /ai/agent/run',
+    status: 'met',
+  },
+];
+
+/** Product-layer flags distinct from package §30A met claims. */
+export interface ProductUxEvidence {
+  readonly explorerFromApi: boolean;
+  readonly pipelineFromRun: boolean;
+  readonly historyFromStore: boolean;
+  readonly scriptedAiWithoutKey: boolean;
+}
+
+export function assessProductUx(flags: ProductUxEvidence): {
+  readonly ready: boolean;
+  readonly missing: readonly string[];
+} {
+  const missing = (Object.entries(flags) as [keyof ProductUxEvidence, boolean][])
+    .filter(([, v]) => !v)
+    .map(([k]) => k);
+  return { ready: missing.length === 0, missing };
+}
 export function assessSection30AEvidence(rows: readonly EvidenceCriterion[] = SECTION_30A_EVIDENCE): {
   readonly total: number;
   readonly met: number;

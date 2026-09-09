@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { GeometryClient } from '@spds/geometry-client';
+import { ExactKernelAdapter } from './exact-kernel.js';
 import { buildGeometryServer } from './server.js';
 
 describe('E7 geometry-client ↔ geometry service boundary', () => {
   it('sweeps and tessellates through HTTP inject without Docker', async () => {
-    const { app } = buildGeometryServer();
+    // Pin exact-adapter so ambient GEOMETRY_KERNEL=occt-native does not pollute CI-default suite.
+    const { app } = buildGeometryServer(new ExactKernelAdapter());
     const client = new GeometryClient({
       baseUrl: 'http://geometry.local',
       fetchImpl: async (url, init) => {

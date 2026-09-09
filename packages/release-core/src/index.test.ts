@@ -27,6 +27,23 @@ describe('G12A release-core', () => {
     ).toBe('not-reproducible');
   });
 
+  it('accepts dual-kernel compile hashes on manifest', () => {
+    const dual = {
+      ...manifest,
+      compileHash: 'a'.repeat(64),
+      pirHash: 'pir:1',
+      dagHash: 'dag:1',
+      kernelArtifactHashes: {
+        exact: ['exact-hash'],
+        occtNote: 'OCCT hashes omitted — dual-kernel publish did not attach OCCT STEP/mesh hashes',
+      },
+    };
+    const release = createDesignRelease({ snapshotId: 'snap:dual', manifest: dual });
+    expect(release.manifest.compileHash).toHaveLength(64);
+    expect(release.manifest.kernelArtifactHashes?.exact).toEqual(['exact-hash']);
+    expect(release.manifest.kernelArtifactHashes?.occtNote).toMatch(/OCCT hashes omitted/);
+  });
+
   it('protects fabrication-release artifacts from GC', () => {
     const result = gcDryRun({
       artifacts: [

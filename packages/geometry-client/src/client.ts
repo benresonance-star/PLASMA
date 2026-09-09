@@ -1,7 +1,11 @@
 import {
   GeometryRepresentationSchema,
+  MeasureRequestSchema,
+  MeasureResultSchema,
   MeshSchema,
   type GeometryRepresentation,
+  type MeasureRequest,
+  type MeasureResult,
   type Mesh,
   type ShellRequest,
   type SweepRequest,
@@ -57,6 +61,16 @@ export class GeometryClient {
       { method: 'POST', body: JSON.stringify(body) },
       signal,
     );
+  }
+
+  async measure(body: MeasureRequest, signal?: AbortSignal): Promise<MeasureResult> {
+    const parsed = MeasureRequestSchema.parse(body);
+    const json = await this.request(
+      '/v1/measure',
+      { method: 'POST', body: JSON.stringify(parsed) },
+      signal,
+    );
+    return MeasureResultSchema.parse(json);
   }
 
   async exportMesh(

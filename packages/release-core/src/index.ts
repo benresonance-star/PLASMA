@@ -5,12 +5,26 @@ import { assertDeterminismClass } from '@spds/reproducibility';
 
 export type ReproducibilityStatus = 'exact' | 'compatible' | 'not-reproducible';
 
+/** Dual-kernel derived geometry hashes (buffers disposable; hashes durable). */
+export interface KernelArtifactHashes {
+  readonly exact: readonly string[];
+  readonly occtWasm?: readonly string[];
+  readonly occtNative?: readonly string[];
+  /** Explicit note when OCCT hashes are absent (never silent omit under dual publish). */
+  readonly occtNote?: string;
+}
+
 export interface ReproducibilityManifest {
   readonly compilerVersion: string;
   readonly operatorVersions: Readonly<Record<string, string>>;
   readonly tolerancePolicyVersion: string;
   readonly determinismClass: DeterminismClass;
   readonly artifactHashes: readonly string[];
+  /** Schema compile digest (GeometryCompileRequest). */
+  readonly compileHash?: string;
+  readonly pirHash?: string;
+  readonly dagHash?: string;
+  readonly kernelArtifactHashes?: KernelArtifactHashes;
 }
 
 export type DesignReleaseStatus = 'draft' | 'validated' | 'published' | 'superseded';

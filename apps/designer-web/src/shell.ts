@@ -8,8 +8,10 @@ export type PanelId =
   | 'validation'
   | 'history'
   | 'ai'
-  | 'analysis-mesh';
+  | 'analysis-mesh'
+  | 'schema';
 
+/** `mobile-tabs` is deferred for hybrid desktop wiring (see Stage 7.4). */
 export type LayoutMode = 'desktop' | 'mobile-tabs';
 
 export interface ShellContext {

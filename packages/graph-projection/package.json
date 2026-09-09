@@ -1,0 +1,31 @@
+{
+  "name": "@spds/graph-projection",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src --max-warnings 0",
+    "test": "vitest run --exclude src/sd12-scale.nightly.test.ts",
+    "test:scale:pr": "vitest run src/sd12-scale.pr.test.ts",
+    "test:scale:nightly": "vitest run src/sd12-scale.pr.test.ts src/sd12-scale.nightly.test.ts"
+  },
+  "dependencies": {
+    "@spds/semantic-core": "workspace:*",
+    "@spds/semantic-query": "workspace:*",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8",
+    "eslint": "^9.22.0"
+  }
+}

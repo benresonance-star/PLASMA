@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Dual Y-Component Geodesic Pavilion v18 Planar IDs + Cut Counter</title>
+<style>
+:root{
+  --bg:#090d10;--panel:#12171b;--panel2:#1a2127;--line:#2b343b;
+  --text:#edf2f5;--muted:#95a1aa;--blue:#4b8dff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);
+font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+#app{display:grid;grid-template-columns:390px 1fr;height:100vh;min-height:0}
+aside{
+  background:linear-gradient(180deg,#14191e,#0f1418);
+  border-right:1px solid var(--line);
+  height:100vh;min-height:0;overflow-y:auto;overflow-x:hidden;
+  scrollbar-width:thin;scrollbar-color:#4d5a63 #11161a;
+}
+aside::-webkit-scrollbar{width:10px}
+aside::-webkit-scrollbar-track{background:#11161a}
+aside::-webkit-scrollbar-thumb{background:#4d5a63;border-radius:8px;border:2px solid #11161a}
+.header{position:sticky;top:0;z-index:30;background:rgba(18,23,27,.96);backdrop-filter:blur(10px);padding:16px 16px 0;border-bottom:1px solid var(--line)}
+h1{font-size:18px;margin:0 0 3px}.sub{font-size:10px;color:var(--muted);line-height:1.4;margin-bottom:12px}
+.tabs{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
+.tab{border:1px solid var(--line);background:#171d22;color:#aeb8bf;border-radius:8px 8px 0 0;padding:10px;font-weight:700;cursor:pointer}
+.tab.active{background:#242d34;color:#fff;border-bottom-color:#242d34}
+.panel{display:none;padding:0 16px 18px}.panel.active{display:block}
+.section{padding:14px 0;border-top:1px solid #252d33}.section:first-child{border-top:0}
+.section h2{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:#b6c1c8;margin:0 0 12px}
+.control{margin:11px 0}
+label{display:flex;justify-content:space-between;gap:10px;font-size:11px;margin-bottom:6px}
+.value{font-weight:650;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--blue)}
+.switch{display:flex;justify-content:space-between;align-items:center;font-size:11px;margin:8px 0}
+.switch input{width:38px;height:20px}
+.palette{display:grid;grid-template-columns:1fr 60px 70px;gap:6px;align-items:center;margin:6px 0;font-size:10px}
+.palette input[type=color]{width:60px;height:27px;border:1px solid var(--line);background:#111;padding:1px;border-radius:5px}
+.palette code{font-size:9px;color:#b7c1c8}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.card{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:9px}
+.k{font-size:8px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.v{font-size:16px;font-weight:700;margin-top:3px;font-variant-numeric:tabular-nums}
+.u{font-size:8px;color:var(--muted)}
+.note{font-size:9px;color:#98a5ad;line-height:1.45;background:#0d1216;border-left:2px solid #65737d;padding:8px 9px;margin-top:8px}
+.versionItem{border:1px solid var(--line);background:#171d22;border-radius:8px;padding:9px;margin:7px 0;cursor:pointer}
+.versionItem.active{border-color:#5f93ff;background:#1c2730}
+.versionTitle{font-size:11px;font-weight:700;color:#fff}
+.versionMeta{font-size:8px;color:#8f9aa3;margin-top:3px;line-height:1.35}
+.versionActions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+.versionActions button{padding:7px;font-size:9px}
+.versionInput{width:100%;background:#10161a;color:#edf2f5;border:1px solid var(--line);border-radius:6px;padding:8px;font-size:10px}
+textarea.versionInput{min-height:64px;resize:vertical}
+.fileInput{display:none}
+.smallStatus{font-size:9px;color:#9eabb3;margin-top:7px;min-height:14px}
+button{width:100%;padding:9px;border-radius:7px;border:1px solid var(--line);background:#20272d;color:var(--text);cursor:pointer}
+#view{position:relative;min-width:0}
+canvas{display:block;width:100%;height:100%}
+#status{position:absolute;left:14px;bottom:13px;padding:8px 10px;background:rgba(5,8,10,.76);border:1px solid rgba(255,255,255,.08);border-radius:7px;font-size:10px;color:#bac5cc}
+#sceneTools{position:absolute;right:14px;top:14px;padding:10px;background:rgba(6,9,12,.78);border:1px solid rgba(255,255,255,.09);border-radius:8px;font-size:10px;color:#bdc8cf;min-width:190px}
+#sceneTools button{margin-top:7px;padding:7px;font-size:10px}
+.badge{display:inline-block;border:1px solid #3a4650;border-radius:999px;padding:3px 7px;margin-right:4px;color:#d6dee3}
+@media(max-width:900px){
+  #app{grid-template-columns:1fr;grid-template-rows:54vh 46vh}
+  aside{height:54vh;border-right:0;border-bottom:1px solid var(--line)}
+}
+</style>
+</head>
+<body>
+<div id="app">
+<aside>
+  <div class="header">
+    <h1>Dual Geodesic Pavilion</h1>
+    <div class="sub">Two independent Y-component spheres in one scene. Each tab owns its geometry, colours, cut and position.</div>
+    <div class="tabs">
+      <button class="tab active" data-tab="A">Sphere A</button>
+      <button class="tab" data-tab="B">Sphere B</button>
+      <button class="tab" data-tab="Scene">Scene</button>
+      <button class="tab" data-tab="Versions">Versions</button>
+    </div>
+  </div>
+  <div id="panelA" class="panel active"></div>
+  <div id="panelB" class="panel"></div>
+  <div id="panelScene" class="panel"></div>
+  <div id="panelVersions" class="panel"></div>
+</aside>
+
+<main id="view">
+  <div id="sceneTools">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <label style="display:flex;align-items:center;justify-content:space-between;gap:6px"><span><span class="badge">A</span> Dome A</span><input id="showA" type="checkbox" checked></label>
+      <label style="display:flex;align-items:center;justify-content:space-between;gap:6px"><span><span class="badge">B</span> Dome B</span><input id="showB" type="checkbox" checked></label>
+    </div>
+    <div style="margin-top:8px">Orbit: drag · Zoom: wheel/pinch</div>
+    <div style="margin-top:4px">Walk: WASD/arrows · Q/E down/up · Shift = faster</div>
+    <div class="switch" style="margin-top:8px"><span>Walk inside domes</span><input id="walkMode" type="checkbox"></div>
+    <div style="margin-top:10px;border-top:1px solid #303941;padding-top:8px">
+      <div class="k">Horizontal cut separation</div>
+      <div style="font-size:18px;font-weight:750;color:#fff" id="horizontalPlaneDistance">0.50 m</div>
+      <div class="k" style="margin-top:7px">Vertical cut separation</div>
+      <div style="font-size:18px;font-weight:750;color:#fff" id="verticalPlaneDistance">14.00 m</div>
+      <div class="k" style="margin-top:7px">Sphere-centre distance</div>
+      <div style="font-size:18px;font-weight:750;color:#fff" id="sphereCenterDistance">14.00 m</div>
+      <div class="k" style="margin-top:10px">Planar element counter</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:5px">
+        <div><div class="k">Total</div><div style="font-size:18px;font-weight:750;color:#fff" id="hudPlanarTotal">0</div></div>
+        <div><div class="k">Uncut / black</div><div style="font-size:18px;font-weight:750;color:#111;background:#f1f3f5;border-radius:4px;padding:2px 6px;display:inline-block" id="hudPlanarUncut">0</div></div>
+        <div><div class="k">Cut / red</div><div style="font-size:18px;font-weight:750;color:#c62828;background:#fff2f2;border-radius:4px;padding:2px 6px;display:inline-block" id="hudPlanarCut">0</div></div>
+        <div><div class="k">A / B breakdown</div><div style="font-size:11px;line-height:1.35;color:#d9e1e6" id="hudPlanarBreakdown">A 0/0 · B 0/0</div></div>
+      </div>
+    </div>
+    <button id="fitView">Fit both spheres</button>
+  </div>
+  <div id="status">Loading dual model…</div>
+</main>
+</div>
+
+<!-- Persistent project data travels inside exported HTML files. -->
+<script id="embeddedProjectData" type="application/json">
+{"projectName":"Dual Geodesic Pavilion","activeVersionId":null,"versions":[]}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+const view=document.getElementById('view');
+const status=document.getElementById('status');
+if(!window.THREE){status.textContent='Three.js failed to load. Open in Safari/Chrome with internet access.';return;}
+
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x090d10);
+const camera=new THREE.PerspectiveCamera(42,1,.1,1200);camera.position.set(32,19,34);
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+renderer.localClippingEnabled=true;
+view.appendChild(renderer.domElement);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true;controls.dampingFactor=.06;controls.target.set(0,1,0);
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x27333c,1.15));
+const dl=new THREE.DirectionalLight(0xffffff,1.45);dl.position.set(15,24,11);scene.add(dl);
+const dl2=new THREE.DirectionalLight(0x89a8bd,.6);dl2.position.set(-15,4,-14);scene.add(dl2);
+
+const ground=new THREE.Mesh(
+  new THREE.PlaneGeometry(800,800),
+  new THREE.MeshPhongMaterial({color:0x7b7468,side:THREE.DoubleSide})
+);
+ground.rotation.x=-Math.PI/2;
+ground.position.y=-0.02;
+ground.visible=false;
+scene.add(ground);
+
+// World-space sky dome.
+// The gradient begins at the ground plane elevation rather than at the
+// bottom of the viewport, so the horizon remains spatially meaningful.
+const skyUniforms={
+  // Initial values match sceneDefaults below, but are intentionally literal
+  // here so this scene setup does not depend on a later declaration.
+  topColor:{value:new THREE.Color('#8fc6ff')},
+  bottomColor:{value:new THREE.Color('#f7f2e8')},
+  groundY:{value:ground.position.y},
+  skyHeight:{value:220.0}
+};
+
+const skyDome=new THREE.Mesh(
+  new THREE.SphereGeometry(500,48,24),
+  new THREE.ShaderMaterial({
+    side:THREE.BackSide,
+    depthWrite:false,
+    depthTest:false,
+    fog:false,
+    uniforms:skyUniforms,
+    vertexShader:`
+      varying vec3 vWorldPosition;
+      void main(){
+        vec4 worldPosition=modelMatrix*vec4(position,1.0);
+        vWorldPosition=worldPosition.xyz;
+        gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);
+      }
+    `,
+    fragmentShader:`
+      uniform vec3 topColor;
+      uniform vec3 bottomColor;
+      uniform float groundY;
+      uniform float skyHeight;
+      varying vec3 vWorldPosition;
+
+      void main(){
+        float h=max(0.0,vWorldPosition.y-groundY);
+        float t=clamp(h/skyHeight,0.0,1.0);
+        // Ease the transition slightly so the horizon stays calm and the
+        // upper sky receives more of the top colour.
+        t=smoothstep(0.0,1.0,t);
+        vec3 col=mix(bottomColor,topColor,t);
+        gl_FragColor=vec4(col,1.0);
+      }
+    `
+  })
+);
+skyDome.visible=false;
+skyDome.renderOrder=-1000;
+scene.add(skyDome);
+
+function applySceneEnvironment(){
+  ground.visible=sceneSettings.groundOn;
+  ground.material.color.set(sceneSettings.groundColor);
+
+  skyUniforms.topColor.value.set(sceneSettings.skyTop);
+  skyUniforms.bottomColor.value.set(sceneSettings.skyBottom);
+  skyUniforms.groundY.value=ground.position.y;
+
+  skyDome.visible=sceneSettings.skyOn;
+  scene.background=new THREE.Color(0x090d10);
+}
+
+const T=(1+Math.sqrt(5))/2;
+const baseVerts=[[-1,T,0],[1,T,0],[-1,-T,0],[1,-T,0],[0,-1,T],[0,1,T],[0,-1,-T],[0,1,-T],[T,0,-1],[T,0,1],[-T,0,-1],[-T,0,1]].map(a=>new THREE.Vector3(...a).normalize());
+const baseFaces=[[0,11,5],[0,5,1],[0,1,7],[0,7,10],[0,10,11],[1,5,9],[5,11,4],[11,10,2],[10,7,6],[7,1,8],[3,9,4],[3,4,2],[3,2,6],[3,6,8],[3,8,9],[4,9,5],[2,4,11],[6,2,10],[8,6,7],[9,8,1]];
+
+function key(v){return v.x.toFixed(7)+','+v.y.toFixed(7)+','+v.z.toFixed(7)}
+function hash01(i,s){let x=Math.sin((i+1)*12.9898+s*78.233)*43758.5453;return x-Math.floor(x)}
+function slerpUnit(a,b,t){
+  let dot=Math.max(-1,Math.min(1,a.dot(b))),theta=Math.acos(dot);
+  if(theta<1e-6)return a.clone();
+  const st=Math.sin(theta);
+  return a.clone().multiplyScalar(Math.sin((1-t)*theta)/st)
+    .add(b.clone().multiplyScalar(Math.sin(t*theta)/st)).normalize();
+}
+function insetPoly(poly,amount){
+  if(amount<=0)return poly.map(p=>p.clone());
+  const c=poly.reduce((s,p)=>s.add(p.clone()),new THREE.Vector3()).normalize();
+  return poly.map(p=>slerpUnit(p,c,amount));
+}
+function buildIcosphere(f){
+  const verts=[],map=new Map(),tris=[];
+  function add(v){
+    v=v.clone().normalize();const q=key(v);
+    if(map.has(q))return map.get(q);
+    const id=verts.length;verts.push(v);map.set(q,id);return id;
+  }
+  for(const face of baseFaces){
+    const A=baseVerts[face[0]],B=baseVerts[face[1]],C=baseVerts[face[2]],rows=[];
+    for(let i=0;i<=f;i++){
+      rows[i]=[];
+      for(let j=0;j<=f-i;j++){
+        const z=f-i-j;
+        rows[i][j]=add(A.clone().multiplyScalar(z/f).add(B.clone().multiplyScalar(i/f)).add(C.clone().multiplyScalar(j/f)).normalize());
+      }
+    }
+    for(let i=0;i<f;i++)for(let j=0;j<f-i;j++){
+      const a=rows[i][j],b=rows[i+1][j],c=rows[i][j+1];
+      tris.push([a,b,c]);
+      if(j<f-i-1)tris.push([b,rows[i+1][j+1],c]);
+    }
+  }
+  return {verts,tris};
+}
+function sortAround(center,items){
+  const n=center.clone().normalize();
+  const ref=Math.abs(n.y)<.9?new THREE.Vector3(0,1,0):new THREE.Vector3(1,0,0);
+  const u=new THREE.Vector3().crossVectors(ref,n).normalize();
+  const v=new THREE.Vector3().crossVectors(n,u).normalize();
+  return items.slice().sort((a,b)=>Math.atan2(a.p.dot(v),a.p.dot(u))-Math.atan2(b.p.dot(v),b.p.dot(u)));
+}
+function radialPrism(unitPoly,r0,r1){
+  const inn=unitPoly.map(p=>p.clone().multiplyScalar(r0)),out=unitPoly.map(p=>p.clone().multiplyScalar(r1));
+  const pos=[];inn.concat(out).forEach(p=>pos.push(p.x,p.y,p.z));
+  const n=unitPoly.length,idx=[];
+  for(let i=1;i<n-1;i++){idx.push(n,n+i,n+i+1);idx.push(0,i+1,i)}
+  for(let i=0;i<n;i++){let j=(i+1)%n;idx.push(i,j,n+j,i,n+j,n+i)}
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
+  return {g,out};
+}
+function ringPrism(unitOuter,unitInner,r0,r1){
+  const bo=unitOuter.map(p=>p.clone().multiplyScalar(r0)),to=unitOuter.map(p=>p.clone().multiplyScalar(r1));
+  const bi=unitInner.map(p=>p.clone().multiplyScalar(r0+.01)),ti=unitInner.map(p=>p.clone().multiplyScalar(r1+.001));
+  const all=bo.concat(to,bi,ti),pos=[];all.forEach(p=>pos.push(p.x,p.y,p.z));
+  const n=unitOuter.length,BO=0,TO=n,BI=2*n,TI=3*n,idx=[];
+  for(let i=0;i<n;i++){let j=(i+1)%n;
+    idx.push(BO+i,BO+j,TO+j,BO+i,TO+j,TO+i);
+    idx.push(TO+i,TO+j,TI+j,TO+i,TI+j,TI+i);
+    idx.push(TI+i,TI+j,BI+j,TI+i,BI+j,BI+i);
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setIndex(idx);g.computeVertexNormals();
+  return {g,to,ti};
+}
+function lineLoop(points,mat){return new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(points),mat)}
+function geoDist(a,b,r){return r*Math.acos(Math.max(-1,Math.min(1,a.dot(b))))}
+function buildEdgeAdjacency(tris){
+  const map=new Map();
+  function addEdge(a,b,fi){
+    const lo=Math.min(a,b),hi=Math.max(a,b),k=lo+'_'+hi;
+    if(!map.has(k))map.set(k,{a:lo,b:hi,faces:[]});
+    map.get(k).faces.push(fi);
+  }
+  tris.forEach((tr,fi)=>{
+    addEdge(tr[0],tr[1],fi);
+    addEdge(tr[1],tr[2],fi);
+    addEdge(tr[2],tr[0],fi);
+  });
+  return Array.from(map.values());
+}
+
+function insetPlanarPolygon3D(points,insetDistance){
+  if(!points || points.length<3 || insetDistance<=0)return points.map(p=>p.clone());
+
+  // Construct a local 2D basis in the polygon's best plane.
+  const origin=points.reduce((s,p)=>s.add(p.clone()),new THREE.Vector3()).multiplyScalar(1/points.length);
+
+  let normal=new THREE.Vector3();
+  for(let i=0;i<points.length;i++){
+    const a=points[i].clone().sub(origin);
+    const b=points[(i+1)%points.length].clone().sub(origin);
+    normal.add(new THREE.Vector3().crossVectors(a,b));
+  }
+  if(normal.lengthSq()<1e-12)return points.map(p=>p.clone());
+  normal.normalize();
+
+  const u=points[0].clone().sub(origin);
+  u.sub(normal.clone().multiplyScalar(u.dot(normal)));
+  if(u.lengthSq()<1e-12){
+    u.set(1,0,0);
+    u.sub(normal.clone().multiplyScalar(u.dot(normal)));
+  }
+  u.normalize();
+  const v=new THREE.Vector3().crossVectors(normal,u).normalize();
+
+  const pts2=points.map(p=>{
+    const q=p.clone().sub(origin);
+    return {x:q.dot(u),y:q.dot(v)};
+  });
+
+  // Signed area establishes winding and therefore inward edge normals.
+  let area2=0;
+  for(let i=0;i<pts2.length;i++){
+    const a=pts2[i],b=pts2[(i+1)%pts2.length];
+    area2+=a.x*b.y-b.x*a.y;
+  }
+  const ccw=area2>=0;
+
+  function offsetLine(a,b){
+    const dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy)||1;
+    const nx=(ccw?-dy:dy)/len;
+    const ny=(ccw? dx:-dx)/len;
+    return {
+      p:{x:a.x+nx*insetDistance,y:a.y+ny*insetDistance},
+      d:{x:dx,y:dy}
+    };
+  }
+  function lineIntersection(l1,l2,fallback){
+    const cross=l1.d.x*l2.d.y-l1.d.y*l2.d.x;
+    if(Math.abs(cross)<1e-9)return fallback;
+    const rx=l2.p.x-l1.p.x, ry=l2.p.y-l1.p.y;
+    const t=(rx*l2.d.y-ry*l2.d.x)/cross;
+    return {x:l1.p.x+l1.d.x*t,y:l1.p.y+l1.d.y*t};
+  }
+
+  const lines=pts2.map((p,i)=>offsetLine(p,pts2[(i+1)%pts2.length]));
+  const inset2=pts2.map((p,i)=>{
+    const prev=lines[(i-1+lines.length)%lines.length];
+    const curr=lines[i];
+    return lineIntersection(prev,curr,p);
+  });
+
+  return inset2.map(p=>origin.clone()
+    .add(u.clone().multiplyScalar(p.x))
+    .add(v.clone().multiplyScalar(p.y)));
+}
+
+
+function triangulatePlanarPolygon3D(points){
+  if(!points || points.length<3)return null;
+
+  const origin=points.reduce((s,p)=>s.add(p.clone()),new THREE.Vector3())
+    .multiplyScalar(1/points.length);
+
+  let normal=new THREE.Vector3();
+  for(let i=0;i<points.length;i++){
+    const a=points[i].clone().sub(origin);
+    const b=points[(i+1)%points.length].clone().sub(origin);
+    normal.add(new THREE.Vector3().crossVectors(a,b));
+  }
+  if(normal.lengthSq()<1e-12)return null;
+  normal.normalize();
+
+  let u=points[0].clone().sub(origin);
+  u.sub(normal.clone().multiplyScalar(u.dot(normal)));
+  if(u.lengthSq()<1e-12){
+    u.set(1,0,0);
+    u.sub(normal.clone().multiplyScalar(u.dot(normal)));
+  }
+  u.normalize();
+  const v=new THREE.Vector3().crossVectors(normal,u).normalize();
+
+  const contour=points.map(p=>{
+    const q=p.clone().sub(origin);
+    return new THREE.Vector2(q.dot(u),q.dot(v));
+  });
+
+  const faces=THREE.ShapeUtils.triangulateShape(contour,[]);
+  if(!faces || !faces.length)return null;
+
+  const positions=[];
+  points.forEach(p=>positions.push(p.x,p.y,p.z));
+  const indices=[];
+  faces.forEach(f=>indices.push(f[0],f[1],f[2]));
+
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));
+  g.setIndex(indices);
+  g.computeVertexNormals();
+
+  return g;
+}
+
+function makePlanarEdgeHexElement(edge,frameCornerByCellFace,centers,radius,jointGapM){
+  // Correct repeated six-sided element:
+  //
+  // Each underlying geodesic EDGE connects two dual cells (cell A / cell B)
+  // and is bounded by two triangular faces (junction J1 / junction J2).
+  //
+  // The six-gon is:
+  //   J1
+  //   A corner at J1
+  //   A corner at J2
+  //   J2
+  //   B corner at J2
+  //   B corner at J1
+  //
+  // This means:
+  // - three elements meet at every J junction,
+  // - neighbouring elements around a hex/pent aperture share the exact
+  //   frame-footprint edge between consecutive aperture corners,
+  // - element width is therefore controlled entirely by Frame footprint width.
+
+  if(!edge.faces || edge.faces.length!==2)return null;
+
+  const cellA=edge.a;
+  const cellB=edge.b;
+  const f1=edge.faces[0];
+  const f2=edge.faces[1];
+
+  const a1=frameCornerByCellFace.get(cellA+'_'+f1);
+  const a2=frameCornerByCellFace.get(cellA+'_'+f2);
+  const b1=frameCornerByCellFace.get(cellB+'_'+f1);
+  const b2=frameCornerByCellFace.get(cellB+'_'+f2);
+  if(!a1||!a2||!b1||!b2)return null;
+
+  const J1=centers[f1].clone().normalize().multiplyScalar(radius);
+  const J2=centers[f2].clone().normalize().multiplyScalar(radius);
+  const A1=a1.clone().normalize().multiplyScalar(radius);
+  const A2=a2.clone().normalize().multiplyScalar(radius);
+  const B1=b1.clone().normalize().multiplyScalar(radius);
+  const B2=b2.clone().normalize().multiplyScalar(radius);
+
+  // Preserve the exact shared topological vertices. These six points are very
+  // close to planar on the geodesic shell; triangulation is only an internal
+  // rendering detail, while the visible boundary is one six-sided element.
+  const rawPts=[J1,A1,A2,J2,B2,B1];
+
+  // Adjacent elements originally share the same boundary. Inset every panel
+  // by half the requested joint gap so the nominal separation between two
+  // neighbouring panel edges is the full requested gap.
+  const halfGap=Math.max(0,(jointGapM||0)*0.5);
+  const pts=insetPlanarPolygon3D(rawPts,halfGap);
+
+  // Robust polygon triangulation rather than a fixed fan.
+  // This prevents overlapping triangles if the six-gon becomes mildly concave.
+  const g=triangulatePlanarPolygon3D(pts);
+  if(!g)return null;
+
+  return {geometry:g,points:pts};
+}
+
+function hexToInt(s){return parseInt(s.slice(1),16)}
+function disposeObject(c){c.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(Array.isArray(o.material))o.material.forEach(m=>m.dispose());else o.material.dispose()}})}
+function clearGroup(group){while(group.children.length){const c=group.children.pop();disposeObject(c)}}
+function polyPlanDimensions(unitPoly,center,r){
+  const n=center.clone().normalize(),ref=Math.abs(n.y)<.9?new THREE.Vector3(0,1,0):new THREE.Vector3(1,0,0);
+  const u=new THREE.Vector3().crossVectors(ref,n).normalize(),v=new THREE.Vector3().crossVectors(n,u).normalize();
+  const pts=unitPoly.map(p=>{const q=p.clone().multiplyScalar(r);return{x:q.dot(u),y:q.dot(v)}});
+  let side=0,perimeter=0,area2=0;
+  for(let i=0;i<pts.length;i++){
+    const a=pts[i],b=pts[(i+1)%pts.length],d=Math.hypot(a.x-b.x,a.y-b.y);
+    side+=d;perimeter+=d;area2+=a.x*b.y-b.x*a.y;
+  }
+  side/=pts.length;
+  let point=0;
+  for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++)point=Math.max(point,Math.hypot(pts[i].x-pts[j].x,pts[i].y-pts[j].y));
+  let flat=0;
+  if(pts.length===6){
+    const mids=[];for(let i=0;i<6;i++){const a=pts[i],b=pts[(i+1)%6];mids.push({x:(a.x+b.x)/2,y:(a.y+b.y)/2})}
+    for(let i=0;i<3;i++)flat+=Math.hypot(mids[i].x-mids[i+3].x,mids[i].y-mids[i+3].y);
+    flat/=3;
+  }
+  const charWidth=pts.length===6 ? flat : point;
+  return {side,perimeter,area:Math.abs(area2)*.5,point,flat,charWidth};
+}
+function cellPlanDimensions(ordered,center,r){
+  return polyPlanDimensions(ordered.map(o=>o.p.clone()), center, r);
+}
+function scalePoly(unitPoly,scale){
+  const c=unitPoly.reduce((s,p)=>s.add(p.clone()),new THREE.Vector3()).normalize();
+  const sc=Math.max(0.001,Math.min(0.999,scale));
+  return unitPoly.map(p=>slerpUnit(c,p,sc));
+}
+
+const defaults={
+ A:{visible:true,x:-7,y:0,z:0,rotX:0,rotY:0,rotZ:0,shellOn:true,planarLayerOn:false,planarIdsOn:false,planarOffsetM:0.04,planarJointGapM:0.01,planarOpacity:0.34,planarBlend:.82,frameCoverColor:'#bfe4ff',frameCoverOpacity:0.38,diam:18.01877,density:3,thick:.22,seam:.02,coverage:22,projection:.75,footprintM:2.40,apertureM:1.20,seed:8,sliceOn:true,invert:false,sliceH:-2,verticalOn:false,verticalInvert:false,verticalX:0,opacity:1,blend:.82,
+ colors:['#135ea8','#147fc1','#159eb1','#138d7a','#17894c','#67a92f'],
+ planarColors:['#f0d94b','#d9ef61','#a9ef63','#56e2cf','#53b8ff','#d18cff']},
+ B:{visible:true,x:7,y:0,z:0,rotX:0,rotY:0,rotZ:0,shellOn:true,planarLayerOn:false,planarIdsOn:false,planarOffsetM:0.04,planarJointGapM:0.01,planarOpacity:0.34,planarBlend:.82,frameCoverColor:'#bfe4ff',frameCoverOpacity:0.38,diam:14,density:3,thick:.18,seam:.02,coverage:18,projection:.55,footprintM:1.90,apertureM:0.95,seed:17,sliceOn:true,invert:false,sliceH:-1.5,verticalOn:false,verticalInvert:false,verticalX:0,opacity:.92,blend:.82,
+ colors:['#7d3aa8','#a34a9d','#c55b83','#d77b61','#d9a24c','#b8b649'],
+ planarColors:['#f0d94b','#d9ef61','#a9ef63','#56e2cf','#53b8ff','#d18cff']}
+};
+
+const sceneDefaults={
+  whiteMode:false,
+  whiteColor:'#f2f2f2',
+  groundOn:false,
+  groundColor:'#7b7468',
+  skyOn:false,
+  skyTop:'#8fc6ff',
+  skyBottom:'#f7f2e8'
+};
+const sceneSettings=JSON.parse(JSON.stringify(sceneDefaults));
+
+const PROJECT_STORAGE_KEY='dualGeodesicPavilionProject_v1';
+const WORKING_STORAGE_KEY='dualGeodesicPavilionWorking_v1';
+
+function parseEmbeddedProject(){
+  try{
+    const el=document.getElementById('embeddedProjectData');
+    return JSON.parse(el.textContent||'{}');
+  }catch(e){return {projectName:'Dual Geodesic Pavilion',activeVersionId:null,versions:[]};}
+}
+let projectState=parseEmbeddedProject();
+if(!Array.isArray(projectState.versions))projectState.versions=[];
+if(!('activeVersionId' in projectState))projectState.activeVersionId=null;
+
+function deepClone(v){return JSON.parse(JSON.stringify(v));}
+function currentSnapshot(){
+  return {
+    schemaVersion:1,
+    sphereA:deepClone(models.A.state),
+    sphereB:deepClone(models.B.state),
+    scene:deepClone(sceneSettings),
+    camera:{
+      position:{x:camera.position.x,y:camera.position.y,z:camera.position.z},
+      target:{x:controls.target.x,y:controls.target.y,z:controls.target.z}
+    }
+  };
+}
+function applySnapshot(snapshot){
+  if(!snapshot)return;
+  if(snapshot.sphereA)models.A.state=deepClone(snapshot.sphereA);
+  if(snapshot.sphereB)models.B.state=deepClone(snapshot.sphereB);
+  ['A','B'].forEach(k=>{
+    const st=models[k].state;
+    if(st.rotX==null)st.rotX=0;
+    if(st.rotY==null)st.rotY=0;
+    if(st.rotZ==null)st.rotZ=0;
+    if(st.shellOn==null)st.shellOn=true;
+    if(st.planarLayerOn==null)st.planarLayerOn=false;
+    if(st.planarIdsOn==null)st.planarIdsOn=false;
+    if(st.planarOffsetM==null)st.planarOffsetM=.04;
+    if(st.planarJointGapM==null)st.planarJointGapM=.01;
+    if(st.planarOpacity==null)st.planarOpacity=.34;
+    if(st.planarBlend==null)st.planarBlend=.82;
+    if(st.frameCoverColor==null)st.frameCoverColor='#bfe4ff';
+    if(st.frameCoverOpacity==null)st.frameCoverOpacity=.38;
+    if(!Array.isArray(st.planarColors)||st.planarColors.length!==6)st.planarColors=['#f0d94b','#d9ef61','#a9ef63','#56e2cf','#53b8ff','#d18cff'];
+  });
+  if(snapshot.scene)Object.assign(sceneSettings,deepClone(snapshot.scene));
+
+  document.getElementById('panelA').innerHTML=buildPanel('A',models.A.state);
+  document.getElementById('panelB').innerHTML=buildPanel('B',models.B.state);
+  document.getElementById('panelScene').innerHTML=buildScenePanel(sceneSettings);
+buildVersionsPanel();
+  bindPanel('A');bindPanel('B');bindScenePanel();
+
+  const showA=document.getElementById('showA'),showB=document.getElementById('showB');
+  if(showA)showA.checked=models.A.state.visible!==false;
+  if(showB)showB.checked=models.B.state.visible!==false;
+
+  applySceneEnvironment();
+  rebuild('A');rebuild('B');
+
+  if(snapshot.camera){
+    const p=snapshot.camera.position,t=snapshot.camera.target;
+    camera.position.set(p.x,p.y,p.z);
+    controls.target.set(t.x,t.y,t.z);
+    controls.update();
+  }
+  saveWorkingState();
+}
+function saveWorkingState(){
+  try{
+    localStorage.setItem(WORKING_STORAGE_KEY,JSON.stringify(currentSnapshot()));
+    localStorage.setItem(PROJECT_STORAGE_KEY,JSON.stringify(projectState));
+  }catch(e){}
+}
+function restoreLocalState(){
+  try{
+    const rawProject=localStorage.getItem(PROJECT_STORAGE_KEY);
+    const rawWorking=localStorage.getItem(WORKING_STORAGE_KEY);
+    // Embedded project takes priority when it actually contains versions,
+    // because it represents a deliberately shared/exported project.
+    if((!projectState.versions || projectState.versions.length===0) && rawProject){
+      const p=JSON.parse(rawProject);
+      if(p&&Array.isArray(p.versions))projectState=p;
+    }
+    if(rawWorking && (!projectState.versions || projectState.versions.length===0)){
+      return JSON.parse(rawWorking);
+    }
+  }catch(e){}
+  return null;
+}
+function makeVersionId(){
+  return 'v_'+Date.now().toString(36)+'_'+Math.random().toString(36).slice(2,7);
+}
+function isoNow(){return new Date().toISOString();}
+
+
+const models={
+ A:{group:new THREE.Group(),plane:new THREE.Plane(),verticalPlane:new THREE.Plane(),planarStats:{total:0,uncut:0,cut:0},state:JSON.parse(JSON.stringify(defaults.A))},
+ B:{group:new THREE.Group(),plane:new THREE.Plane(),verticalPlane:new THREE.Plane(),planarStats:{total:0,uncut:0,cut:0},state:JSON.parse(JSON.stringify(defaults.B))}
+};
+scene.add(models.A.group,models.B.group);
+
+function controlHTML(prefix,label,min,max,step,value,key,unit=''){
+  return `<div class="control"><label><span>${label}</span><span class="value" id="${prefix}_${key}Lab"></span></label><input id="${prefix}_${key}" data-key="${key}" type="range" min="${min}" max="${max}" step="${step}" value="${value}"></div>`;
+}
+function paletteHTML(prefix,colors){
+  return colors.map((c,i)=>`<div class=\"palette\"><span>Colour ${i+1}</span><input id=\"${prefix}_c${i}\" data-color=\"${i}\" type=\"color\" value=\"${c}\"><code id=\"${prefix}_c${i}v\">${c.toUpperCase()}</code></div>`).join('');
+}
+function planarPaletteHTML(prefix,colors){
+  return colors.map((c,i)=>`<div class=\"palette\"><span>Planar colour ${i+1}</span><input id=\"${prefix}_pc${i}\" data-planar-color-index=\"${i}\" type=\"color\" value=\"${c}\"><code id=\"${prefix}_pc${i}v\">${c.toUpperCase()}</code></div>`).join('');
+}
+function buildPanel(prefix,state){
+  return `
+  <div class="section">
+    <h2>Position</h2>
+    ${controlHTML(prefix,'Position X',-30,30,.1,state.x,'x')}
+    ${controlHTML(prefix,'Position Y',-20,20,.1,state.y,'y')}
+    ${controlHTML(prefix,'Position Z',-30,30,.1,state.z,'z')}
+  </div>
+  <div class="section">
+    <h2>Rotation</h2>
+    ${controlHTML(prefix,'Rotation X',-180,180,1,state.rotX||0,'rotX')}
+    ${controlHTML(prefix,'Rotation Y',-180,180,1,state.rotY||0,'rotY')}
+    ${controlHTML(prefix,'Rotation Z',-180,180,1,state.rotZ||0,'rotZ')}
+    <div class="note">Sphere geometry rotates independently. Horizontal and vertical cutting planes remain fixed in world space.</div>
+  </div>
+  <div class="section">
+    <h2>Planar shell-element layer</h2>
+    <div class="switch"><span>Show planar elements</span><input id="${prefix}_planarLayerOn" data-bool="planarLayerOn" type="checkbox" ${state.planarLayerOn?'checked':''}></div>
+    <div class="switch"><span>Show planar element IDs</span><input id="${prefix}_planarIdsOn" data-bool="planarIdsOn" type="checkbox" ${state.planarIdsOn?'checked':''}></div>
+    <div class="switch"><span>Show original shell geometry</span><input id="${prefix}_shellOn" data-bool="shellOn" type="checkbox" ${state.shellOn!==false?'checked':''}></div>
+    ${controlHTML(prefix,'Layer offset from shell',0,0.50,.005,state.planarOffsetM||.04,'planarOffsetM')}
+    ${controlHTML(prefix,'Joint gap between elements',0,0.10,.001,state.planarJointGapM==null?.01:state.planarJointGapM,'planarJointGapM')}
+    ${controlHTML(prefix,'Element opacity',0.03,1,.01,state.planarOpacity||.34,'planarOpacity')}
+    ${controlHTML(prefix,'Planar colour zoning blend',0,1,.01,state.planarBlend==null?.82:state.planarBlend,'planarBlend')}
+    ${planarPaletteHTML(prefix,state.planarColors||['#f0d94b','#d9ef61','#a9ef63','#56e2cf','#53b8ff','#d18cff'])}
+    <div class="note">One elongated six-sided element is generated per underlying geodesic edge. Each element runs between two neighbouring Y-junctions. Its four side corners are the exact frame-footprint corners of the two adjacent hexagonal/pentagonal apertures. Adjacent elements therefore share the same aperture edge coordinates. Frame footprint width is the sole width driver. The joint-gap control creates a physical separation by insetting each neighbouring element by half the requested gap. At 100% opacity panels render as true opaque depth-writing two-sided surfaces, with identical colour inside and outside.</div>
+  </div>
+
+  <div class="section">
+    <h2>Geometry</h2>
+    ${controlHTML(prefix,'Sphere diameter',5,40,.01,state.diam,'diam')}
+    ${controlHTML(prefix,'Geodesic density',2,6,.01,state.density,'density')}
+    ${controlHTML(prefix,'Y radial thickness',.02,1.2,.01,state.thick,'thick')}
+    ${controlHTML(prefix,'Sector inset / seam',0,.12,.005,state.seam,'seam')}
+  </div>
+  <div class="section">
+    <h2>Raised polygon frames</h2>
+    ${controlHTML(prefix,'Raised-cell coverage',0,100,1,state.coverage,'coverage')}
+    ${controlHTML(prefix,'Frame projection',0,2.5,.01,state.projection,'projection')}
+    ${controlHTML(prefix,'Frame footprint width',0.10,12,.01,state.footprintM,'footprintM')}
+    ${controlHTML(prefix,'Aperture opening width',0.05,10,.01,state.apertureM,'apertureM')}
+    ${controlHTML(prefix,'Outer-face covering opacity',0,1,.01,state.frameCoverOpacity==null?.38:state.frameCoverOpacity,'frameCoverOpacity')}
+    <div class="palette" style="grid-template-columns:1fr 60px 70px">
+      <span>Outer-face covering colour</span>
+      <input id="${prefix}_frameCoverColor" data-frame-cover-color="1" type="color" value="${state.frameCoverColor||'#bfe4ff'}">
+      <code id="${prefix}_frameCoverColorv">${(state.frameCoverColor||'#bfe4ff').toUpperCase()}</code>
+    </div>
+    ${controlHTML(prefix,'Distribution seed',1,50,1,state.seed,'seed')}
+    <div class="note">A flat covering polygon is added to the outer face of each raised hexagonal or pentagonal frame. Set covering opacity to 0 to hide it.</div>
+  </div>
+  <div class="section">
+    <h2>Horizontal world-space cut</h2>
+    <div class="switch"><span>Enable horizon cut</span><input id="${prefix}_sliceOn" data-bool="sliceOn" type="checkbox" ${state.sliceOn?'checked':''}></div>
+    <div class="switch"><span>Invert horizontal cut</span><input id="${prefix}_invert" data-bool="invert" type="checkbox" ${state.invert?'checked':''}></div>
+    ${controlHTML(prefix,'Horizontal cut height from sphere centre',-20,20,.01,state.sliceH,'sliceH')}
+    <div class="note">Horizontal plane remains level in world space and does not inherit sphere rotation.</div>
+  </div>
+
+  <div class="section">
+    <h2>Vertical world-space cut</h2>
+    <div class="switch"><span>Enable vertical cut</span><input id="${prefix}_verticalOn" data-bool="verticalOn" type="checkbox" ${state.verticalOn?'checked':''}></div>
+    <div class="switch"><span>Invert vertical cut</span><input id="${prefix}_verticalInvert" data-bool="verticalInvert" type="checkbox" ${state.verticalInvert?'checked':''}></div>
+    ${controlHTML(prefix,'Vertical cut offset from sphere centre',-20,20,.01,state.verticalX,'verticalX')}
+    <div class="note">Vertical plane is parallel to the world YZ plane. Positive offset moves it toward +X from that sphere’s centre. Invert swaps the retained side.</div>
+  </div>
+  <div class="section">
+    <h2>Six Y-component colours</h2>
+    ${paletteHTML(prefix,state.colors)}
+    ${controlHTML(prefix,'Colour zoning blend',0,1,.01,state.blend,'blend')}
+  </div>
+  <div class="section">
+    <h2>Appearance</h2>
+    ${controlHTML(prefix,'Component opacity',.05,1,.01,state.opacity,'opacity')}
+  </div>
+  <div class="section">
+    <h2>Quantities + metric dimensions</h2>
+    <div class="grid">
+      <div class="card"><div class="k">Y-components</div><div class="v" id="${prefix}_ys">—</div><div class="u">qty</div></div>
+      <div class="card"><div class="k">Planar elements</div><div class="v" id="${prefix}_planarCount">—</div><div class="u">qty · visible retained elements</div></div>
+      <div class="card"><div class="k">Planar uncut</div><div class="v" id="${prefix}_planarUncut">—</div><div class="u">qty · black IDs</div></div>
+      <div class="card"><div class="k">Planar cut</div><div class="v" id="${prefix}_planarCut">—</div><div class="u">qty · red IDs</div></div>
+      <div class="card"><div class="k">Planar element width</div><div class="v" id="${prefix}_planarDrivenWidth">—</div><div class="u">m · linked to frame footprint</div></div>
+      <div class="card"><div class="k">Planar joint gap</div><div class="v" id="${prefix}_planarGapOut">—</div><div class="u">mm nominal</div></div>
+      <div class="card"><div class="k">Hexagons</div><div class="v" id="${prefix}_hexes">—</div><div class="u">qty</div></div>
+      <div class="card"><div class="k">Pentagons</div><div class="v">12</div><div class="u">qty</div></div>
+      <div class="card"><div class="k">Raised frames</div><div class="v" id="${prefix}_frames">—</div><div class="u">qty</div></div>
+      <div class="card"><div class="k">Surface area</div><div class="v" id="${prefix}_area">—</div><div class="u">m²</div></div>
+      <div class="card"><div class="k">Hex side</div><div class="v" id="${prefix}_side">—</div><div class="u">m avg</div></div>
+      <div class="card"><div class="k">Hex flats</div><div class="v" id="${prefix}_flat">—</div><div class="u">m avg</div></div>
+      <div class="card"><div class="k">Hex points</div><div class="v" id="${prefix}_point">—</div><div class="u">m avg</div></div>
+      <div class="card"><div class="k">Hex area</div><div class="v" id="${prefix}_hexArea">—</div><div class="u">m² avg</div></div>
+      <div class="card"><div class="k">Y seam gap</div><div class="v" id="${prefix}_gap">—</div><div class="u">m avg</div></div>
+      <div class="card"><div class="k">Cut diameter</div><div class="v" id="${prefix}_cutDia">—</div><div class="u">m</div></div>
+      <div class="card"><div class="k">Dome height</div><div class="v" id="${prefix}_domeH">—</div><div class="u">m</div></div>
+      <div class="card"><div class="k">Horizontal plane Y</div><div class="v" id="${prefix}_hPlane">—</div><div class="u">m world coordinate</div></div>
+      <div class="card"><div class="k">Vertical plane X</div><div class="v" id="${prefix}_vPlane">—</div><div class="u">m world coordinate</div></div>
+    </div>
+  </div>
+  <button id="${prefix}_reset">Reset ${prefix}</button>
+  `;
+}
+function buildScenePanel(state){
+  return `
+  <div class="section">
+    <h2>White model mode</h2>
+    <div class="switch"><span>Override geometry colours</span><input id="scene_whiteMode" data-scene-bool="whiteMode" type="checkbox" ${state.whiteMode?'checked':''}></div>
+    <div class="palette" style="grid-template-columns:1fr 72px 82px">
+      <span>Override model colour</span>
+      <input id="scene_whiteColor" data-scene-color="whiteColor" type="color" value="${state.whiteColor}">
+      <code id="scene_whiteColorv">${state.whiteColor.toUpperCase()}</code>
+    </div>
+    <div class="note">When enabled, all dome geometry uses one override colour while preserving the underlying geometry and cuts.</div>
+  </div>
+
+  <div class="section">
+    <h2>Ground plane</h2>
+    <div class="switch"><span>Show ground plane</span><input id="scene_groundOn" data-scene-bool="groundOn" type="checkbox" ${state.groundOn?'checked':''}></div>
+    <div class="palette" style="grid-template-columns:1fr 72px 82px">
+      <span>Ground colour</span>
+      <input id="scene_groundColor" data-scene-color="groundColor" type="color" value="${state.groundColor}">
+      <code id="scene_groundColorv">${state.groundColor.toUpperCase()}</code>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Sky gradient</h2>
+    <div class="switch"><span>Show sky gradient</span><input id="scene_skyOn" data-scene-bool="skyOn" type="checkbox" ${state.skyOn?'checked':''}></div>
+    <div class="palette" style="grid-template-columns:1fr 72px 82px">
+      <span>Sky top colour</span>
+      <input id="scene_skyTop" data-scene-color="skyTop" type="color" value="${state.skyTop}">
+      <code id="scene_skyTopv">${state.skyTop.toUpperCase()}</code>
+    </div>
+    <div class="palette" style="grid-template-columns:1fr 72px 82px">
+      <span>Sky bottom colour</span>
+      <input id="scene_skyBottom" data-scene-color="skyBottom" type="color" value="${state.skyBottom}">
+      <code id="scene_skyBottomv">${state.skyBottom.toUpperCase()}</code>
+    </div>
+    <div class="note">The sky gradient is world-space: the bottom sky colour begins at the ground-plane elevation and blends upward to the top colour. Ground and sky can still be used independently.</div>
+  </div>
+
+  <button id="scene_reset">Reset scene settings</button>
+  `;
+}
+
+function versionLabel(v,index){
+  return v.name && v.name.trim() ? v.name.trim() : `Version ${String(index+1).padStart(2,'0')}`;
+}
+function buildVersionsPanel(){
+  const active=projectState.activeVersionId;
+  const list=projectState.versions.map((v,i)=>`
+    <div class="versionItem ${v.id===active?'active':''}" data-version-id="${v.id}">
+      <div class="versionTitle">${escapeHTML(versionLabel(v,i))}</div>
+      <div class="versionMeta">${escapeHTML(v.note||'No note')}<br>${new Date(v.updatedAt||v.createdAt).toLocaleString()}</div>
+    </div>`).join('');
+
+  document.getElementById('panelVersions').innerHTML=`
+    <div class="section">
+      <h2>Design versions</h2>
+      <div class="note">Versions store parameter state, not mesh geometry. Geometry is regenerated deterministically when a version is loaded.</div>
+      <div style="margin-top:10px">
+        <label><span>Version name</span></label>
+        <input id="versionNameInput" class="versionInput" placeholder="e.g. Wide overlap study">
+      </div>
+      <div style="margin-top:8px">
+        <label><span>Note</span></label>
+        <textarea id="versionNoteInput" class="versionInput" placeholder="Optional design note"></textarea>
+      </div>
+      <div class="versionActions">
+        <button id="saveNewVersion">Save new version</button>
+        <button id="updateActiveVersion">Update selected</button>
+        <button id="duplicateVersion">Duplicate selected</button>
+        <button id="deleteVersion">Delete selected</button>
+      </div>
+      <div id="versionStatus" class="smallStatus"></div>
+    </div>
+
+    <div class="section">
+      <h2>Saved versions</h2>
+      <div id="versionsList">${list || '<div class="note">No saved versions yet.</div>'}</div>
+    </div>
+
+    <div class="section">
+      <h2>Portable project</h2>
+      <div class="versionActions">
+        <button id="exportProjectHTML">Export shareable HTML</button>
+        <button id="exportProjectJSON">Export JSON</button>
+        <button id="importProjectJSON">Import JSON</button>
+        <button id="clearLocalWorking">Clear local autosave</button>
+      </div>
+      <input id="jsonFileInput" class="fileInput" type="file" accept=".json,application/json">
+      <div class="note">Export Shareable HTML embeds all saved versions into a fresh copy of this file. Anyone opening that HTML can browse and load the same version set.</div>
+    </div>
+  `;
+  bindVersionsPanel();
+}
+function escapeHTML(str){
+  return String(str??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+}
+function selectedVersion(){
+  return projectState.versions.find(v=>v.id===projectState.activeVersionId)||null;
+}
+function setVersionStatus(msg){
+  const el=document.getElementById('versionStatus');if(el)el.textContent=msg||'';
+}
+function refreshVersions(){
+  buildVersionsPanel();
+  saveWorkingState();
+}
+function bindVersionsPanel(){
+  document.querySelectorAll('.versionItem').forEach(el=>{
+    el.addEventListener('click',()=>{
+      projectState.activeVersionId=el.dataset.versionId;
+      const v=selectedVersion();
+      if(v)applySnapshot(v.snapshot);
+      refreshVersions();
+    });
+  });
+
+  const saveBtn=document.getElementById('saveNewVersion');
+  if(saveBtn)saveBtn.addEventListener('click',()=>{
+    const name=document.getElementById('versionNameInput').value.trim()||`Version ${projectState.versions.length+1}`;
+    const note=document.getElementById('versionNoteInput').value.trim();
+    const id=makeVersionId(),now=isoNow();
+    projectState.versions.push({
+      id,name,note,parentId:projectState.activeVersionId||null,
+      createdAt:now,updatedAt:now,snapshot:currentSnapshot()
+    });
+    projectState.activeVersionId=id;
+    refreshVersions();
+    setVersionStatus('Version saved.');
+  });
+
+  const upd=document.getElementById('updateActiveVersion');
+  if(upd)upd.addEventListener('click',()=>{
+    const v=selectedVersion();
+    if(!v){setVersionStatus('Select a version first.');return;}
+    const name=document.getElementById('versionNameInput').value.trim();
+    const note=document.getElementById('versionNoteInput').value.trim();
+    if(name)v.name=name;
+    if(note || document.getElementById('versionNoteInput').value==='')v.note=note;
+    v.snapshot=currentSnapshot();
+    v.updatedAt=isoNow();
+    refreshVersions();
+    setVersionStatus('Selected version updated.');
+  });
+
+  const dup=document.getElementById('duplicateVersion');
+  if(dup)dup.addEventListener('click',()=>{
+    const v=selectedVersion();
+    if(!v){setVersionStatus('Select a version first.');return;}
+    const id=makeVersionId(),now=isoNow();
+    projectState.versions.push({
+      id,name:(v.name||'Version')+' copy',note:v.note||'',
+      parentId:v.id,createdAt:now,updatedAt:now,snapshot:deepClone(v.snapshot)
+    });
+    projectState.activeVersionId=id;
+    refreshVersions();
+    setVersionStatus('Version duplicated.');
+  });
+
+  const del=document.getElementById('deleteVersion');
+  if(del)del.addEventListener('click',()=>{
+    const v=selectedVersion();
+    if(!v){setVersionStatus('Select a version first.');return;}
+    projectState.versions=projectState.versions.filter(x=>x.id!==v.id);
+    projectState.activeVersionId=projectState.versions.length?projectState.versions[projectState.versions.length-1].id:null;
+    refreshVersions();
+    setVersionStatus('Version deleted.');
+  });
+
+  const exportJson=document.getElementById('exportProjectJSON');
+  if(exportJson)exportJson.addEventListener('click',()=>{
+    downloadText(
+      `${safeProjectName()}.json`,
+      JSON.stringify({projectName:projectState.projectName||'Dual Geodesic Pavilion',activeVersionId:projectState.activeVersionId,versions:projectState.versions},null,2),
+      'application/json'
+    );
+  });
+
+  const importBtn=document.getElementById('importProjectJSON');
+  const fileInput=document.getElementById('jsonFileInput');
+  if(importBtn&&fileInput){
+    importBtn.addEventListener('click',()=>fileInput.click());
+    fileInput.addEventListener('change',async()=>{
+      const file=fileInput.files&&fileInput.files[0];if(!file)return;
+      try{
+        const obj=JSON.parse(await file.text());
+        if(!obj||!Array.isArray(obj.versions))throw new Error('Invalid project JSON');
+        projectState=obj;
+        if(!('activeVersionId' in projectState))projectState.activeVersionId=null;
+        refreshVersions();
+        const v=selectedVersion();
+        if(v)applySnapshot(v.snapshot);
+        setVersionStatus('Project JSON imported.');
+      }catch(e){setVersionStatus('Import failed: '+e.message);}
+      fileInput.value='';
+    });
+  }
+
+  const exportHtml=document.getElementById('exportProjectHTML');
+  if(exportHtml)exportHtml.addEventListener('click',exportShareableHTML);
+
+  const clearLocal=document.getElementById('clearLocalWorking');
+  if(clearLocal)clearLocal.addEventListener('click',()=>{
+    try{localStorage.removeItem(WORKING_STORAGE_KEY);localStorage.removeItem(PROJECT_STORAGE_KEY);}catch(e){}
+    setVersionStatus('Local autosave cleared. Embedded versions are unchanged.');
+  });
+}
+function safeProjectName(){
+  return (projectState.projectName||'dual-geodesic-pavilion').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'')||'dual-geodesic-pavilion';
+}
+function downloadText(filename,text,mime){
+  const blob=new Blob([text],{type:mime});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=filename;
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function exportShareableHTML(){
+  // Start from the running document so all current code/features travel with it.
+  const clone=document.documentElement.cloneNode(true);
+
+  // Replace embedded project data with a serialization-safe form.
+  const dataEl=clone.querySelector('#embeddedProjectData');
+  if(dataEl){
+    const exportProject={
+      projectName:projectState.projectName||'Dual Geodesic Pavilion',
+      activeVersionId:projectState.activeVersionId,
+      versions:projectState.versions
+    };
+    dataEl.textContent=JSON.stringify(exportProject).replace(/<\//g,'<\\/');
+  }
+
+  // Remove runtime-only canvas injected by Three.js.
+  clone.querySelectorAll('#view canvas').forEach(c=>c.remove());
+
+  const html='<!DOCTYPE html>\n'+clone.outerHTML;
+  downloadText(`${safeProjectName()}-shared.html`,html,'text/html');
+  setVersionStatus('Shareable HTML exported.');
+}
+document.getElementById('panelA').innerHTML=buildPanel('A',models.A.state);
+document.getElementById('panelB').innerHTML=buildPanel('B',models.B.state);
+document.getElementById('panelScene').innerHTML=buildScenePanel(sceneSettings);
+buildVersionsPanel();
+
+function activePlanes(M,s){
+  const planes=[];
+  if(s.sliceOn)planes.push(M.plane);
+  if(s.verticalOn)planes.push(M.verticalPlane);
+  return planes;
+}
+function getMat(color,opacity,M,s){
+  return new THREE.MeshPhongMaterial({
+    color,shininess:20,side:THREE.DoubleSide,transparent:opacity<.999,opacity,
+    depthWrite:opacity>.45,clippingPlanes:activePlanes(M,s)
+  });
+}
+function getEdgeMat(M,s){
+  return new THREE.LineBasicMaterial({color:0xdfe5e8,transparent:true,opacity:.42,clippingPlanes:activePlanes(M,s)});
+}
+
+
+function polygonCentroid(points){
+  return points.reduce((sum,p)=>sum.add(p.clone()),new THREE.Vector3()).multiplyScalar(1/points.length);
+}
+function classifyPolygonAgainstCuts(worldPts,M,s){
+  let retained=true, cut=false;
+  const eps=1e-5;
+  function testPlane(plane,enabled){
+    if(!enabled)return;
+    const ds=worldPts.map(p=>plane.distanceToPoint(p));
+    const hasPos=ds.some(d=>d>eps), hasNeg=ds.some(d=>d<-eps), hasOn=ds.some(d=>Math.abs(d)<=eps);
+    if((hasPos&&hasNeg)||((hasPos||hasNeg)&&hasOn))cut=true;
+    if(!hasPos && !hasOn)retained=false;
+  }
+  testPlane(M.plane,s.sliceOn);
+  testPlane(M.verticalPlane,s.verticalOn);
+  return {retained,cut};
+}
+function makeIdSprite(text,color){
+  const canvas=document.createElement('canvas');
+  canvas.width=160; canvas.height=74;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const x=8,y=8,w=canvas.width-16,h=canvas.height-16,r=12;
+  ctx.fillStyle='rgba(255,255,255,0.92)';
+  ctx.strokeStyle=color==='red'?'rgba(198,40,40,0.9)':'rgba(30,30,30,0.55)';
+  ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y); ctx.closePath();
+  ctx.fill(); ctx.stroke();
+  ctx.font='700 34px Arial, sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillStyle=color==='red'?'#c62828':'#111111';
+  ctx.fillText(text,canvas.width/2,canvas.height/2+1);
+  const tex=new THREE.CanvasTexture(canvas);
+  tex.needsUpdate=true;
+  const mat=new THREE.SpriteMaterial({map:tex,transparent:true,depthTest:true,depthWrite:false});
+  return new THREE.Sprite(mat);
+}
+function updatePlanarHud(){
+  const active=['A','B'].filter(k=>models[k].group.visible!==false && models[k].state.visible!==false);
+  const total=active.reduce((n,k)=>n+(models[k].planarStats.total||0),0);
+  const uncut=active.reduce((n,k)=>n+(models[k].planarStats.uncut||0),0);
+  const cut=active.reduce((n,k)=>n+(models[k].planarStats.cut||0),0);
+  const set=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+  set('hudPlanarTotal',String(total));
+  set('hudPlanarUncut',String(uncut));
+  set('hudPlanarCut',String(cut));
+  set('hudPlanarBreakdown',`A ${models.A.planarStats.uncut||0}/${models.A.planarStats.cut||0} · B ${models.B.planarStats.uncut||0}/${models.B.planarStats.cut||0}`);
+}
+
+function rebuild(prefix){
+  const M=models[prefix],s=M.state,g=M.group;
+  clearGroup(g);
+  g.visible=s.visible!==false;
+  g.position.set(s.x,s.y,s.z);
+  g.rotation.order='XYZ';
+  g.rotation.set(
+    THREE.MathUtils.degToRad(s.rotX||0),
+    THREE.MathUtils.degToRad(s.rotY||0),
+    THREE.MathUtils.degToRad(s.rotZ||0)
+  );
+  g.updateMatrixWorld(true);
+
+  const r=s.diam/2;
+  const f=Math.max(2,Math.min(6,Math.round(s.density)));
+  const sh=s.sliceH;
+
+  // Horizontal world plane incorporates group translation, but not group rotation.
+  if(!s.invert){M.plane.normal.set(0,1,0);M.plane.constant=-(s.y+sh);}
+  else{M.plane.normal.set(0,-1,0);M.plane.constant=(s.y+sh);}
+
+  // Vertical world plane, parallel to YZ. Offset is relative to this sphere centre.
+  const vx=s.x+s.verticalX;
+  if(!s.verticalInvert){M.verticalPlane.normal.set(1,0,0);M.verticalPlane.constant=-vx;}
+  else{M.verticalPlane.normal.set(-1,0,0);M.verticalPlane.constant=vx;}
+
+  const ico=buildIcosphere(f);
+  const centers=ico.tris.map(tr=>ico.verts[tr[0]].clone().add(ico.verts[tr[1]]).add(ico.verts[tr[2]]).normalize());
+  const incident=Array.from({length:ico.verts.length},()=>[]);
+  ico.tris.forEach((tr,fi)=>tr.forEach(vi=>incident[vi].push(fi)));
+  const cells=incident.map((faces,vi)=>sortAround(ico.verts[vi],faces.map(fi=>({fi,p:centers[fi]}))));
+
+  const raisedCells=new Set();
+  const framePolys=new Map();
+  cells.forEach((ordered,vi)=>{
+    const V=ico.verts[vi],yBias=.35+.65*Math.max(0,V.y);
+    if(hash01(vi,s.seed)*yBias<=s.coverage/100){
+      raisedCells.add(vi);
+
+      // Build frame polygons from metric target dimensions.
+      // footprintM and apertureM are interpreted as target flat/overall widths
+      // within the cell's tangent-plane dimensions.
+      const cellBoundary=ordered.map(o=>o.p.clone());
+      const cellDims=polyPlanDimensions(cellBoundary,V,r);
+
+      const targetFoot=Math.min(s.footprintM, cellDims.charWidth*0.98);
+      const footScale=Math.max(0.02, Math.min(0.98, targetFoot / cellDims.charWidth));
+      const outerInset=scalePoly(cellBoundary, footScale);
+
+      const outerDims=polyPlanDimensions(outerInset,V,r);
+      const targetAperture=Math.min(s.apertureM, outerDims.charWidth*0.95);
+      const apertureScale=Math.max(0.02, Math.min(0.95, targetAperture / outerDims.charWidth));
+      const inner=scalePoly(outerInset, apertureScale);
+
+      framePolys.set(vi,{outerInset,inner});
+    }
+  });
+
+  const sectorsByFace=Array.from({length:ico.tris.length},()=>[]);
+  let sideSum=0,sideN=0,flatSum=0,pointSum=0,hexAreaSum=0,hexN=0;
+  cells.forEach((ordered,vi)=>{
+    const V=ico.verts[vi],n=ordered.length;
+    const punched=raisedCells.has(vi);
+
+    // Use the exact same polygon for the shell opening as the raised frame's
+    // inner aperture, so the cutout and frame opening coincide precisely.
+    let exactInner=null;
+    if(punched){
+      const frameData=framePolys.get(vi);
+      exactInner=frameData ? frameData.inner : null;
+    }
+
+    for(let i=0;i<n;i++){
+      const prev=ordered[(i-1+n)%n],cur=ordered[i],next=ordered[(i+1)%n];
+      const mPrev=slerpUnit(prev.p,cur.p,.5),mNext=slerpUnit(cur.p,next.p,.5);
+      let poly;
+      if(punched){
+        const innerCur=exactInner[i];
+        const innerNext=exactInner[(i+1)%n];
+        poly=[cur.p.clone(),mNext,innerNext.clone(),innerCur.clone(),mPrev];
+      }else{poly=[cur.p.clone(),mNext,V.clone(),mPrev];}
+      sectorsByFace[cur.fi].push(insetPoly(poly,s.seam));
+    }
+    if(n===6){
+      for(let i=0;i<6;i++){sideSum+=geoDist(ordered[i].p,ordered[(i+1)%6].p,r);sideN++}
+      const d=cellPlanDimensions(ordered,V,r);flatSum+=d.flat;pointSum+=d.point;hexAreaSum+=d.area;hexN++;
+    }
+  });
+
+  const activePalette=sceneSettings.whiteMode ? Array(6).fill(sceneSettings.whiteColor) : s.colors;
+  const yMats=activePalette.map(c=>getMat(typeof c==='string' ? hexToInt(c) : c,s.opacity,M,s));
+  const em=getEdgeMat(M,s);
+  if(sceneSettings.whiteMode)em.color.set(0xb8b8b8);
+
+  if(s.shellOn!==false){
+    sectorsByFace.forEach((sectorList,fi)=>{
+      const center=centers[fi];
+      const zoned=Math.max(0,Math.min(5,Math.floor(((center.x+1)/2)*6)));
+      const randomIndex=Math.floor(hash01(fi,s.seed+21)*6);
+      const ci=hash01(fi,s.seed+77)<s.blend?zoned:randomIndex;
+      for(const poly of sectorList){
+        const prism=radialPrism(poly,r,r+s.thick);
+        g.add(new THREE.Mesh(prism.g,yMats[ci]));
+        g.add(lineLoop(prism.out,em));
+      }
+    });
+  }
+
+
+  // Optional second geometric layer:
+  // one repeated elongated six-sided polygon per underlying geodesic edge.
+  //
+  // The polygon sides are derived directly from the frame-footprint corner
+  // network, while its pointed ends terminate at the two neighbouring
+  // triangular/Y junctions.
+  const frameCornerByCellFace=new Map();
+
+  cells.forEach((ordered,vi)=>{
+    const frameData=framePolys.get(vi);
+    if(!frameData)return;
+
+    // ordered[i].fi and outerInset[i] are corresponding polygon corners.
+    for(let i=0;i<ordered.length;i++){
+      frameCornerByCellFace.set(
+        vi+'_'+ordered[i].fi,
+        frameData.outerInset[i].clone()
+      );
+    }
+  });
+
+  const planarEdges=buildEdgeAdjacency(ico.tris);
+  let planarElementCount=0;
+  let planarVisibleTotal=0, planarVisibleUncut=0, planarVisibleCut=0;
+  let planarIdCounter=0;
+
+  if(s.planarLayerOn){
+    const layerRadius=r+s.thick+(s.planarOffsetM||0);
+    const planarPalette=sceneSettings.whiteMode ? Array(6).fill(sceneSettings.whiteColor) : (Array.isArray(s.planarColors)&&s.planarColors.length===6 ? s.planarColors : s.colors);
+    const planarAlpha=s.planarOpacity==null?.34:s.planarOpacity;
+    const planarOpaque=planarAlpha>=0.999;
+
+    const planarMats=planarPalette.map(c=>new THREE.MeshPhongMaterial({
+      color: typeof c==='string' ? hexToInt(c) : c,
+      shininess:10,
+      side:THREE.DoubleSide,
+      flatShading:true,
+
+      // Critical visibility fix:
+      // at 100% opacity these are true opaque depth-writing surfaces.
+      transparent:!planarOpaque,
+      opacity:planarAlpha,
+      depthTest:true,
+      depthWrite:planarOpaque,
+
+      // Same single material is rendered on both front and back faces.
+      // No separate back-face material or alternate colour.
+      clippingPlanes:activePlanes(M,s),
+
+      // Layer offset already prevents z-fighting; depth bias can cause
+      // foreground/background leakage at grazing angles, so disable it.
+      polygonOffset:false
+    }));
+
+    const planarEdgeMat=new THREE.LineBasicMaterial({
+      color:sceneSettings.whiteMode?0x777777:0x5a3515,
+      transparent:true,
+      opacity:Math.min(1,planarAlpha+.35),
+      clippingPlanes:activePlanes(M,s),
+      depthTest:true,
+      depthWrite:false
+    });
+
+    planarEdges.forEach((edge,ei)=>{
+      const elem=makePlanarEdgeHexElement(
+        edge,
+        frameCornerByCellFace,
+        centers,
+        layerRadius,
+        s.planarJointGapM==null?.01:s.planarJointGapM
+      );
+      if(!elem)return;
+
+      const c1=centers[edge.faces[0]], c2=centers[edge.faces[1]];
+      const mid=c1.clone().add(c2).multiplyScalar(0.5).normalize();
+      const zoned=Math.max(0,Math.min(5,Math.floor(((mid.x+1)/2)*6)));
+      const randomIndex=Math.floor(hash01(ei + edge.a*31 + edge.b*131,s.seed+121)*6);
+      const ci=hash01(ei + edge.a*17 + edge.b*29,s.seed+177)<(s.planarBlend==null?.82:s.planarBlend)?zoned:randomIndex;
+
+      planarElementCount++;
+      g.add(new THREE.Mesh(elem.geometry,planarMats[ci]));
+      g.add(lineLoop(elem.points,planarEdgeMat));
+
+      const worldPts=elem.points.map(p=>g.localToWorld(p.clone()));
+      const cutInfo=classifyPolygonAgainstCuts(worldPts,M,s);
+      if(cutInfo.retained){
+        planarVisibleTotal++;
+        if(cutInfo.cut)planarVisibleCut++;
+        else planarVisibleUncut++;
+
+        if(s.planarIdsOn){
+          planarIdCounter++;
+          const idText=String(planarIdCounter).padStart(3,'0');
+          const localCenter=polygonCentroid(elem.points);
+          const nudge=localCenter.clone().normalize().multiplyScalar(0.03 + s.planarOffsetM + s.thick*0.02);
+          const sprite=makeIdSprite(idText,cutInfo.cut?'red':'black');
+          sprite.position.copy(localCenter.clone().add(nudge));
+          const labelScale=Math.max(0.34,Math.min(0.72,s.diam*0.022));
+          sprite.scale.set(labelScale*1.55,labelScale*0.72,1);
+          g.add(sprite);
+        }
+      }
+    });
+  }
+
+  const frameMat=getMat(sceneSettings.whiteMode ? hexToInt(sceneSettings.whiteColor) : 0xd7d5ce,Math.min(1,s.opacity+.05),M,s);
+  const frameCoverAlpha=s.frameCoverOpacity==null?.38:s.frameCoverOpacity;
+  const frameCoverOpaque=frameCoverAlpha>=0.999;
+  const frameCoverMat=new THREE.MeshPhongMaterial({
+    color: sceneSettings.whiteMode ? hexToInt(sceneSettings.whiteColor) : hexToInt(s.frameCoverColor||'#bfe4ff'),
+    shininess:12,
+    side:THREE.DoubleSide,
+    transparent:!frameCoverOpaque,
+    opacity:frameCoverAlpha,
+    depthTest:true,
+    depthWrite:frameCoverOpaque,
+    clippingPlanes:activePlanes(M,s)
+  });
+  let frameCount=0;
+  cells.forEach((ordered,vi)=>{
+    if(!raisedCells.has(vi))return;
+    const frameData=framePolys.get(vi);
+    if(!frameData)return;
+    frameCount++;
+    const ring=ringPrism(frameData.outerInset,frameData.inner,r+s.thick,r+s.thick+s.projection);
+    g.add(new THREE.Mesh(ring.g,frameMat));
+    if(frameCoverAlpha>0.001){
+      const coverGeo=triangulatePlanarPolygon3D(ring.ti);
+      if(coverGeo)g.add(new THREE.Mesh(coverGeo,frameCoverMat));
+    }
+    g.add(lineLoop(ring.to,em));g.add(lineLoop(ring.ti,em));
+  });
+
+  const hexCount=10*f*f-10;
+  const sphereArea=4*Math.PI*r*r;
+  const cutDia=(Math.abs(sh)<r)?2*Math.sqrt(Math.max(0,r*r-sh*sh)):0;
+  const domeH=!s.invert?Math.max(0,r-sh):Math.max(0,r+sh);
+
+  M.planarStats={total:planarVisibleTotal,uncut:planarVisibleUncut,cut:planarVisibleCut};
+  setText(prefix,'ys',ico.tris.length);
+  setText(prefix,'planarCount',planarVisibleTotal);
+  setText(prefix,'planarUncut',planarVisibleUncut);
+  setText(prefix,'planarCut',planarVisibleCut);
+  setText(prefix,'planarDrivenWidth',s.footprintM.toFixed(2));
+  setText(prefix,'planarGapOut',Math.round((s.planarJointGapM==null?.01:s.planarJointGapM)*1000));
+  setText(prefix,'hexes',hexCount);
+  setText(prefix,'frames',frameCount);
+  setText(prefix,'area',sphereArea.toFixed(0));
+  setText(prefix,'side',(sideSum/sideN).toFixed(2));
+  setText(prefix,'flat',(flatSum/hexN).toFixed(2));
+  setText(prefix,'point',(pointSum/hexN).toFixed(2));
+  setText(prefix,'hexArea',(hexAreaSum/hexN).toFixed(2));
+  setText(prefix,'gap',(s.seam*(sideSum/sideN)).toFixed(3));
+  setText(prefix,'cutDia',(s.sliceOn?cutDia:s.diam).toFixed(2));
+  setText(prefix,'domeH',(s.sliceOn?domeH:s.diam).toFixed(2));
+  setText(prefix,'hPlane',(s.y+s.sliceH).toFixed(2));
+  setText(prefix,'vPlane',(s.x+s.verticalX).toFixed(2));
+
+  updateLabels(prefix);
+  updatePlaneDistances();
+  updatePlanarHud();
+  status.textContent=`Sphere A: ${models.A.state.diam.toFixed(2)} m · Sphere B: ${models.B.state.diam.toFixed(2)} m · independent controls`;
+}
+function updatePlaneDistances(){
+  const a=models.A.state,b=models.B.state;
+  const hA=a.y+a.sliceH, hB=b.y+b.sliceH;
+  const vA=a.x+a.verticalX, vB=b.x+b.verticalX;
+  const centerDist=Math.hypot(b.x-a.x,b.y-a.y,b.z-a.z);
+  document.getElementById('horizontalPlaneDistance').textContent=Math.abs(hB-hA).toFixed(2)+' m';
+  document.getElementById('verticalPlaneDistance').textContent=Math.abs(vB-vA).toFixed(2)+' m';
+  document.getElementById('sphereCenterDistance').textContent=centerDist.toFixed(2)+' m';
+}
+function setText(prefix,id,v){const el=document.getElementById(`${prefix}_${id}`);if(el)el.textContent=v}
+function updateLabels(prefix){
+  const s=models[prefix].state;
+  const vals={
+    x:`${s.x.toFixed(1)} m`,y:`${s.y.toFixed(1)} m`,z:`${s.z.toFixed(1)} m`,
+    rotX:`${(s.rotX||0).toFixed(0)}°`,rotY:`${(s.rotY||0).toFixed(0)}°`,rotZ:`${(s.rotZ||0).toFixed(0)}°`,
+    shellOn:`${s.shellOn!==false?'On':'Off'}`,
+    planarOffsetM:`${(s.planarOffsetM||0).toFixed(3)} m`,
+    planarJointGapM:`${Math.round((s.planarJointGapM==null?.01:s.planarJointGapM)*1000)} mm`,
+    planarOpacity:`${Math.round((s.planarOpacity==null?.34:s.planarOpacity)*100)}%`,
+    planarBlend:`${Math.round((s.planarBlend==null?.82:s.planarBlend)*100)}%`,
+    diam:`${s.diam.toFixed(2)} m`,density:`${s.density.toFixed(2)} → F${Math.round(s.density)}`,
+    thick:`${s.thick.toFixed(2)} m`,seam:`${Math.round(s.seam*100)}%`,
+    coverage:`${Math.round(s.coverage)}%`,projection:`${s.projection.toFixed(2)} m`,
+    footprintM:`${s.footprintM.toFixed(2)} m`,apertureM:`${s.apertureM.toFixed(2)} m`,
+    seed:`${Math.round(s.seed)}`,sliceH:`${s.sliceH.toFixed(2)} m`,
+    verticalX:`${s.verticalX.toFixed(2)} m`,
+    blend:`${Math.round(s.blend*100)}%`,opacity:`${Math.round(s.opacity*100)}%`
+  };
+  Object.entries(vals).forEach(([k,v])=>{const el=document.getElementById(`${prefix}_${k}Lab`);if(el)el.textContent=v});
+  s.colors.forEach((c,i)=>{const el=document.getElementById(`${prefix}_c${i}v`);if(el)el.textContent=c.toUpperCase()});
+}
+function bindScenePanel(){
+  const panel=document.getElementById('panelScene');
+  panel.querySelectorAll('input[type=checkbox]').forEach(el=>{
+    el.addEventListener('change',()=>{
+      const k=el.dataset.sceneBool;
+      if(k)sceneSettings[k]=el.checked;
+      if(k==='whiteMode'){ rebuild('A'); rebuild('B'); }
+      else applySceneEnvironment();
+      saveWorkingState();
+    });
+  });
+  panel.querySelectorAll('input[type=color]').forEach(el=>{
+    el.addEventListener('input',()=>{
+      const k=el.dataset.sceneColor;
+      if(k)sceneSettings[k]=el.value;
+      const code=document.getElementById(`scene_${k}v`);
+      if(code)code.textContent=el.value.toUpperCase();
+      if(k==='whiteColor'){ if(sceneSettings.whiteMode){ rebuild('A'); rebuild('B'); } }
+      else applySceneEnvironment();
+      saveWorkingState();
+    });
+  });
+  document.getElementById('scene_reset').addEventListener('click',()=>{
+    Object.assign(sceneSettings, JSON.parse(JSON.stringify(sceneDefaults)));
+    document.getElementById('panelScene').innerHTML=buildScenePanel(sceneSettings);
+buildVersionsPanel();
+    bindScenePanel();
+    applySceneEnvironment();
+    rebuild('A'); rebuild('B');
+  });
+}
+
+function bindPanel(prefix){
+  const panel=document.getElementById(`panel${prefix}`),s=models[prefix].state;
+  panel.querySelectorAll('input[type=range]').forEach(el=>{
+    el.addEventListener('input',()=>{
+      const k=el.dataset.key;if(k)s[k]=+el.value;
+      rebuild(prefix);
+      saveWorkingState();
+    });
+  });
+  panel.querySelectorAll('input[type=checkbox]').forEach(el=>{
+    el.addEventListener('change',()=>{
+      const k=el.dataset.bool;if(k)s[k]=el.checked;
+      rebuild(prefix);
+      saveWorkingState();
+    });
+  });
+  panel.querySelectorAll('input[type=color]').forEach(el=>{
+    el.addEventListener('input',()=>{
+      if(el.dataset.planarColorIndex!=null && el.dataset.planarColorIndex!==''){
+        if(!Array.isArray(s.planarColors)||s.planarColors.length!==6)s.planarColors=['#f0d94b','#d9ef61','#a9ef63','#56e2cf','#53b8ff','#d18cff'];
+        s.planarColors[+el.dataset.planarColorIndex]=el.value;
+        const code=document.getElementById(`${prefix}_pc${+el.dataset.planarColorIndex}v`);
+        if(code)code.textContent=el.value.toUpperCase();
+      }else if(el.dataset.frameCoverColor){
+        s.frameCoverColor=el.value;
+        const code=document.getElementById(`${prefix}_frameCoverColorv`);
+        if(code)code.textContent=el.value.toUpperCase();
+      }else{
+        s.colors[+el.dataset.color]=el.value;
+        const code=document.getElementById(`${prefix}_c${+el.dataset.color}v`);
+        if(code)code.textContent=el.value.toUpperCase();
+      }
+      rebuild(prefix);
+      saveWorkingState();
+    });
+  });
+  document.getElementById(`${prefix}_reset`).addEventListener('click',()=>{
+    models[prefix].state=JSON.parse(JSON.stringify(defaults[prefix]));
+    const replacement=buildPanel(prefix,models[prefix].state);
+    document.getElementById(`panel${prefix}`).innerHTML=replacement;
+    bindPanel(prefix);
+    const hud=document.getElementById(prefix==='A'?'showA':'showB');if(hud)hud.checked=models[prefix].state.visible!==false;
+    rebuild(prefix);
+  });
+}
+bindPanel('A');bindPanel('B');bindScenePanel();
+applySceneEnvironment();
+
+document.getElementById('showA').addEventListener('change',e=>{models.A.state.visible=e.target.checked;models.A.group.visible=e.target.checked;updatePlanarHud();saveWorkingState();});
+document.getElementById('showB').addEventListener('change',e=>{models.B.state.visible=e.target.checked;models.B.group.visible=e.target.checked;updatePlanarHud();saveWorkingState();});
+
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(`panel${btn.dataset.tab}`).classList.add('active');
+  });
+});
+
+document.getElementById('fitView').addEventListener('click',()=>{
+  const a=models.A.state,b=models.B.state;
+  const minX=Math.min(a.x-a.diam/2,b.x-b.diam/2),maxX=Math.max(a.x+a.diam/2,b.x+b.diam/2);
+  const midX=(minX+maxX)/2,span=Math.max(12,maxX-minX);
+  controls.target.set(midX,(a.y+b.y)/2,0);
+  camera.position.set(midX+span*.9,span*.55,span*1.15);
+  controls.update();
+});
+
+// Walk-through navigation
+const heldKeys=new Set();
+const WALK_KEYS=new Set(['KeyW','KeyA','KeyS','KeyD','KeyQ','KeyE','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','ShiftLeft','ShiftRight']);
+let walkYaw=0,walkPitch=0,walkDragging=false,walkLastX=0,walkLastY=0;
+
+function isTextEditingTarget(target){
+  if(!target)return false;
+  const tag=(target.tagName||'').toLowerCase();
+  return tag==='input'||tag==='textarea'||tag==='select'||target.isContentEditable;
+}
+window.addEventListener('keydown',e=>{
+  if(!document.getElementById('walkMode').checked)return;
+  if(isTextEditingTarget(e.target))return;
+  if(!WALK_KEYS.has(e.code))return;
+  heldKeys.add(e.code);
+  e.preventDefault();
+});
+window.addEventListener('keyup',e=>{if(WALK_KEYS.has(e.code))heldKeys.delete(e.code);});
+document.getElementById('walkMode').addEventListener('change',e=>{
+  controls.enabled=!e.target.checked;
+  renderer.domElement.style.cursor=e.target.checked?'crosshair':'grab';
+  heldKeys.clear();
+  if(e.target.checked){
+    if(document.activeElement&&typeof document.activeElement.blur==='function')document.activeElement.blur();
+    const dir=new THREE.Vector3();camera.getWorldDirection(dir);
+    walkYaw=Math.atan2(-dir.x,-dir.z);
+    walkPitch=Math.asin(Math.max(-1,Math.min(1,dir.y)));
+  }
+});
+renderer.domElement.addEventListener('pointerdown',e=>{if(!document.getElementById('walkMode').checked||e.button!==0)return;walkDragging=true;walkLastX=e.clientX;walkLastY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId);});
+renderer.domElement.addEventListener('pointermove',e=>{if(!walkDragging||!document.getElementById('walkMode').checked)return;const dx=e.clientX-walkLastX,dy=e.clientY-walkLastY;walkLastX=e.clientX;walkLastY=e.clientY;walkYaw-=dx*.004;walkPitch-=dy*.004;walkPitch=Math.max(-1.45,Math.min(1.45,walkPitch));});
+renderer.domElement.addEventListener('pointerup',e=>{walkDragging=false;try{renderer.domElement.releasePointerCapture(e.pointerId)}catch(_){}});
+renderer.domElement.addEventListener('pointercancel',()=>walkDragging=false);
+const clock=new THREE.Clock();
+function updateWalk(){
+  if(!document.getElementById('walkMode').checked)return;
+  if(isTextEditingTarget(document.activeElement))return;
+  const dt=Math.min(.05,clock.getDelta()),fast=heldKeys.has('ShiftLeft')||heldKeys.has('ShiftRight'),speed=(fast?10:4)*dt;
+  const forward=new THREE.Vector3(-Math.sin(walkYaw),0,-Math.cos(walkYaw)),right=new THREE.Vector3(Math.cos(walkYaw),0,-Math.sin(walkYaw)),move=new THREE.Vector3();
+  if(heldKeys.has('KeyW')||heldKeys.has('ArrowUp'))move.add(forward);if(heldKeys.has('KeyS')||heldKeys.has('ArrowDown'))move.sub(forward);if(heldKeys.has('KeyD')||heldKeys.has('ArrowRight'))move.add(right);if(heldKeys.has('KeyA')||heldKeys.has('ArrowLeft'))move.sub(right);if(heldKeys.has('KeyE'))move.y+=1;if(heldKeys.has('KeyQ'))move.y-=1;
+  if(move.lengthSq()>0)camera.position.add(move.normalize().multiplyScalar(speed));
+  camera.rotation.order='YXZ';camera.rotation.y=walkYaw;camera.rotation.x=walkPitch;
+}
+
+function resize(){
+  const w=view.clientWidth,h=view.clientHeight;
+  renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+}
+window.addEventListener('resize',resize);
+
+resize();
+const restoredWorking=restoreLocalState();
+if(projectState.versions.length && projectState.activeVersionId){
+  const startupVersion=projectState.versions.find(v=>v.id===projectState.activeVersionId);
+  if(startupVersion)applySnapshot(startupVersion.snapshot);
+  else{rebuild('A');rebuild('B');document.getElementById('fitView').click();}
+}else if(restoredWorking){
+  applySnapshot(restoredWorking);
+}else{
+  rebuild('A');rebuild('B');document.getElementById('fitView').click();
+}
+buildVersionsPanel();
+(function loop(){
+  requestAnimationFrame(loop);
+  if(document.getElementById('walkMode').checked)updateWalk();
+  else{clock.getDelta();controls.update();}
+
+  // Keep the sky centred horizontally on the viewer, but never move its
+  // vertical datum: gradient zero remains fixed to the ground plane.
+  skyDome.position.x=camera.position.x;
+  skyDome.position.z=camera.position.z;
+  skyDome.position.y=0;
+
+  renderer.render(scene,camera);
+})();
+})();
+</script>
+</body>
+</html>

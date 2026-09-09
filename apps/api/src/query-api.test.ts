@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { buildServer } from './server.js';
 
-describe('G3B query/explain/trace API', () => {
-  it('serves FILTER query and EXPLAIN lineage', async () => {
-    const { app } = buildServer();
+describe('G3B query/explain/trace API (unit fixture opt-in)', () => {
+  it('serves FILTER query and EXPLAIN lineage when unit fixture is seeded', async () => {
+    const { app } = buildServer(undefined, { seedUnitFixture: true });
     const query = await app.inject({
       method: 'POST',
       url: '/models/model:fixture/query',

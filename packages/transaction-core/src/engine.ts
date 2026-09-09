@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { assertExpectedHead } from '@spds/concurrency-core';
 import { createSpdsError } from '@spds/failure-taxonomy';
 import { sha256Canonical } from '@spds/reproducibility';
-import type { InMemoryVersionStore } from '@spds/version-core';
+import type { VersionStore } from '@spds/version-core';
 import type {
   CandidateRevision,
   DesignCommand,
@@ -11,6 +11,9 @@ import type {
   PublicationManifest,
 } from './types.js';
 
+async function asPromise<T>(value: T | Promise<T>): Promise<T> {
+  return await value;
+}
 export type CompileStage =
   | 'semantic'
   | 'composition'
@@ -26,6 +29,20 @@ export interface MockCompileResult {
   readonly artifactHashes: readonly string[];
 }
 
+export type CompileAdapter = (input: {
+  readonly transactionId: string;
+  readonly candidate: CandidateRevision;
+  readonly commands: readonly DesignCommand[];
+}) => Promise<{
+  readonly ok: boolean;
+  readonly pirHash: string;
+  readonly dagHash: string;
+  readonly validationHash: string;
+  readonly artifactHashes: readonly string[];
+  readonly pipelineHash?: string;
+  readonly failAt?: CompileStage;
+}>;
+
 export class TransactionEngine {
   private readonly txns = new Map<string, DesignTransaction>();
   private readonly byIdempotency = new Map<string, string>();
@@ -33,8 +50,17 @@ export class TransactionEngine {
   private readonly manifests = new Map<string, PublicationManifest>();
   private publishedHeadObjects = new Map<string, Record<string, unknown>>();
   private workerGeneration = 1;
+  private compileAdapter: CompileAdapter | null = null;
 
-  constructor(private readonly store: InMemoryVersionStore) {}
+  constructor(private readonly store: VersionStore) {}
+
+  setCompileAdapter(adapter: CompileAdapter | null): void {
+    this.compileAdapter = adapter;
+  }
+
+  hasCompileAdapter(): boolean {
+    return this.compileAdapter !== null;
+  }
 
   getTransaction(id: string): DesignTransaction | undefined {
     return this.txns.get(id);
@@ -44,29 +70,32 @@ export class TransactionEngine {
     return this.candidates.get(id);
   }
 
-  getPublishedObjects(branchId: string): ReadonlyMap<string, Record<string, unknown>> {
+  async getPublishedObjects(
+    branchId: string,
+  ): Promise<ReadonlyMap<string, Record<string, unknown>>> {
     const cached = this.publishedHeadObjects.get(branchId);
     if (cached) {
       return new Map(
         Object.entries(cached).map(([k, v]) => [k, v as Record<string, unknown>] as const),
       );
     }
-    return new Map(this.store.listObjects(branchId).map((o) => [String(o['id']), o] as const));
+    const objects = await asPromise(this.store.listObjects(branchId));
+    return new Map(objects.map((o) => [String(o['id']), o] as const));
   }
 
-  begin(input: {
+  async begin(input: {
     modelId: string;
     branchId: string;
     actorId: string;
     actorType: 'user' | 'ai' | 'system';
     expectedHeadHash: string;
     idempotencyKey: string;
-  }): DesignTransaction {
+  }): Promise<DesignTransaction> {
     const existingId = this.byIdempotency.get(input.idempotencyKey);
     if (existingId) {
       return this.txns.get(existingId)!;
     }
-    const head = this.store.getBranchHead(input.branchId).headHash;
+    const head = (await asPromise(this.store.getBranchHead(input.branchId))).headHash;
     assertExpectedHead({
       expectedHeadHash: input.expectedHeadHash,
       actualHeadHash: head,
@@ -115,12 +144,10 @@ export class TransactionEngine {
     return next;
   }
 
-  /** Apply commands only to an isolated candidate; published remains untouched. */
-  buildCandidate(txnId: string): CandidateRevision {
+  async buildCandidate(txnId: string): Promise<CandidateRevision> {
     const txn = this.requireOpen(txnId);
-    const base = Object.fromEntries(
-      this.store.listObjects(txn.branchId).map((o) => [String(o['id']), structuredClone(o)]),
-    );
+    const listed = await asPromise(this.store.listObjects(txn.branchId));
+    const base = Object.fromEntries(listed.map((o) => [String(o['id']), structuredClone(o)]));
     for (const cmd of txn.commands) {
       applyCommand(base, cmd);
     }
@@ -214,20 +241,71 @@ export class TransactionEngine {
     return manifest;
   }
 
-  publicationGate(txnId: string): PublicationGateResult {
+  async compile(
+    txnId: string,
+    options?: { failAt?: CompileStage; workerGeneration?: number },
+  ): Promise<PublicationManifest> {
+    if (!this.compileAdapter || options?.failAt) {
+      return this.mockCompile(txnId, options);
+    }
+    const txn = this.txns.get(txnId);
+    if (!txn?.candidateRevisionId) {
+      throw createSpdsError({
+        code: 'SEMANTIC_INVALID',
+        summary: 'Candidate required before compile',
+        affectedSemanticIds: [txnId],
+        recoverable: true,
+      });
+    }
+    const candidate = this.candidates.get(txn.candidateRevisionId)!;
+    this.patch(txnId, { status: 'compiling' });
+    const result = await this.compileAdapter({
+      transactionId: txnId,
+      candidate,
+      commands: txn.commands,
+    });
+    if (!result.ok) {
+      this.patch(txnId, { status: 'failed', failureStage: result.failAt ?? 'geometry' });
+      throw createSpdsError({
+        code: 'OPERATOR_FAILED',
+        summary: `Compile failed at ${result.failAt ?? 'geometry'}`,
+        affectedSemanticIds: [txnId],
+        recoverable: true,
+      });
+    }
+    const manifest: PublicationManifest = {
+      id: `pub:${randomUUID()}`,
+      transactionId: txnId,
+      snapshotHash: sha256Canonical(candidate.objects),
+      pirHash: result.pirHash,
+      dagHash: result.dagHash,
+      envHash: sha256Canonical({ node: process.version, pipelineHash: result.pipelineHash ?? null }),
+      validationHash: result.validationHash,
+      artifactHashes: result.artifactHashes,
+      workerGeneration: options?.workerGeneration ?? this.workerGeneration,
+    };
+    this.manifests.set(manifest.id, manifest);
+    this.patch(txnId, {
+      status: 'gated',
+      publicationManifestId: manifest.id,
+    });
+    return manifest;
+  }
+
+  async publicationGate(txnId: string): Promise<PublicationGateResult> {
     const txn = this.txns.get(txnId);
     if (!txn || txn.status !== 'gated' || !txn.publicationManifestId) {
       return { ok: false, reason: 'not-gated' };
     }
-    const head = this.store.getBranchHead(txn.branchId).headHash;
+    const head = (await asPromise(this.store.getBranchHead(txn.branchId))).headHash;
     if (head !== txn.expectedHeadHash) {
       return { ok: false, reason: 'HEAD_CONFLICT' };
     }
     return { ok: true };
   }
 
-  commit(txnId: string): DesignTransaction {
-    const gate = this.publicationGate(txnId);
+  async commit(txnId: string): Promise<DesignTransaction> {
+    const gate = await this.publicationGate(txnId);
     if (!gate.ok) {
       this.abort(txnId, gate.reason);
       throw createSpdsError({
@@ -241,22 +319,24 @@ export class TransactionEngine {
     const candidate = this.candidates.get(txn.candidateRevisionId!)!;
     let head = txn.expectedHeadHash;
     for (const cmd of txn.commands) {
-      const event = this.store.applyMutation({
-        branchId: txn.branchId,
-        actor: { type: txn.actorType, id: txn.actorId },
-        command: cmd.type,
-        expectedHeadHash: head,
-        targetIds: cmd.targetIds,
-        mutate: (objects) => {
-          const asRecord = Object.fromEntries(objects);
-          applyCommand(asRecord, cmd);
-          objects.clear();
-          for (const [k, v] of Object.entries(asRecord)) {
-            objects.set(k, v as Record<string, unknown>);
-          }
-          return cmd.targetIds;
-        },
-      });
+      const event = await asPromise(
+        this.store.applyMutation({
+          branchId: txn.branchId,
+          actor: { type: txn.actorType, id: txn.actorId },
+          command: cmd.type,
+          expectedHeadHash: head,
+          targetIds: [...cmd.targetIds],
+          mutate: (objects) => {
+            const asRecord = Object.fromEntries(objects);
+            applyCommand(asRecord, cmd);
+            objects.clear();
+            for (const [k, v] of Object.entries(asRecord)) {
+              objects.set(k, v as Record<string, unknown>);
+            }
+            return [...cmd.targetIds];
+          },
+        }),
+      );
       head = event.afterHash;
     }
     this.publishedHeadObjects.set(
@@ -305,7 +385,12 @@ export class TransactionEngine {
 
   private patch(
     txnId: string,
-    patch: Partial<Pick<DesignTransaction, 'status' | 'failureStage' | 'publicationManifestId' | 'candidateRevisionId'>>,
+    patch: Partial<
+      Pick<
+        DesignTransaction,
+        'status' | 'failureStage' | 'publicationManifestId' | 'candidateRevisionId'
+      >
+    >,
   ): void {
     const txn = this.txns.get(txnId)!;
     this.txns.set(txnId, {
@@ -321,7 +406,12 @@ function applyCommand(objects: Record<string, unknown>, cmd: DesignCommand): voi
     case 'SET_PARAMETER': {
       const id = String(cmd.payload['id'] ?? cmd.targetIds[0]);
       const prev = (objects[id] as Record<string, unknown> | undefined) ?? { id };
-      objects[id] = { ...prev, value: cmd.payload['value'] };
+      const path = typeof cmd.payload['path'] === 'string' ? cmd.payload['path'] : undefined;
+      const value = cmd.payload['value'];
+      objects[id] =
+        path === 'lengthMm'
+          ? { ...prev, id, lengthMm: value, value }
+          : { ...prev, id, value };
       break;
     }
     case 'CREATE_OBJECT': {

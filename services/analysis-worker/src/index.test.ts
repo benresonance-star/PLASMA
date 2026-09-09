@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { runD01ReferencePipeline } from '@spds/reference-pipeline';
+import { deriveYComponentArmSegments } from '@spds/topology-operators';
 import { runAnalysisJob } from './index.js';
 
 describe('E7 analysis-worker mesh→analysis', () => {
@@ -8,19 +9,13 @@ describe('E7 analysis-worker mesh→analysis', () => {
     const yMembers = pipeline.yNetwork.components
       .filter((c) => c.trim === 'retained')
       .slice(0, 2)
-      .map((c) => {
-        const origin = c.frame.origin;
-        const arm = c.arms[0]!;
-        return {
-          id: c.id,
-          a: origin,
-          b: [
-            origin[0] + c.frame.tangent[0] * arm.lengthMmPlaceholder,
-            origin[1] + c.frame.tangent[1] * arm.lengthMmPlaceholder,
-            origin[2] + c.frame.tangent[2] * arm.lengthMmPlaceholder,
-          ] as [number, number, number],
-        };
-      });
+      .flatMap((component) =>
+        deriveYComponentArmSegments(component).map((segment) => ({
+          id: segment.id,
+          a: segment.a,
+          b: segment.b,
+        })),
+      );
 
     const job = runAnalysisJob({
       requestId: 'analysis:d01-e7',
@@ -57,6 +52,7 @@ describe('E7 analysis-worker mesh→analysis', () => {
     expect(job.meshArtifact?.labelPolicy).toBe('computational-indicative');
     expect(job.exportFixture?.labelPolicy).toBe('computational-indicative');
     expect(job.model?.solids[0]?.meshArtifactHash).toBe(job.meshArtifact?.artifactHash);
+    expect(job.model?.beams).toHaveLength(6);
     expect(job.results?.viewportLabels.every((l) => l.indicative)).toBe(true);
   });
 

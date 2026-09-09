@@ -123,3 +123,35 @@ CREATE TABLE IF NOT EXISTS coordinate_frames (
 CREATE INDEX IF NOT EXISTS idx_semantic_objects_model_branch ON semantic_objects(model_id, branch_id);
 CREATE INDEX IF NOT EXISTS idx_change_events_branch ON change_events(branch_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_snapshots_branch ON snapshots(branch_id, created_at);
+
+-- Version store mirror of InMemoryVersionStore (TEXT ids, JSONB branch payload)
+CREATE TABLE IF NOT EXISTS vs_models (
+  model_id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS vs_branches (
+  branch_id TEXT PRIMARY KEY,
+  model_id TEXT NOT NULL REFERENCES vs_models(model_id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  head_hash TEXT NOT NULL,
+  head_event_id TEXT,
+  created_at TIMESTAMPTZ NOT NULL,
+  objects JSONB NOT NULL DEFAULT '{}'::jsonb,
+  events JSONB NOT NULL DEFAULT '[]'::jsonb,
+  snapshots JSONB NOT NULL DEFAULT '[]'::jsonb,
+  UNIQUE (model_id, name)
+);
+
+CREATE INDEX IF NOT EXISTS idx_vs_branches_model ON vs_branches(model_id);
+
+-- Per-user designer UI preferences (theme, viewport camera/engines, measure library).
+-- user_id is a stable client id (anon:<uuid>) until real auth lands.
+CREATE TABLE IF NOT EXISTS user_ui_preferences (
+  user_id TEXT PRIMARY KEY,
+  payload JSONB NOT NULL DEFAULT '{}'::jsonb,
+  schema_version TEXT NOT NULL DEFAULT '1',
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);

@@ -16,18 +16,19 @@ export {
   assertD01TopologyInvariants,
   hashTopology,
 } from './d01.js';
-export {
-  createGoldbergTopologyOperator,
-  type GoldbergOperatorInput,
-} from './operator.js';
+export { createGoldbergTopologyOperator, type GoldbergOperatorInput } from './operator.js';
 export {
   DEFAULT_Y_PROFILE,
+  Y_ARM_LABELS,
   computeLocalFrame,
+  deriveYComponentArmSegments,
   extractYNetwork,
   validateYProfile,
   clearOpeningMm,
   type LocalFrame,
   type YArm,
+  type YArmLabel,
+  type YArmSegment,
   type YComponent,
   type YProfileParameters,
   type YNetwork,

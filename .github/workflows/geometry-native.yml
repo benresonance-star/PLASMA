@@ -1,0 +1,56 @@
+# N1.9 — optional OCCT native (OpenCascade.js) lane.
+# Default CI stays on exact-adapter; this job is manual / non-blocking.
+name: geometry-native
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'services/geometry-occt/**'
+      - 'packages/geometry-contracts/**'
+      - '.github/workflows/geometry-native.yml'
+
+jobs:
+  occt-native:
+    runs-on: ubuntu-latest
+    # Optional lane: surface failures without blocking merge of exact-adapter CI.
+    continue-on-error: true
+    env:
+      NODE_OPTIONS: --use-system-ca
+      GEOMETRY_KERNEL: occt-native
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install geometry-occt workspace
+        run: pnpm install --frozen-lockfile --filter @spds/geometry-occt...
+
+      - name: Build geometry-occt
+        run: pnpm --filter @spds/geometry-occt... build
+
+      - name: Native constructive + STEP + drift tests
+        run: pnpm --filter @spds/geometry-occt test -- occt-native native-step mesh-drift kernel-factory
+
+      - name: Health smoke (occt-native)
+        run: |
+          pnpm --filter @spds/geometry-occt start &
+          PID=$!
+          for i in $(seq 1 30); do
+            if curl -sf http://127.0.0.1:7080/health | grep -q occt-native; then
+              curl -sf http://127.0.0.1:7080/health
+              kill $PID
+              exit 0
+            fi
+            sleep 2
+          done
+          kill $PID || true
+          echo "geometry-occt native health failed"
+          exit 1

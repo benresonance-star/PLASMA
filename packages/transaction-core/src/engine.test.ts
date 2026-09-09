@@ -13,9 +13,9 @@ function setup() {
 }
 
 describe('G3C transactions publication undo precursors', () => {
-  it('is idempotent on begin and isolates candidates from published', () => {
+  it('is idempotent on begin and isolates candidates from published', async () => {
     const { model, branchId, head, engine, store } = setup();
-    const a = engine.begin({
+    const a = await engine.begin({
       modelId: model.modelId,
       branchId,
       actorId: 'user:1',
@@ -23,7 +23,7 @@ describe('G3C transactions publication undo precursors', () => {
       expectedHeadHash: head,
       idempotencyKey: 'k1',
     });
-    const b = engine.begin({
+    const b = await engine.begin({
       modelId: model.modelId,
       branchId,
       actorId: 'user:1',
@@ -39,15 +39,15 @@ describe('G3C transactions publication undo precursors', () => {
       targetIds: ['param:freq'],
       payload: { id: 'param:freq', value: 3 },
     });
-    const candidate = engine.buildCandidate(a.id);
+    const candidate = await engine.buildCandidate(a.id);
     expect(candidate.published).toBe(false);
     expect(store.listObjects(branchId)).toHaveLength(0);
     expect(candidate.objects['param:freq']).toEqual({ id: 'param:freq', value: 3 });
   });
 
-  it('rejects stale heads and prevents partial publication on compile failure', () => {
+  it('rejects stale heads and prevents partial publication on compile failure', async () => {
     const { model, branchId, head, engine, store } = setup();
-    const txn = engine.begin({
+    const txn = await engine.begin({
       modelId: model.modelId,
       branchId,
       actorId: 'user:1',
@@ -61,16 +61,16 @@ describe('G3C transactions publication undo precursors', () => {
       targetIds: ['param:x'],
       payload: { id: 'param:x', object: { id: 'param:x', value: 1 } },
     });
-    engine.buildCandidate(txn.id);
+    await engine.buildCandidate(txn.id);
 
-    expect(() =>
-      engine.mockCompile(txn.id, { failAt: 'geometry' }),
-    ).toThrow(/Injected compile failure/);
+    expect(() => engine.mockCompile(txn.id, { failAt: 'geometry' })).toThrow(
+      /Injected compile failure/,
+    );
     expect(engine.getTransaction(txn.id)?.status).toBe('failed');
     expect(store.listObjects(branchId)).toHaveLength(0);
 
     try {
-      engine.begin({
+      await engine.begin({
         modelId: model.modelId,
         branchId,
         actorId: 'ai:1',
@@ -84,9 +84,9 @@ describe('G3C transactions publication undo precursors', () => {
     }
   });
 
-  it('atomically publishes on successful gate and rejects stale workers', () => {
+  it('atomically publishes on successful gate and rejects stale workers', async () => {
     const { model, branchId, head, engine, store } = setup();
-    const txn = engine.begin({
+    const txn = await engine.begin({
       modelId: model.modelId,
       branchId,
       actorId: 'user:1',
@@ -100,11 +100,11 @@ describe('G3C transactions publication undo precursors', () => {
       targetIds: ['param:y'],
       payload: { id: 'param:y', object: { id: 'param:y', value: 9 } },
     });
-    engine.buildCandidate(txn.id);
+    await engine.buildCandidate(txn.id);
     engine.bumpWorkerGeneration();
     expect(() => engine.mockCompile(txn.id, { workerGeneration: 1 })).toThrow(/Stale worker/);
 
-    const txn2 = engine.begin({
+    const txn2 = await engine.begin({
       modelId: model.modelId,
       branchId,
       actorId: 'user:1',
@@ -118,9 +118,9 @@ describe('G3C transactions publication undo precursors', () => {
       targetIds: ['param:y'],
       payload: { id: 'param:y', object: { id: 'param:y', value: 9 } },
     });
-    engine.buildCandidate(txn2.id);
+    await engine.buildCandidate(txn2.id);
     engine.mockCompile(txn2.id);
-    const committed = engine.commit(txn2.id);
+    const committed = await engine.commit(txn2.id);
     expect(committed.status).toBe('committed');
     expect(store.getObject(branchId, 'param:y')).toEqual({ id: 'param:y', value: 9 });
   });

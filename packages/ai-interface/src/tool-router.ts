@@ -9,65 +9,111 @@ import {
   validateChangeSet,
   type ChangeSet,
   type ChangeSetCommand,
+  type ChangeSetCommandOp,
 } from './tools.js';
 import { whyTool } from './repair.js';
 import type { LlmToolDefinition } from './llm-client.js';
+import {
+  DEFAULT_ACCEPT_OPS,
+  type AgentContextPackage,
+} from './agent-context.js';
 
-export const AI_TOOL_DEFINITIONS: readonly LlmToolDefinition[] = [
-  {
-    type: 'function',
-    function: {
-      name: 'summary',
-      description: 'Read-only model summary (object/pattern counts)',
-      parameters: { type: 'object', properties: {}, additionalProperties: false },
-    },
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'search',
-      description: 'Read-only semantic id/kind search',
-      parameters: {
-        type: 'object',
-        properties: { query: { type: 'string' } },
-        required: ['query'],
-        additionalProperties: false,
+export function buildAiToolDefinitions(
+  acceptOps: readonly ChangeSetCommandOp[] = DEFAULT_ACCEPT_OPS,
+): readonly LlmToolDefinition[] {
+  const ops = [...acceptOps];
+  return [
+    {
+      type: 'function',
+      function: {
+        name: 'get_context',
+        description:
+          'Return AgentContextPackage: units, WORLD frame, discover catalogs, mutate capabilities, examples',
+        parameters: { type: 'object', properties: {}, additionalProperties: false },
       },
     },
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'propose_changeset',
-      description:
-        'Propose a semantic ChangeSet on an isolated AI branch. Forbidden: fabricationReady, brep, threeJs.',
-      parameters: {
-        type: 'object',
-        properties: {
-          changeSetId: { type: 'string' },
-          targetId: { type: 'string' },
-          op: { type: 'string', enum: ['create', 'update', 'delete', 'apply_pattern'] },
-          payload: { type: 'object' },
+    {
+      type: 'function',
+      function: {
+        name: 'summary',
+        description: 'Read-only model summary (object/pattern counts)',
+        parameters: { type: 'object', properties: {}, additionalProperties: false },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'search',
+        description: 'Read-only semantic id/kind search',
+        parameters: {
+          type: 'object',
+          properties: { query: { type: 'string' } },
+          required: ['query'],
+          additionalProperties: false,
         },
-        required: ['changeSetId', 'targetId', 'op'],
-        additionalProperties: false,
       },
     },
-  },
-  {
-    type: 'function',
-    function: {
-      name: 'why',
-      description: 'Explain semantic lineage for an object id',
-      parameters: {
-        type: 'object',
-        properties: { semanticId: { type: 'string' } },
-        required: ['semanticId'],
-        additionalProperties: false,
+    {
+      type: 'function',
+      function: {
+        name: 'propose_changeset',
+        description:
+          'Propose a semantic ChangeSet on an isolated AI branch. Forbidden: fabricationReady, brep, threeJs. Ops limited to accept-capable set.',
+        parameters: {
+          type: 'object',
+          properties: {
+            changeSetId: { type: 'string' },
+            targetId: { type: 'string' },
+            op: {
+              type: 'string',
+              enum: ops,
+            },
+            payload: { type: 'object' },
+          },
+          required: ['changeSetId', 'op'],
+          additionalProperties: false,
+        },
       },
     },
-  },
-];
+    {
+      type: 'function',
+      function: {
+        name: 'why',
+        description: 'Explain semantic lineage for an object id',
+        parameters: {
+          type: 'object',
+          properties: { semanticId: { type: 'string' } },
+          required: ['semanticId'],
+          additionalProperties: false,
+        },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'schema_catalog',
+        description: 'Read-only semantic kinds and live model types (discover)',
+        parameters: { type: 'object', properties: {}, additionalProperties: false },
+      },
+    },
+    {
+      type: 'function',
+      function: {
+        name: 'lookup',
+        description: 'Read-only lookup of a semantic object by id',
+        parameters: {
+          type: 'object',
+          properties: { semanticId: { type: 'string' } },
+          required: ['semanticId'],
+          additionalProperties: false,
+        },
+      },
+    },
+  ];
+}
+
+/** Default tool defs — acceptOps-gated (not full create/delete/apply_pattern enum). */
+export const AI_TOOL_DEFINITIONS: readonly LlmToolDefinition[] = buildAiToolDefinitions();
 
 export interface ToolRouterContext {
   readonly catalog: {
@@ -80,6 +126,9 @@ export interface ToolRouterContext {
   readonly sourceBranchId: string;
   readonly currentHeadHash: string;
   readonly transactionId: string;
+  /** Capability-gated context; required for get_context tool. */
+  readonly agentContext?: AgentContextPackage;
+  readonly acceptOps?: readonly ChangeSetCommandOp[];
 }
 
 export interface ToolRouterResult {
@@ -103,6 +152,12 @@ export function routeAiTool(
   }
 
   switch (name) {
+    case 'get_context': {
+      if (!ctx.agentContext) {
+        return { ok: false, name, data: null, error: 'AgentContextPackage not bound' };
+      }
+      return { ok: true, name, data: ctx.agentContext };
+    }
     case 'summary': {
       const data = executeReadTool({ tool: 'summary' }, ctx.catalog).data;
       return { ok: true, name, data };
@@ -122,11 +177,42 @@ export function routeAiTool(
         data: whyTool(semanticId, ['pattern', 'compose', 'operator']),
       };
     }
+    case 'schema_catalog': {
+      const data = executeReadTool({ tool: 'schema_catalog' }, ctx.catalog).data;
+      return { ok: true, name, data };
+    }
+    case 'lookup': {
+      const semanticId = String(args.semanticId ?? '');
+      const data = executeReadTool({ tool: 'lookup', semanticId }, ctx.catalog).data;
+      const param = ctx.agentContext?.mutate.parameters.find(
+        (p) => p.id === semanticId || p.targetAliases.includes(semanticId),
+      );
+      return {
+        ok: true,
+        name,
+        data: param ? { ...(data as object), parameter: param } : data,
+      };
+    }
     case 'propose_changeset': {
+      const op = (args.op as ChangeSetCommand['op']) ?? 'update';
+      const allowed = ctx.acceptOps ?? ctx.agentContext?.mutate.acceptOps ?? DEFAULT_ACCEPT_OPS;
+      if (!allowed.includes(op)) {
+        return {
+          ok: false,
+          name,
+          data: null,
+          error: `UNSUPPORTED_OP:${op}`,
+        };
+      }
+      const targetRaw = args.targetId;
       const commands: ChangeSetCommand[] = [
         {
-          op: (args.op as ChangeSetCommand['op']) ?? 'update',
-          targetId: String(args.targetId ?? ''),
+          op,
+          ...(typeof targetRaw === 'string' && targetRaw.length > 0
+            ? { targetId: targetRaw }
+            : op === 'create_group'
+              ? {}
+              : { targetId: '' }),
           payload: args.payload ?? {},
         },
       ];

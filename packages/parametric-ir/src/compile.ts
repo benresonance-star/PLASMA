@@ -12,6 +12,7 @@ export interface CompilePirInput {
 function readParams(effective: EffectiveState): {
   frequency: number;
   diameterMm: number;
+  riseRatio: number;
   skin?: string;
 } {
   const params = effective.objects['params'];
@@ -21,10 +22,14 @@ function readParams(effective: EffectiveState): {
   const p = params as Record<string, unknown>;
   const frequency = Number(p['frequency']);
   const diameterMm = Number(p['diameterMm']);
+  const riseRatio = Number(p['riseRatio'] ?? 0.5);
   if (!Number.isInteger(frequency) || frequency < 1) throw new Error('invalid frequency');
   if (!(diameterMm > 0)) throw new Error('invalid diameterMm');
+  if (!(riseRatio >= 0 && riseRatio <= 1)) throw new Error('invalid riseRatio');
   const skin = typeof p['skin'] === 'string' ? p['skin'] : undefined;
-  return skin !== undefined ? { frequency, diameterMm, skin } : { frequency, diameterMm };
+  return skin !== undefined
+    ? { frequency, diameterMm, riseRatio, skin }
+    : { frequency, diameterMm, riseRatio };
 }
 
 /** Mock compiler: resolved composition → kernel-neutral PIR (no OCCT). */
@@ -74,9 +79,17 @@ export function compilePirFromEffectiveState(input: CompilePirInput): {
         inputs: {
           frequency: { value: params.frequency },
           diameterMm: { value: params.diameterMm },
+          riseRatio: { value: params.riseRatio },
           ...(params.skin !== undefined ? { skin: { value: params.skin } } : {}),
         },
-        produces: { role: 'topology:cells' },
+        produces: {
+          role: 'topology:cells',
+          form: {
+            kind: 'topology',
+            topologyType: 'cells',
+            capabilities: ['emit.cells', 'emit.adjacency'],
+          },
+        },
         provenance: {
           patternInstance: input.patternInstanceId,
           compositionHash: input.effective.effectiveHash,
@@ -100,7 +113,14 @@ export function compilePirFromEffectiveState(input: CompilePirInput): {
           topology: { pirRef: 'pir:topology.goldberg' },
           targets: { selector: 'selector:capability-cells' },
         },
-        produces: { role: 'topology:bound' },
+        produces: {
+          role: 'topology:bound',
+          form: {
+            kind: 'topology',
+            topologyType: 'cells',
+            capabilities: ['emit.cells'],
+          },
+        },
         provenance: {
           patternInstance: input.patternInstanceId,
           compositionHash: input.effective.effectiveHash,
@@ -116,7 +136,14 @@ export function compilePirFromEffectiveState(input: CompilePirInput): {
           topology: { pirRef: 'pir:topology.goldberg' },
           diameterMm: { value: params.diameterMm },
         },
-        produces: { role: 'network:y' },
+        produces: {
+          role: 'network:y',
+          form: {
+            kind: 'topology',
+            topologyType: 'network',
+            capabilities: ['emit.components', 'emit.local-frames', 'preview.y-network-members'],
+          },
+        },
         provenance: {
           patternInstance: input.patternInstanceId,
           compositionHash: input.effective.effectiveHash,

@@ -15,7 +15,7 @@ describe('RC-01 API D01 display meshes + AI live compile', () => {
       meshes: { semanticOwner: string; triangleCount: number }[];
     };
     expect(body.source).toBe('d01-reference-pipeline');
-    expect(body.meshes.length).toBe(2);
+    expect(body.meshes.length).toBe(6);
     expect(body.meshes[0]!.triangleCount).toBeGreaterThan(0);
   });
 

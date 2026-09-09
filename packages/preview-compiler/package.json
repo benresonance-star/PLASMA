@@ -1,0 +1,31 @@
+{
+  "name": "@spds/preview-compiler",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src --max-warnings 0",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@spds/geometry-contracts": "workspace:*",
+    "@spds/parametric-ir": "workspace:*",
+    "@spds/reproducibility": "workspace:*"
+  },
+  "devDependencies": {
+    "eslint": "^9.22.0",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.8"
+  }
+}

@@ -11,7 +11,7 @@ export interface DemoMemberParams {
 export const DEMO_Y_SEMANTIC_ID = 'y:demo:01';
 
 const DEFAULT_PARAMS: DemoMemberParams = {
-  lengthMm: 200,
+  lengthMm: 2300,
   widthMm: 40,
   depthMm: 40,
 };

@@ -10,7 +10,8 @@ import {
 
 describe('G6 geometry service', () => {
   it('serves health/version and basic sweep/tessellate with positive volume', async () => {
-    const { app } = buildGeometryServer();
+    // Pin exact-adapter so ambient GEOMETRY_KERNEL=occt-native does not pollute CI-default suite.
+    const { app } = buildGeometryServer(new ExactKernelAdapter());
     const health = await app.inject({ method: 'GET', url: '/health' });
     expect(health.statusCode).toBe(200);
     expect(health.json().kernel).toBe('exact-adapter');
@@ -54,17 +55,27 @@ describe('G6 geometry service', () => {
     const first = network.components.find((c) => c.trim === 'retained')!;
     const a = generateYBrep(kernel, first);
     const b = generateYBrep(kernel, first);
-    expect(a.id).toBe(b.id);
-    expect(a.semanticOwner).toBe(first.id);
-    expect(a.mass.volumeMm3).toBeGreaterThan(0);
+    expect(a).toHaveLength(3);
+    expect(a.map((representation) => representation.id)).toEqual(
+      b.map((representation) => representation.id),
+    );
+    expect(a.every((representation) => representation.semanticOwner === first.id)).toBe(true);
+    expect(a.every((representation) => representation.mass.volumeMm3 > 0)).toBe(true);
+    expect(a.flatMap((representation) => representation.subElementPaths)).toEqual(
+      expect.arrayContaining([
+        `${first.id}/arm:A/start`,
+        `${first.id}/arm:B/start`,
+        `${first.id}/arm:C/start`,
+      ]),
+    );
 
     const set = generateD01YFixtureSet(kernel, 10);
-    expect(set).toHaveLength(10);
+    expect(set).toHaveLength(30);
     expect(set.every((r) => r.fabricationReady)).toBe(true);
   });
 
   it('returns structured shell failure without crashing and blocks fabrication', async () => {
-    const { app } = buildGeometryServer();
+    const { app } = buildGeometryServer(new ExactKernelAdapter());
     const sweep = await app.inject({
       method: 'POST',
       url: '/v1/sweep',

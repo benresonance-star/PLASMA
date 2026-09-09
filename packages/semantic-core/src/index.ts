@@ -28,6 +28,17 @@ export {
   type Relationship,
 } from './relationships.js';
 export {
+  SDI_RELATIONSHIP_TYPES,
+  SDI_TO_STORAGE,
+  allSdiStoragePairs,
+  isCoreOrNamespacedRelation,
+  isSdiRelationshipType,
+  presentationRelationLabel,
+  toPresentationRelationType,
+  toStorageRelationType,
+  type SdiRelationshipType,
+} from './relationship-aliases.js';
+export {
   createSemanticGraph,
   upstream,
   downstream,
@@ -47,3 +58,13 @@ export {
 export { RuleSchema, parseRule, type Rule } from './rules.js';
 export { AFFECTOR_TYPES, AffectorSchema, parseAffector, type Affector } from './affectors.js';
 export { buildD01SemanticFixture } from './fixture-d01.js';
+export {
+  buildLiveSchemaSlice,
+  buildSchemaPayload,
+  buildStaticSchema,
+  schemaPayloadToAiCatalog,
+  type SchemaLiveObject,
+  type SchemaLiveType,
+  type SchemaOrganisationSummary,
+  type SchemaPayload,
+} from './schema-payload.js';
