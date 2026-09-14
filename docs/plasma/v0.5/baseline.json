@@ -1,6 +1,6 @@
 {
   "schema": "plasma/consolidated-baseline/0.1.0",
-  "version": "0.5.0-candidate.3",
+  "version": "0.5.0-candidate.4",
   "date": "2026-09-14",
   "status": "reviewable_specification_candidate",
   "software_release": false,
@@ -25,7 +25,9 @@
     "inference.md",
     "inference-contracts.ts",
     "interaction.md",
-    "interaction-contracts.ts"
+    "interaction-contracts.ts",
+    "presentation.md",
+    "presentation-contracts.ts"
   ],
   "derived_reading_copy": "index.html",
   "renderer": "render.mjs",
@@ -95,6 +97,15 @@
       "types": "interaction-contracts.ts",
       "decision": "CON-020",
       "acceptance": "INT-A01–INT-A13 (M1/M2 extension)"
+    },
+    "PLS-IPS-01": {
+      "version": "0.1.0",
+      "status": "specified_candidate",
+      "document": "presentation.md",
+      "types": "presentation-contracts.ts",
+      "decision": "CON-021",
+      "acceptance": "IPS-A01–IPS-A14 (M1/M2 presentation extension)",
+      "placement": "PLS-14 consumer of PLS-INT-01 overlays and existing representation responses"
     }
   }
 }

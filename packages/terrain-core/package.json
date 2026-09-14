@@ -5,7 +5,9 @@
     "./surface": "./src/surface.mjs",
     "./bridge": "./src/bridge.mjs",
     "./worker-client": "./src/worker-client.mjs",
-    "./surface-worker": "./src/surface-worker.mjs"
+    "./surface-worker": "./src/surface-worker.mjs",
+    "./common-contracts": "./src/common-contracts.mjs",
+    "./presentation-consumer": "./src/presentation-consumer.mjs"
   },
   "name": "@spds/terrain-core",
   "private": true,

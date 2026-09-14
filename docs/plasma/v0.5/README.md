@@ -12,7 +12,8 @@ Start here for the current Plasma direction. Existing SPDS code remains an engin
 6. [Implementation and evidence](implementation.md).
 7. [Bounded interpretation and escalation](inference.md).
 8. [Interaction sessions and speculative overlays](interaction.md).
-9. [Milestones and acceptance gates](roadmap.md).
+9. [Interactive presentation surface](presentation.md).
+10. [Milestones and acceptance gates](roadmap.md).
 
 [baseline.json](baseline.json) identifies sources, precedence and exact-identity rules.
 [sources/foundry-v0.4.26.json](sources/foundry-v0.4.26.json) preserves the complete extracted Foundry declaration, including all 27 loop entries, policies, audit, architecture updates and evidence claims.
@@ -47,3 +48,6 @@ Bounded interpretation, abstention and policy-based escalation now have one shar
 
 ## Candidate update — PLS-INT-01
 Interaction overlays, independently scheduled rates, bounded work and exact-result reconciliation are now specified within the existing runtime. Performance values are qualification targets; commit-critical validation still precedes acceptance. See CON-020 and the INT-A01–13 corpus.
+
+## Candidate update — PLS-IPS-01
+IPS is an existing-overlay/representation consumer inside PLS-14, with a small provider-neutral interface. No seventh representation schema or Rive dependency is introduced. CON-021 defines ownership, semantic anchors, field styling, fallback and 14 conformance cases. Rive's dated capability/licensing note distinguishes editor availability from experimental web APIs. No IPS runtime tests or device qualification are claimed.
