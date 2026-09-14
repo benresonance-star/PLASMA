@@ -4,7 +4,7 @@ Status: bounded implementation, **not full T1 completion or live-site integratio
 
 This package advances the terrain v0.2 companion and PLS-INT-01 with registered
 design controls, a boundary, one breakline, multi-operation proposal preparation,
-and ephemeral point interaction. It has no dependencies and no world-state store.
+ephemeral point interaction, and a validated constrained surface evaluator. It has no dependencies and no world-state store.
 
 ## What it does
 
@@ -23,7 +23,7 @@ and ephemeral point interaction. It has no dependencies and no world-state store
   predicates; rejects duplicate XY, malformed rings, crossing/overlapping
   constraints, dangling references and controls outside coverage.
 - Requires explicit split controls where a point touches a constrained segment.
-  It rejects unresolved arrangements instead of silently snapping, splitting,
+  It rejects unresolved source arrangements instead of silently snapping, splitting,
   merging conflicting heights, or dropping constraints.
 - Supplies inverse operations for a new undo proposal, affected IDs and broad
   realization invalidations. The host remains responsible for the full causal closure.
@@ -99,7 +99,7 @@ they are not silently ignored. Existing `plasma-edit/1` semantics stay unchanged
 - Exact integer topology predicates; these do not establish survey accuracy.
 - Full bounded validation is quadratic and must run outside the pointer loop.
 - Holes, submillimetre coordinates, external CRS conversion, automatic crossing
-  arrangements, surface triangulation and source replacement are not implemented.
+  arrangements, Delaunay refinement and source replacement are not implemented.
 - The source parser/transport must bound bytes before constructing these objects.
 - This is not evidence of 100,000-control scalability, 60 fps, physical-device
   latency, durable commits or T1R completion.
@@ -114,7 +114,7 @@ node packages/terrain-core/test/run.mjs
 
 Or use `pnpm --filter @spds/terrain-core test`.
 
-The implementation and 20 behavioral cases were executed in the available V8
+The implementation and 34 behavioral cases (20 control and 14 surface cases) were executed in the available V8
 orchestration runtime, loading the source after removal of ESM export keywords.
 The Node launcher, monorepo gates, browser, persistence and device tests were not
 executed because the development environment could not initialize.
@@ -128,8 +128,7 @@ resource bounds, large-coordinate predicates and the actual legacy grid shape.
 
 Connect this package to the live host source and durable transaction adapter;
 add point/boundary/breakline handles and exact level entry in plan, 3D and section.
-Then implement a constrained surface evaluator with constraint lineage,
-boundary-preserving validation and explicit unresolved/failure states.
+Integrate the constrained surface evaluator described below, then add triangle-quality refinement and evaluator-specific quantities/contours with explicit currentness.
 
 T1R remains the gate before broad T2/T3 expansion: arrangements and conflicts,
 rapid drags under contention, long histories, source replacement, concurrent
@@ -141,3 +140,58 @@ saved 2026-09-12, still requires `step=2000,nx=12,ny=18,points.length=247`
 and rejects other surveys with "Import requires a separate registration adapter."
 Its readable bundled main/worker sources duplicate that restriction. No live-site
 code was modified by this increment.
+
+## Constrained surface evaluator — second increment
+
+Import `evaluateTerrainSurface` and `validateTerrainSurface` from
+`@spds/terrain-core/surface`. Pass either the accepted terrain entity or the
+detached candidate's terrain value:
+
+```js
+const candidate = prepareTerrainEdit(snapshot, request, hostCapability);
+const surface = evaluateTerrainSurface(candidate.candidate);
+// Publish only as a candidate representation; host commit checks still apply.
+```
+
+This produces a 2.5D piecewise-linear design surface. Every source control retains
+its ID, XY and Z; no Steiner vertices or inferred heights are introduced.
+Boundary ear clipping, interior point insertion and crossed-edge recovery preserve
+the explicit boundary and each breakline segment. Convex-quadrilateral edge flips
+recover the constrained edges. A 20,000-iteration cap per segment rejects stalled
+or excessive recovery rather than hanging indefinitely.
+
+This is constrained triangulation, **not constrained Delaunay triangulation**.
+There is no minimum-angle, smoothness, drainage, slope or simulation-quality
+guarantee. Full rebuilds and exhaustive validation are intentionally a bounded
+correctness baseline. Schedule the evaluator outside the UI thread. No worker
+transport is installed by this package.
+
+A separate realization validator checks source/coordinate/elevation identity,
+positive triangle orientation, exact total domain area, control completeness,
+boundary/interior edge incidence, opposite shared-edge orientation, required
+constraint edges and their feature/segment lineage, no crossing or unsplit
+overlapping edges, domain containment and triangle connectivity.
+
+The full normalized source key pins geometry, revisions, datum and evidence.
+It is an identity key, not a cryptographic attestation. Never trust the returned
+`validation` field on an externally supplied mesh; rerun the validator. The host
+must additionally pin branch, world/proposal revisions and interaction sequence
+before presenting an asynchronous result. Valid for a candidate does not mean
+current for accepted World State.
+
+The source-control resolver continues to return `surfaceStatus: unresolved`:
+surface evaluation is a separate domain stage, and does not mutate that candidate
+or establish its downstream claims. A valid surface does not validate its cut/fill,
+hydrology, access, pad/threshold relationships or host invariants.
+
+The legacy fixture realizes 247 controls as 432 triangles, with 60 boundary
+segments and 14 explicitly split breakline segments. Tests also cover concave
+boundaries, collinear controls, points on mesh edges, forced diagonal recovery,
+multi-segment ridges, source order invariance, large offsets and deliberate
+realization corruption. None are physical-device performance measurements.
+
+Algorithm contract reference:
+[CGAL 2D Triangulations manual](https://doc.cgal.org/latest/Triangulation_2/index.html)
+documents constrained edges, oriented face adjacency and the convex-quadrilateral
+condition for edge flips. This implementation adds no CGAL dependency and makes
+no claim of equivalence to its production algorithms.

@@ -11,8 +11,8 @@ This increment implements the bounded source-control resolver in
 | Reversible feature CRUD and exact levels | Atomic candidate batches and inverse operations | Durable WorldTransaction adapter |
 | Human/AI parity | Shared resolver and host-supplied authorization scope | Live command transport and receipt ledger |
 | Immediate interaction feedback | Constant-size point overlay, sequence guards, release-time resolution | Plan/3D/section rendering and device measurements |
-| Constrained terrain surface | Explicitly unresolved | Arrangement, triangulation and realization validation |
-| T1R robustness/performance | 20 bounded core cases executed | Full T1R matrix, 100,000-control context and physical devices |
+| Constrained terrain surface | Bounded full triangulation and independent realization validation implemented | Live evaluator integration, triangle quality and broader arrangements |
+| T1R robustness/performance | 34 bounded control/surface cases executed | Full T1R matrix, 100,000-control context and physical devices |
 
 Keep this as an implementation increment, not a new architecture layer or a
 claim that T1/T1R is complete. Source observations remain evidence; editable
@@ -20,3 +20,5 @@ design controls and authoritative commit remain in the existing World State path
 
 No canonical specification text is changed. The package documents its stricter
 integer-mm/resource limits and supported subset of the proposed terrain envelope.
+
+The second increment preserves all 247 legacy controls in 432 triangles with boundary/breakline lineage. It is a full-rebuild constrained triangulation, not a Delaunay/refinement implementation. No live host, viewport, commit durability or device-performance claims follow from these tests.

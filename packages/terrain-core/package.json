@@ -1,11 +1,14 @@
 {
-  "name": "@spds/terrain-core",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
   "description": "Bounded Plasma T1 terrain-control candidate resolver; no commit authority",
-  "exports": "./src/index.mjs",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./surface": "./src/surface.mjs"
+  },
+  "name": "@spds/terrain-core",
+  "private": true,
   "scripts": {
     "test": "node test/run.mjs"
-  }
+  },
+  "type": "module",
+  "version": "0.0.0"
 }

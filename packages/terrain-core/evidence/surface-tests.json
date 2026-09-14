@@ -1,0 +1,152 @@
+{
+  "schema": "plasma-test-evidence/1",
+  "date": "2026-09-14",
+  "runtime": "V8 orchestration: ESM imports injected and export keywords removed; Node launcher not executed",
+  "scope": "20 control regression cases and 14 constrained-surface cases",
+  "notExecuted": [
+    "Node ESM launcher",
+    "pnpm monorepo gates",
+    "live host/worker/browser integration",
+    "durable commits",
+    "physical-device latency",
+    "T1R 100000-control context"
+  ],
+  "results": [
+    {
+      "name": "registered controls and breakline remain explicitly unresolved",
+      "status": "pass"
+    },
+    {
+      "name": "atomic batch preserves input and exact requested levels",
+      "status": "pass"
+    },
+    {
+      "name": "failed second operation cannot partially mutate input",
+      "status": "pass"
+    },
+    {
+      "name": "stale world, branch, proposal and dependency revisions rejected",
+      "status": "pass"
+    },
+    {
+      "name": "caller scope does not grant authority",
+      "status": "pass"
+    },
+    {
+      "name": "frame mismatch, unknown datum, nonfinite and submillimetre inputs rejected",
+      "status": "pass"
+    },
+    {
+      "name": "duplicate XY observations cannot silently merge",
+      "status": "pass"
+    },
+    {
+      "name": "self-intersecting boundary rejected",
+      "status": "pass"
+    },
+    {
+      "name": "dangling controls and unnormalised constraint touches rejected",
+      "status": "pass"
+    },
+    {
+      "name": "crossing breakline segments rejected",
+      "status": "pass"
+    },
+    {
+      "name": "concave boundary cannot admit an outside chord between boundary vertices",
+      "status": "pass"
+    },
+    {
+      "name": "undo is an inverse proposal with monotonic revisions",
+      "status": "pass"
+    },
+    {
+      "name": "multi-operation CRUD is reversible after dependency deletion",
+      "status": "pass"
+    },
+    {
+      "name": "rapid updates coalesce and stale sequence cannot overwrite latest",
+      "status": "pass"
+    },
+    {
+      "name": "cancelled and stale interactions cannot resolve",
+      "status": "pass"
+    },
+    {
+      "name": "human interaction and typed proposal use identical resolver results",
+      "status": "pass"
+    },
+    {
+      "name": "request identity includes all guards and normalizes key order",
+      "status": "pass"
+    },
+    {
+      "name": "resource cap bounds resolver workload",
+      "status": "pass"
+    },
+    {
+      "name": "legacy adapter preserves all 247 observations and datum without mutating survey",
+      "status": "pass"
+    },
+    {
+      "name": "near-coincident integer controls and large coordinates use exact predicates",
+      "status": "pass"
+    },
+    {
+      "name": "all controls and breakline survive validated realization",
+      "status": "pass"
+    },
+    {
+      "name": "constraint recovery changes a crossed unconstrained diagonal",
+      "status": "pass"
+    },
+    {
+      "name": "concave site is covered without bridging its notch",
+      "status": "pass"
+    },
+    {
+      "name": "collinear boundary controls retained",
+      "status": "pass"
+    },
+    {
+      "name": "point exactly on initial mesh edge splits both incident triangles",
+      "status": "pass"
+    },
+    {
+      "name": "multi-segment ridge retains each source segment",
+      "status": "pass"
+    },
+    {
+      "name": "reordered source arrays reproduce identical mesh",
+      "status": "pass"
+    },
+    {
+      "name": "clockwise boundary has same positive coverage",
+      "status": "pass"
+    },
+    {
+      "name": "moved control forces a new realization without changing prior surface",
+      "status": "pass"
+    },
+    {
+      "name": "validator rejects tampered geometry, coverage, lineage and provenance",
+      "status": "pass"
+    },
+    {
+      "name": "missing boundary and invalid source cannot publish a mesh",
+      "status": "pass"
+    },
+    {
+      "name": "large registered offsets preserve topology and exact area",
+      "status": "pass"
+    },
+    {
+      "name": "247-control legacy surface preserves boundary and 14 breakline edges",
+      "status": "pass"
+    },
+    {
+      "name": "deterministic generated interior sets preserve coverage and exact plane heights",
+      "status": "pass"
+    }
+  ]
+}

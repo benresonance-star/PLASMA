@@ -1,7 +1,9 @@
-import * as api from "../src/index.mjs";
+import * as core from "../src/index.mjs";
+import * as surface from "../src/surface.mjs";
 import { runTerrainTests } from "./cases.mjs";
+import { runSurfaceTests } from "./surface-cases.mjs";
 
-const results = runTerrainTests(api);
+const results = [...runTerrainTests(core), ...runSurfaceTests(core, surface)];
 for (const result of results) {
   console.log(result.status === "pass" ? "PASS" : "FAIL", result.name);
   if (result.error) console.error(result.error);
