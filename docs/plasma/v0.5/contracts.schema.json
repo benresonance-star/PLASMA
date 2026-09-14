@@ -523,6 +523,13 @@
             "$ref": "#/$defs/Ref"
           },
           "uniqueItems": true
+        },
+        "interaction_session_ref": {
+          "$ref": "#/$defs/Ref"
+        },
+        "interaction_input_sequence": {
+          "type": "integer",
+          "minimum": 0
         }
       },
       "required": [
@@ -597,7 +604,15 @@
             }
           }
         }
-      ]
+      ],
+      "dependentRequired": {
+        "interaction_session_ref": [
+          "interaction_input_sequence"
+        ],
+        "interaction_input_sequence": [
+          "interaction_session_ref"
+        ]
+      }
     },
     "WorldSnapshot": {
       "type": "object",

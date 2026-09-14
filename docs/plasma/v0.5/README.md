@@ -11,7 +11,8 @@ Start here for the current Plasma direction. Existing SPDS code remains an engin
 5. [Decision reconciliation](decisions.md).
 6. [Implementation and evidence](implementation.md).
 7. [Bounded interpretation and escalation](inference.md).
-8. [Milestones and acceptance gates](roadmap.md).
+8. [Interaction sessions and speculative overlays](interaction.md).
+9. [Milestones and acceptance gates](roadmap.md).
 
 [baseline.json](baseline.json) identifies sources, precedence and exact-identity rules.
 [sources/foundry-v0.4.26.json](sources/foundry-v0.4.26.json) preserves the complete extracted Foundry declaration, including all 27 loop entries, policies, audit, architecture updates and evidence claims.
@@ -43,3 +44,6 @@ The renderer reads the Markdown chapters and full JSON sources; HTML is a derive
 
 ## Candidate update — PLS-INF-01
 Bounded interpretation, abstention and policy-based escalation now have one shared protocol within the existing stack. See CON-019, the inference types and M1 acceptance corpus. Learned models remain optional.
+
+## Candidate update — PLS-INT-01
+Interaction overlays, independently scheduled rates, bounded work and exact-result reconciliation are now specified within the existing runtime. Performance values are qualification targets; commit-critical validation still precedes acceptance. See CON-020 and the INT-A01–13 corpus.

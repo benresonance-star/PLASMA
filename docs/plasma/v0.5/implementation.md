@@ -35,3 +35,6 @@ Keep a failed or unknown result visible. A mock, approximation or readiness prob
 
 ## IMP-14 — PLS-INF-01
 [Bounded interpretation](inference.md) and [candidate types](inference-contracts.ts) are specified only. The INF-A01–12 corpus extends M1; none of those runtime cases was executed in this update. Model benchmarks and learned-provider qualification remain absent. Existing historical evidence cannot be reused to claim these gates passed.
+
+## IMP-15 — PLS-INT-01
+[Interaction runtime contract](interaction.md) and [types](interaction-contracts.ts) are specified only. Thirteen acceptance cases and requested performance targets require named workloads and actual measurements. Earlier synthetic pointer results do not qualify this contract, physical-device performance or Plasticity equivalence.

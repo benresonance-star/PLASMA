@@ -170,6 +170,18 @@
       "next_gate": "M1-M2",
       "qualified": false,
       "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-15",
+      "capability": "PLS-INT-01 interaction session runtime",
+      "implementation": "interaction-contracts.ts",
+      "evidence": "interaction.md",
+      "implementation_status": "specified; candidate types",
+      "evidence_status": "document checks only",
+      "limits": "No runtime implementation, compilation, INT-A01–13 execution, physical-device latency or comparative benchmark",
+      "next_gate": "M1-M2",
+      "qualified": false,
+      "rerun_in_consolidation": false
     }
   ]
 }

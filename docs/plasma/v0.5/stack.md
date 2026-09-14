@@ -22,3 +22,6 @@ Do not implement all layers as separate services by default. Keep contracts expl
 
 ## PLS-INF-01 placement
 Bounded interpretation is a protocol across the existing intent, workbench, runtime, orchestration, resolver and evidence responsibilities. Reflex is an execution class, not another layer or state owner. Model placement is a policy choice; local and frontier models are optional qualified providers. See [inference protocol](inference.md).
+
+## PLS-INT-01 placement
+[Interaction sessions and overlays](interaction.md) implement the fast path inside PLS-10/PLS-14. They feed existing domain resolvers and WorldTransactions. PLS-INF-01 supplies optional interpretation; PLS-INT-01 works without it. Separately scheduled rates do not relax causal or commit-critical validation requirements.

@@ -118,3 +118,6 @@ That bounded recognition example motivates this proposal. Plasma's general routi
 
 ## Structural semantic validation
 IDs/references must resolve; digests use their declared canonical encoding. Scores and budgets are finite; probabilities lie in [0,1]; counts and sequence numbers are nonnegative integers; attempts are at least one. Candidate IDs are unique; candidate status has at least one candidate and ambiguous/conflicting status has at least two distinct alternatives. Retained raw evidence requires an artifact reference; absent raw evidence must not claim exact replay. A selected disposition or resolve_candidate route requires a candidate ID from the referenced proposal; other dispositions cannot imply selection. Reuse and escalation require valid result/provider references and context compatibility. Expiry is checked alongside revision, input digest and interaction sequence. Producer-selected hints do not establish actor authority.
+
+## Relationship to PLS-INT-01
+[Interaction Session Runtime](interaction.md) owns gesture sessions, ephemeral overlays, fast visual feedback and reconciliation. PLS-INF-01 may offer hypotheses under those budgets; no inference is required for ordinary explicit manipulation. The two uses of “reflex” describe different bounded capabilities within the same stack, not independent layers.

@@ -1,6 +1,6 @@
 {
   "schema": "plasma/consolidated-baseline/0.1.0",
-  "version": "0.5.0-candidate.2",
+  "version": "0.5.0-candidate.3",
   "date": "2026-09-14",
   "status": "reviewable_specification_candidate",
   "software_release": false,
@@ -23,7 +23,9 @@
     "sources/foundry-v0.4.26.json",
     "sources/terrain-v0.2.html",
     "inference.md",
-    "inference-contracts.ts"
+    "inference-contracts.ts",
+    "interaction.md",
+    "interaction-contracts.ts"
   ],
   "derived_reading_copy": "index.html",
   "renderer": "render.mjs",
@@ -56,6 +58,11 @@
       "target": "Terrain T1R",
       "effective": "required central gate before broader T2/T3",
       "decision": "CON-006"
+    },
+    {
+      "target": "PLS-10 synchronous local invariants and preview/commit wording",
+      "effective": "only budget-bounded visual checks synchronously; every applicable commit-critical validation precedes acceptance",
+      "decision": "CON-020"
     }
   ],
   "next_gates": [
@@ -80,6 +87,14 @@
       "types": "inference-contracts.ts",
       "decision": "CON-019",
       "acceptance": "INF-A01–INF-A12 (M1 extension)"
+    },
+    "PLS-INT-01": {
+      "version": "0.1.0",
+      "status": "specified_candidate",
+      "document": "interaction.md",
+      "types": "interaction-contracts.ts",
+      "decision": "CON-020",
+      "acceptance": "INT-A01–INT-A13 (M1/M2 extension)"
     }
   }
 }

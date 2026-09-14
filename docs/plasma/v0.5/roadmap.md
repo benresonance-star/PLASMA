@@ -41,3 +41,7 @@ Prefer extracting a proven mechanism from the existing repository over wholesale
 ## M1 extension — PLS-INF-01
 Complete INF-A01 through INF-A12 in [inference.md](inference.md): explicit-tool bypass, unknown-preserving intent, labelled alternatives, ambiguity handling, gesture/revision staleness, insufficient context, mandatory checks, stable suggestions, bounded routing, semantic mismatch, aggregate budgets and replay provenance.
 A deterministic/heuristic implementation is sufficient. These criteria extend M1 without making learned models prerequisites or replacing persistence, fault-injection, OCCT and device-evidence gates. Reuse the same contracts in M2/T1R before specialising further.
+
+## M1/M2 extension — PLS-INT-01
+Implement the wall session/overlay lifecycle and qualify INT-A01–INT-A11 plus INT-A13 in [interaction.md](interaction.md) during M1. Cover slow required/noncritical work, out-of-order responses, concurrent head changes, failure/cancellation/undo, contention, invalidated snap limits and exact/proxy reconciliation. Set concrete hardware and ordinary-workload profiles before measurement. Keep the existing durability, OCCT and physical-device gates.
+Reuse the same contract for INT-A12 terrain/domain operations during M2/T1R; broaden topology edits only with named operation fixtures. A spec-defined target or synthetic viewport measurement is not a performance pass.

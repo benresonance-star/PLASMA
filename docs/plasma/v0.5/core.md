@@ -49,3 +49,6 @@ An unresolved requirement conflict remains open and blocks a dependent release c
 Separate interpretation, domain evaluation and authoritative mutation. Intelligence proposes meaning; evaluators establish validity within declared assumptions; governed transactions establish accepted project state; evidence connects that state to reality. Determinism alone does not establish physical truth or correct interpretation.
 Explicit intent outranks predictions. Uncertainty and abstention remain expressible. Inference cannot waive hard checks, alter authority or certify dependency closure. Execute through existing PLS-10/13/14/15/16 and Geometry Resolver boundaries.
 See [PLS-INF-01](inference.md) for contracts, routing, provenance and M1 acceptance criteria.
+
+## Interaction responsiveness — PLS-INT-01
+Input/render scheduling is independent of geometry, propagation, simulation, reasoning and commit scheduling, with explicit revision/sequence consistency. Ephemeral overlays provide honest local feedback; they never become another authoritative world. Slow hard validation may hold acceptance without blocking camera, inspection or cancellation. See [Interaction Session Runtime](interaction.md).

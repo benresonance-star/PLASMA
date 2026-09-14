@@ -1,21 +1,21 @@
 {
   "schema": "plasma/consolidation-checks/0.1.0",
   "date": "2026-09-14",
+  "protocol": "PLS-INT-01/0.1.0",
   "status": "passed",
-  "protocol": "PLS-INF-01/0.1.0",
   "checks": {
-    "json_documents_parsed": 12,
-    "authored_relative_links_checked": 41,
-    "json_schema_local_refs_resolved": 39,
+    "json_source_documents_parsed": 4,
+    "authored_relative_links_checked": 47,
+    "json_schema_local_refs_resolved": 40,
     "preserved_foundry_loop_count": 27,
     "historical_foundry_source_unchanged": true,
-    "inference_acceptance_cases_declared": 12,
+    "interaction_acceptance_cases_declared": 13,
     "reading_copy_regenerated": true
   },
   "errors": [],
   "limits": [
-    "Orchestration-side document checks only.",
-    "No TypeScript compiler or JSON Schema validator executed.",
-    "INF-A01–INF-A12, browser/runtime tests and model benchmarks were not run."
+    "Orchestration-side document checks only; inspected source subset and regenerated chapters.",
+    "No TypeScript compilation, JSON Schema validator or runtime/physical-device tests executed.",
+    "Performance figures are requirements, not observed benchmarks."
   ]
 }
