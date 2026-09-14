@@ -1,0 +1,37 @@
+{
+  "contract": "PLS-KERNEL-01/0.1.0",
+  "fixture_id": "wall-boundary-transaction-v1",
+  "world": {
+    "world_id": "PLASMA-WALL-SLICE",
+    "revision_id": "R0",
+    "parent_revision_id": null,
+    "branch_id": "branch-main",
+    "state_refs": {"W17":"S-W17-R0","B03":"S-B03-R0","C04":"S-C04-R0"},
+    "committed_at": "2026-09-12T13:00:00+10:00",
+    "transaction_id": "bootstrap"
+  },
+  "branch": {"id":"branch-main","name":"main","intent":"Reference wall transaction","base_revision_id":"R0","head_revision_id":"R0"},
+  "entities": [
+    {"id":"W17","type":"Boundary","created_by":"fixture","created_at":"2026-09-12T13:00:00+10:00","lifecycle":"active","schema_version":"1"},
+    {"id":"B03","type":"Space","created_by":"fixture","created_at":"2026-09-12T13:00:00+10:00","lifecycle":"active","schema_version":"1"},
+    {"id":"C04","type":"Space","created_by":"fixture","created_at":"2026-09-12T13:00:00+10:00","lifecycle":"active","schema_version":"1"}
+  ],
+  "states": [
+    {"id":"S-W17-R0","entity_id":"W17","revision_id":"R0","status":"authoritative","values":{"offset_mm":0,"height_mm":2700,"thickness_mm":110},"evidence_refs":["EV-DESIGN-BASE"],"produced_by":"bootstrap"},
+    {"id":"S-B03-R0","entity_id":"B03","revision_id":"R0","status":"authoritative","values":{"width_mm":3500},"evidence_refs":["EV-DESIGN-BASE"],"produced_by":"bootstrap"},
+    {"id":"S-C04-R0","entity_id":"C04","revision_id":"R0","status":"authoritative","values":{"width_mm":1150},"evidence_refs":["EV-DESIGN-BASE"],"produced_by":"bootstrap"}
+  ],
+  "relations": [
+    {"id":"REL-W17-B03","type":"BOUNDS","source":"W17","target":"B03","direction":"directed","attributes":{},"status":"authoritative","evidence_refs":["EV-DESIGN-BASE"]},
+    {"id":"REL-W17-C04","type":"BOUNDS","source":"W17","target":"C04","direction":"directed","attributes":{},"status":"authoritative","evidence_refs":["EV-DESIGN-BASE"]}
+  ],
+  "invariants": [
+    {"id":"INV-C04-MIN-WIDTH","type":"hard","scope":["C04","W17"],"expression":{"kind":"min_value","entity":"C04","field":"width_mm","min":1000},"priority":100,"source_evidence":["EV-RULE-CORRIDOR"],"rationale":"Corridor clear width must remain at least 1000 mm","enabled":true},
+    {"id":"INV-B03-PREF-WIDTH","type":"preference","scope":["B03","W17"],"expression":{"kind":"min_value","entity":"B03","field":"width_mm","min":3600},"priority":20,"source_evidence":["EV-BRIEF-BEDROOM"],"rationale":"Prefer bedroom at least 3600 mm wide","enabled":true}
+  ],
+  "evidence": [
+    {"id":"EV-DESIGN-BASE","type":"human_assertion","source_ref":"fixture://design/base","assertion":"Reference townhouse geometry","confidence":1,"valid_from":"2026-09-12T13:00:00+10:00","valid_until":null,"created_at":"2026-09-12T13:00:00+10:00","created_by":"fixture","lineage":[],"hash":"sha256:design-base"},
+    {"id":"EV-RULE-CORRIDOR","type":"document","source_ref":"fixture://rule/corridor","assertion":"Minimum corridor width 1000 mm for acceptance fixture","confidence":1,"valid_from":"2026-09-12T13:00:00+10:00","valid_until":null,"created_at":"2026-09-12T13:00:00+10:00","created_by":"fixture","lineage":[],"hash":"sha256:corridor-rule"},
+    {"id":"EV-BRIEF-BEDROOM","type":"document","source_ref":"fixture://brief/bedroom","assertion":"Bedroom width preference 3600 mm","confidence":1,"valid_from":"2026-09-12T13:00:00+10:00","valid_until":null,"created_at":"2026-09-12T13:00:00+10:00","created_by":"fixture","lineage":[],"hash":"sha256:bedroom-brief"}
+  ]
+}

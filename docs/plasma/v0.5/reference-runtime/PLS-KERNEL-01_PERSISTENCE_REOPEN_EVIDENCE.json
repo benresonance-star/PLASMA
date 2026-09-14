@@ -1,0 +1,60 @@
+{
+  "schema": "plasma-kernel-persistence-reopen-evidence/1",
+  "generatedAt": "2026-09-12T04:43:00.717Z",
+  "html": "/mnt/data/Plasma-Design-and-Site-Editing-Kernel-v0.3.html",
+  "harness": "two fresh Page.setDocumentContent JS realms + persisted-byte handoff via localStorage shim",
+  "tests": {
+    "conflictLeavesR0": true,
+    "hardLimitCommitPersistsR1": true,
+    "persistentEnvelopeValid": true,
+    "freshRealmRecoversKernelR1": true,
+    "freshRealmRecoversApplicationR1": true,
+    "undoAfterReopenAppendsR2": true,
+    "R1RemainsAddressable": true,
+    "storeGenerationAdvances": true
+  },
+  "persistence": {
+    "schema": "plasma-kernel-store/0.2.0",
+    "key": "plasma-kernel-runtime-v0.2",
+    "generationBeforeReopen": 7,
+    "generationAfterUndo": 8,
+    "checksum": "fnv1a32:5f58c328",
+    "recoveredSource": "primary"
+  },
+  "finalKernel": {
+    "head": "R2",
+    "state": {
+      "revisionId": "R2",
+      "parentRevisionId": "R1",
+      "committedAt": "2026-09-12T04:43:00.704Z",
+      "values": {
+        "W17": {
+          "offset_mm": 0
+        },
+        "B03": {
+          "width_mm": 3500
+        },
+        "C04": {
+          "width_mm": 1150
+        }
+      },
+      "transformRef": "transform:5s77b19jjih",
+      "transactionRef": "tx:guuq65whmff"
+    },
+    "eventCount": 7,
+    "transformCount": 6,
+    "revisionIds": [
+      "R0",
+      "R1",
+      "R2"
+    ]
+  },
+  "runtimeExceptions": [],
+  "limitations": [
+    "Browser navigation to localhost/file origins is blocked by environment policy",
+    "Persistence bytes are carried into a fresh browser realm by the harness; native-origin browser storage durability is not directly observed",
+    "No database/multi-user transport",
+    "No OCCT exact geometry",
+    "No physical-device performance evidence"
+  ]
+}

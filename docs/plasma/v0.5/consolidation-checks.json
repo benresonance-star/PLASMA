@@ -1,0 +1,22 @@
+{
+  "schema": "plasma/consolidation-checks/0.1.0",
+  "date": "2026-09-14",
+  "protocol": "PLS-IPS-01/0.1.0",
+  "status": "passed",
+  "checks": {
+    "json_source_documents_parsed": 4,
+    "authored_relative_links_checked": 57,
+    "json_schema_local_refs_resolved": 40,
+    "preserved_foundry_loop_count": 27,
+    "historical_foundry_source_unchanged": true,
+    "six_schemas_and_overlay_types_unchanged": true,
+    "presentation_acceptance_cases_declared": 14,
+    "reading_copy_regenerated": true
+  },
+  "errors": [],
+  "limits": [
+    "Orchestration-side document/link/reference checks only.",
+    "No TypeScript compilation, JSON Schema validator, IPS conformance execution or device tests.",
+    "Rive provider remains a researched candidate; no runtime dependency added."
+  ]
+}

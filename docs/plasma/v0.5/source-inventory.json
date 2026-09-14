@@ -1,0 +1,203 @@
+{
+  "schema": "plasma/source-inventory/0.1.0",
+  "method": "Native Library read returned extracted text. Original-byte digests unavailable; imported Git blobs identify extracted bytes only.",
+  "scope": "Selected consolidation sources, not an exhaustive library inventory.",
+  "files": [
+    {
+      "name": "plasma-foundry-v04-26.html",
+      "library_file_id": "libfile_0f40b8bc35648191b05f26dc72b21ba6",
+      "recorded_size_bytes": 467690,
+      "modified_at": "2026-09-14T11:24:07.912465Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "plasma-kernel-backup-recovery.test.mjs",
+      "library_file_id": "libfile_1133033b7a488191b1403db53664ecc0",
+      "recorded_size_bytes": 6338,
+      "modified_at": "2026-09-12T04:45:56.881542Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "plasma-kernel-persistence-reopen.test.mjs",
+      "library_file_id": "libfile_bb30f2c0fefc8191b6b5de930a5922da",
+      "recorded_size_bytes": 9978,
+      "modified_at": "2026-09-12T04:45:38.313506Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "plasma-kernel-persistent-runtime-v0.2.js",
+      "library_file_id": "libfile_ea66255065048191a34c6209eb4f09cc",
+      "recorded_size_bytes": 20712,
+      "modified_at": "2026-09-12T04:45:19.168126Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "Plasma-Design-and-Site-Editing-Kernel-v0.3.html",
+      "library_file_id": "libfile_08e1d0298aec81918acc4890db69367a",
+      "recorded_size_bytes": 2890010,
+      "modified_at": "2026-09-12T04:45:08.826241Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": false
+    },
+    {
+      "name": "plasma-kernel-live-bridge-v0.1.js",
+      "library_file_id": "libfile_56255f61bd7c819195ee2a4fbc221400",
+      "recorded_size_bytes": 12304,
+      "modified_at": "2026-09-12T04:37:29.246986Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "plasma-kernel-wall.test.mjs",
+      "library_file_id": "libfile_3cabc7d1ccd48191905d230a98b558da",
+      "recorded_size_bytes": 3161,
+      "modified_at": "2026-09-12T04:29:22.094259Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "plasma-kernel-v0.1.mjs",
+      "library_file_id": "libfile_6f6121801f648191b173bee4eb554d9f",
+      "recorded_size_bytes": 9413,
+      "modified_at": "2026-09-12T04:29:14.292473Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "plasma-rc02-browser-evidence-v0.1.json",
+      "library_file_id": "libfile_1ad673d0852c8191aefc2e141b8936ae",
+      "recorded_size_bytes": 3458,
+      "modified_at": "2026-09-12T01:46:18.190276Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "plasma-rc02-runtime-evidence-v0.1.json",
+      "library_file_id": "libfile_424fd3cfa15c81918e6c139286527c20",
+      "recorded_size_bytes": 2223,
+      "modified_at": "2026-09-12T01:27:23.425939Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "plasma-rc02-edit-runtime-v0.1.ts",
+      "library_file_id": "libfile_42c91be66e788191abbc5b4a3eae8cae",
+      "recorded_size_bytes": 54872,
+      "modified_at": "2026-09-12T01:27:08.924614Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": false
+    },
+    {
+      "name": "plasma-rc02-edit-runtime-contracts-v0.1.ts",
+      "library_file_id": "libfile_88aace6b3a208191b65bdcf051a9e0ec",
+      "recorded_size_bytes": 22677,
+      "modified_at": "2026-09-12T01:18:41.401066Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": false
+    },
+    {
+      "name": "Plasma-Terrain-Toolset-and-Pipeline-v0.2.html",
+      "library_file_id": "libfile_ee49ac9846e8819187def25880392725",
+      "recorded_size_bytes": 64202,
+      "modified_at": "2026-09-10T10:06:01.022841Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "plasma-repository-audit-2026-09-09.md",
+      "library_file_id": "libfile_57a6d7dd46fc81919e9b4a73bc65093d",
+      "recorded_size_bytes": 19980,
+      "modified_at": "2026-09-09T13:11:49.542548Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "PLS-KERNEL-01_BACKUP_RECOVERY_EVIDENCE.json",
+      "library_file_id": "libfile_85799acb549481918dc70173bd6e935e",
+      "recorded_size_bytes": 1325,
+      "modified_at": "2026-09-12T04:46:06.736633Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "PLS-KERNEL-01_PERSISTENCE_REOPEN_EVIDENCE.json",
+      "library_file_id": "libfile_3a5bd4c6858881919cb7211912b18a5b",
+      "recorded_size_bytes": 1795,
+      "modified_at": "2026-09-12T04:45:46.933845Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "PLS-KERNEL-01_PERSISTENCE_CONTRACT.md",
+      "library_file_id": "libfile_7bcbe98e0dc08191bb0027168aff0f39",
+      "recorded_size_bytes": 7085,
+      "modified_at": "2026-09-12T04:45:28.769985Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "PLS-KERNEL-01_LIVE_INTEGRATION_CONTRACT.md",
+      "library_file_id": "libfile_8e54da14002081919c5f625a783313fc",
+      "recorded_size_bytes": 4513,
+      "modified_at": "2026-09-12T04:37:36.767147Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "PLS-KERNEL-01_WALL_REFERENCE_EVIDENCE.json",
+      "library_file_id": "libfile_3a76a1c304888191942ece8f32e206b3",
+      "recorded_size_bytes": 1200,
+      "modified_at": "2026-09-12T04:29:29.767706Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "PLS-KERNEL-01_WALL_FIXTURE.json",
+      "library_file_id": "libfile_1736e7f824dc8191b47315779b7a5f1a",
+      "recorded_size_bytes": 3459,
+      "modified_at": "2026-09-12T04:29:06.679627Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    },
+    {
+      "name": "PLS-KERNEL-01_WALL_REFERENCE_CONTRACT.md",
+      "library_file_id": "libfile_442bc843ee6c81919e461863d566c3e8",
+      "recorded_size_bytes": 3401,
+      "modified_at": "2026-09-12T04:28:58.599790Z",
+      "version_id": null,
+      "original_byte_digest": null,
+      "imported": true
+    }
+  ],
+  "duplicates": {
+    "status": "not byte-compared; no archives/deletions performed",
+    "examples": [
+      "plasma-foundry-v04-26.html",
+      "plasma-foundry-v04-26(1).html"
+    ]
+  }
+}
