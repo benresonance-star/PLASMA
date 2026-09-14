@@ -73,7 +73,7 @@ point IDs as well as boundary/breakline IDs in this bounded implementation.
 7. After reconciliation, dispose the overlay exactly once. Undo submits the
    inverse operations against a fresh snapshot and goes through the same checks.
 
-The package deliberately provides **no commit function**, persistent request
+The source resolver deliberately provides **no authoritative commit function**, persistent request
 ledger, independent revision store or mesh fallback. Its revision counters are
 host entity revisions. Recreated deleted IDs have fresh local control revisions;
 the mandatory aggregate/world guards prevent treating them as the old state.
@@ -114,7 +114,7 @@ node packages/terrain-core/test/run.mjs
 
 Or use `pnpm --filter @spds/terrain-core test`.
 
-The implementation and 34 behavioral cases (20 control and 14 surface cases) were executed in the available V8
+The implementation and 51 behavioral cases (20 control, 14 surface and 17 host/transport cases) were executed in the available V8
 orchestration runtime, loading the source after removal of ESM export keywords.
 The Node launcher, monorepo gates, browser, persistence and device tests were not
 executed because the development environment could not initialize.
@@ -163,8 +163,8 @@ or excessive recovery rather than hanging indefinitely.
 This is constrained triangulation, **not constrained Delaunay triangulation**.
 There is no minimum-angle, smoothness, drainage, slope or simulation-quality
 guarantee. Full rebuilds and exhaustive validation are intentionally a bounded
-correctness baseline. Schedule the evaluator outside the UI thread. No worker
-transport is installed by this package.
+correctness baseline. Schedule the evaluator outside the UI thread. A dedicated worker transport is supplied in the third increment; it has not been
+installed in the live host.
 
 A separate realization validator checks source/coordinate/elevation identity,
 positive triangle orientation, exact total domain area, control completeness,
@@ -195,3 +195,15 @@ Algorithm contract reference:
 documents constrained edges, oriented face adjacency and the convex-quadrilateral
 condition for edge flips. This implementation adds no CGAL dependency and makes
 no claim of equivalence to its production algorithms.
+
+## Host and worker integration — third increment
+
+[Host transaction and worker adapter](HOST-INTEGRATION.md) adds bounded preview scheduling,
+a fresh transaction-time authorization/validation path, durable-receipt replay through
+host ports, and a dedicated module-worker transport. The bridge delegates actual commits
+to the host; it is not a second World State or a persistence engine.
+
+The 17 new cases run against a simulated host and worker port. They do not establish
+live integration or production durability. See the linked port contract before wiring
+this adapter to the application. V8 harness execution substitutes a recursive plain-data
+clone for unavailable structuredClone; Node/browser execution remains unverified.
