@@ -38,3 +38,6 @@ Keep a failed or unknown result visible. A mock, approximation or readiness prob
 
 ## IMP-15 — PLS-INT-01
 [Interaction runtime contract](interaction.md) and [types](interaction-contracts.ts) are specified only. Thirteen acceptance cases and requested performance targets require named workloads and actual measurements. Earlier synthetic pointer results do not qualify this contract, physical-device performance or Plasticity equivalence.
+
+## IMP-16 — PLS-IPS-01
+[Presentation consumer](presentation.md) and [candidate types](presentation-contracts.ts) are specified only. Fourteen conformance cases extend the existing wall/terrain gates. No renderer adapter, Rive integration, TS compilation, authority-isolation execution or device measurement was performed. PR #2's implementation at d0fe23270034b67436ed8d05c2a82b98596323c3 is reviewed as domain code requiring explicit common-contract mapping, not as an IPS-conformant deployment.

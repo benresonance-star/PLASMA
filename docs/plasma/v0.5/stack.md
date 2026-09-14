@@ -25,3 +25,6 @@ Bounded interpretation is a protocol across the existing intent, workbench, runt
 
 ## PLS-INT-01 placement
 [Interaction sessions and overlays](interaction.md) implement the fast path inside PLS-10/PLS-14. They feed existing domain resolvers and WorldTransactions. PLS-INF-01 supplies optional interpretation; PLS-INT-01 works without it. Separately scheduled rates do not relax causal or commit-critical validation requirements.
+
+## PLS-IPS-01 placement
+[Interactive Presentation Surface](presentation.md) is PLS-14's visual consumer of PLS-INT-01 overlays and PLS-09/existing RepresentationResponses. It is not a new layer or producer architecture. A small frame/receipt/input interface connects interchangeable render adapters; missing-artifact demand routes through existing representation scheduling. PLS-10 budgets execution. Rive GPU Canvas is an optional candidate for selected surfaces, never a World State/geometry/solver dependency. Primary large 3D scenes remain with Three.js/WebGPU or an evidence-qualified future renderer.

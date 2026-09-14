@@ -52,3 +52,6 @@ See [PLS-INF-01](inference.md) for contracts, routing, provenance and M1 accepta
 
 ## Interaction responsiveness — PLS-INT-01
 Input/render scheduling is independent of geometry, propagation, simulation, reasoning and commit scheduling, with explicit revision/sequence consistency. Ephemeral overlays provide honest local feedback; they never become another authoritative world. Slow hard validation may hold acceptance without blocking camera, inspection or cancellation. See [Interaction Session Runtime](interaction.md).
+
+## Interactive presentation — PLS-IPS-01
+The presentation surface represents World State and never owns it. It consumes existing representations and interaction overlays within PLS-14; only the existing runtime/WorldTransaction path may change accepted state. Visual fidelity and animation cannot establish validity or authority. Basic manipulation must survive loss of any optional presentation provider. See [Interactive Presentation Surface](presentation.md).
