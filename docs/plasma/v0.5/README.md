@@ -10,7 +10,8 @@ Start here for the current Plasma direction. Existing SPDS code remains an engin
 4. [Contract semantics](contracts.md) and [six draft JSON schemas](contracts.schema.json).
 5. [Decision reconciliation](decisions.md).
 6. [Implementation and evidence](implementation.md).
-7. [Milestones and acceptance gates](roadmap.md).
+7. [Bounded interpretation and escalation](inference.md).
+8. [Milestones and acceptance gates](roadmap.md).
 
 [baseline.json](baseline.json) identifies sources, precedence and exact-identity rules.
 [sources/foundry-v0.4.26.json](sources/foundry-v0.4.26.json) preserves the complete extracted Foundry declaration, including all 27 loop entries, policies, audit, architecture updates and evidence claims.
@@ -39,3 +40,6 @@ Use the enclosing Git commit to identify this exact baseline. A branch name or t
 ## Readable edition
 Run `node docs/plasma/v0.5/render.mjs` from the repository root to regenerate [index.html](index.html).
 The renderer reads the Markdown chapters and full JSON sources; HTML is a derived reading copy.
+
+## Candidate update — PLS-INF-01
+Bounded interpretation, abstention and policy-based escalation now have one shared protocol within the existing stack. See CON-019, the inference types and M1 acceptance corpus. Learned models remain optional.

@@ -1,6 +1,6 @@
 {
   "schema": "plasma/consolidated-baseline/0.1.0",
-  "version": "0.5.0-candidate.1",
+  "version": "0.5.0-candidate.2",
   "date": "2026-09-14",
   "status": "reviewable_specification_candidate",
   "software_release": false,
@@ -21,7 +21,9 @@
     "implementation.md",
     "roadmap.md",
     "sources/foundry-v0.4.26.json",
-    "sources/terrain-v0.2.html"
+    "sources/terrain-v0.2.html",
+    "inference.md",
+    "inference-contracts.ts"
   ],
   "derived_reading_copy": "index.html",
   "renderer": "render.mjs",
@@ -69,5 +71,15 @@
     "Actual application import/build qualification",
     "Live deployment identity check",
     "Original detailed thread reconciliation"
-  ]
+  ],
+  "protocols": {
+    "PLS-INF-01": {
+      "version": "0.1.0",
+      "status": "specified_candidate",
+      "document": "inference.md",
+      "types": "inference-contracts.ts",
+      "decision": "CON-019",
+      "acceptance": "INF-A01–INF-A12 (M1 extension)"
+    }
+  }
 }

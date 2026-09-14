@@ -158,6 +158,18 @@
       "next_gate": "R1",
       "qualified": false,
       "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-14",
+      "capability": "PLS-INF-01 bounded interpretation",
+      "implementation": "inference-contracts.ts",
+      "evidence": "inference.md",
+      "implementation_status": "specified; candidate types",
+      "evidence_status": "document checks only",
+      "limits": "No runtime implementation, TypeScript compilation, provider benchmark or INF-A01–12 execution",
+      "next_gate": "M1-M2",
+      "qualified": false,
+      "rerun_in_consolidation": false
     }
   ]
 }

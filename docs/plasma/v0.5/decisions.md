@@ -32,3 +32,9 @@ Unresolved contradictions remain in this register; do not choose a newest filena
 Full recent chat transcripts were not available. The reconstructed proposals are based on the visible thread summaries and current user's instruction to consolidate. Original wording may differ.
 Original file-byte digests were not computed by the read interface. Git will identify the imported text; that is not proof that extracted text equals original bytes.
 The complete source repository was indexed for guidance files; no AGENTS.md appeared in the pinned tree. Existing architecture ADRs were read and retained.
+
+## CON-019 — PLS-INF-01 bounded interpretation
+Source: the user-supplied Desert Ant proposal and critical review in this thread; user instructed proceeding with the recommended update.
+Disposition: incorporated in the consolidation candidate as PLS-INF-01/0.1.0. No new Reflex Layer, kernel primitive or autonomous state store. Use shared proposal/field-origin/routing/disposition contracts within existing subsystems. Explicit intent and mandatory checks outrank predictions. Replace deterministic-truth shorthand with scoped validity, accepted state and evidence. Policy-based routing supports context expansion, clarification and abstention with bounded resource use. Learned providers remain optional.
+Affected: core, stack, PLS-13/14/10/15/16, PLS-GR-01, WorldTransaction provenance and M1 acceptance corpus. Existing source snapshots remain unchanged.
+Evidence: specification and document consistency checks only; no inference implementation, model benchmark or M1 test completion.

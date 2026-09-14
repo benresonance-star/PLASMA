@@ -32,3 +32,6 @@ Library identifiers are provenance locators, not public executable URLs. Retriev
 ## Evidence required for a new claim
 Record exact commit and artifact digests; fixture/input digests; evaluator version; execution environment; actual observations; limitations; and the claim's supported scope.
 Keep a failed or unknown result visible. A mock, approximation or readiness probe cannot masquerade as a successful production computation.
+
+## IMP-14 — PLS-INF-01
+[Bounded interpretation](inference.md) and [candidate types](inference-contracts.ts) are specified only. The INF-A01–12 corpus extends M1; none of those runtime cases was executed in this update. Model benchmarks and learned-provider qualification remain absent. Existing historical evidence cannot be reused to claim these gates passed.

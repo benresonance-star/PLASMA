@@ -19,3 +19,6 @@ Initial technology posture inherited from v0.4.26: TypeScript/browser interactio
 Native versus WASM OCCT, worker process placement, durable storage implementation and deployment topology remain implementation selections tied to evidence and workload budgets. This baseline does not claim those selections have been qualified.
 
 Do not implement all layers as separate services by default. Keep contracts explicit and deploy the smallest arrangement that proves the first workflow.
+
+## PLS-INF-01 placement
+Bounded interpretation is a protocol across the existing intent, workbench, runtime, orchestration, resolver and evidence responsibilities. Reflex is an execution class, not another layer or state owner. Model placement is a policy choice; local and frontier models are optional qualified providers. See [inference protocol](inference.md).

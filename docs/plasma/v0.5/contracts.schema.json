@@ -509,6 +509,20 @@
             "$ref": "#/$defs/Diagnostic"
           },
           "minItems": 0
+        },
+        "interpretation_proposal_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "uniqueItems": true
+        },
+        "interpretation_disposition_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Ref"
+          },
+          "uniqueItems": true
         }
       },
       "required": [

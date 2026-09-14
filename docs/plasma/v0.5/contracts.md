@@ -59,3 +59,8 @@ External actions require separately scoped authorization and reconciliation of r
 Map existing RC-02, kernel reference and SPDS contracts explicitly. Document renamed fields, enum mappings, units, revision identity, missing evidence and unsupported semantics.
 Round-trip known inputs without losing requirements; reject unsupported inputs. Compare new and existing fixture outcomes.
 Only after wall and terrain reuse evidence may these schemas become a frozen compatibility boundary. A correction to intended semantics requires a decision and migration note.
+
+## PLS-INF-01 interpretation provenance
+[Candidate inference types](inference-contracts.ts) and [semantic invariants](inference.md) specialise PLS-13 outputs without expanding the kernel. WorldTransaction adds optional interpretation_proposal_refs and interpretation_disposition_refs. Explicit-tool changes need not manufacture inference records. Any referenced selected interpretation must match the transaction's base revision, relevant interaction sequence and resolved material parameters; user/model selection does not waive the commit gate.
+CausalImpactSet's declared scope may contain predictions; its computed scope and coverage certificates remain authoritative runtime results. No additional classifier score can certify closure.
+These are additive draft fields in the unshipped 0.1.0 structural schema; no adapter or deployed compatibility is claimed.

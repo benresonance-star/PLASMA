@@ -44,3 +44,8 @@ Existing repository SPDS contracts remain legacy implementation contracts. They 
 An adapter must explicitly map IDs, units, status, revision, evidence and error semantics, and pass differential fixtures before adoption.
 Within this candidate, contracts.md governs the new schema semantics; explicit consolidation decisions govern conflicting inherited status notes; the preserved Foundry declaration supplies unchanged detailed requirements; the terrain companion supplies domain-specific requirements.
 An unresolved requirement conflict remains open and blocks a dependent release claim.
+
+## Bounded interpretation — PLS-INF-01
+Separate interpretation, domain evaluation and authoritative mutation. Intelligence proposes meaning; evaluators establish validity within declared assumptions; governed transactions establish accepted project state; evidence connects that state to reality. Determinism alone does not establish physical truth or correct interpretation.
+Explicit intent outranks predictions. Uncertainty and abstention remain expressible. Inference cannot waive hard checks, alter authority or certify dependency closure. Execute through existing PLS-10/13/14/15/16 and Geometry Resolver boundaries.
+See [PLS-INF-01](inference.md) for contracts, routing, provenance and M1 acceptance criteria.

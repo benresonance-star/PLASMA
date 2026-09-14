@@ -37,3 +37,7 @@ They may produce experiments and decisions without becoming prerequisites of M1/
 Do not advance a dependent gate when evidence is stale, incomplete, fixture-only beyond its stated scope, or based on an unqualified fallback.
 Any expansion of kernel primitives needs a concrete failing cross-domain case and an explicit design decision.
 Prefer extracting a proven mechanism from the existing repository over wholesale adoption; use the preserved 15-target audit.
+
+## M1 extension — PLS-INF-01
+Complete INF-A01 through INF-A12 in [inference.md](inference.md): explicit-tool bypass, unknown-preserving intent, labelled alternatives, ambiguity handling, gesture/revision staleness, insufficient context, mandatory checks, stable suggestions, bounded routing, semantic mismatch, aggregate budgets and replay provenance.
+A deterministic/heuristic implementation is sufficient. These criteria extend M1 without making learned models prerequisites or replacing persistence, fault-injection, OCCT and device-evidence gates. Reuse the same contracts in M2/T1R before specialising further.
