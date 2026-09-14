@@ -1,0 +1,20 @@
+{
+  "description": "Bounded Plasma T1 terrain-control candidate resolver; no commit authority",
+  "exports": {
+    ".": "./src/index.mjs",
+    "./surface": "./src/surface.mjs",
+    "./bridge": "./src/bridge.mjs",
+    "./worker-client": "./src/worker-client.mjs",
+    "./surface-worker": "./src/surface-worker.mjs",
+    "./common-contracts": "./src/common-contracts.mjs",
+    "./presentation-consumer": "./src/presentation-consumer.mjs",
+    "./svg-terrain": "./src/svg-terrain.mjs"
+  },
+  "name": "@spds/terrain-core",
+  "private": true,
+  "scripts": {
+    "test": "node test/run.mjs"
+  },
+  "type": "module",
+  "version": "0.0.0"
+}

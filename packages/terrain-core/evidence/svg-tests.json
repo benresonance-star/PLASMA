@@ -1,0 +1,44 @@
+{
+  "schema": "plasma-test-evidence/1",
+  "date": "2026-09-14",
+  "runtime": "V8 orchestration; ESM bindings injected; minimal DOM test double",
+  "results": [
+    {
+      "name": "SVG mesh, breakline and accessible control are drawn",
+      "status": "pass"
+    },
+    {
+      "name": "pointer and keyboard produce only anchored observations",
+      "status": "pass"
+    },
+    {
+      "name": "unresolved controls have no activation listeners",
+      "status": "pass"
+    },
+    {
+      "name": "HTML-looking labels remain text",
+      "status": "pass"
+    },
+    {
+      "name": "release removes owned nodes and invalidates old callbacks",
+      "status": "pass"
+    },
+    {
+      "name": "invalid indices, response roles and nonfinite coordinates fail before mounting",
+      "status": "pass"
+    },
+    {
+      "name": "dispose clears resources and prevents further draw",
+      "status": "pass"
+    }
+  ],
+  "fixture": {
+    "controls": 25,
+    "executedInBrowser": false,
+    "originalUnchanged": true,
+    "previewLevelDeltaMm": 500,
+    "triangles": 32
+  },
+  "browserExecution": false,
+  "sitesDeployment": false
+}

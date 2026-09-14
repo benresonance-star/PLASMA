@@ -1,0 +1,64 @@
+{
+  "schema": "plasma-test-evidence/1",
+  "date": "2026-09-14",
+  "runtime": "V8 orchestration; ESM bindings injected; plain-data clone substitute in surface mapping",
+  "scope": "12 focused mapping/ownership/lifecycle cases; not full IPS conformance",
+  "notExecuted": [
+    "Prior 51 regression cases in this increment",
+    "Node aggregate launcher",
+    "Full JSON Schema validation",
+    "TypeScript compilation",
+    "Live drawing/backend/device tests",
+    "Untrusted-adapter sandbox tests"
+  ],
+  "results": [
+    {
+      "name": "host mapping preserves requested delta and no validity is invented",
+      "status": "pass"
+    },
+    {
+      "name": "read-only draw receives detached nested data",
+      "status": "pass"
+    },
+    {
+      "name": "accessors, functions, shared typed buffers and cycles rejected without evaluation",
+      "status": "pass"
+    },
+    {
+      "name": "late frames and stale view hit maps cannot edit a new frame",
+      "status": "pass"
+    },
+    {
+      "name": "ambiguous, lost and unqualified reprojected anchors disable editing",
+      "status": "pass"
+    },
+    {
+      "name": "provider cannot label an ambiguous anchor editable",
+      "status": "pass"
+    },
+    {
+      "name": "hit emits only observation and has no mutation method",
+      "status": "pass"
+    },
+    {
+      "name": "render failure makes picking unavailable",
+      "status": "pass"
+    },
+    {
+      "name": "replacement and release dispose visual handles and revoke picks",
+      "status": "pass"
+    },
+    {
+      "name": "payload and listener budgets are enforced",
+      "status": "pass"
+    },
+    {
+      "name": "surface mapping stays unknown without measured representation tolerances",
+      "status": "pass"
+    },
+    {
+      "name": "invalidation hints cannot claim complete causal coverage",
+      "status": "pass"
+    }
+  ]
+}

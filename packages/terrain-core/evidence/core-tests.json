@@ -1,0 +1,96 @@
+{
+  "schema": "plasma-test-evidence/1",
+  "date": "2026-09-14",
+  "runtime": "V8 functions orchestration; source loaded after removing ESM export keywords",
+  "scope": "Core behavior only",
+  "notExecuted": [
+    "Node ESM launcher",
+    "pnpm install/build/typecheck/lint",
+    "Browser integration",
+    "Durable WorldTransactions",
+    "Physical-device performance",
+    "T1R large-context tests"
+  ],
+  "results": [
+    {
+      "name": "registered controls and breakline remain explicitly unresolved",
+      "status": "pass"
+    },
+    {
+      "name": "atomic batch preserves input and exact requested levels",
+      "status": "pass"
+    },
+    {
+      "name": "failed second operation cannot partially mutate input",
+      "status": "pass"
+    },
+    {
+      "name": "stale world, branch, proposal and dependency revisions rejected",
+      "status": "pass"
+    },
+    {
+      "name": "caller scope does not grant authority",
+      "status": "pass"
+    },
+    {
+      "name": "frame mismatch, unknown datum, nonfinite and submillimetre inputs rejected",
+      "status": "pass"
+    },
+    {
+      "name": "duplicate XY observations cannot silently merge",
+      "status": "pass"
+    },
+    {
+      "name": "self-intersecting boundary rejected",
+      "status": "pass"
+    },
+    {
+      "name": "dangling controls and unnormalised constraint touches rejected",
+      "status": "pass"
+    },
+    {
+      "name": "crossing breakline segments rejected",
+      "status": "pass"
+    },
+    {
+      "name": "concave boundary cannot admit an outside chord between boundary vertices",
+      "status": "pass"
+    },
+    {
+      "name": "undo is an inverse proposal with monotonic revisions",
+      "status": "pass"
+    },
+    {
+      "name": "multi-operation CRUD is reversible after dependency deletion",
+      "status": "pass"
+    },
+    {
+      "name": "rapid updates coalesce and stale sequence cannot overwrite latest",
+      "status": "pass"
+    },
+    {
+      "name": "cancelled and stale interactions cannot resolve",
+      "status": "pass"
+    },
+    {
+      "name": "human interaction and typed proposal use identical resolver results",
+      "status": "pass"
+    },
+    {
+      "name": "request identity includes all guards and normalizes key order",
+      "status": "pass"
+    },
+    {
+      "name": "resource cap bounds resolver workload",
+      "status": "pass"
+    },
+    {
+      "name": "legacy adapter preserves all 247 observations and datum without mutating survey",
+      "status": "pass"
+    },
+    {
+      "name": "near-coincident integer controls and large coordinates use exact predicates",
+      "status": "pass"
+    }
+  ]
+}

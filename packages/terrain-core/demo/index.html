@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Plasma · Terrain preview</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font:15px system-ui,sans-serif;color:#193c35;background:#f0f3ef}
+header{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid #ccd8ce}
+header strong{letter-spacing:.16em}header span{font-size:12px;color:#536a61;margin-left:auto}
+main{max-width:1100px;margin:auto;padding:16px}nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button,input,select{font:inherit;border:1px solid #afc2b5;background:#fff;border-radius:6px;padding:10px;min-height:44px}
+button{cursor:pointer}button:disabled{opacity:.5}button:focus-visible,input:focus-visible,select:focus-visible,svg [role=button]:focus-visible{outline:3px solid #cb6b32}
+svg{display:block;width:100%;max-height:70vh;background:#e8eee7;border-radius:12px;margin:12px 0}
+svg [role=button]{cursor:pointer}#status{min-height:2.8em;font-size:13px}aside{font-size:12px;color:#536a61}
+#controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}input{width:130px}
+@media(max-width:600px){header{padding:12px}header span{max-width:180px}main{padding:10px}svg{min-height:340px}nav{gap:6px}}
+</style>
+<header><strong>PLASMA</strong><span>Terrain · standalone preview fixture</span></header>
+<main>
+<nav aria-label="View"><button id="plan" aria-pressed="true">Plan</button><button id="axon" aria-pressed="false">Axonometric</button><button id="reset">Reset preview</button></nav>
+<svg id="view" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640" role="group" aria-label="Terrain preview. Select a control point or use the point selector."></svg>
+<div id="controls"><label>Control <select id="point"></select></label><label>Level (mm) <input id="level" type="number" step="1"></label><button id="preview" disabled>Preview level</button></div>
+<p id="status" role="status" aria-live="polite">Loading the terrain worker…</p>
+<aside>Synthetic local datum. Changes are temporary previews, discarded on reload. No project commit or persistence.
+Colour indicates relative height; the orange line is the breakline. Representation accuracy is unqualified.</aside>
+<noscript>This preview requires JavaScript. No project data has been changed.</noscript>
+</main><script type="module" src="./app.mjs"></script></html>
