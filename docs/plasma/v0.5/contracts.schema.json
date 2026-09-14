@@ -1,0 +1,1251 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:plasma:consolidation:contracts:0.1.0",
+  "title": "Plasma six contract candidates",
+  "description": "Structural schemas only. Cross-record semantic validation in contracts.md is mandatory. Not a compatibility claim for existing prototypes.",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/WorldTransaction"
+    },
+    {
+      "$ref": "#/$defs/WorldSnapshot"
+    },
+    {
+      "$ref": "#/$defs/RepresentationRequest"
+    },
+    {
+      "$ref": "#/$defs/RepresentationResponse"
+    },
+    {
+      "$ref": "#/$defs/CausalImpactSet"
+    },
+    {
+      "$ref": "#/$defs/RefinementPlan"
+    }
+  ],
+  "$defs": {
+    "Digest": {
+      "type": "string",
+      "pattern": "^sha256:[a-f0-9]{64}$"
+    },
+    "Ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Actor": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "kind": {
+          "enum": [
+            "human",
+            "agent",
+            "solver",
+            "import",
+            "system"
+          ]
+        },
+        "authority_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "authority_ref"
+      ],
+      "additionalProperties": false
+    },
+    "VersionedProducer": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "implementation_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "configuration_digest": {
+          "$ref": "#/$defs/Digest"
+        }
+      },
+      "required": [
+        "id",
+        "version",
+        "implementation_digest",
+        "configuration_digest"
+      ],
+      "additionalProperties": false
+    },
+    "Provenance": {
+      "type": "object",
+      "properties": {
+        "producer": {
+          "$ref": "#/$defs/VersionedProducer"
+        },
+        "input_digests": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Digest"
+          },
+          "minItems": 1
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "producer",
+        "input_digests",
+        "evidence_refs",
+        "created_at"
+      ],
+      "additionalProperties": false
+    },
+    "Tolerance": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "type": "string",
+          "minLength": 1
+        },
+        "maximum": {
+          "type": "number",
+          "minimum": 0
+        },
+        "unit": {
+          "type": "string",
+          "minLength": 1
+        },
+        "space": {
+          "enum": [
+            "world",
+            "surface",
+            "screen",
+            "parameter",
+            "field"
+          ]
+        },
+        "scope_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        }
+      },
+      "required": [
+        "metric",
+        "maximum",
+        "unit",
+        "space",
+        "scope_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Diagnostic": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "severity": {
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subject_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "code",
+        "severity",
+        "message",
+        "subject_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Check": {
+      "type": "object",
+      "properties": {
+        "invariant_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rule_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evaluator": {
+          "$ref": "#/$defs/VersionedProducer"
+        },
+        "status": {
+          "enum": [
+            "pass",
+            "fail",
+            "unknown",
+            "stale"
+          ]
+        },
+        "hard": {
+          "type": "boolean"
+        },
+        "input_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "invariant_ref",
+        "rule_revision",
+        "evaluator",
+        "status",
+        "hard",
+        "input_digest",
+        "evidence_refs"
+      ],
+      "additionalProperties": false
+    },
+    "Subject": {
+      "type": "object",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "semantic_reference": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "entity_id",
+        "semantic_reference"
+      ],
+      "additionalProperties": false
+    },
+    "Budget": {
+      "type": "object",
+      "properties": {
+        "wall_time_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cpu_time_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "memory_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gpu_time_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "max_work_items": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "required": [
+        "wall_time_ms",
+        "cpu_time_ms",
+        "memory_bytes",
+        "gpu_time_ms",
+        "max_work_items"
+      ],
+      "additionalProperties": false
+    },
+    "Scope": {
+      "type": "object",
+      "properties": {
+        "entity_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "relation_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "spatial_region_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "coordinate_frame_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "entity_refs",
+        "relation_refs",
+        "spatial_region_ref",
+        "coordinate_frame_ref"
+      ],
+      "additionalProperties": false
+    },
+    "ImpactBoundary": {
+      "type": "object",
+      "properties": {
+        "boundary_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evaluator_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "certificate_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "status": {
+          "enum": [
+            "certified_unchanged",
+            "requires_expansion",
+            "unknown"
+          ]
+        }
+      },
+      "required": [
+        "boundary_ref",
+        "evaluator_ref",
+        "certificate_ref",
+        "status"
+      ],
+      "additionalProperties": false
+    },
+    "WorldTransaction": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "plasma/WorldTransaction/0.1.0"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "world_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "branch_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "base_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor": {
+          "$ref": "#/$defs/Actor"
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transform_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "knowledge_baseline_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "proposed",
+            "evaluating",
+            "conflicted",
+            "ready",
+            "committed",
+            "rejected",
+            "cancelled"
+          ]
+        },
+        "candidate_revision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "impact_set_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "validation_results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "minItems": 0
+        },
+        "commit_required_representation_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "evidence_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "committed_revision": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "event_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Diagnostic"
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schema",
+        "id",
+        "world_id",
+        "branch_id",
+        "base_revision",
+        "actor",
+        "idempotency_key",
+        "transform_refs",
+        "knowledge_baseline_ref",
+        "status",
+        "candidate_revision",
+        "impact_set_ref",
+        "validation_results",
+        "commit_required_representation_refs",
+        "evidence_refs",
+        "committed_revision",
+        "event_ref",
+        "diagnostics"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "committed"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "candidate_revision": {
+                "type": "string",
+                "minLength": 1
+              },
+              "impact_set_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "committed_revision": {
+                "type": "string",
+                "minLength": 1
+              },
+              "event_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "not": {
+                  "const": "committed"
+                }
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "committed_revision": {
+                "type": "null"
+              },
+              "event_ref": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "WorldSnapshot": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "plasma/WorldSnapshot/0.1.0"
+        },
+        "world_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "parent_revisions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "state_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "entity_state_refs": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "relation_set_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "invariant_set_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "event_range": {
+          "type": "object",
+          "properties": {
+            "first_event_ref": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "last_event_ref": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "minLength": 1
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "first_event_ref",
+            "last_event_ref"
+          ],
+          "additionalProperties": false
+        },
+        "knowledge_baseline_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capability_baseline_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "accepted_representation_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "claim_status_set_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "schema",
+        "world_id",
+        "revision_id",
+        "parent_revisions",
+        "state_digest",
+        "entity_state_refs",
+        "relation_set_ref",
+        "invariant_set_ref",
+        "event_range",
+        "knowledge_baseline_ref",
+        "capability_baseline_ref",
+        "accepted_representation_refs",
+        "claim_status_set_ref",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "RepresentationRequest": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "plasma/RepresentationRequest/0.1.0"
+        },
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "world_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subjects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Subject"
+          },
+          "minItems": 1
+        },
+        "purpose": {
+          "type": "string",
+          "minLength": 1
+        },
+        "representation_kind": {
+          "enum": [
+            "exact_brep",
+            "interactive_mesh",
+            "analysis_mesh",
+            "field",
+            "sdf",
+            "drawing",
+            "ifc",
+            "usd",
+            "fabrication",
+            "material"
+          ]
+        },
+        "semantic_lod": {
+          "type": "string",
+          "minLength": 1
+        },
+        "geometric_lod": {
+          "type": "string",
+          "minLength": 1
+        },
+        "coordinate_frame_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "view_context_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "tolerances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Tolerance"
+          },
+          "minItems": 1
+        },
+        "freshness": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "enum": [
+                "exact_revision",
+                "allow_stale_preview"
+              ]
+            },
+            "maximum_age_ms": {
+              "anyOf": [
+                {
+                  "type": "number",
+                  "minimum": 0
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "required": [
+            "mode",
+            "maximum_age_ms"
+          ],
+          "additionalProperties": false
+        },
+        "latency_budget_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "required_for_commit": {
+          "type": "boolean"
+        },
+        "fallback_policy": {
+          "enum": [
+            "none",
+            "equivalent_provider",
+            "approximate_preview"
+          ]
+        },
+        "requester": {
+          "$ref": "#/$defs/Actor"
+        },
+        "input_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "cancellation_token_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "schema",
+        "request_id",
+        "world_revision",
+        "subjects",
+        "purpose",
+        "representation_kind",
+        "semantic_lod",
+        "geometric_lod",
+        "coordinate_frame_ref",
+        "view_context_ref",
+        "tolerances",
+        "freshness",
+        "latency_budget_ms",
+        "required_for_commit",
+        "fallback_policy",
+        "requester",
+        "input_digest",
+        "cancellation_token_ref"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "required_for_commit": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "freshness": {
+                "properties": {
+                  "mode": {
+                    "const": "exact_revision"
+                  }
+                }
+              },
+              "fallback_policy": {
+                "enum": [
+                  "none",
+                  "equivalent_provider"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "RepresentationResponse": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "plasma/RepresentationResponse/0.1.0"
+        },
+        "response_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "request_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "request_input_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "world_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "current",
+            "stale",
+            "computing",
+            "failed",
+            "unavailable",
+            "unknown"
+          ]
+        },
+        "artifact_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "artifact_digest": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Digest"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "representation_kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "achieved_tolerances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Tolerance"
+          },
+          "minItems": 0
+        },
+        "topology_correspondence_ref": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "validation_results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Check"
+          },
+          "minItems": 0
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        },
+        "fallback_used": {
+          "enum": [
+            "none",
+            "equivalent_provider",
+            "approximate_preview"
+          ]
+        },
+        "diagnostics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Diagnostic"
+          },
+          "minItems": 0
+        }
+      },
+      "required": [
+        "schema",
+        "response_id",
+        "request_ref",
+        "request_input_digest",
+        "world_revision",
+        "status",
+        "artifact_ref",
+        "artifact_digest",
+        "representation_kind",
+        "achieved_tolerances",
+        "topology_correspondence_ref",
+        "validation_results",
+        "provenance",
+        "fallback_used",
+        "diagnostics"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "enum": [
+                  "current",
+                  "stale"
+                ]
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "artifact_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "artifact_digest": {
+                "$ref": "#/$defs/Digest"
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CausalImpactSet": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "plasma/CausalImpactSet/0.1.0"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "base_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "transform_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 1
+        },
+        "declared_scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "computed_scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "dirty_claim_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "dirty_representation_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "required_evaluator_refs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "minItems": 0
+        },
+        "dependency_projection_digest": {
+          "$ref": "#/$defs/Digest"
+        },
+        "boundaries": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ImpactBoundary"
+          },
+          "minItems": 0
+        },
+        "closure_status": {
+          "enum": [
+            "complete_for_evaluators",
+            "conservative_expansion",
+            "unknown"
+          ]
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "schema",
+        "id",
+        "base_revision",
+        "transform_refs",
+        "declared_scope",
+        "computed_scope",
+        "dirty_claim_refs",
+        "dirty_representation_refs",
+        "required_evaluator_refs",
+        "dependency_projection_digest",
+        "boundaries",
+        "closure_status",
+        "provenance"
+      ],
+      "additionalProperties": false
+    },
+    "RefinementPlan": {
+      "type": "object",
+      "properties": {
+        "schema": {
+          "const": "plasma/RefinementPlan/0.1.0"
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "world_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "impact_set_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "goal_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "running",
+            "completed",
+            "cancelled",
+            "superseded",
+            "failed"
+          ]
+        },
+        "work_items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "request_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "depends_on": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "minItems": 0
+              },
+              "priority": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "commit_critical": {
+                "type": "boolean"
+              },
+              "expected_input_digest": {
+                "$ref": "#/$defs/Digest"
+              },
+              "output_contract_ref": {
+                "type": "string",
+                "minLength": 1
+              },
+              "bounded_cycle_group_ref": {
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "side_effect_class": {
+                "enum": [
+                  "pure",
+                  "staged_artifact",
+                  "external_action"
+                ]
+              },
+              "budget": {
+                "$ref": "#/$defs/Budget"
+              }
+            },
+            "required": [
+              "id",
+              "request_ref",
+              "depends_on",
+              "priority",
+              "commit_critical",
+              "expected_input_digest",
+              "output_contract_ref",
+              "bounded_cycle_group_ref",
+              "side_effect_class",
+              "budget"
+            ],
+            "additionalProperties": false
+          },
+          "minItems": 0
+        },
+        "budget": {
+          "$ref": "#/$defs/Budget"
+        },
+        "cancellation_policy": {
+          "enum": [
+            "on_supersession",
+            "explicit"
+          ]
+        },
+        "convergence_policy_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "$ref": "#/$defs/Provenance"
+        }
+      },
+      "required": [
+        "schema",
+        "id",
+        "world_revision",
+        "impact_set_ref",
+        "goal_ref",
+        "status",
+        "work_items",
+        "budget",
+        "cancellation_policy",
+        "convergence_policy_ref",
+        "provenance"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

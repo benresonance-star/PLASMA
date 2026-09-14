@@ -1,0 +1,22 @@
+{
+  "contract":"PLS-KERNEL-01/0.1.0",
+  "slice":"wall-boundary-transaction-v1",
+  "run_at":"2026-09-12T14:20:00+10:00",
+  "runtime":"node v22.16.0",
+  "suite":"plasma-kernel-wall.test.mjs",
+  "status":"pass",
+  "tests":[
+    {"id":"A","name":"hard-conflict preview preserves requested candidate and leaves accepted R0 unchanged","status":"pass"},
+    {"id":"B","name":"+150 mm exact hard-limit move commits W17/B03/C04 atomically to R1","status":"pass"},
+    {"id":"C","name":"stale-base transaction rejected with REVISION_CONFLICT","status":"pass"},
+    {"id":"D","name":"branch forked at R0 remains isolated when main advances","status":"pass"},
+    {"id":"E","name":"undo creates inverse transform and new R2 without deleting history","status":"pass"}
+  ],
+  "evidence_boundary":"Deterministic in-memory reference kernel only. This proves semantics of the seven-primitives transaction contract, not persistence, OCCT geometry, worker scheduling, multi-user transport, physical-device UI latency or production reliability.",
+  "artifacts":[
+    "PLS-KERNEL-01_WALL_REFERENCE_CONTRACT.md",
+    "PLS-KERNEL-01_WALL_FIXTURE.json",
+    "plasma-kernel-v0.1.mjs",
+    "plasma-kernel-wall.test.mjs"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema": "plasma/consolidation-checks/0.1.0",
+  "date": "2026-09-14",
+  "status": "passed",
+  "checks": {
+    "json_documents_parsed": 11,
+    "authored_relative_links_checked": 32,
+    "json_schema_local_refs_resolved": 37,
+    "preserved_foundry_loop_count": 27,
+    "foundry_declaration_deep_equal": true,
+    "generated_reading_copy_equal": true
+  },
+  "errors": [],
+  "limits": [
+    "Checks executed in orchestration JavaScript, not the repository toolchain.",
+    "No JSON Schema validator or runtime test suite executed.",
+    "No original-byte identity or live deployment verified."
+  ]
+}

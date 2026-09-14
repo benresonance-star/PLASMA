@@ -1,0 +1,56 @@
+{
+  "schema": "plasma-kernel-backup-recovery-evidence/1",
+  "generatedAt": "2026-09-12T04:43:26.644Z",
+  "tests": {
+    "corruptedPrimaryRejected": true,
+    "validBackupRecovered": true,
+    "recoveredHeadR1": true,
+    "applicationStateMatchesR1": true
+  },
+  "status": {
+    "runtimeVersion": "PLS-KERNEL-01/persistent-runtime/0.2.0",
+    "storageKey": "plasma-kernel-runtime-v0.2",
+    "source": "backup",
+    "headRevision": "R1",
+    "generation": 7,
+    "valid": true,
+    "activeErrors": [],
+    "primaryValid": false,
+    "primaryErrors": [
+      "STORE_CHECKSUM"
+    ],
+    "lastPersistResult": {
+      "ok": true,
+      "source": "backup",
+      "diagnostics": [
+        {
+          "source": "primary",
+          "errors": [
+            "STORE_CHECKSUM"
+          ]
+        },
+        {
+          "source": "primary",
+          "action": "recovered-backup"
+        }
+      ]
+    },
+    "recoveryDiagnostics": [
+      {
+        "source": "primary",
+        "errors": [
+          "STORE_CHECKSUM"
+        ]
+      },
+      {
+        "source": "primary",
+        "action": "recovered-backup"
+      }
+    ]
+  },
+  "runtimeExceptions": [],
+  "limitations": [
+    "Synthetic localStorage shim because navigable origins are blocked",
+    "Backup recovery proven for serialized store envelope, not database failover"
+  ]
+}

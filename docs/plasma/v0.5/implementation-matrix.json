@@ -1,0 +1,163 @@
+{
+  "schema": "plasma/implementation-matrix/0.1.0",
+  "as_of": "2026-09-14",
+  "source_repository_commit": "b7c9b17733cebde3a4d19ac8f66125123d86a7ac",
+  "entries": [
+    {
+      "id": "IMP-01",
+      "capability": "Seven-primitive wall transaction",
+      "implementation": "reference-runtime/plasma-kernel-v0.1.mjs",
+      "evidence": "reference-runtime/PLS-KERNEL-01_WALL_REFERENCE_EVIDENCE.json",
+      "implementation_status": "implemented reference",
+      "evidence_status": "historical 5-test pass",
+      "limits": "Not rerun; in-memory semantics only",
+      "next_gate": "M1",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-02",
+      "capability": "RC-02 reducer",
+      "implementation": "library:libfile_42c91be66e788191abbc5b4a3eae8cae",
+      "evidence": "reference-runtime/plasma-rc02-runtime-evidence-v0.1.json",
+      "implementation_status": "reported implemented",
+      "evidence_status": "historical 12-test pass",
+      "limits": "Separate implementation; mapping to kernel and six schemas not qualified",
+      "next_gate": "M1",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-03",
+      "capability": "Direct manipulation",
+      "implementation": "library:libfile_08e1d0298aec81918acc4890db69367a",
+      "evidence": "reference-runtime/plasma-rc02-browser-evidence-v0.1.json",
+      "implementation_status": "reported integrated prototype",
+      "evidence_status": "historical synthetic pointer run",
+      "limits": "Evidence file pertains to earlier RC-02 build; not proof of current live build or physical device",
+      "next_gate": "M1",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-04",
+      "capability": "Kernel bridge",
+      "implementation": "reference-runtime/plasma-kernel-live-bridge-v0.1.js",
+      "evidence": "reference-runtime/PLS-KERNEL-01_LIVE_INTEGRATION_CONTRACT.md",
+      "implementation_status": "implemented prototype source",
+      "evidence_status": "historical integration narrative",
+      "limits": "Not a new test run; persistence v0.2 is successor",
+      "next_gate": "M1",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-05",
+      "capability": "Persistence reopen",
+      "implementation": "reference-runtime/plasma-kernel-persistent-runtime-v0.2.js",
+      "evidence": "reference-runtime/PLS-KERNEL-01_PERSISTENCE_REOPEN_EVIDENCE.json",
+      "implementation_status": "implemented prototype source",
+      "evidence_status": "historical fresh-realm byte handoff",
+      "limits": "No native-origin durability, crash atomicity or shared store evidence",
+      "next_gate": "M1",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-06",
+      "capability": "Backup recovery",
+      "implementation": "reference-runtime/plasma-kernel-backup-recovery.test.mjs",
+      "evidence": "reference-runtime/PLS-KERNEL-01_BACKUP_RECOVERY_EVIDENCE.json",
+      "implementation_status": "prototype test source",
+      "evidence_status": "historical checksum rejection and backup recovery",
+      "limits": "Storage shim; not database failover or malicious-tamper verification",
+      "next_gate": "M1",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-07",
+      "capability": "Terrain pad driveway placement",
+      "implementation": "library:libfile_faf58f5a63b081918389b2cff5d7f5ca",
+      "evidence": "sources/terrain-v0.2.html",
+      "implementation_status": "reported schematic prototype",
+      "evidence_status": "companion reports all 16 test files passed",
+      "limits": "Live source/build and test reports not reverified; quantities sampled; synthetic site",
+      "next_gate": "M2",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-08",
+      "capability": "Terrain T1R",
+      "implementation": "domains.md",
+      "evidence": "sources/terrain-v0.2.html",
+      "implementation_status": "specified",
+      "evidence_status": "none inspected",
+      "limits": "Proof gate remains open",
+      "next_gate": "M2",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-09",
+      "capability": "Exact geometry resolver",
+      "implementation": "sources/foundry-v0.4.26.json",
+      "evidence": "sources/repository-audit-2026-09-09.md",
+      "implementation_status": "specified; legacy OCCT candidate exists",
+      "evidence_status": "legacy source audit",
+      "limits": "No shared wall transaction/OCCT end-to-end proof",
+      "next_gate": "M1",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-10",
+      "capability": "Six unified contracts",
+      "implementation": "contracts.schema.json",
+      "evidence": "contracts.md",
+      "implementation_status": "new draft",
+      "evidence_status": "document checks only",
+      "limits": "No validator execution, adapter implementation or compatibility freeze",
+      "next_gate": "M1-M2",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-11",
+      "capability": "Execution runtime/pathology/knowledge governance",
+      "implementation": "sources/foundry-v0.4.26.json",
+      "evidence": "decisions.md",
+      "implementation_status": "specified",
+      "evidence_status": "none establishing general implementation",
+      "limits": "Individual prototype mechanisms do not prove the full contract",
+      "next_gate": "M3",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-12",
+      "capability": "Cost/craft/reality/appearance",
+      "implementation": "domains.md",
+      "evidence": "decisions.md",
+      "implementation_status": "reconstructed proposal",
+      "evidence_status": "thread-summary intent only",
+      "limits": "Original detailed chats not recovered; no implementation claim",
+      "next_gate": "M3",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    },
+    {
+      "id": "IMP-13",
+      "capability": "Botanical/planet/robotics tracks",
+      "implementation": "domains.md",
+      "evidence": "decisions.md",
+      "implementation_status": "research proposal",
+      "evidence_status": "none inspected",
+      "limits": "No ecosystem-scale, biology or robot-control qualification",
+      "next_gate": "R1",
+      "qualified": false,
+      "rerun_in_consolidation": false
+    }
+  ]
+}
