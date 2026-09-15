@@ -8,12 +8,14 @@
     "./surface-worker": "./src/surface-worker.mjs",
     "./common-contracts": "./src/common-contracts.mjs",
     "./presentation-consumer": "./src/presentation-consumer.mjs",
-    "./svg-terrain": "./src/svg-terrain.mjs"
+    "./svg-terrain": "./src/svg-terrain.mjs",
+    "./interaction-adapter": "./src/interaction-adapter.mjs"
   },
   "name": "@spds/terrain-core",
   "private": true,
   "scripts": {
-    "test": "node test/run.mjs"
+    "test": "node test/run.mjs && node --test test/interaction.test.mjs",
+    "demo": "node demo/serve.mjs"
   },
   "type": "module",
   "version": "0.0.0"
