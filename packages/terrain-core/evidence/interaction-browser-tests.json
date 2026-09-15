@@ -1,0 +1,58 @@
+{
+  "executedAt": "2026-09-15T01:02:22.947Z",
+  "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
+  "sourceDigests": {
+    "demo/app.mjs": "6fa6927b6c186d10cfa6cd0f6b13dfbda7905e44036b2045f70aa4c828c0ac2c",
+    "demo/digest.mjs": "c2ef39d1afc4bc84d7a8c9d82e16af3d946d3b067a0f445d54b5169827e560cc",
+    "src/interaction-adapter.mjs": "74189f69f468ebab5c31b151379ff3de712655ef7312d0ac42f5789f8438da3c",
+    "src/svg-terrain.mjs": "271961978d779f07c0da2cf5a16d8118cd67d6b61faeec94b9e7b364a4b2fbc8",
+    "src/presentation-consumer.mjs": "914acf2de07f8a0cf7951fe3238583ace242a3bc9a318d87ea641e8837c78c77",
+    "../interaction-reflex/src/session.mjs": "4e249efaef0cf70d50bc1fe7260ec5d6c4ca9625999227c8b22ba7e9b13f6287"
+  },
+  "results": [
+    {
+      "name": "native module worker loads and renders 25 controls",
+      "status": "pass"
+    },
+    {
+      "name": "pointer drag survives redraw, resolves on release and preserves Z",
+      "status": "pass"
+    },
+    {
+      "name": "Escape during a second drag restores the previous candidate",
+      "status": "pass"
+    },
+    {
+      "name": "pointercancel clears the gesture and its late worker output",
+      "status": "pass"
+    },
+    {
+      "name": "view changes cancel active manipulation before changing projection",
+      "status": "pass"
+    },
+    {
+      "name": "invalid control position remains a failed temporary preview",
+      "status": "pass"
+    },
+    {
+      "name": "keyboard selection and numeric elevation preview still work",
+      "status": "pass"
+    },
+    {
+      "name": "reset restores original fixture and removes transient visuals",
+      "status": "pass"
+    },
+    {
+      "name": "phone-sized layout fits without horizontal overflow",
+      "status": "pass"
+    },
+    {
+      "name": "no uncaught page errors",
+      "status": "pass"
+    }
+  ],
+  "limits": [
+    "Desktop Chrome automation; phone viewport emulation only",
+    "No physical touch/pen, frame-latency or production-persistence qualification"
+  ]
+}
