@@ -10,6 +10,21 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NODE_OPTIONS: --use-system-ca
+      DATABASE_URL: postgres://spds:spds@127.0.0.1:5432/spds
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: spds
+          POSTGRES_PASSWORD: spds
+          POSTGRES_DB: spds
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U spds -d spds"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - uses: actions/checkout@v4
 
@@ -38,7 +53,8 @@ jobs:
         run: pnpm typecheck
 
       - name: Test
-        run: pnpm test
+        # Timing-budget tests need to avoid contention with other package suites.
+        run: pnpm exec turbo run test --concurrency=1
 
       - name: Build
         run: pnpm build

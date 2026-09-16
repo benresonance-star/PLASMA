@@ -5,7 +5,7 @@ import { runD01ReferencePipeline } from '@spds/reference-pipeline';
 import { recordBenchmark } from './index.js';
 
 describe('E7 B17 release recovery proof', () => {
-  it('backups full D01 release bundle and restores exact reproducibility', async () => {
+  it('restores D01 fixture metadata and independently reproduces the complete manifest', async () => {
     const store = new InMemoryObjectStore();
     const pipeline = await runD01ReferencePipeline({ yLimit: 4 });
 
@@ -36,6 +36,9 @@ describe('E7 B17 release recovery proof', () => {
     const restored = new InMemoryObjectStore();
     restored.restoreBackup(backup);
     expect(allHashes.every((h) => restored.verify(h))).toBe(true);
+    for (const put of artifactPuts) {
+      expect(restored.get(put.objectKey)).toBe(store.get(put.objectKey));
+    }
 
     const releaseBlob = restored.get(releasePut.objectKey);
     expect(releaseBlob).toBeTruthy();
@@ -46,12 +49,10 @@ describe('E7 B17 release recovery proof', () => {
     expect(parsed.release.status).toBe('published');
     expect(parsed.pipelineHash).toBe(pipeline.pipelineHash);
 
-    expect(
-      assessReproducibility(parsed.release.manifest, {
-        ...pipeline.release.manifest,
-        artifactHashes: pipeline.fabrication.artifacts.map((a) => a.contentHash),
-      }),
-    ).toBe('exact');
+    // Metadata/fabrication backup is not a backup of compiled kernel artifacts.
+    // Compare the restored full manifest to a fresh, independent pipeline run.
+    const reproduced = await runD01ReferencePipeline({ yLimit: 4 });
+    expect(assessReproducibility(parsed.release.manifest, reproduced.release.manifest)).toBe('exact');
 
     const t0 = performance.now();
     // Re-verify restored meta set (recovery timing precursor).

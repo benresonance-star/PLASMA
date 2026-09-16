@@ -71,6 +71,9 @@ describe('React Flow adapter (SD1)', () => {
           { op: 'update', targetId: 'param:d01:lengthMm' },
           { op: 'create', targetId: 'component:y:new' },
           { op: 'delete', targetId: 'component:y:2' },
+          { op: 'create_group', targetId: 'folder:preview' },
+          { op: 'apply_pattern', targetId: 'pattern:preview' },
+          { op: 'connect', targetId: 'component:y:1', payload: { parentId: 'folder:preview' } },
         ],
       },
     });
@@ -85,6 +88,12 @@ describe('React Flow adapter (SD1)', () => {
     expect(removed.className).toContain('sdi-rf-node--removed');
     const removedNode = delta.nodes.find((n) => n.semanticId === 'component:y:2')!;
     expect(rfClassForProjectionNode(removedNode)).toContain('sdi-rf-node--removed');
+    for (const id of ['folder:preview', 'pattern:preview']) {
+      expect(nodes.find((n) => n.data.semanticId === id)?.className).toContain('sdi-rf-node--added');
+    }
+    expect(nodes.find((n) => n.data.semanticId === 'component:y:1')?.className).toContain(
+      'sdi-rf-node--changed',
+    );
 
     const t0 = performance.now();
     for (let i = 0; i < 100; i += 1) projectionToReactFlow(delta);
