@@ -1,0 +1,13 @@
+{
+  "name": "@spds/kernel-gateway",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "Transport-neutral, authority-enforced gateway to Plasma world reads, proposals and governed publication",
+  "exports": {
+    ".": "./src/index.mjs"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  }
+}
