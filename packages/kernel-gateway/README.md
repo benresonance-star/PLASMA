@@ -51,6 +51,8 @@ Transform registration and semantic validation belong behind the gateway in the 
 
 `createKernelGateway` accepts plain request/response records. `createInProcessTransport` is supplied only as the first adapter and test seam. HTTP, local RPC, WebSocket, worker, process or future Rust FFI adapters should preserve the same request semantics and trusted identity injection.
 
+The boundary copies and validates data in one pass before method validation and authorization. Objects must have enumerable data properties; accessors, cycles and sparse arrays are rejected. Arrays cannot have extra properties. `history.get` requires exactly one supplied reference field containing a nonblank string.
+
 ## Current relation to terrain
 
 The terrain T1 bridge already demonstrates the important host-side rules: injected authenticated actor, proposal-only preview, fresh commit authorization, hard validation, stale-head rejection, durable receipts and atomic host commit. This package extracts the reusable outer doorway so terrain is not the permanent API definition.

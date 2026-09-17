@@ -30,31 +30,52 @@ function assertNonEmptyString(value, label) {
   }
 }
 
-function assertPlainJson(value, path = '$') {
-  if (value === null) return;
+function clonePlainJson(value, path = '$', ancestors = new Set()) {
+  if (value === null) return null;
   const type = typeof value;
   if (type === 'string' || type === 'number' || type === 'boolean') {
     if (type === 'number' && !Number.isFinite(value)) {
       fail('INVALID_REQUEST', `${path} must not contain non-finite numbers`);
     }
-    return;
-  }
-  if (Array.isArray(value)) {
-    value.forEach((item, index) => assertPlainJson(item, `${path}[${index}]`));
-    return;
+    return value;
   }
   if (type !== 'object') {
     fail('INVALID_REQUEST', `${path} must contain JSON-compatible plain data only`);
   }
+  const isArray = Array.isArray(value);
   const proto = Object.getPrototypeOf(value);
-  if (proto !== Object.prototype && proto !== null) {
+  if (!isArray && proto !== Object.prototype && proto !== null) {
     fail('INVALID_REQUEST', `${path} must contain plain objects only`);
   }
-  for (const [key, item] of Object.entries(value)) {
-    if (key === '__proto__' || key === 'prototype' || key === 'constructor') {
-      fail('INVALID_REQUEST', `${path}.${key} is not permitted`);
+  if (ancestors.has(value)) fail('INVALID_REQUEST', `${path} must not contain cycles`);
+  ancestors.add(value);
+  try {
+    // Copy descriptor values once: never execute an accessor or re-read caller data.
+    const descriptors = Object.getOwnPropertyDescriptors(value);
+    const keys = Reflect.ownKeys(descriptors);
+    const length = isArray ? descriptors.length.value : 0;
+    if (isArray && keys.length !== length + 1) {
+      fail('INVALID_REQUEST', `${path} must be a dense array without extra properties`);
     }
-    assertPlainJson(item, `${path}.${key}`);
+    const copy = isArray ? [] : {};
+    for (const key of keys) {
+      if (isArray && key === 'length') continue;
+      if (typeof key !== 'string' || key === '__proto__' || key === 'prototype' || key === 'constructor') {
+        fail('INVALID_REQUEST', `${path}.${String(key)} is not permitted`);
+      }
+      if (isArray && (!Number.isInteger(Number(key)) || Number(key) < 0 ||
+          Number(key) >= length || String(Number(key)) !== key)) {
+        fail('INVALID_REQUEST', `${path}.${key} must be an array index`);
+      }
+      const descriptor = descriptors[key];
+      if (!Object.hasOwn(descriptor, 'value') || !descriptor.enumerable) {
+        fail('INVALID_REQUEST', `${path}.${key} must be an enumerable data property`);
+      }
+      copy[key] = clonePlainJson(descriptor.value, `${path}.${key}`, ancestors);
+    }
+    return copy;
+  } finally {
+    ancestors.delete(value);
   }
 }
 
@@ -65,7 +86,6 @@ function assertOnlyKeys(object, allowed, label) {
 }
 
 function validateTransform(transform, index) {
-  assertPlainJson(transform, `payload.transforms[${index}]`);
   if (!transform || Array.isArray(transform)) {
     fail('INVALID_REQUEST', `payload.transforms[${index}] must be an object`);
   }
@@ -133,10 +153,11 @@ function validateMethodPayload(method, payload, idempotencyKey) {
         new Set(['revision', 'eventId', 'transformId', 'proposalId', 'runId']),
         'payload',
       );
-      const refs = Object.values(payload).filter((value) => typeof value === 'string' && value.length > 0);
-      if (refs.length !== 1) {
+      const keys = Object.keys(payload);
+      if (keys.length !== 1) {
         fail('INVALID_REQUEST', 'history.get requires exactly one history reference');
       }
+      assertNonEmptyString(payload[keys[0]], `payload.${keys[0]}`);
       return;
     }
     case KERNEL_GATEWAY_METHODS.PUBLISH_PROPOSAL: {
@@ -150,8 +171,8 @@ function validateMethodPayload(method, payload, idempotencyKey) {
   }
 }
 
-export function validateKernelGatewayRequest(request) {
-  assertPlainJson(request);
+export function validateKernelGatewayRequest(rawRequest) {
+  const request = clonePlainJson(rawRequest);
   if (!request || Array.isArray(request)) fail('INVALID_REQUEST', 'request must be an object');
   for (const key of Object.keys(request)) {
     if (RESERVED_TOP_LEVEL_IDENTITY_KEYS.has(key)) {
@@ -173,7 +194,7 @@ export function validateKernelGatewayRequest(request) {
   }
   if (request.idempotencyKey !== undefined) assertNonEmptyString(request.idempotencyKey, 'idempotencyKey');
   validateMethodPayload(request.method, request.payload, request.idempotencyKey);
-  return structuredClone(request);
+  return request;
 }
 
 function assertPrincipal(context) {
@@ -219,8 +240,7 @@ export function createKernelGateway({ authorize, ports }) {
         request: structuredClone(request),
         authority: structuredClone(decision),
       });
-      assertPlainJson(result, '$result');
-      return structuredClone(result);
+      return clonePlainJson(result, '$result');
     },
   });
 }
