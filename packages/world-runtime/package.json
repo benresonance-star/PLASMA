@@ -1,0 +1,9 @@
+{
+  "name": "@spds/world-runtime",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22.13.0" },
+  "exports": { ".": "./src/store.mjs", "./reference-domains": "./src/reference-domains.mjs", "./terrain-host": "./src/terrain-host.mjs", "./gateway-host": "./src/gateway-host.mjs", "./mock-fea": "./src/mock-fea.mjs" },
+  "scripts": { "test": "node --test test/*.test.mjs", "demo": "node demo/server.mjs" }
+}

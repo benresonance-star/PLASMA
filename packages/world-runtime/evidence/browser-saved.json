@@ -1,0 +1,112 @@
+{
+  "date": "2026-09-16T22:56:41.292Z",
+  "node": "v25.2.1",
+  "platform": "win32",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "3D orbit, pan, zoom and fit inspect terrain without creating an edit",
+      "status": "pass"
+    },
+    {
+      "name": "unaccepted numeric draft survives refresh and remains editable until reset",
+      "status": "pass"
+    },
+    {
+      "name": "drag-created amber draft survives refresh and reset clears it",
+      "status": "pass"
+    },
+    {
+      "name": "edited node rings track multiple changes independently of selection and survive refresh",
+      "status": "pass"
+    },
+    {
+      "name": "point review shows exact deltas and individually reverts edits without changing saved terrain",
+      "status": "pass"
+    },
+    {
+      "name": "exact XYZ edits survive refresh and invalid coordinates preserve the prior draft",
+      "status": "pass"
+    },
+    {
+      "name": "typing coordinates updates viewport without a preview click and never saves automatically",
+      "status": "pass"
+    },
+    {
+      "name": "acceptance survives server token rotation while the edited page remains open",
+      "status": "pass"
+    },
+    {
+      "name": "reset returns to saved terrain rather than the original fixture",
+      "status": "pass"
+    },
+    {
+      "name": "closing browser and restarting server retains the accepted terrain",
+      "status": "pass"
+    },
+    {
+      "name": "a subsequent accepted edit creates the next revision",
+      "status": "pass"
+    },
+    {
+      "name": "lost save response retains a retry that does not duplicate publication",
+      "status": "pass"
+    },
+    {
+      "name": "reset after an unavailable save clears pending state and permits editing",
+      "status": "pass"
+    },
+    {
+      "name": "recovery copy records the saved revision without accepting a preview",
+      "status": "pass"
+    },
+    {
+      "name": "undo previews, cancels and accepts through a new saved revision",
+      "status": "pass"
+    },
+    {
+      "name": "saved history previews and restores an older revision while retaining later history",
+      "status": "pass"
+    },
+    {
+      "name": "stale pending edits reapply as a reviewable preview and survive reload before acceptance",
+      "status": "pass"
+    },
+    {
+      "name": "same-point conflict retains preview and pending request for manual resolution",
+      "status": "pass"
+    },
+    {
+      "name": "offline pending preview restores on reload and Reload saved without publishing",
+      "status": "pass"
+    },
+    {
+      "name": "reload reconciles an already committed pending request instead of restoring a proposal",
+      "status": "pass"
+    },
+    {
+      "name": "browser reports no uncaught errors",
+      "status": "pass"
+    }
+  ],
+  "digest_encoding": "sha256 UTF-8 with CRLF normalized to LF",
+  "source_digests": {
+    "packages/world-runtime/demo/server.mjs": "a50da019fd83efde6b2d3d540b0020a9c732d75cf831183737291d1de583fc20",
+    "packages/world-runtime/src/store.mjs": "bda10a289621fcb010a6fd6d31d2abeff8fc6ef3fd825891b4699179c193cc7d",
+    "packages/world-runtime/src/undo.mjs": "b285a6ff186de5e5cf2d39752524413077aa4b037c5fc6adb98c165d7845b7e3",
+    "packages/world-runtime/src/reference-domains.mjs": "4ca50bc634b09b07b2c1d988efbde6778169a5f4d8d570f71661357c1f1eeb20",
+    "packages/world-runtime/test/browser-saved.mjs": "147382885f7e2e4fbae014d013d13c3c81f6c20b5076397edfe6295ff09134a0",
+    "packages/world-runtime/test/http.test.mjs": "51af7f6e8043b7420c6fc728ae548dafcd1272c497868dabdfc2283ca3636cf7",
+    "packages/terrain-core/src/svg-terrain.mjs": "a175b8b3319c29ebc00d578fe41d0d8a5f3190fe210e8a3f64487e98c11ed5ae",
+    "packages/terrain-core/demo/app.mjs": "3de69bcafa103f9c080ffa4e459901a674f3441c7bf1ba7234518010dc2c0aa6",
+    "packages/terrain-core/demo/navigation.mjs": "4c879bb4db0d13f323786777384b95d2092486e8cc4d5467bda412c2c05fd3f7",
+    "packages/terrain-core/demo/persistence.mjs": "b0c899e537c0780412603faee06d467124eacf4734390e3ade2a47b7b7a0cfb0",
+    "packages/terrain-core/demo/fixture.mjs": "b05b14a98e7f4a915f2558eafcfe8e915c111fa7017b6e73ca5f880b02fe73be",
+    "packages/terrain-core/demo/index.html": "5b521e3f53f036bd9c586c86bd165b68388137a9dc474b6632d8bac8fcb1c93b",
+    "packages/world-runtime/src/rebase.mjs": "5a9c82a48baa06c67e4c9a2f10f46d8aacaa0a2273161440daf23b8421d95638"
+  },
+  "limits": [
+    "Synthetic local fixture in desktop Chrome; no physical-device, power-loss or multi-user qualification.",
+    "Database isolated from the user saved-demo database."
+  ]
+}

@@ -17,7 +17,7 @@ export function runSvgTests(api) {
  const all=node=>[node,...node.children.flatMap(all)];
  test("SVG mesh, breakline and accessible control are drawn",()=>{
   const s=setup();s.sink.draw(f(),p());const nodes=all(s.svg);
-  assert(nodes.some(n=>n.name==="polygon"));assert(nodes.some(n=>n.name==="line"&&n.attrs.stroke==="#a94d21"));
+  assert(nodes.some(n=>n.name==="polygon"));assert(nodes.some(n=>n.name==="line"&&n.attrs["stroke-width"]==="3"));
   assert(nodes.some(n=>n.attrs.role==="button"&&n.attrs["aria-label"]==="Control A"&&n.attrs.tabindex==="0"));
  });
  test("pointer and keyboard produce only anchored observations",()=>{

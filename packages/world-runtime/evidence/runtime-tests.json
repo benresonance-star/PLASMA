@@ -1,0 +1,55 @@
+{
+  "schema": "plasma/world-runtime-evidence/0.1.0",
+  "date": "2026-09-16",
+  "decision": "CON-023",
+  "source_identity": "Enclosing git tree plus normalized source digests; uncommitted at execution",
+  "environment": {
+    "node": "v25.2.1",
+    "platform": "win32",
+    "release": "10.0.26200",
+    "sqlite": "3.50.4"
+  },
+  "status": "passed",
+  "runs": [
+    {
+      "command": "node --test packages/world-runtime/test/runtime.test.mjs",
+      "passed": 17
+    },
+    {
+      "command": "node docs/plasma/v0.5/reference-runtime/plasma-kernel-wall.test.mjs",
+      "passed": 5
+    },
+    {
+      "command": "node packages/terrain-core/test/run.mjs",
+      "passed": 70
+    },
+    {
+      "command": "node --test packages/terrain-core/test/interaction.test.mjs packages/interaction-reflex/test/session.test.mjs",
+      "passed": 17
+    }
+  ],
+  "checks": [
+    "licence register",
+    "package boundaries"
+  ],
+  "digest_encoding": "sha256 of UTF-8 text with CRLF normalized to LF",
+  "source_digests": {
+    "packages/world-runtime/src/store.mjs": "03089d08b590f7ce0e273a6b65fa34ea852d4136140e305aefa012507800cc78",
+    "packages/world-runtime/src/reference-domains.mjs": "4ca50bc634b09b07b2c1d988efbde6778169a5f4d8d570f71661357c1f1eeb20",
+    "packages/world-runtime/src/terrain-host.mjs": "6c4ef7974ec9bd13d7e2b17325221af93af627cddadc9d2d972dcea833a99033",
+    "packages/world-runtime/test/runtime.test.mjs": "5f7b7c18381af5b6cc2196d0c0e19d2a2eb7ecaa952616c69c125eb9bbfe19b6",
+    "packages/world-runtime/test/crash-child.mjs": "40f1b270c330f5b2af8bb171d7f25cf46dd6b4bcaa02e4b861c072119771a9b0",
+    "packages/world-runtime/test/fixture.mjs": "debb54f92de9558ebbed313c1e0a61fb07838e95f2fc90a820b4c6fdbdb52f64",
+    "docs/plasma/v0.5/reference-runtime/plasma-kernel-v0.1.mjs": "0997f1bd70658b8b316c4316b00bdae90c9e47786bd91cda41d80985a4a168fa",
+    "docs/plasma/v0.5/reference-runtime/PLS-KERNEL-01_WALL_FIXTURE.json": "9a78282269c31d65feae54fed0b8041ab1712dfb8090aa3e0476dd528ee57ddb",
+    "packages/terrain-core/src/index.mjs": "25d30f308e66cfeb776effd7df273a5b918ff4572c55c1543854754de1e62f01",
+    "packages/terrain-core/src/bridge.mjs": "f05ebfd9ae39d7764b88a547a0e52503183f61bace105751f9b03d7e0e63c32d",
+    "packages/terrain-core/src/surface.mjs": "a77abee39e36ce52ddddcafe904e672a0949aa78bbd5d5437131a40a77078f9b"
+  },
+  "limitations": [
+    "Synthetic main-branch fixtures with trusted synchronous evaluators; no full six-schema conformance.",
+    "Node SQLite process exits at before-write, after-revision, before-commit and after-commit; not hardware power-loss testing.",
+    "Corrupt semantic row fails closed; no automatic backup repair or authenticated tamper resistance.",
+    "No browser application persistence, exact wall geometry, T1R influence, physical-device or production multi-user qualification."
+  ]
+}

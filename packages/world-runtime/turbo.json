@@ -1,0 +1,14 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "test": {
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        "$TURBO_ROOT$/docs/plasma/v0.5/reference-runtime/**",
+        "$TURBO_ROOT$/packages/terrain-core/src/**",
+        "$TURBO_ROOT$/packages/kernel-gateway/src/**",
+        "$TURBO_ROOT$/packages/terrain-core/demo/**"
+      ]
+    }
+  }
+}

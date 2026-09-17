@@ -14,7 +14,7 @@
   "name": "@spds/terrain-core",
   "private": true,
   "scripts": {
-    "test": "node test/run.mjs && node --test test/interaction.test.mjs",
+    "test": "node test/run.mjs && node --test test/interaction.test.mjs test/navigation.test.mjs",
     "demo": "node demo/serve.mjs"
   },
   "type": "module",
