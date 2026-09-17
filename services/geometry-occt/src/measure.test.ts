@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { boxFeaturePath } from '@spds/geometry-contracts';
 import { ExactKernelAdapter } from './exact-kernel.js';
 import { OcctNativeKernel } from './occt-native-kernel.js';
@@ -12,6 +12,10 @@ const EXTENTS = {
 };
 
 describe('kernel + HTTP measure (incl. angle)', () => {
+  const native = new OcctNativeKernel();
+  beforeAll(async () => {
+    await native.ensureReady();
+  }, 60_000);
   it('exact edge and face-face angle', () => {
     const k = new ExactKernelAdapter();
     const edge = k.measure({
@@ -34,10 +38,8 @@ describe('kernel + HTTP measure (incl. angle)', () => {
     expect(ang.quantity).toBeCloseTo(90, 5);
   });
 
-  it('native matches exact angle within 0.25°', async () => {
+  it('native matches exact angle within 0.25°', () => {
     const exact = new ExactKernelAdapter();
-    const native = new OcctNativeKernel();
-    await native.ensureReady();
     native.sweep({
       semanticOwner: OWNER,
       pirOperationId: 'pir:measure:1',
