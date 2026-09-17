@@ -1,72 +1,86 @@
-# Terrain SVG viewport preview
+# Terrain interaction preview
 
-This runnable browser preview connects the existing terrain evaluator,
-RepresentationResponse mapper, IPS consumer and module-worker transport to a
-real SVG drawing backend. It has not been opened or visually tested in a browser
-in this environment and is not deployed to Sites.
-
-From the repository root, serve the package over localhost, for example:
+From the repository root, with Node 22 or newer:
 
 ```sh
-python -m http.server 8080 --directory packages/terrain-core
+node packages/terrain-core/demo/serve.mjs
 ```
 
-Then open [the local preview](http://localhost:8080/demo/). Do not open the HTML
-with a file URL: module workers and source-digest fetching need an HTTP origin.
-Any equivalent static server is suitable. No npm installation is needed for this
-page; all modules are relative source imports.
+Open [the localhost preview](http://127.0.0.1:8080/packages/terrain-core/demo/).
+The server binds only to localhost and serves the repository so the sibling
+interaction-reflex package can load. No npm installation is required for the demo.
+An equivalent static server must serve the repository root, not just terrain-core.
 
-## Implemented UI
+## Try it
 
-- Plan and fixed axonometric projection.
-- 25-control synthetic terrain, explicit boundary and breakline, 32 triangles.
-- Height tint, boundary/breakline strokes and labelled control handles.
-- Pointer/keyboard selection plus a conventional control selector.
-- Integer-mm level entry, worker-evaluated temporary preview and reset.
-- Representation status and synthetic datum disclosed in the page.
+1. In Plan, drag the orange `p12` control. XY changes; elevation stays fixed.
+2. The dashed ghost and control move immediately. A worker independently rebuilds
+   the terrain. Only a result for the current session/revision/sequence/digest can
+   enter the current presentation.
+3. Release to retain a temporary candidate. This is awaiting acceptance, not an
+   accepted project edit. The original fixture remains visible underneath.
+4. Escape, Cancel drag or pointer cancellation restores the preview from before
+   that gesture. Reset preview restores the original fixture.
+5. Enter/Space selects a focused control; the selector and numeric level preview
+   remain available. Axonometric is a fixed projected diagram for inspection.
 
-The numeric preview goes through prepareTerrainEdit and the worker evaluator.
-The base fixture remains unchanged. Successive previews use the current temporary
-candidate, and reset/reload returns to the original fixture. There is no Apply,
-WorldTransaction commit, persistence, collaboration or imported survey support.
+Switching views or resizing the window cancels an active gesture before changing
+its projection. A completed candidate can be the starting point for another drag;
+each session pins that source independently. An invalid move stays visibly
+unavailable/failed and can be corrected or cancelled. No constraint snapping is
+implied. The fixture has 25 controls and 32 triangles.
 
-Camera-mode changes and selection do not submit geometry jobs. The Preview button
-is disabled while a job is active. Browser/device performance has not been measured.
-Axonometric rendering is a projected SVG diagram, not a depth-correct 3D renderer;
-it does not provide orbit, solid occlusion, shaded-normal rendering or drag gizmos.
+## Contract boundary
 
-## SVG adapter boundary
+`PresentationInput` -> domain-neutral `createInteractionSession` ->
+`InteractionOverlay` -> `PresentationFrame` -> SVG feedback, with an independent
+`PreviewRequest` -> terrain bridge -> module worker -> `PreviewResponse` path.
+Terrain mesh artifacts also receive the existing `RepresentationResponse` mapping.
 
-createSvgTerrainSink supplies draw/releaseVisuals to the existing IPS consumer.
-The host supplies viewBox-space vertices, ordered triangles, boundary/breakline
-segments and semantic anchor projections. The sink checks finite coordinates,
-bounded arrays and response/role bindings before mounting its group.
+The SVG sink emits frame-bound observations in viewBox coordinates. The domain
+adapter owns the pinned XY conversion, `point.replace` delta and bridge request.
+Stable semantic references identify controls across replacement meshes. Root SVG
+pointer capture survives replacement of the rendered child groups. The consumer
+still checks exact current frame/hit-map bindings before emitting input.
 
-Labels use textContent. Exact editable controls emit frame-bound hit observations;
-no operation/commit capability is provided. Key activation supports Enter/Space,
-while the selector offers an equivalent conventional input. Release removes only
-the sink's owned groups and listeners, and stale captured callbacks do nothing.
+The runtime retains one active and one latest pending request, rejects obsolete
+results, and releases superseded delta/artifact references. The demo additionally
+bounds transport work across cancelled/replaced sessions. Artifact reference
+counts preserve the initial fixture and the prior candidate while a gesture runs.
+These registries are a temporary harness, not a durable World State host.
 
-The demo uses a bounded transient reference registry, real SHA-256 digests of
-artifact bytes and the fetched evaluator-source bundle, and explicit unknown
-representation tolerance. The full request envelope is supplied, but the registry
-is a preview harness rather than a production WorldSnapshot/WorldTransaction host.
-No computed tolerance, complete causal impact or durable evidence is invented.
+Topology validation supports `locally_valid` interaction assessment; requested
+representation tolerances remain `unknown`. The synchronous operation digest is
+bounded to 8 KiB and tested against native SHA-256. Mesh/source hashing uses Web
+Crypto outside the reflex path. No evaluator or transaction port is passed to SVG.
 
-## Evidence and remaining gates
+## Verification
 
-Seven renderer behaviour tests pass using a minimal DOM test double in V8.
-They cover mesh/line/control creation, anchored click/keyboard input, unresolved
-controls, text-only labels, owned-resource release, invalid geometry/bindings and
-disposal. These test DOM operations, not browser layout, accessibility APIs or pixels.
+```sh
+node packages/terrain-core/test/run.mjs
+node --test packages/terrain-core/test/interaction.test.mjs
+node --test packages/interaction-reflex/test/session.test.mjs
+```
 
-The actual demo fixture and a +500 mm centre-control preview were evaluated in V8:
-25 controls, 32 triangles, original fixture unchanged. The browser module was
-syntax-checked after replacing import.meta for the harness. Module loading, Worker
-startup, digest fetching, keyboard focus, phone sizing and full end-to-end execution
-remain unverified. The aggregate Node launcher contains 70 tests; only the seven new
-SVG tests and fixture exercise ran in this increment.
+The existing 70 cases and 17 new cases passed natively in Node 25.2.1 on Windows.
+With the server running and agent-browser installed, reproduce browser checks:
 
-Next: run this page in a restored browser environment, test its complete interaction
-loop and physical-device inputs, then package/publish with Sites. Connect a genuine
-host transaction store only after that store meets the existing durability contract.
+```sh
+node packages/terrain-core/test/browser-smoke.mjs /path/to/agent-browser
+```
+
+On Windows, supply the native agent-browser executable path. Set
+`AGENT_BROWSER_EXECUTABLE_PATH` to the installed Chrome executable if needed.
+The script creates and closes its own browser session and records source digests
+and results in `../evidence/interaction-browser-tests.json`. Ten Chrome checks pass,
+including real module Worker loading, native mouse dragging, Escape, a synthesized
+pointercancel event, invalid movement, view switching, keyboard/numeric controls,
+reset, phone-width layout and uncaught page errors.
+
+## Limits
+
+This is local, uncommitted fixture preview. No project commit, persistence, undo,
+production host, Rive, 3D picking, snapping or imported survey is implemented here.
+Phone-width emulation does not qualify physical touch/pen input. Physical latency,
+frame rate, full accessibility and monorepo-wide build gates are not qualified by
+these checks. No Sites deployment has been performed.

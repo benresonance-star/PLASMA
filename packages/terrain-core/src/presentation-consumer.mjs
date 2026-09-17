@@ -90,7 +90,7 @@ export function createPresentationConsumer({surfaceId,generation,capabilities,dr
       const a=p.anchors.find(x=>x.semanticAnchorRef===h.semanticAnchorRef);
       if(!a||!a.editable||a.status!=="exact")fail("UNRESOLVED_ANCHOR","Hit has no editable exact mapping.");
       const event=immutablePresentationData({surfaceId,generation,frameSequence:f.frameSequence,
-        worldSnapshotRef:f.worldSnapshotRef,viewContextRef:f.viewContextRef,kind:"hit",semanticAnchorRef:a.semanticAnchorRef,
+        worldSnapshotRef:f.worldSnapshotRef,viewContextRef:f.viewContextRef,kind:h.kind==="input"?"input":"hit",semanticAnchorRef:a.semanticAnchorRef,
         hitMapRef:p.hitMapRef,observationRef:h.observationRef,interactionSessionRef:f.overlay?.sessionId??null,inputSequence:h.inputSequence});
       for(const listener of listeners)listener(event);
       return event; // Runtime still revalidates operation meaning and authorization.

@@ -574,6 +574,8 @@ importers:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(jiti@2.7.0)(jsdom@26.1.0)(lightningcss@1.32.0)(tsx@4.23.11)
 
+  packages/interaction-reflex: {}
+
   packages/operator-core:
     dependencies:
       '@spds/reproducibility':
