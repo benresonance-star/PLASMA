@@ -95,6 +95,23 @@ describe('M2 box features + angles', () => {
     for (let i = 0; i < 10_000; i++) resolveBoxFeature(path, EXTENTS);
     expect(performance.now() - t0).toBeLessThan(25);
   });
+
+  it('single-feature resolution matches enumeration without retaining stale extents', () => {
+    for (const extents of [EXTENTS, { min: [-100, 2, -5] as const, max: [80, 22, 400] as const }]) {
+      for (const vertex of boxVertices(OWNER, extents)) {
+        expect(resolveBoxFeature(vertex.path, extents)).toEqual({ kind: 'vertex', vertex });
+      }
+      for (const edge of boxEdges(OWNER, extents)) {
+        expect(resolveBoxFeature(edge.path, extents)).toEqual({ kind: 'edge', edge });
+      }
+    }
+    for (const id of ['-1', '0.5', '99', 'NaN', 'Infinity']) {
+      expect(resolveBoxFeature(boxFeaturePath(OWNER, 'edge', id), EXTENTS)).toBeNull();
+      expect(resolveBoxFeature(boxFeaturePath(OWNER, 'vertex', id), EXTENTS)).toBeNull();
+    }
+    expect(resolveBoxFeature(boxFeaturePath(OWNER, 'edge', '-0'), EXTENTS))
+      .toEqual({ kind: 'edge', edge: boxEdges(OWNER, EXTENTS)[0] });
+  });
 });
 
 describe('M3 mesh snap', () => {
