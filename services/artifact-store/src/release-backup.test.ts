@@ -5,7 +5,7 @@ import { InMemoryObjectStore } from './index.js';
 import { MinioObjectStore } from './minio-store.js';
 
 describe('E1 artifact integrity + release backup/restore', () => {
-  it('publishes D01 artifacts, backups, restores, and verifies exact reproducibility', async () => {
+  it('restores fabrication artifacts and verifies independent D01 reproducibility', async () => {
     const store = new InMemoryObjectStore();
     const pipeline = await runD01ReferencePipeline({ yLimit: 4 });
     for (const art of pipeline.fabrication.artifacts) {
@@ -20,13 +20,21 @@ describe('E1 artifact integrity + release backup/restore', () => {
     restored.restoreBackup(backup);
     for (const meta of backup.meta) {
       expect(restored.verify(meta.contentHash)).toBe(true);
+      expect(restored.get(meta.objectKey)).toBe(store.get(meta.objectKey));
     }
 
+    // A fabrication-only backup omits the release's compiled geometry hashes;
+    // it cannot establish exact reproduction of the complete release.
     expect(
       assessReproducibility(pipeline.release.manifest, {
         ...pipeline.release.manifest,
         artifactHashes: pipeline.fabrication.artifacts.map((a) => a.contentHash),
       }),
+    ).toBe('compatible');
+
+    const reproduced = await runD01ReferencePipeline({ yLimit: 4 });
+    expect(
+      assessReproducibility(pipeline.release.manifest, reproduced.release.manifest),
     ).toBe('exact');
   });
 
