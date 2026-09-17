@@ -1,0 +1,23 @@
+{
+  "date": "2026-09-16T09:35:21.266Z",
+  "decision": "CON-024",
+  "automated_tests": {
+    "command": "node --test packages/world-runtime/test/*.test.mjs",
+    "passed": 22,
+    "scope": "17 runtime and 5 HTTP/client cases"
+  },
+  "browser": {
+    "previous_passed": 8,
+    "final_rerun": "blocked by automatic approval review: usage limit",
+    "files_changed_since_browser_run": [
+      "packages/world-runtime/test/http.test.mjs",
+      "packages/terrain-core/demo/persistence.mjs"
+    ]
+  },
+  "document_links_checked": 60,
+  "limits": [
+    "Latest receipt-reconciliation fix has automated test coverage; final Chrome rerun remains pending."
+  ],
+  "superseded_by": "inspection-recovery.json",
+  "current_browser_rerun": "passed under CON-025"
+}

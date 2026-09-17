@@ -78,7 +78,7 @@ describe('GeometryCompileRequest', () => {
     ).toThrow(/non-zero/);
   });
 
-  it('benchmarks 10k four-operator-union parses under 75ms', () => {
+  it('benchmarks 10k warmed compile-request parses under 75ms', () => {
     const payload = {
       snapshotHash: 'snap:1',
       pirHash: 'pir:1',
@@ -87,6 +87,11 @@ describe('GeometryCompileRequest', () => {
       parameters: { lengthMm: 2300 },
       ops: [sampleOp],
     };
+    // Measure steady-state throughput after schema/JIT initialization.
+    // Keep warm-up fixed: do not retry measured samples until one passes.
+    for (let i = 0; i < 10_000; i++) {
+      parseGeometryCompileRequest(payload);
+    }
     const t0 = performance.now();
     for (let i = 0; i < 10_000; i++) {
       parseGeometryCompileRequest(payload);

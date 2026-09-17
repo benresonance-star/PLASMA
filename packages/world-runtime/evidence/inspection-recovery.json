@@ -1,0 +1,26 @@
+{
+  "date": "2026-09-16T10:08:05.337Z",
+  "decision": "CON-025",
+  "node": "v25.2.1",
+  "status": "passed",
+  "native_tests": 29,
+  "terrain_tests": 70,
+  "browser_tests": 10,
+  "browser_evidence": "browser-saved.json",
+  "digest_encoding": "sha256 UTF-8 CRLF normalized to LF",
+  "source_digests": {
+    "packages/world-runtime/src/store.mjs": "bda10a289621fcb010a6fd6d31d2abeff8fc6ef3fd825891b4699179c193cc7d",
+    "packages/world-runtime/demo/server.mjs": "441ce8d221bac4fc4fe127e0f0c16cec1c9fea4ca8c4e0048ece83029fd46151",
+    "packages/world-runtime/demo/restore.mjs": "74a778589001e157d2efe05edeb877475e8a13b445cac23b39835ba2bd2c8140",
+    "packages/world-runtime/test/runtime.test.mjs": "d1c57916e9dff9baa7295deed93dfc18167e7932cd74e9592287d3405fdf315b",
+    "packages/world-runtime/test/http.test.mjs": "10efd21b5fe89bcb0b2d346f55b3e3afcd14c8a6d70d86f93d5e38b35db28f95",
+    "packages/terrain-core/demo/navigation.mjs": "4c879bb4db0d13f323786777384b95d2092486e8cc4d5467bda412c2c05fd3f7",
+    "packages/terrain-core/test/navigation.test.mjs": "630fca75951751f5b4b0cdc66af052de162dcf5c28f4e5db39d3561264a923da",
+    "packages/terrain-core/src/svg-terrain.mjs": "f4647194ec5cc2247fd418e9a188e6b40144daaa13d5ba4e49b0fc56d68cff5b"
+  },
+  "limits": [
+    "Synthetic local fixture and desktop Chrome only.",
+    "Manual recovery into new file; no automatic failover or physical power-loss qualification.",
+    "Touch gesture code is not physical-device evidence."
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "contract": "PLS-RUN-01/0.1.0",
+  "recordedAt": "2026-09-17T21:28:44.619Z",
+  "runtime": "v25.2.1",
+  "checks": [
+    {
+      "command": "node --test --test-reporter=spec packages/kernel-gateway/test/gateway.test.mjs packages/kernel-gateway/test/validation.test.mjs packages/world-runtime/test/http.test.mjs packages/world-runtime/test/provenance.test.mjs packages/world-runtime/test/rebase.test.mjs packages/world-runtime/test/runtime.test.mjs",
+      "passed": 70,
+      "exitCode": 0
+    },
+    {
+      "command": "node packages/terrain-core/test/run.mjs",
+      "passed": 70,
+      "exitCode": 0
+    },
+    {
+      "command": "node --test --test-reporter=spec packages/interaction-reflex/test/session.test.mjs packages/terrain-core/test/interaction.test.mjs packages/terrain-core/test/navigation.test.mjs",
+      "passed": 21,
+      "exitCode": 0
+    }
+  ],
+  "totalPassed": 161,
+  "cliDemonstration": {
+    "processes": [
+      "create",
+      "inspect",
+      "rerun"
+    ],
+    "worldHead": "R2",
+    "thicknessMm": 12,
+    "previousMm": 10,
+    "introducedAt": "R1",
+    "runRef": "run:fea-1",
+    "originalInputRevision": "R0",
+    "currentness": {
+      "evaluatedAgainst": "R2",
+      "validForRevision": "R0",
+      "scope": "revision_identity_only",
+      "state": "stale",
+      "staleBecause": [
+        "world_revision_changed"
+      ]
+    },
+    "rerunId": "run:fea-2"
+  },
+  "sourceIdentity": "SHA-256 of UTF-8 source with CRLF normalized to LF",
+  "sources": {
+    "docs/plasma/v0.5/run-records.md": "fcd390de78fdfa511e4f6900ef4ab716c5efdb8bb6045b86edc37c9ab02b2e82",
+    "docs/plasma/v0.5/run-records.ts": "05ac929633e425d28fc65128234423743f597f5e9e794879f1e7eac7ba2e9fa5",
+    "packages/kernel-gateway/src/index.mjs": "9ce2895123955d7009eb19c4779d189f03083149775e3f95c0cf523b301e29e5",
+    "packages/kernel-gateway/test/gateway.test.mjs": "45a1244a5f29ada5058003426ce117e6ba7c25fb7f9a0060b6c3cdc263221d64",
+    "packages/kernel-gateway/test/validation.test.mjs": "3d72a234bdf2d977ee5cca43c3ba69bf2ff11e7a440779445a67a13ba8e5cfba",
+    "packages/world-runtime/demo/provenance.mjs": "00abcb609fabd35ea29db1fc1dc16a6b9aa1fc24e7fd6cf5d9f6a0d5f90d1aef",
+    "packages/world-runtime/src/execution.mjs": "f79b7d9c13930768e91044d08bf966e3847be8c5442536f946b7f7cfb0e444ea",
+    "packages/world-runtime/src/gateway-host.mjs": "b368b6c884afafed28df2f455faf61fc409851e886c516944a38e38dd03baee9",
+    "packages/world-runtime/src/mock-fea.mjs": "13e596001261b137ba37374697ac7f420b7d07cba21e7bc264b7f4242449a0da",
+    "packages/world-runtime/src/rebase.mjs": "5a9c82a48baa06c67e4c9a2f10f46d8aacaa0a2273161440daf23b8421d95638",
+    "packages/world-runtime/src/reference-domains.mjs": "4ca50bc634b09b07b2c1d988efbde6778169a5f4d8d570f71661357c1f1eeb20",
+    "packages/world-runtime/src/store.mjs": "865085169d90bfa4bcbf28fb803e4e0341cff6437e6328322171ae8f53e90999",
+    "packages/world-runtime/src/terrain-host.mjs": "a40fc40761dc447476ded0c0c5f39256ce8a2ad2e5d9b7135ea243ba7667b2e9",
+    "packages/world-runtime/src/undo.mjs": "b285a6ff186de5e5cf2d39752524413077aa4b037c5fc6adb98c165d7845b7e3",
+    "packages/world-runtime/test/browser-saved.mjs": "2558c4d65d680803d628159ec29224cce3d05ac24188183b2cc850c4055d895e",
+    "packages/world-runtime/test/crash-child.mjs": "40f1b270c330f5b2af8bb171d7f25cf46dd6b4bcaa02e4b861c072119771a9b0",
+    "packages/world-runtime/test/fixture.mjs": "debb54f92de9558ebbed313c1e0a61fb07838e95f2fc90a820b4c6fdbdb52f64",
+    "packages/world-runtime/test/http.test.mjs": "51af7f6e8043b7420c6fc728ae548dafcd1272c497868dabdfc2283ca3636cf7",
+    "packages/world-runtime/test/provenance-child.mjs": "1320b61cf89cd5269c20018f59e8268c120c59eed05190d06a3320059d29cb06",
+    "packages/world-runtime/test/provenance-fixture.mjs": "a6449f2adf89ca59e115cbc3b9f1c701494ce8618030780b2daaf42149ca88b4",
+    "packages/world-runtime/test/provenance.test.mjs": "195d5ec93e188542d3d563c55a526315993dbc4c7a1ca721d37d6bef5392e147",
+    "packages/world-runtime/test/rebase.test.mjs": "b65d049386a9a4e5198e24bf4b196e2fd002028fdb6c9ad1e6123cac6b3de609",
+    "packages/world-runtime/test/runtime.test.mjs": "d1c57916e9dff9baa7295deed93dfc18167e7932cd74e9592287d3405fdf315b",
+    "packages/world-runtime/test/verify-provenance.mjs": "85a57239edfe029b37f50fe2f718c8844c32f71891a2e934e7d0720ac21a894c"
+  },
+  "limits": [
+    "Synthetic fixtures; no real FEA qualification",
+    "No new browser workflow was exercised",
+    "SQLite process interruption and verified recovery copy, not power-loss qualification",
+    "Revision-only currentness; producer revocation and general causal scope remain open"
+  ]
+}

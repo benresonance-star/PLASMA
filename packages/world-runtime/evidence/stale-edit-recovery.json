@@ -1,0 +1,34 @@
+{
+  "date": "2026-09-16T22:27:50.488Z",
+  "decision": "CON-029",
+  "status": "passed",
+  "node": "v25.2.1",
+  "runtime_http_reconciliation_tests": 41,
+  "camera_tests": 4,
+  "terrain_tests": 70,
+  "browser_tests": 14,
+  "browser_evidence": "browser-saved.json",
+  "digest_encoding": "sha256 UTF-8 with CRLF normalized to LF",
+  "source_digests": {
+    "packages/world-runtime/demo/server.mjs": "a50da019fd83efde6b2d3d540b0020a9c732d75cf831183737291d1de583fc20",
+    "packages/world-runtime/src/store.mjs": "bda10a289621fcb010a6fd6d31d2abeff8fc6ef3fd825891b4699179c193cc7d",
+    "packages/world-runtime/src/undo.mjs": "b285a6ff186de5e5cf2d39752524413077aa4b037c5fc6adb98c165d7845b7e3",
+    "packages/world-runtime/src/reference-domains.mjs": "4ca50bc634b09b07b2c1d988efbde6778169a5f4d8d570f71661357c1f1eeb20",
+    "packages/world-runtime/test/browser-saved.mjs": "7d0f01142a5b78d4c17c74cc5740034c77baa3006133340eefe4c92605cf5889",
+    "packages/world-runtime/test/http.test.mjs": "51af7f6e8043b7420c6fc728ae548dafcd1272c497868dabdfc2283ca3636cf7",
+    "packages/terrain-core/src/svg-terrain.mjs": "b49ac07bb520fda9eac34ccb5678577dfd49f62d01d60ddcf770a652c83b50ca",
+    "packages/terrain-core/demo/app.mjs": "137b8529121740c74aa17c7ba037cbd22371636023ae11a8ac0f858192cca164",
+    "packages/terrain-core/demo/navigation.mjs": "4c879bb4db0d13f323786777384b95d2092486e8cc4d5467bda412c2c05fd3f7",
+    "packages/terrain-core/demo/persistence.mjs": "11e63b0680b6a2e28f73b51050b1cb176677994835968f263967091d6db74a30",
+    "packages/terrain-core/demo/fixture.mjs": "b05b14a98e7f4a915f2558eafcfe8e915c111fa7017b6e73ca5f880b02fe73be",
+    "packages/terrain-core/demo/index.html": "6db95a8ec458069045c38535c27ba1413d8d5001c69054cfd3f8b695594c5f6c",
+    "packages/world-runtime/src/rebase.mjs": "5a9c82a48baa06c67e4c9a2f10f46d8aacaa0a2273161440daf23b8421d95638",
+    "packages/world-runtime/test/rebase.test.mjs": "b65d049386a9a4e5198e24bf4b196e2fd002028fdb6c9ad1e6123cac6b3de609",
+    "packages/world-runtime/test/runtime.test.mjs": "d1c57916e9dff9baa7295deed93dfc18167e7932cd74e9592287d3405fdf315b"
+  },
+  "limits": [
+    "Local synthetic fixture; only point replacements with unchanged source and topology.",
+    "No automatic conflict resolution, branch merge, production multi-user or full T1R qualification.",
+    "Browser verification used a disposable database; user saved state was not modified."
+  ]
+}

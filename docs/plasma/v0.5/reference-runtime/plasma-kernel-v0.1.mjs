@@ -8,22 +8,40 @@ export class KernelError extends Error {
 }
 
 export class PlasmaKernel {
+  #entities;
+  get entities() { return clone(this.#entities); }
+  #states;
+  get states() { return clone(this.#states); }
+  #relations;
+  get relations() { return clone(this.#relations); }
+  #invariants;
+  get invariants() { return clone(this.#invariants); }
+  #evidence;
+  get evidence() { return clone(this.#evidence); }
+  #revisions;
+  get revisions() { return clone(this.#revisions); }
+  #branches;
+  get branches() { return clone(this.#branches); }
+  #events;
+  get events() { return clone(this.#events); }
+  #transactions = new WeakMap();
+  #validated = new WeakMap();
   constructor(fixture) {
-    this.entities = new Map(fixture.entities.map(x => [x.id, clone(x)]));
-    this.states = new Map(fixture.states.map(x => [x.id, clone(x)]));
-    this.relations = new Map(fixture.relations.map(x => [x.id, clone(x)]));
-    this.invariants = new Map(fixture.invariants.map(x => [x.id, clone(x)]));
-    this.evidence = new Map(fixture.evidence.map(x => [x.id, clone(x)]));
-    this.revisions = new Map([[fixture.world.revision_id, clone(fixture.world)]]);
-    this.branches = new Map([[fixture.branch.id, clone(fixture.branch)]]);
-    this.events = [];
+    this.#entities = new Map(fixture.entities.map(x => [x.id, clone(x)]));
+    this.#states = new Map(fixture.states.map(x => [x.id, clone(x)]));
+    this.#relations = new Map(fixture.relations.map(x => [x.id, clone(x)]));
+    this.#invariants = new Map(fixture.invariants.map(x => [x.id, clone(x)]));
+    this.#evidence = new Map(fixture.evidence.map(x => [x.id, clone(x)]));
+    this.#revisions = new Map([[fixture.world.revision_id, clone(fixture.world)]]);
+    this.#branches = new Map([[fixture.branch.id, clone(fixture.branch)]]);
+    this.#events = [];
   }
 
-  get branch() { return this.branches.get('branch-main'); }
+  get branch() { return clone(this.#branches.get('branch-main')); }
   get headRevision() { return this.branch.head_revision_id; }
 
   snapshot(revisionId=this.headRevision) {
-    const rev = this.revisions.get(revisionId);
+    const rev = this.#revisions.get(revisionId);
     if (!rev) throw new KernelError('REVISION_NOT_FOUND', `Unknown revision ${revisionId}`);
     return clone(rev);
   }
@@ -32,13 +50,13 @@ export class PlasmaKernel {
     const rev = this.snapshot(revision);
     const sid = rev.state_refs[entityId];
     if (!sid) throw new KernelError('STATE_NOT_FOUND', `No state for ${entityId} at ${revision}`);
-    return clone(this.states.get(sid));
+    return clone(this.#states.get(sid));
   }
 
   beginTransaction({actor, base_revision=this.headRevision}) {
-    if (!this.revisions.has(base_revision)) throw new KernelError('REVISION_NOT_FOUND', `Unknown base ${base_revision}`);
-    return {
-      id: id('tx', `${base_revision}:${actor.id}:${this.events.length}`),
+    if (!this.#revisions.has(base_revision)) throw new KernelError('REVISION_NOT_FOUND', `Unknown base ${base_revision}`);
+    const tx = {
+      id: crypto.randomUUID(),
       base_revision,
       actor: clone(actor),
       transforms: [],
@@ -47,6 +65,8 @@ export class PlasmaKernel {
       invariant_results: [],
       candidate: null
     };
+    this.#transactions.set(tx, JSON.stringify([tx.id, tx.base_revision, tx.actor]));
+    return tx;
   }
 
   declare(tx, transform) {
@@ -79,7 +99,7 @@ export class PlasmaKernel {
   impact(tx) {
     const touched = new Set(tx.operations.map(o => o.entity));
     // semantic closure: W17 bounds B03/C04, and invariants scoped to touched entities
-    for (const r of this.relations.values()) {
+    for (const r of this.#relations.values()) {
       if (touched.has(r.source) || touched.has(r.target)) { touched.add(r.source); touched.add(r.target); }
     }
     tx.affected_set = [...touched].sort();
@@ -120,12 +140,12 @@ export class PlasmaKernel {
 
   _candidateState(tx, entityId) {
     const sid = tx.candidate.state_refs[entityId];
-    return clone(tx.candidate.candidate_states?.[sid] || this.states.get(sid));
+    return clone(tx.candidate.candidate_states?.[sid] || this.#states.get(sid));
   }
 
   evaluate(tx) {
     const results=[];
-    for (const inv of this.invariants.values()) {
+    for (const inv of this.#invariants.values()) {
       if (!inv.enabled) continue;
       if (!inv.scope.some(x => tx.affected_set.includes(x))) continue;
       let value, pass;
@@ -154,7 +174,7 @@ export class PlasmaKernel {
     if (hardFails.length) {
       tx.status='conflicted';
       const baseCorridor=this.stateFor('C04', tx.base_revision).values.width_mm;
-      const min=this.invariants.get('INV-C04-MIN-WIDTH').expression.min;
+      const min=this.#invariants.get('INV-C04-MIN-WIDTH').expression.min;
       const maxDelta=baseCorridor-min;
       tx.conflicts=hardFails.map(f => ({
         invariant_id:f.invariant_id,
@@ -171,36 +191,44 @@ export class PlasmaKernel {
   }
 
   preview(tx) {
-    if (!tx.operations) this.expand(tx);
-    if (!tx.affected_set?.length) this.impact(tx);
-    if (!tx.candidate) this.apply(tx);
+    this.#assertTransaction(tx);
+    this.#validated.delete(tx);
+    this.expand(tx); this.impact(tx); this.apply(tx);
     this.derive(tx); this.evaluate(tx); this.resolve(tx);
-    this.events.push({
-      id:id('event', `${tx.id}:preview:${this.events.length}`),
+    this.#events.push({
+      id:id('event', `${tx.id}:preview:${this.#events.length}`),
       type:'TransactionPreview', actor:clone(tx.actor), timestamp:new Date().toISOString(),
       world_before:tx.base_revision, world_after:null, transform_refs:tx.transforms.map(t=>t.id),
       outcome:'previewed', affected_entities:clone(tx.affected_set), evidence_refs:[]
     });
+    this.#validated.set(tx, JSON.stringify(tx));
     return clone(tx);
   }
 
+  #assertTransaction(tx) {
+    if (!this.#transactions.has(tx) || this.#transactions.get(tx) !== JSON.stringify([tx.id, tx.base_revision, tx.actor]))
+      throw new KernelError("TX_IDENTITY", "Transaction must retain its issued identity, actor and base");
+  }
+
   commit(tx) {
+    this.#assertTransaction(tx);
     if (this.headRevision !== tx.base_revision) throw new KernelError('REVISION_CONFLICT', `Base ${tx.base_revision} is stale; head is ${this.headRevision}`);
-    if (!tx.candidate) this.preview(tx);
+    if (!this.#validated.has(tx)) this.preview(tx);
+    if (this.#validated.get(tx) !== JSON.stringify(tx)) throw new KernelError("CANDIDATE_CHANGED", "Transaction changed after validation; preview again");
     if (tx.status === 'conflicted') throw new KernelError('HARD_INVARIANT_FAILED', 'Transaction has hard conflicts', {conflicts:tx.conflicts});
     if (!['approved','approved_with_warning'].includes(tx.status)) throw new KernelError('TX_NOT_APPROVED', `Transaction status ${tx.status}`);
 
-    const n = this.revisions.size;
+    const n = Number(this.headRevision.slice(1)) + 1;
     const rid = `R${n}`;
     for (const st of Object.values(tx.candidate.candidate_states || {})) {
-      const committed=clone(st); committed.revision_id=rid; this.states.set(committed.id, committed);
+      const committed=clone(st); committed.revision_id=rid; this.#states.set(committed.id, committed);
     }
     const revision = {
       world_id:'PLASMA-WALL-SLICE', revision_id:rid, parent_revision_id:tx.base_revision,
       branch_id:'branch-main', state_refs:clone(tx.candidate.state_refs), committed_at:new Date().toISOString(), transaction_id:tx.id
     };
-    this.revisions.set(rid, revision);
-    this.branch.head_revision_id=rid;
+    this.#revisions.set(rid, revision);
+    this.#branches.get('branch-main').head_revision_id=rid;
     tx.status='committed'; tx.candidate_revision=rid;
 
     const ev={
@@ -208,14 +236,15 @@ export class PlasmaKernel {
       world_before:tx.base_revision, world_after:rid, transform_refs:tx.transforms.map(t=>t.id), outcome:'committed',
       affected_entities:clone(tx.affected_set), evidence_refs:tx.transforms.flatMap(t=>t.evidence_refs||[])
     };
-    this.events.push(ev);
+    this.#events.push(ev);
     return {revision:clone(revision), event:clone(ev), transaction:clone(tx)};
   }
 
   forkBranch({source_revision_id, id:branchId, name, intent}) {
-    if (!this.revisions.has(source_revision_id)) throw new KernelError('REVISION_NOT_FOUND', source_revision_id);
+    if (!this.#revisions.has(source_revision_id)) throw new KernelError('REVISION_NOT_FOUND', source_revision_id);
+    if (this.#branches.has(branchId)) throw new KernelError('BRANCH_EXISTS', branchId);
     const b={id:branchId,name,intent,base_revision_id:source_revision_id,head_revision_id:source_revision_id};
-    this.branches.set(branchId,b); return clone(b);
+    this.#branches.set(branchId,b); return clone(b);
   }
 
   inverseTransform(transform) {

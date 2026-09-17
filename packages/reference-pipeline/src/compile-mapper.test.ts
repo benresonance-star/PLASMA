@@ -37,9 +37,19 @@ describe('mapYNetworkToCompileRequest', () => {
     expect(new Set(firstComponentEnds.map((point) => JSON.stringify(point))).size).toBe(3);
   });
 
-  it('benchmarks 600 tri-arm sweep ops under 10ms', () => {
+  it('benchmarks 600 warmed tri-arm sweep ops under 10ms', () => {
     const topo = generateD01Topology();
     const yNetwork = extractYNetwork(topo, D01_TOPOLOGY_POLICY.diameterMm);
+    // Fixed warm-up isolates throughput from schema/JIT initialization.
+    for (let i = 0; i < 400; i++) {
+      mapYNetworkToCompileRequest({
+        yNetwork,
+        pirHash: 'pir:test',
+        dagHash: 'dag:test',
+        yLimit: 5,
+        lengthMm: 2300 + i,
+      });
+    }
     const t0 = performance.now();
     for (let i = 0; i < 40; i++) {
       mapYNetworkToCompileRequest({

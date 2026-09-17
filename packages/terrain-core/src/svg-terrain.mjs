@@ -42,6 +42,7 @@ export function createSvgTerrainSink(svg,{onHit=()=>{},onPointer=()=>{}}={}) {
     if(!Array.isArray(p.surfaces)||p.surfaces.length>2||!Array.isArray(p.anchors)||p.anchors.length>512)
       fail("Bounded surfaces and anchor projection required.");
     for(const mesh of p.surfaces) {
+      if(mesh.opacity!==undefined&&(!finite(mesh.opacity)||mesh.opacity<0||mesh.opacity>1))fail("Invalid surface opacity.");
       if(!frame.representations.some(r=>r.responseRef===mesh.responseRef&&r.role===mesh.role)||
          !Array.isArray(mesh.vertices)||mesh.vertices.length>512||!Array.isArray(mesh.triangles)||mesh.triangles.length>1024||
          !Array.isArray(mesh.segments)||mesh.segments.length>256)fail("Invalid or unbound mesh projection.");
@@ -53,17 +54,18 @@ export function createSvgTerrainSink(svg,{onHit=()=>{},onPointer=()=>{}}={}) {
     const group=element("g",{"data-plasma-surface":frame.surfaceId});
     // Draw order belongs to the host projection (including its depth policy).
     for(const mesh of p.surfaces) {
-      const layer=element("g",{"aria-label":mesh.role+" terrain preview",opacity:mesh.role==="accepted"?.9:.45});
+      const proposed=mesh.role==="candidate";
+      const layer=element("g",{"aria-label":mesh.role+" terrain preview",opacity:proposed?(mesh.opacity??.78):.75});
       for(const tri of mesh.triangles) {
         const verts=tri.map(i=>mesh.vertices[i]),height=verts.reduce((s,v)=>s+v.height,0)/3;
-        const light=Math.max(35,Math.min(86,65+height*.004));
+        const light=Math.max(40,Math.min(78,62+height*.004));
         layer.appendChild(element("polygon",{points:verts.map(v=>v.x+","+v.y).join(" "),
-          fill:"hsl(166 24% "+light+"%)",stroke:"#638d83","stroke-width":.6,"vector-effect":"non-scaling-stroke"}));
+          fill:"hsl("+(proposed?"32 80% ":"205 24% ")+light+"%)",stroke:proposed?"#a75612":"#527184","stroke-width":proposed?1.1:.6,"vector-effect":"non-scaling-stroke"}));
       }
       for(const edge of mesh.segments){
         const a=mesh.vertices[edge.a],b=mesh.vertices[edge.b];
-        layer.appendChild(element("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:edge.kind==="breakline"?"#a94d21":"#244d45",
-          "stroke-width":edge.kind==="breakline"?3:2,"vector-effect":"non-scaling-stroke"}));
+        layer.appendChild(element("line",{x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:proposed?"#9a440b":"#355b74",
+          "stroke-width":edge.kind==="breakline"?3:2,"stroke-dasharray":!proposed&&edge.kind==="breakline"?"7 4":"none","vector-effect":"non-scaling-stroke"}));
       }
       group.appendChild(layer);
     }
@@ -76,8 +78,14 @@ export function createSvgTerrainSink(svg,{onHit=()=>{},onPointer=()=>{}}={}) {
     for(const a of p.anchors) {
       const enabled=a.editable&&a.status==="exact";
       const handle=element("g",{"aria-label":a.label,role:enabled?"button":"img",tabindex:enabled?0:-1,
-        "aria-disabled":String(!enabled),"data-selected":String(!!a.selected)});
+        "aria-disabled":String(!enabled),"data-selected":String(!!a.selected),"data-edited":String(!!a.edited)});
       handle.appendChild(element("circle",{cx:a.screenX,cy:a.screenY,r:12,fill:"transparent","pointer-events":"all"}));
+      if(a.edited){
+        handle.appendChild(element("circle",{cx:a.screenX,cy:a.screenY,r:10,fill:"none",stroke:"#fff","stroke-width":5,"pointer-events":"none"}));
+        handle.appendChild(element("circle",{cx:a.screenX,cy:a.screenY,r:10,fill:"none",stroke:"#a21a68","stroke-width":2.5,"pointer-events":"none"}));
+        handle.appendChild(element("text",{x:a.screenX+15,y:a.screenY-12,fill:"#821052","font-size":13,"font-weight":700,
+          stroke:"#fff","stroke-width":3,"paint-order":"stroke","pointer-events":"none","aria-hidden":"true"},a.pointLabel??''));
+      }
       handle.appendChild(element("circle",{cx:a.screenX,cy:a.screenY,r:a.selected?6:3.5,
         fill:enabled?(a.selected?"#c55220":"#f7faf7"):"#a6afad",stroke:"#244d45","stroke-width":1.5,"pointer-events":"none"}));
       handle.appendChild(element("title",{},a.label));

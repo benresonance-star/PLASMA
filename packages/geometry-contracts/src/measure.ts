@@ -308,14 +308,23 @@ export function resolveBoxFeature(
   if (!parsed) return null;
   const owner = parsed.owner.replace(/^semantic:/, '');
   if (parsed.kind === 'vertex') {
-    const index = Number(parsed.id);
-    const v = boxVertices(owner, extents).find((x) => x.index === index);
-    return v ? { kind: 'vertex', vertex: v } : null;
+    const requested = Number(parsed.id);
+    if (!Number.isInteger(requested) || requested < 0 || requested >= VERTEX_SIGNS.length) return null;
+    const index = requested === 0 ? 0 : requested;
+    return { kind: 'vertex', vertex: { index, path: boxFeaturePath(owner, 'vertex', index),
+      position: corner(extents, VERTEX_SIGNS[index]!) } };
   }
   if (parsed.kind === 'edge') {
-    const index = Number(parsed.id);
-    const e = boxEdges(owner, extents).find((x) => x.index === index);
-    return e ? { kind: 'edge', edge: e } : null;
+    const requested = Number(parsed.id);
+    if (!Number.isInteger(requested) || requested < 0 || requested >= EDGE_PAIRS.length) return null;
+    const index = requested === 0 ? 0 : requested;
+    // Resolve only the requested edge instead of allocating all 8 vertices and 12 edges.
+    const [a, b] = EDGE_PAIRS[index]!;
+    const start = corner(extents, VERTEX_SIGNS[a]!);
+    const end = corner(extents, VERTEX_SIGNS[b]!);
+    const direction = sub(end, start);
+    return { kind: 'edge', edge: { index, path: boxFeaturePath(owner, 'edge', index), a, b,
+      start, end, direction, lengthMm: length(direction) } };
   }
   const f = boxFaces(owner, extents).find((x) => x.key === parsed.id);
   return f ? { kind: 'face', face: f } : null;

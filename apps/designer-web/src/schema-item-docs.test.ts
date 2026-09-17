@@ -12,11 +12,17 @@ import {
 describe('schema-item-docs', () => {
   it('looks up Parameter / length / Goldberg with non-empty copy', () => {
     const t0 = performance.now();
-    expect(lookupSchemaItemDoc('Parameter').purpose.length).toBeGreaterThan(10);
-    expect(lookupSchemaItemDoc('parameter.number').howToUse.length).toBeGreaterThan(10);
-    expect(lookupSchemaItemDoc(PARAM_D01_LENGTH_ID).purpose).toMatch(/length/i);
-    expect(lookupSchemaItemDoc(GOLDBERG_PATTERN_PUBLISHED_ID).purpose).toMatch(/Goldberg/i);
-    expect(performance.now() - t0).toBeLessThan(1);
+    const parameter = lookupSchemaItemDoc('Parameter');
+    const number = lookupSchemaItemDoc('parameter.number');
+    const length = lookupSchemaItemDoc(PARAM_D01_LENGTH_ID);
+    const goldberg = lookupSchemaItemDoc(GOLDBERG_PATTERN_PUBLISHED_ID);
+    const elapsed = performance.now() - t0;
+    // The lookup budget excludes assertion-library initialization and matchers.
+    expect(parameter.purpose.length).toBeGreaterThan(10);
+    expect(number.howToUse.length).toBeGreaterThan(10);
+    expect(length.purpose).toMatch(/length/i);
+    expect(goldberg.purpose).toMatch(/Goldberg/i);
+    expect(elapsed).toBeLessThan(1);
   });
 
   it('falls back for unknown keys', () => {

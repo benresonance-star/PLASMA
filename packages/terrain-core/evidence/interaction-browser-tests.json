@@ -1,8 +1,8 @@
 {
-  "executedAt": "2026-09-15T01:02:22.947Z",
+  "executedAt": "2026-09-16T09:30:20.579Z",
   "browser": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/153.0.0.0 Safari/537.36",
   "sourceDigests": {
-    "demo/app.mjs": "6fa6927b6c186d10cfa6cd0f6b13dfbda7905e44036b2045f70aa4c828c0ac2c",
+    "demo/app.mjs": "4a2e6eebc3e99589c66e1bdb0299339423af1a2b12430280ad6d3b358b984128",
     "demo/digest.mjs": "c2ef39d1afc4bc84d7a8c9d82e16af3d946d3b067a0f445d54b5169827e560cc",
     "src/interaction-adapter.mjs": "74189f69f468ebab5c31b151379ff3de712655ef7312d0ac42f5789f8438da3c",
     "src/svg-terrain.mjs": "271961978d779f07c0da2cf5a16d8118cd67d6b61faeec94b9e7b364a4b2fbc8",
