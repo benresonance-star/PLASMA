@@ -36,6 +36,13 @@ export function createExecutionStore({ db, snapshot, canonical, hash, fail }) {
   const artifact = id => read('execution_artifacts', id);
   const run = id => read('execution_runs', id);
   const proposal = id => read('execution_proposals', id);
+  function verifyProposalReceipt(receipt, actorId) {
+    try {
+      const saved = proposal(receipt.proposal);
+      if (saved.actorId !== actorId || hash(saved.payload) !== receipt.digest) fail('CORRUPT_PROPOSAL_RECEIPT');
+      return saved;
+    } catch { fail('CORRUPT_PROPOSAL_RECEIPT'); }
+  }
   function references(record) {
     const refs = [...record.artifacts, ...record.evidence, ...record.logs, ...record.replay.requiredArtifacts];
     for (const input of record.inputs) {
@@ -99,8 +106,8 @@ export function createExecutionStore({ db, snapshot, canonical, hash, fail }) {
     try {
       const prior = db.prepare('SELECT digest,proposal FROM proposal_receipts WHERE actor=? AND request=?').get(actor.id, idempotencyKey);
       if (prior) {
+        const saved = verifyProposalReceipt(prior, actor.id);
         if (prior.digest !== digest) fail('REQUEST_ID_REUSED');
-        const saved = proposal(prior.proposal);
         db.exec('COMMIT'); return saved;
       }
       snapshot('main', revisionNumber(payload.baseRevision));
@@ -121,6 +128,7 @@ export function createExecutionStore({ db, snapshot, canonical, hash, fail }) {
     for (const row of db.prepare(`SELECT id FROM ${table}`).all()) read(table, row.id);
   }
   for (const row of db.prepare('SELECT id FROM execution_runs').all()) validateRun(run(row.id));
+  for (const row of db.prepare('SELECT * FROM proposal_receipts').all()) verifyProposalReceipt(row, row.actor);
   return Object.freeze({
     revisionNumber, artifact, run, proposal, publications, inspectRun, saveProposal,
     putArtifact({ mediaType, content }) {

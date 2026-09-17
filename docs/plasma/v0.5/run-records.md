@@ -29,6 +29,8 @@ Runs, artifacts and immutable proposals reside in the same SQLite database as ex
 
 Submission idempotency and publication idempotency are distinct ledgers. Reusing a key with different content fails. Publication receipts bind the stored provenance as well as the world request. Authority is checked again before receipt replay. An old run can be inspected or rerun even when a new proposal against its old base can no longer publish.
 
+Retry records are checked against their retained proposal or revision event both when replayed and when the database is reopened (including recovery-copy verification). Inconsistent actor, request, digest or target links fail closed. The serializer rejects sparse arrays before persistence so retained data can round-trip without losing entries or producing invalid JSON. These checks detect inconsistent storage; hashes are not signatures against a writer that can rewrite the database and all matching digests.
+
 ## Currentness and replay
 
 Currentness is a derived view evaluated against a named revision, never a permanent flag in the immutable record. This first implementation is deliberately conservative: equal revision identity yields current; any later/different revision yields stale. The returned scope is revision_identity_only. Producer revocation, evaluator-specific influence closure and partial currentness require further contracts; current does not certify those properties or a safe physical design.

@@ -13,6 +13,45 @@ import { restoreWorld } from '../src/store.mjs';
 import { KERNEL_GATEWAY_CONTRACT } from '../../kernel-gateway/src/index.mjs';
 import { makeTerrainRequest } from '../../terrain-core/src/index.mjs';
 
+test('sparse run data is rejected before it can damage retained history', t => {
+  const f = setup(t), w = f.reopen();
+  const record = executeMockFea(w, { runId: 'original' });
+  const invalid = { ...record, id: 'sparse', proposals: [], assumptions: new Array(2) };
+  assert.throws(() => w.execution.recordRun(invalid), { code: 'INVALID_DATA' });
+  assert.throws(() => w.execution.run('sparse'), { code: 'HISTORY_NOT_FOUND' });
+  w.close();
+  assert.deepEqual(f.reopen().execution.run(record.id), record);
+});
+
+test('publication retry rejects a receipt redirected to another revision', async t => {
+  const f = setup(t), w = f.reopen(), { capability, governor } = clients(w);
+  const record = executeMockFea(w, { runId: 'original' });
+  await capability.submitProposal(record.proposals[0], 'submit');
+  const receipt = await governor.publishProposal({ proposalId: record.proposals[0].proposalId }, 'publish');
+  const db = new DatabaseSync(f.filename);
+  db.prepare('UPDATE receipts SET body=?').run(JSON.stringify({ status: 'committed', worldRevision: 0, requestDigest: receipt.requestDigest }));
+  db.close();
+  await assert.rejects(() => governor.publishProposal({ proposalId: record.proposals[0].proposalId }, 'publish'), { code: 'CORRUPT_RECEIPT' });
+  assert.equal(w.snapshot().revision, 1);
+  w.close();
+  assert.throws(() => f.reopen(), { code: 'CORRUPT_RECEIPT' });
+});
+
+test('submission retry rejects a receipt redirected to another proposal', async t => {
+  const f = setup(t), w = f.reopen(), { capability } = clients(w);
+  const first = executeMockFea(w, { runId: 'first' }).proposals[0];
+  const second = executeMockFea(w, { runId: 'second' }).proposals[0];
+  await capability.submitProposal(first, 'first-submit');
+  await capability.submitProposal(second, 'second-submit');
+  const db = new DatabaseSync(f.filename);
+  db.prepare('UPDATE proposal_receipts SET proposal=? WHERE request=?').run(second.proposalId, 'first-submit');
+  db.close();
+  await assert.rejects(() => capability.submitProposal(first, 'first-submit'), { code: 'CORRUPT_PROPOSAL_RECEIPT' });
+  assert.equal(w.snapshot().revision, 0);
+  w.close();
+  assert.throws(() => f.reopen(), { code: 'CORRUPT_PROPOSAL_RECEIPT' });
+});
+
 function setup(t, options = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'plasma-provenance-'));
   const filename = path.join(dir, 'world.sqlite');

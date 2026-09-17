@@ -12,7 +12,12 @@ const fail = code => { throw new WorldError(code); };
 export function canonical(value) {
   if (value === null || typeof value === 'boolean' || typeof value === 'string') return JSON.stringify(value);
   if (typeof value === 'number' && Number.isFinite(value)) return JSON.stringify(value);
-  if (Array.isArray(value)) return '[' + value.map(canonical).join(',') + ']';
+  if (Array.isArray(value)) {
+    // JSON must round-trip without holes becoming null, disappearing, or yielding invalid bytes.
+    if (Object.keys(value).length !== value.length) fail('INVALID_DATA');
+    for (let i = 0; i < value.length; i++) if (!Object.hasOwn(value, i)) fail('INVALID_DATA');
+    return '[' + value.map(canonical).join(',') + ']';
+  }
   if (value && Object.getPrototypeOf(value) === Object.prototype)
     return '{' + Object.keys(value).sort().map(k => JSON.stringify(k) + ':' + canonical(value[k])).join(',') + '}';
   fail('INVALID_DATA');
@@ -50,8 +55,24 @@ export function openWorld({ filename, initialState, domains, authorize, fault = 
     if (hash(body) !== row.digest) fail('CORRUPT_REVISION');
     return { branch, revision: row.id, parent: row.parent, ...body };
   }
-  // Detect corrupt historical records as well as the current head on reopen.
-  try { for (const row of db.prepare('SELECT id FROM revisions').all()) snapshot('main', row.id); }
+  function verifyReceipt(row, actorId, branch, requestId) {
+    try {
+      const receipt = JSON.parse(row.body);
+      if (receipt.status !== 'committed' || !Number.isSafeInteger(receipt.worldRevision) ||
+          receipt.worldRevision < 1 || receipt.requestDigest !== row.digest) fail('CORRUPT_RECEIPT');
+      const accepted = snapshot(branch, receipt.worldRevision), event = accepted.event;
+      if (!event || event.actor.id !== actorId || event.request.branch !== branch ||
+          event.request.requestId !== requestId ||
+          hash(event.provenance ? { request: event.request, provenance: event.provenance } : event.request) !== row.digest)
+        fail('CORRUPT_RECEIPT');
+      return { receipt, accepted };
+    } catch { fail('CORRUPT_RECEIPT'); }
+  }
+  // Detect corrupt historical records and retry links on reopen and recovery verification.
+  try {
+    for (const row of db.prepare('SELECT id FROM revisions').all()) snapshot('main', row.id);
+    for (const row of db.prepare('SELECT * FROM receipts').all()) verifyReceipt(row, row.actor, row.branch, row.request);
+  }
   catch (error) { db.close(); throw error; }
   function permission(actor, request, phase) {
     const capability = authorize(copy(actor), copy(request), phase);
@@ -106,12 +127,10 @@ export function openWorld({ filename, initialState, domains, authorize, fault = 
       return Object.freeze({
         capability(request, phase) { return permission(actor, input(request), phase); },
         getReceipt(requestId, branch = 'main') {
-          const row = db.prepare('SELECT body FROM receipts WHERE actor=? AND branch=? AND request=?').get(actor.id,branch,requestId);
+          const row = db.prepare('SELECT digest,body FROM receipts WHERE actor=? AND branch=? AND request=?').get(actor.id,branch,requestId);
           if (!row) return null;
-          const receipt = JSON.parse(row.body), accepted = snapshot(branch, receipt.worldRevision);
+          const { receipt, accepted } = verifyReceipt(row, actor.id, branch, requestId);
           permission(actor, accepted.event.request, 'commit');
-          if (accepted.event.actor.id !== actor.id || accepted.event.request.requestId !== requestId ||
-              hash(accepted.event.provenance ? { request: accepted.event.request, provenance: accepted.event.provenance } : accepted.event.request) !== receipt.requestDigest) fail('CORRUPT_RECEIPT');
           return { ...receipt, request: accepted.event.request };
         },
         preview(request) {
@@ -128,8 +147,8 @@ export function openWorld({ filename, initialState, domains, authorize, fault = 
             permission(actor, r, 'commit'); // Revocation applies even to receipt replay.
             const prior = db.prepare('SELECT digest,body FROM receipts WHERE actor=? AND branch=? AND request=?').get(actor.id,r.branch,r.requestId);
             if (prior) {
+              const { receipt } = verifyReceipt(prior, actor.id, r.branch, r.requestId);
               if (prior.digest !== digest) fail('REQUEST_ID_REUSED');
-              const receipt = JSON.parse(prior.body);
               db.exec('COMMIT'); committed = true;
               return receipt;
             }
