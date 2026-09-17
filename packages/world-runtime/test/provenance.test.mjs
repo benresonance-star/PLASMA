@@ -88,6 +88,10 @@ test('run links bind exact proposals and evidence; immutable records cannot be r
   await capability.submitProposal(p, 'submit');
   await assert.rejects(() => capability.submitProposal({ ...p, proposalId: 'different' }, 'submit'), { code: 'REQUEST_ID_REUSED' });
   assert.throws(() => w.execution.recordRun({ ...record, assumptions: [] }), { code: 'IMMUTABLE_RECORD' });
+  assert.throws(() => w.execution.recordRun({ ...record, id: 'invalid-revision', worldRevision: ['R0'] }), { code: 'INVALID_REVISION' });
+  assert.throws(() => w.execution.recordRun({ ...record, id: 'invalid-time', execution: { startedAt: 0, finishedAt: 1 } }), { code: 'INVALID_RUN_TIME' });
+  assert.throws(() => w.execution.recordRun({ ...record, id: 'changed-input-rerun', rerunOf: record.id,
+    inputs: [{ ...record.inputs[0], entityRef: 'panel:other' }] }), { code: 'RERUN_INPUT_MISMATCH' });
   const missing = structuredClone(record); missing.id = 'missing-artifact'; missing.artifacts.push('missing');
   assert.throws(() => w.execution.recordRun(missing), { code: 'HISTORY_NOT_FOUND' });
   assert.deepEqual(w.execution.run(record.id), record);

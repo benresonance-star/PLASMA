@@ -13,7 +13,7 @@ export function createExecutionStore({ db, snapshot, canonical, hash, fail }) {
     PRIMARY KEY(actor, request));`);
   const string = value => typeof value === 'string' && value.trim().length > 0;
   const revisionNumber = ref => {
-    if (!/^R(0|[1-9]\d*)$/.test(ref) || !Number.isSafeInteger(Number(ref.slice(1)))) fail('INVALID_REVISION');
+    if (typeof ref !== 'string' || !/^R(0|[1-9]\d*)$/.test(ref) || !Number.isSafeInteger(Number(ref.slice(1)))) fail('INVALID_REVISION');
     return Number(ref.slice(1));
   };
   function read(table, id) {
@@ -56,9 +56,13 @@ export function createExecutionStore({ db, snapshot, canonical, hash, fail }) {
         !record.inputs.length || !Array.isArray(record.replay?.requiredArtifacts) ||
         !['inspect_only','rerunnable','reproducible'].includes(record.replay.mode)) fail('INVALID_RUN');
     const start = Date.parse(record.execution?.startedAt), end = Date.parse(record.execution?.finishedAt);
-    if (!Number.isFinite(start) || !Number.isFinite(end) || end < start) fail('INVALID_RUN_TIME');
+    if (!string(record.execution?.startedAt) || !string(record.execution?.finishedAt) ||
+        !Number.isFinite(start) || !Number.isFinite(end) || end < start) fail('INVALID_RUN_TIME');
     snapshot('main', revisionNumber(record.worldRevision));
-    if (record.rerunOf) run(record.rerunOf);
+    if (record.rerunOf) {
+      const original = run(record.rerunOf);
+      if (original.worldRevision !== record.worldRevision || hash(original.inputs) !== hash(record.inputs)) fail('RERUN_INPUT_MISMATCH');
+    }
     references(record);
     for (const p of record.proposals) {
       if (!string(p.proposalId) || p.runRef !== record.id || p.baseRevision !== record.worldRevision ||
