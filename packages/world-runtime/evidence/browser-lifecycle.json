@@ -1,0 +1,63 @@
+{
+  "date": "2026-09-18T08:34:31.844Z",
+  "node": "v25.2.1",
+  "platform": "win32",
+  "status": "passed",
+  "checks": [
+    {
+      "name": "saved fixture loads real geometry, boundary, breakline and 25 picking controls",
+      "status": "pass"
+    },
+    {
+      "name": "UI preview and cancellation preserve authority; two accepted edits append exactly two revisions",
+      "status": "pass"
+    },
+    {
+      "name": "page lifecycle disposal removes visuals and revokes retained picking callbacks",
+      "status": "pass"
+    },
+    {
+      "name": "cold browser and server restart rebuild identical geometry and functional picking from durable controls",
+      "status": "pass"
+    },
+    {
+      "name": "replay of UI-recorded commands through an authorized agent rebuilds the same browser geometry and picks",
+      "status": "pass"
+    },
+    {
+      "name": "invalid UI, HTTP and agent edits reject duplicate XY controls without changing saved state or picking",
+      "status": "pass"
+    },
+    {
+      "name": "obsolete real worker output cannot replace a newer saved revision, geometry or picking",
+      "status": "pass"
+    }
+  ],
+  "comparison": "Exact semantic state, deterministic surface data and SVG geometry/anchor labels at 1280x900",
+  "source_digests": {
+    "packages/world-runtime/test/browser-lifecycle.mjs": "049cac6d8cc2ba79e1323724e2b52221a69d2b1db44419bcf9c2030ba0338508",
+    "packages/world-runtime/demo/server.mjs": "a50da019fd83efde6b2d3d540b0020a9c732d75cf831183737291d1de583fc20",
+    "packages/world-runtime/src/store.mjs": "865085169d90bfa4bcbf28fb803e4e0341cff6437e6328322171ae8f53e90999",
+    "packages/world-runtime/src/execution.mjs": "f79b7d9c13930768e91044d08bf966e3847be8c5442536f946b7f7cfb0e444ea",
+    "packages/world-runtime/src/reference-domains.mjs": "4ca50bc634b09b07b2c1d988efbde6778169a5f4d8d570f71661357c1f1eeb20",
+    "packages/world-runtime/src/terrain-host.mjs": "a40fc40761dc447476ded0c0c5f39256ce8a2ad2e5d9b7135ea243ba7667b2e9",
+    "packages/world-runtime/src/gateway-host.mjs": "b368b6c884afafed28df2f455faf61fc409851e886c516944a38e38dd03baee9",
+    "packages/kernel-gateway/src/index.mjs": "9ce2895123955d7009eb19c4779d189f03083149775e3f95c0cf523b301e29e5",
+    "packages/terrain-core/demo/app.mjs": "21e27794f6c03e9d87275b6735400d4766391314543339268afc967091a699b8",
+    "packages/terrain-core/demo/persistence.mjs": "b032ee3159a5f13c0efa9943622e7db4a4362304a8ecb8f291b7214b3e215753",
+    "packages/terrain-core/demo/fixture.mjs": "b05b14a98e7f4a915f2558eafcfe8e915c111fa7017b6e73ca5f880b02fe73be",
+    "packages/terrain-core/src/bridge.mjs": "dc180d76aa6677a15751060125652cf1b7c6ea463c16bd491bc059cd83e3366b",
+    "packages/terrain-core/src/surface.mjs": "3cfc78e56f19b7368d068d3800567abc1ba2650abb4a20978835a1d77ffa7848",
+    "packages/terrain-core/src/surface-worker.mjs": "feff230a03b0d9eecb46af8dbbc343ddb6e2b9164c6ee480ac37b90821ee15f6",
+    "packages/terrain-core/src/worker-client.mjs": "a07b54b2b557954b15c2aa9edcc352cabeda93bdbb14a70bc554f5312d883fd2",
+    "packages/terrain-core/src/svg-terrain.mjs": "74fdf141c8bbe189a8ad846ec07e17ed1d8f7383a6cda656e4447b991eae8bb7",
+    "packages/terrain-core/src/presentation-consumer.mjs": "914acf2de07f8a0cf7951fe3238583ace242a3bc9a318d87ea641e8837c78c77",
+    "packages/world-runtime/test/browser-worker-gate.js": "35db64fad9f5d1a4cac893a6a7aa439f5eb7ee6c188679fc4f23fc071dc20398",
+    "packages/terrain-core/src/index.mjs": "233a193664cf2f08626d6a709dac2ebacfe481d30ef419097081ed88615eebbb"
+  },
+  "limits": [
+    "Synthetic desktop fixture; no physical-device or production qualification.",
+    "Pagehide is dispatched explicitly to observe cleanup; then the browser and server are closed and restarted.",
+    "Test init script holds one actual worker response; release follows a competing HTTP commit and explicit Reload saved. No fabricated evaluator outputs."
+  ]
+}

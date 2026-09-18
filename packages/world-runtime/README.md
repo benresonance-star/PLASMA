@@ -1,5 +1,24 @@
 # Shared world runtime — bounded reference implementation
 
+## Terrain browser rebuild and replay
+
+Run `node packages/world-runtime/test/browser-lifecycle.mjs <agent-browser executable>`
+from the repository root. This uses disposable databases and localhost port 8083.
+Seven desktop-browser workflows verify preview/cancel isolation, two real UI commits,
+resource disposal and revoked picking callbacks, browser/server restart, and replay of
+the recorded UI commands through an authorized agent into a fresh database. Geometry,
+boundary/breakline lines and all 25 picking labels match after reconstruction; a rebuilt
+control can be selected and edited without publishing until acceptance. Duplicate-XY
+edits reject through UI, HTTP and authorized-agent paths without changing authority.
+A test-only init script holds real worker output until after a competing commit and
+Reload saved; obsolete output cannot replace the rebuilt geometry or picking.
+
+See `evidence/browser-lifecycle.json` for source hashes and the
+[gate audit](../../docs/plasma/terrain-cad-gate-audit.md) for scope and
+`evidence/terrain-checkpoint.json` for verified checkpoint source equivalence.
+All A1–A9 behavioral criteria have bounded fixture evidence;
+this is not physical-device, automatic multi-client synchronization or production qualification.
+
 ## Durable computation provenance — CON-031
 
 The [RunRecord contract](../../docs/plasma/v0.5/run-records.md) now retains immutable terminal runs, content-addressed text/JSON artifacts and proposals beside the existing revision store. The terrain bridge and mock FEA publish through the same kernel gateway. Publication links are part of the atomic revision event; completing a run or submitting a proposal never changes the world. Currentness is derived against a named revision, conservatively by exact revision identity.

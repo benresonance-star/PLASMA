@@ -1,0 +1,75 @@
+{
+  "schema": "plasma-terrain-lifecycle-evidence/1",
+  "node": "v25.2.1",
+  "scope": "Uncommitted workspace runtime proof; full browser Gate A remains incomplete",
+  "reviewedGatewayCommit": "a54e5f5c123356441d73962d339cf534f9774725",
+  "workspaceBase": "ee5b895",
+  "platform": "Windows",
+  "date": "2026-09-18",
+  "results": [
+    {
+      "skipped": 0,
+      "passed": 74,
+      "command": "node --test packages/world-runtime/test/*.test.mjs packages/kernel-gateway/test/*.test.mjs",
+      "failed": 0
+    },
+    {
+      "skipped": 0,
+      "passed": 70,
+      "command": "node packages/terrain-core/test/run.mjs",
+      "failed": 0
+    },
+    {
+      "skipped": 0,
+      "passed": 7,
+      "command": "node --test packages/terrain-core/test/interaction.test.mjs packages/terrain-core/test/navigation.test.mjs",
+      "failed": 0
+    }
+  ],
+  "sources": [
+    {
+      "sha256": "256d9273f0aefd6c0a206d7c079cdec58fc9bdb0ba4cf805552636e6f60cc5b4",
+      "path": "packages/world-runtime/test/terrain-lifecycle.test.mjs"
+    },
+    {
+      "sha256": "debb54f92de9558ebbed313c1e0a61fb07838e95f2fc90a820b4c6fdbdb52f64",
+      "path": "packages/world-runtime/test/fixture.mjs"
+    },
+    {
+      "sha256": "865085169d90bfa4bcbf28fb803e4e0341cff6437e6328322171ae8f53e90999",
+      "path": "packages/world-runtime/src/store.mjs"
+    },
+    {
+      "sha256": "f79b7d9c13930768e91044d08bf966e3847be8c5442536f946b7f7cfb0e444ea",
+      "path": "packages/world-runtime/src/execution.mjs"
+    },
+    {
+      "sha256": "4ca50bc634b09b07b2c1d988efbde6778169a5f4d8d570f71661357c1f1eeb20",
+      "path": "packages/world-runtime/src/reference-domains.mjs"
+    },
+    {
+      "sha256": "a40fc40761dc447476ded0c0c5f39256ce8a2ad2e5d9b7135ea243ba7667b2e9",
+      "path": "packages/world-runtime/src/terrain-host.mjs"
+    },
+    {
+      "sha256": "b368b6c884afafed28df2f455faf61fc409851e886c516944a38e38dd03baee9",
+      "path": "packages/world-runtime/src/gateway-host.mjs"
+    },
+    {
+      "sha256": "9ce2895123955d7009eb19c4779d189f03083149775e3f95c0cf523b301e29e5",
+      "path": "packages/kernel-gateway/src/index.mjs"
+    },
+    {
+      "sha256": "dc180d76aa6677a15751060125652cf1b7c6ea463c16bd491bc059cd83e3366b",
+      "path": "packages/terrain-core/src/bridge.mjs"
+    },
+    {
+      "sha256": "233a193664cf2f08626d6a709dac2ebacfe481d30ef419097081ed88615eebbb",
+      "path": "packages/terrain-core/src/index.mjs"
+    },
+    {
+      "sha256": "3cfc78e56f19b7368d068d3800567abc1ba2650abb4a20978835a1d77ffa7848",
+      "path": "packages/terrain-core/src/surface.mjs"
+    }
+  ]
+}

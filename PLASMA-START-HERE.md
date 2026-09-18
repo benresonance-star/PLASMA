@@ -4,3 +4,5 @@ The [Plasma Consolidated Baseline v0.5](docs/plasma/v0.5/README.md) is the propo
 This branch contains a consolidation candidate and imported reference material. It does not claim that the existing SPDS application implements the new Plasma contracts.
 The existing README, SPEC and ADRs remain useful descriptions of the engineering ancestor.
 See [implementation evidence](docs/plasma/v0.5/implementation.md) before treating any capability as qualified.
+
+For the 18 September implementation status and next gate, see the [terrain lifecycle and OpenCascade audit](docs/plasma/terrain-cad-gate-audit.md).

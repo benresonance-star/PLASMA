@@ -1,0 +1,95 @@
+{
+  "sources": [
+    {
+      "sha256": "9ce2895123955d7009eb19c4779d189f03083149775e3f95c0cf523b301e29e5",
+      "path": "packages/kernel-gateway/src/index.mjs"
+    },
+    {
+      "sha256": "21e27794f6c03e9d87275b6735400d4766391314543339268afc967091a699b8",
+      "path": "packages/terrain-core/demo/app.mjs"
+    },
+    {
+      "sha256": "b05b14a98e7f4a915f2558eafcfe8e915c111fa7017b6e73ca5f880b02fe73be",
+      "path": "packages/terrain-core/demo/fixture.mjs"
+    },
+    {
+      "sha256": "b032ee3159a5f13c0efa9943622e7db4a4362304a8ecb8f291b7214b3e215753",
+      "path": "packages/terrain-core/demo/persistence.mjs"
+    },
+    {
+      "sha256": "f05ebfd9ae39d7764b88a547a0e52503183f61bace105751f9b03d7e0e63c32d",
+      "path": "packages/terrain-core/src/bridge.mjs"
+    },
+    {
+      "sha256": "25d30f308e66cfeb776effd7df273a5b918ff4572c55c1543854754de1e62f01",
+      "path": "packages/terrain-core/src/index.mjs"
+    },
+    {
+      "sha256": "5f13e4dde2c759fee47bdc5b517ac2fb673bed8045985ea8fae9ecce9532a556",
+      "path": "packages/terrain-core/src/presentation-consumer.mjs"
+    },
+    {
+      "sha256": "5734cc5fc066e5acb375a89d82710e50bb9c34f7ec85f1cbd82fb7544f7dce4f",
+      "path": "packages/terrain-core/src/surface-worker.mjs"
+    },
+    {
+      "sha256": "a77abee39e36ce52ddddcafe904e672a0949aa78bbd5d5437131a40a77078f9b",
+      "path": "packages/terrain-core/src/surface.mjs"
+    },
+    {
+      "sha256": "a175b8b3319c29ebc00d578fe41d0d8a5f3190fe210e8a3f64487e98c11ed5ae",
+      "path": "packages/terrain-core/src/svg-terrain.mjs"
+    },
+    {
+      "sha256": "d1078b0ccedb9117b5aab4ed40f933c0a04b45fe9d7e82683517aa7cba18d442",
+      "path": "packages/terrain-core/src/worker-client.mjs"
+    },
+    {
+      "sha256": "a50da019fd83efde6b2d3d540b0020a9c732d75cf831183737291d1de583fc20",
+      "path": "packages/world-runtime/demo/server.mjs"
+    },
+    {
+      "sha256": "f79b7d9c13930768e91044d08bf966e3847be8c5442536f946b7f7cfb0e444ea",
+      "path": "packages/world-runtime/src/execution.mjs"
+    },
+    {
+      "sha256": "b368b6c884afafed28df2f455faf61fc409851e886c516944a38e38dd03baee9",
+      "path": "packages/world-runtime/src/gateway-host.mjs"
+    },
+    {
+      "sha256": "4ca50bc634b09b07b2c1d988efbde6778169a5f4d8d570f71661357c1f1eeb20",
+      "path": "packages/world-runtime/src/reference-domains.mjs"
+    },
+    {
+      "sha256": "865085169d90bfa4bcbf28fb803e4e0341cff6437e6328322171ae8f53e90999",
+      "path": "packages/world-runtime/src/store.mjs"
+    },
+    {
+      "sha256": "a40fc40761dc447476ded0c0c5f39256ce8a2ad2e5d9b7135ea243ba7667b2e9",
+      "path": "packages/world-runtime/src/terrain-host.mjs"
+    },
+    {
+      "sha256": "049cac6d8cc2ba79e1323724e2b52221a69d2b1db44419bcf9c2030ba0338508",
+      "path": "packages/world-runtime/test/browser-lifecycle.mjs"
+    },
+    {
+      "sha256": "35db64fad9f5d1a4cac893a6a7aa439f5eb7ee6c188679fc4f23fc071dc20398",
+      "path": "packages/world-runtime/test/browser-worker-gate.js"
+    },
+    {
+      "sha256": "debb54f92de9558ebbed313c1e0a61fb07838e95f2fc90a820b4c6fdbdb52f64",
+      "path": "packages/world-runtime/test/fixture.mjs"
+    },
+    {
+      "sha256": "256d9273f0aefd6c0a206d7c079cdec58fc9bdb0ba4cf805552636e6f60cc5b4",
+      "path": "packages/world-runtime/test/terrain-lifecycle.test.mjs"
+    }
+  ],
+  "schema": "plasma-terrain-checkpoint/1",
+  "browserWorkflows": 7,
+  "parentCommit": "a54e5f5c123356441d73962d339cf534f9774725",
+  "date": "2026-09-18",
+  "runtimeChecks": 151,
+  "verification": "Original evidence hashes verified against tested workspace; every listed checkpoint source equals tested source after line-ending normalization. No implementation changes or rerun.",
+  "encoding": "SHA-256 of UTF-8 with CRLF normalized to LF"
+}
