@@ -243,6 +243,17 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
             <div class="principle">Views are projections of one graph</div>
           </div>
 
+          <section class="atlas-section evidence-semantics">
+            <div class="section-heading"><div><div class="eyebrow">Evidence semantics</div><h3>What “evidence” means in Atlas</h3></div><span>claim-scoped · repository-traceable</span></div>
+            <p class="evidence-definition">${esc(model.data.integration.evidenceSemantics.definition)}</p>
+            <div class="evidence-semantics-grid">
+              <article><span>Required evidence</span><p>${esc(model.data.integration.evidenceSemantics.required)}</p></article>
+              <article><span>Supporting evidence</span><p>${esc(model.data.integration.evidenceSemantics.supporting)}</p></article>
+              <article><span>Scope</span><p>${esc(model.data.integration.evidenceSemantics.scope)}</p></article>
+            </div>
+            <p class="evidence-semantics-foot">${esc(model.data.integration.evidenceSemantics.repositoryBacked)} ${esc(model.data.integration.evidenceSemantics.unlinked)}</p>
+          </section>
+
           <section class="atlas-section repository-evidence-summary">
             <div class="section-heading"><div><div class="eyebrow">Repository evidence</div><h3>Current Plasma implementation status</h3></div><span>${repositoryEvidence?.available?'live main read':repositoryEvidence?.mode||'offline'}</span></div>
             <div class="repository-status-grid">
@@ -288,7 +299,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
                     if(!link)return `<span class="matrix-cell none" title="Not materially exercised">—</span>`;
                     const evidence=model.deriveEvidenceCoverage(link);
                     const selected=route.type==='integrationLink'&&route.id===link.id;
-                    return `<button class="matrix-cell ${stateTone[link.architectureState]||''} evidence-${esc(evidence.state)} ${selected?'selected':''}" data-atlas-type="integrationLink" data-atlas-id="${esc(link.id)}" title="${esc(slice.name)} → ${esc(row.label)} · architecture ${esc(link.architectureState)} · evidence ${esc(evidence.state)} ${evidence.verified}/${evidence.required}"><b class="matrix-architecture">${stateSymbol[link.architectureState]||'·'}</b><span class="matrix-evidence">${esc(evidenceCoverageLabel(evidence))}</span></button>`;
+                    return `<button class="matrix-cell ${stateTone[link.architectureState]||''} evidence-${esc(evidence.state)} ${selected?'selected':''}" data-atlas-type="integrationLink" data-atlas-id="${esc(link.id)}" title="${esc(slice.name)} → ${esc(row.label)} · architecture ${esc(link.architectureState)} · required evidence ${esc(evidence.state)} ${evidence.verified}/${evidence.required} · ${evidence.supporting} supporting"><b class="matrix-architecture">${stateSymbol[link.architectureState]||'·'}</b><span class="matrix-evidence">${esc(evidenceCoverageLabel(evidence))}</span></button>`;
                   }).join('')}`;
               }).join('')}
             </div>
@@ -517,18 +528,22 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
       const coverage=model.deriveEvidenceCoverage(r);
       const from=model.resolve(r.from.type,r.from.id);
       const to=model.resolve(r.to.type,r.to.id);
-      const renderEvidenceItems=(items,empty)=>items.length?`<div class="evidence-ref-list">${items.map(({ref:evidenceRef,evidence})=>`
-        <button type="button" data-atlas-type="evidence" data-atlas-id="${esc(evidence.id)}">
+      const renderEvidenceItems=(items,empty)=>items.length?`<div class="evidence-ref-list">${items.map(({ref:evidenceRef,evidence})=>{
+        const evidenceStatus=evidence.verification?.status||'unlinked';
+        return `
+        <button type="button" class="evidence-ref-item evidence-${esc(evidenceStatus)}" data-atlas-type="evidence" data-atlas-id="${esc(evidence.id)}">
           <span>${esc(labelize(evidenceRef.requirement))}</span>
           <b>${esc(evidence.name)}</b>
-          <small>${esc(labelize(evidence.verification?.status||'unlinked'))}${evidenceRef.proves?.length?` · ${evidenceRef.proves.length} criteria`:''}</small>
-        </button>`).join('')}</div>`:`<span class="muted">${esc(empty)}</span>`;
+          <small>${esc(labelize(evidenceStatus))}${evidenceRef.proves?.length?` · ${evidenceRef.proves.length} criteria`:''}</small>
+          ${evidenceRef.note?`<em>${esc(evidenceRef.note)}</em>`:''}
+        </button>`;
+      }).join('')}</div>`:`<span class="muted">${esc(empty)}</span>`;
       body=`
         <div class="inspector-kv"><span>Role</span><b>${esc(labelize(r.role))}</b><span>Architecture</span><b>${esc(labelize(r.architectureState))}</b><span>Evidence</span><b>${esc(labelize(coverage.state))} · ${coverage.verified}/${coverage.required}</b><span>Policy</span><b>${esc(labelize(coverage.policy.mode))}</b></div>
         <section><h4>From → To</h4><div class="ref-list">${from?refButton(from.type,from.id,from.name):''}${to?refButton(to.type,to.id,to.name):''}</div></section>
-        <section><h4>Required evidence</h4>${renderEvidenceItems(coverage.requiredItems,'No required evidence yet.')}</section>
-        <section><h4>Supporting evidence</h4>${renderEvidenceItems(coverage.supportingItems,'No supporting evidence linked.')}</section>
-        <section><h4>Coverage</h4>${evidenceCoverageBadge(coverage)}</section>`;
+        <section class="evidence-meaning required"><h4>Required evidence</h4><p class="inspector-help">${esc(model.data.integration.evidenceSemantics.required)}</p>${renderEvidenceItems(coverage.requiredItems,'No required evidence yet.')}</section>
+        <section class="evidence-meaning supporting"><h4>Supporting evidence</h4><p class="inspector-help">${esc(model.data.integration.evidenceSemantics.supporting)}</p>${renderEvidenceItems(coverage.supportingItems,'No supporting evidence linked.')}</section>
+        <section><h4>Coverage</h4>${evidenceCoverageBadge(coverage)}<p class="inspector-help">Coverage state is calculated from required evidence only. Supporting evidence is deliberately excluded from the pass/fail calculation.</p></section>`;
     } else if(ref.type==='evidence'){
       const status=r.verification?.status||'unlinked';
       const users=model.evidenceUsers(r.id);
