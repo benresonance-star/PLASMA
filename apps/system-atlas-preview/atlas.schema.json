@@ -445,7 +445,15 @@
       "required": [
         "id",
         "name",
+        "domain",
         "summary",
+        "purpose",
+        "whyThisSlice",
+        "flow",
+        "proves",
+        "stressPoints",
+        "successCriteria",
+        "keySystems",
         "declaredState",
         "evidenceState",
         "checks",
@@ -458,8 +466,52 @@
         "name": {
           "type": "string"
         },
+        "domain": {
+          "type": "string"
+        },
         "summary": {
           "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "whyThisSlice": {
+          "type": "string"
+        },
+        "flow": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 4
+        },
+        "proves": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 3
+        },
+        "stressPoints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 3
+        },
+        "successCriteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 3
+        },
+        "keySystems": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2
         },
         "declaredState": {
           "type": "string"
