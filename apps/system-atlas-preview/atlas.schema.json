@@ -164,7 +164,8 @@
         "principle",
         "matrixRows",
         "architectureStates",
-        "evidenceStates"
+        "evidenceStates",
+        "evidenceSemantics"
       ],
       "properties": {
         "principle": {
@@ -233,6 +234,38 @@
             },
             "additionalProperties": false
           }
+        },
+        "evidenceSemantics": {
+          "type": "object",
+          "required": [
+            "definition",
+            "scope",
+            "required",
+            "supporting",
+            "repositoryBacked",
+            "unlinked"
+          ],
+          "properties": {
+            "definition": {
+              "type": "string"
+            },
+            "scope": {
+              "type": "string"
+            },
+            "required": {
+              "type": "string"
+            },
+            "supporting": {
+              "type": "string"
+            },
+            "repositoryBacked": {
+              "type": "string"
+            },
+            "unlinked": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
