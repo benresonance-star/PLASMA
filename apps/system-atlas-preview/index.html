@@ -119,26 +119,44 @@
   .geometry{grid-column:1;grid-row:3}.constraints{grid-column:2;grid-row:3}.representation{grid-column:3;grid-row:3}.external{grid-column:4;grid-row:3}
   .hint{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);padding:4px 8px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--panel-strong) 92%,transparent);color:var(--faint);font-size:7.5px;z-index:7;white-space:nowrap}
 
-  /* Language map */
-  .language-map{display:none;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),var(--canvas);background-size:30px 30px;box-shadow:var(--shadow-soft);padding:46px 24px 24px}
+  /* Language architecture */
+  .center.language-mode{grid-template-rows:43px minmax(0,1fr)}
+  .language-map{display:none;position:relative;overflow:auto;border:1px solid var(--line);border-radius:12px;background:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),var(--canvas);background-size:30px 30px;box-shadow:var(--shadow-soft);padding:45px 16px 18px}
   .language-map.active{display:block}
   .language-head{position:absolute;left:15px;right:15px;top:11px;display:flex;justify-content:space-between;align-items:center}
-  .language-grid{height:100%;display:grid;grid-template-columns:1fr 1.15fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:18px 22px;align-items:stretch}
-  .language-card,.language-hub,.language-boundary{position:relative;border:1px solid var(--line-strong);border-radius:11px;background:var(--panel-strong);padding:12px;box-shadow:var(--shadow-soft);overflow:hidden}
-  .language-card:before,.language-hub:before,.language-boundary:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
-  .language-card h3,.language-hub h3,.language-boundary h3{font-size:12px;margin:4px 0 5px}
-  .language-card p,.language-hub p,.language-boundary p{margin:0;color:var(--muted);font-size:8.5px;line-height:1.42}
-  .language-card .verb-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
-  .verb{font-size:7.5px;font-weight:760;color:var(--muted);background:var(--authority-soft);border:1px solid var(--line);padding:3px 5px;border-radius:999px}
-  .language-site{grid-column:1;grid-row:1}.language-geometry{grid-column:1;grid-row:3}.language-assembly{grid-column:3;grid-row:1}.language-analysis{grid-column:3;grid-row:3}
-  .language-hub{grid-column:2;grid-row:2;border-color:var(--accent);box-shadow:0 10px 24px rgba(20,30,36,.10)}
-  .language-hub:before{background:var(--authority)}
-  .language-boundary.top{grid-column:2;grid-row:1}.language-boundary.bottom{grid-column:2;grid-row:3}
-  .language-boundary.top:before{background:var(--violet)}.language-boundary.bottom:before{background:var(--green)}
-  #languageWireLayer{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}
-  .language-grid>*{z-index:2}
-  .language-rule{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);padding:4px 8px;border:1px solid var(--line);border-radius:999px;background:var(--panel-strong);color:var(--faint);font-size:7.5px;white-space:nowrap;z-index:4}
-
+  .language-content{min-width:760px;display:flex;flex-direction:column;gap:12px}
+  .language-band{border:1px solid var(--line);border-radius:11px;background:color-mix(in srgb,var(--panel) 94%,transparent);padding:11px;box-shadow:var(--shadow-soft)}
+  .band-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:9px}
+  .band-head h3{font-size:11px;margin:2px 0 2px}.band-head p{margin:0;color:var(--muted);font-size:8px;line-height:1.35}
+  .band-tag{white-space:nowrap;border:1px solid var(--line);background:var(--panel-strong);border-radius:999px;padding:4px 7px;font-size:7px;color:var(--faint);font-weight:800}
+  .domain-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .language-card,.core-card{position:relative;border:1px solid var(--line-strong);border-radius:9px;background:var(--panel-strong);padding:9px;min-height:116px;transition:.16s ease;overflow:hidden}
+  .language-card:hover,.core-card:hover{border-color:var(--accent);box-shadow:var(--shadow-soft)}
+  .language-card.selected,.core-card.selected{outline:2px solid color-mix(in srgb,var(--accent) 24%,transparent);border-color:var(--accent)}
+  .language-card:before,.core-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+  .language-card.site:before{background:#56a985}.language-card.geometry:before{background:var(--amber)}.language-card.assembly:before{background:var(--violet)}.language-card.analysis:before{background:var(--accent)}
+  .language-card h4,.core-card h4{font-size:10px;margin:3px 0 5px}.language-card p,.core-card p{margin:0;color:var(--muted);font-size:7.6px;line-height:1.35}
+  .lang-section{margin-top:7px}.lang-label{font-size:6.7px;text-transform:uppercase;letter-spacing:.11em;color:var(--faint);font-weight:900;margin-bottom:3px}
+  .token-row{display:flex;flex-wrap:wrap;gap:3px}.token{font-size:6.8px;color:var(--muted);border:1px solid var(--line);background:var(--authority-soft);padding:2px 4px;border-radius:999px}.token.verb{color:var(--ink);background:var(--panel)}.token.constraint{color:var(--amber);background:var(--amber-soft)}.token.type{color:var(--green);background:var(--green-soft)}
+  .core-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
+  .core-card{min-height:86px;padding:8px}.core-card:before{background:var(--authority)}
+  .core-card h4{font-size:8.5px}.core-card p{font-size:7px}
+  .language-anatomy{display:grid;grid-template-columns:1.25fr .75fr;gap:8px;margin-top:9px}
+  .anatomy-card,.levels-card{border:1px solid var(--line);border-radius:9px;background:var(--panel-strong);padding:9px}
+  .anatomy-card strong,.levels-card strong{display:block;font-size:8px;margin-bottom:6px}
+  .anatomy-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.anatomy-grid span{display:block;border:1px solid var(--line);border-radius:6px;padding:5px;font-size:6.8px;color:var(--muted);background:var(--panel)}
+  .level-line{display:grid;grid-template-columns:62px 1fr;gap:6px;padding:4px 0;border-bottom:1px solid var(--line);font-size:7px}.level-line:last-child{border-bottom:0}.level-line b{color:var(--ink)}.level-line span{color:var(--muted)}
+  .lifecycle{display:grid;grid-template-columns:repeat(7,1fr);gap:17px;align-items:stretch}
+  .life-stage{position:relative;border:1px solid var(--line-strong);border-radius:8px;background:var(--panel-strong);padding:8px;min-height:83px}
+  .life-stage:not(:last-child):after{content:"→";position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--faint);font-weight:900;font-size:12px}
+  .life-stage .step{font-size:6.5px;font-weight:900;color:var(--accent-strong);letter-spacing:.1em}.life-stage h4{font-size:8.5px;margin:3px 0 4px}.life-stage p{font-size:6.9px;color:var(--muted);line-height:1.3;margin:0}
+  .life-stage.world{border-color:var(--authority);box-shadow:0 0 0 1px color-mix(in srgb,var(--authority) 18%,transparent)}
+  .dependency-loop{margin-top:9px;border:1px solid color-mix(in srgb,var(--green) 42%,var(--line));border-radius:8px;background:var(--green-soft);padding:8px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;font-size:7.5px;color:var(--green)}
+  .dependency-loop strong{color:var(--ink)}.dependency-loop .arrow{font-size:12px;font-weight:900}
+  .interaction-rule{margin-top:9px;border:1px solid color-mix(in srgb,var(--red) 32%,var(--line));background:var(--red-soft);border-radius:8px;padding:7px 9px;font-size:7.5px;color:var(--muted)}.interaction-rule b{color:var(--red)}
+  .example-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .example-card{border:1px solid var(--line);border-radius:9px;background:var(--panel-strong);padding:9px}.example-card h4{font-size:8.5px;margin:0 0 6px}.example-flow{display:flex;flex-wrap:wrap;align-items:center;gap:4px}.example-flow span{font-size:7px;border:1px solid var(--line);background:var(--panel);padding:4px 5px;border-radius:6px}.example-flow i{font-style:normal;color:var(--faint);font-size:9px}
+  .future-domains{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.future-domains span{font-size:7px;border:1px dashed var(--line-strong);color:var(--faint);padding:4px 6px;border-radius:999px;background:var(--panel)}
   /* Slice strip */
   .slice-strip{display:grid;grid-template-columns:1.35fr repeat(4,.9fr);gap:8px;min-width:0}.slice{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;overflow:hidden;box-shadow:var(--shadow-soft)}.slice .kicker{font-size:7.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-weight:900}.slice h4{margin:4px 0 3px;font-size:10px}.slice p{margin:0;color:var(--muted);font-size:7.5px;line-height:1.35}.slice.hero{background:linear-gradient(135deg,var(--panel-strong),var(--accent-soft))}.slice.hero h4{font-size:12px}.metric-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}.metric{font-size:7px;color:var(--muted);border:1px solid var(--line);background:var(--panel-strong);border-radius:5px;padding:4px 5px}.progress{position:absolute;left:9px;right:9px;bottom:9px;height:3px;background:var(--authority-soft);border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--accent);border-radius:99px}
 
@@ -185,6 +203,7 @@
       grid-template-rows:43px 640px 126px;
       min-height:826px;
     }
+    .center.language-mode{grid-template-rows:43px 920px}
     .canvas{
       min-height:640px;
       touch-action:pan-x pan-y pinch-zoom;
@@ -229,19 +248,28 @@
           <button class="tree-item" data-select="representation"><span class="dot"></span>Representations<span class="count">6</span></button>
           <button class="tree-item" data-select="external"><span class="dot"></span>External systems<span class="count">14</span></button>
         </div>
-        <div class="tree-group"><div class="tree-label">Languages</div>
-          <button class="tree-item" data-language="geometry"><span class="dot"></span>Geometry language<span class="count">18</span></button>
-          <button class="tree-item" data-language="site"><span class="dot"></span>Site language<span class="count">15</span></button>
-          <button class="tree-item" data-language="assembly"><span class="dot"></span>Assembly language<span class="count">16</span></button>
-          <button class="tree-item" data-language="analysis"><span class="dot"></span>Analysis language<span class="count">12</span></button>
+        <div class="tree-group"><div class="tree-label">Domain languages</div>
+          <button class="tree-item" data-language="site"><span class="dot"></span>Site language</button>
+          <button class="tree-item" data-language="geometry"><span class="dot"></span>Geometry language</button>
+          <button class="tree-item" data-language="assembly"><span class="dot"></span>Assembly language</button>
+          <button class="tree-item" data-language="analysis"><span class="dot"></span>Analysis language</button>
         </div>
+        <div class="tree-group"><div class="tree-label">Cross-cutting languages</div>
+          <button class="tree-item" data-core-language="query"><span class="dot"></span>Query / Selection</button>
+          <button class="tree-item" data-core-language="change"><span class="dot"></span>Change / Operation</button>
+          <button class="tree-item" data-core-language="constraint"><span class="dot"></span>Constraint</button>
+          <button class="tree-item" data-core-language="measurement"><span class="dot"></span>Measurement</button>
+          <button class="tree-item" data-core-language="evidence"><span class="dot"></span>Evidence / Claim</button>
+          <button class="tree-item" data-core-language="representation"><span class="dot"></span>Representation</button>
+          <button class="tree-item" data-core-language="history"><span class="dot"></span>History / Revision</button>
+        </div>        </div>
       </div>
       <div class="legend"><div><span class="sw authority"></span>authoritative</div><div><span class="sw runtime"></span>runtime</div><div><span class="sw agent"></span>agentic</div><div><span class="sw external"></span>external</div></div>
     </aside>
 
     <section class="center">
       <div class="atlas-toolbar">
-        <div class="titleline"><strong>System overview</strong><span>Atlas sheet 01 · authority + execution boundaries</span></div>
+        <div class="titleline"><strong id="viewTitle">System overview</strong><span id="viewSubtitle">Atlas sheet 01 · authority + execution boundaries</span></div>
         <div class="tools"><button class="tool active" id="relationshipsToggle">Relationships</button><button class="tool">Evidence</button><button class="tool">Health</button><button class="tool">Diff</button></div>
       </div>
 
@@ -282,54 +310,110 @@
 
       <div class="language-map" id="languageMap">
         <div class="language-head">
-          <div class="canvas-title">PLASMA SMALL LANGUAGES · INTERACTION MAP</div>
-          <div class="canvas-note">Languages compile to typed semantic operations — engines remain replaceable</div>
+          <div class="canvas-title">PLASMA LANGUAGE ARCHITECTURE · REFERENCE MODEL</div>
+          <div class="canvas-note">Domain intent → shared semantic languages → typed operation → validation → authoritative world</div>
         </div>
-        <svg id="languageWireLayer" aria-hidden="true"></svg>
-        <div class="language-grid">
-          <article class="language-card language-site" data-language-card="site">
-            <div class="type">Domain language</div><h3>Site Language</h3>
-            <p>Describes site-specific intent without encoding terrain or planning engine details.</p>
-            <div class="verb-row"><span class="verb">parcel</span><span class="verb">terrain</span><span class="verb">grade</span><span class="verb">setback</span><span class="verb">drain</span><span class="verb">plant</span></div>
-          </article>
 
-          <article class="language-boundary top" data-language-card="world">
-            <div class="type">Shared semantics</div><h3>World References + Constraints</h3>
-            <p>Stable entities, roles, relations, frames, invariants and bounded world slices are the common vocabulary.</p>
-            <div class="chips"><span class="chip">entity refs</span><span class="chip">relations</span><span class="chip">invariants</span></div>
-          </article>
+        <div class="language-content">
+          <section class="language-band">
+            <div class="band-head">
+              <div><div class="eyebrow">Band 1</div><h3>Domain languages</h3><p>Human- and agent-facing vocabularies for a bounded domain. They describe intent; they do not own state or engine implementation.</p></div>
+              <div class="band-tag">domain-specific · replaceable vocabularies</div>
+            </div>
+            <div class="domain-grid">
+              <article class="language-card site" data-language-card="site">
+                <div class="eyebrow">Site</div><h4>Site Language</h4>
+                <p>Site, terrain, landscape and planning intent.</p>
+                <div class="lang-section"><div class="lang-label">Types</div><div class="token-row"><span class="token type">parcel</span><span class="token type">terrain</span><span class="token type">easement</span><span class="token type">tree</span></div></div>
+                <div class="lang-section"><div class="lang-label">Verbs</div><div class="token-row"><span class="token verb">grade</span><span class="token verb">split</span><span class="token verb">drain</span><span class="token verb">plant</span></div></div>
+                <div class="lang-section"><div class="lang-label">Constraints</div><div class="token-row"><span class="token constraint">setback</span><span class="token constraint">slope</span><span class="token constraint">tree zone</span></div></div>
+              </article>
 
-          <article class="language-card language-assembly" data-language-card="assembly">
-            <div class="type">Domain language</div><h3>Assembly Language</h3>
-            <p>Expresses composition and connection intent across systems, subsystems, components and interfaces.</p>
-            <div class="verb-row"><span class="verb">compose</span><span class="verb">connect</span><span class="verb">repeat</span><span class="verb">replace</span><span class="verb">open</span><span class="verb">join</span></div>
-          </article>
+              <article class="language-card geometry" data-language-card="geometry">
+                <div class="eyebrow">Spatial</div><h4>Geometry Language</h4>
+                <p>Engine-neutral spatial intent resolved by the Geometry Resolver.</p>
+                <div class="lang-section"><div class="lang-label">Types</div><div class="token-row"><span class="token type">curve</span><span class="token type">surface</span><span class="token type">solid</span><span class="token type">face</span></div></div>
+                <div class="lang-section"><div class="lang-label">Verbs</div><div class="token-row"><span class="token verb">offset</span><span class="token verb">split</span><span class="token verb">trim</span><span class="token verb">transform</span></div></div>
+                <div class="lang-section"><div class="lang-label">Constraints</div><div class="token-row"><span class="token constraint">tolerance</span><span class="token constraint">topology</span></div></div>
+              </article>
 
-          <article class="language-hub" data-language-card="hub">
-            <div class="type">Common contract</div><h3>Semantic Operation Contract</h3>
-            <p>Every language emits typed operations against semantic references. Plasma validates authority, scope and invariants before execution.</p>
-            <div class="chips"><span class="chip blue">target refs</span><span class="chip blue">intent</span><span class="chip blue">parameters</span><span class="chip blue">preconditions</span><span class="chip blue">evidence</span></div>
-          </article>
+              <article class="language-card assembly" data-language-card="assembly">
+                <div class="eyebrow">Composition</div><h4>Assembly Language</h4>
+                <p>Composition, interfaces and connections across nested systems.</p>
+                <div class="lang-section"><div class="lang-label">Types</div><div class="token-row"><span class="token type">system</span><span class="token type">component</span><span class="token type">interface</span><span class="token type">connector</span></div></div>
+                <div class="lang-section"><div class="lang-label">Verbs</div><div class="token-row"><span class="token verb">compose</span><span class="token verb">connect</span><span class="token verb">repeat</span><span class="token verb">replace</span></div></div>
+                <div class="lang-section"><div class="lang-label">Constraints</div><div class="token-row"><span class="token constraint">compatibility</span><span class="token constraint">spacing</span></div></div>
+              </article>
 
-          <article class="language-card language-geometry" data-language-card="geometry">
-            <div class="type">Domain language</div><h3>Geometry Language</h3>
-            <p>Spatial verbs remain engine-neutral and compile through the Geometry Resolver.</p>
-            <div class="verb-row"><span class="verb">select</span><span class="verb">offset</span><span class="verb">split</span><span class="verb">intersect</span><span class="verb">trim</span><span class="verb">transform</span></div>
-          </article>
+              <article class="language-card analysis" data-language-card="analysis">
+                <div class="eyebrow">Evaluation</div><h4>Analysis Language</h4>
+                <p>Questions and evaluations over world state and representations.</p>
+                <div class="lang-section"><div class="lang-label">Types</div><div class="token-row"><span class="token type">metric</span><span class="token type">field</span><span class="token type">result</span><span class="token type">claim</span></div></div>
+                <div class="lang-section"><div class="lang-label">Verbs</div><div class="token-row"><span class="token verb">sample</span><span class="token verb">solve</span><span class="token verb">map</span><span class="token verb">compare</span></div></div>
+                <div class="lang-section"><div class="lang-label">Constraints</div><div class="token-row"><span class="token constraint">assumption</span><span class="token constraint">tolerance</span></div></div>
+              </article>
+            </div>
+            <div class="future-domains"><span>Structure</span><span>Envelope</span><span>Services</span><span>Materials</span><span>Fabrication</span><span>Construction</span><span>Operation</span><span>Botanical / ecology</span></div>
+          </section>
 
-          <article class="language-boundary bottom" data-language-card="execution">
-            <div class="type">Execution + feedback</div><h3>Resolvers · Solvers · Evaluators</h3>
-            <p>Geometry, constraint, site and analysis engines execute bounded work and return typed results, claims and evidence.</p>
-            <div class="chips"><span class="chip warn">Geometry Resolver</span><span class="chip warn">Constraint Runtime</span><span class="chip good">analysis solvers</span></div>
-          </article>
+          <section class="language-band">
+            <div class="band-head">
+              <div><div class="eyebrow">Band 2</div><h3>Cross-cutting Plasma languages</h3><p>Small reusable languages shared by every domain. Domain languages compose these rather than inventing their own state, evidence or history semantics.</p></div>
+              <div class="band-tag">shared semantics · stable contracts</div>
+            </div>
+            <div class="core-grid">
+              <article class="core-card" data-core-card="query"><div class="eyebrow">Find</div><h4>Query / Selection</h4><p>Bind stable entities by identity, role, topology, relation, region or predicate.</p></article>
+              <article class="core-card" data-core-card="change"><div class="eyebrow">Propose</div><h4>Change / Operation</h4><p>Describe a typed candidate change without mutating canonical state.</p></article>
+              <article class="core-card" data-core-card="constraint"><div class="eyebrow">Permit</div><h4>Constraint</h4><p>Express conditions, admissible ranges and invariants that must remain true.</p></article>
+              <article class="core-card" data-core-card="measurement"><div class="eyebrow">Observe</div><h4>Measurement</h4><p>Measure or derive values with units, method, resolution and uncertainty.</p></article>
+              <article class="core-card" data-core-card="evidence"><div class="eyebrow">Believe</div><h4>Evidence / Claim</h4><p>State what is asserted, why, by which source or method, and with what confidence.</p></article>
+              <article class="core-card" data-core-card="representation"><div class="eyebrow">Show</div><h4>Representation</h4><p>Request or derive a view without creating a second source of truth.</p></article>
+              <article class="core-card" data-core-card="history"><div class="eyebrow">Trace</div><h4>History / Revision</h4><p>Inspect lineage, diffs, operations, branches and provenance through time.</p></article>
+            </div>
 
-          <article class="language-card language-analysis" data-language-card="analysis">
-            <div class="type">Domain language</div><h3>Analysis Language</h3>
-            <p>Requests evaluation over world state and representations, then returns claims rather than silently mutating geometry.</p>
-            <div class="verb-row"><span class="verb">sample</span><span class="verb">solve</span><span class="verb">map</span><span class="verb">compare</span><span class="verb">validate</span><span class="verb">optimise</span></div>
-          </article>
+            <div class="language-anatomy">
+              <div class="anatomy-card">
+                <strong>Machine-readable language contract</strong>
+                <div class="anatomy-grid"><span>id + version</span><span>types + references</span><span>verbs + parameters</span><span>units</span><span>preconditions</span><span>invariants</span><span>result types</span><span>evidence + conformance tests</span></div>
+              </div>
+              <div class="levels-card">
+                <strong>Operation levels</strong>
+                <div class="level-line"><b>Primitive</b><span>split · sample · transform</span></div>
+                <div class="level-line"><b>Compound</b><span>make opening · grade pad</span></div>
+                <div class="level-line"><b>Workflow</b><span>resolve drainage · optimise façade</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="language-band">
+            <div class="band-head">
+              <div><div class="eyebrow">Band 3</div><h3>Authoritative operation lifecycle</h3><p>This is how a language becomes action. Executors may propose results; only validation and the transaction boundary can change canonical world state.</p></div>
+              <div class="band-tag">proposal ≠ truth</div>
+            </div>
+            <div class="lifecycle">
+              <div class="life-stage"><div class="step">01</div><h4>Semantic operation</h4><p>Target refs · intent · parameters · preconditions · requested evidence.</p></div>
+              <div class="life-stage"><div class="step">02</div><h4>World slice</h4><p>Read the smallest authoritative state and dependencies required for the task.</p></div>
+              <div class="life-stage"><div class="step">03</div><h4>Execute</h4><p>Resolver · deterministic algorithm · solver · bounded agent · external tool.</p></div>
+              <div class="life-stage"><div class="step">04</div><h4>Candidate result</h4><p>Patch · claims · representations · measurements · evidence. Not yet truth.</p></div>
+              <div class="life-stage"><div class="step">05</div><h4>Validate</h4><p>Check invariants, contracts, topology, units, constraints and acceptance evidence.</p></div>
+              <div class="life-stage"><div class="step">06</div><h4>Transaction gate</h4><p>Accept atomically or reject without corrupting the world.</p></div>
+              <div class="life-stage world"><div class="step">07</div><h4>Authoritative world</h4><p>Commit revision, provenance and stable identity; then invalidate actual dependents.</p></div>
+            </div>
+            <div class="dependency-loop"><strong>Authoritative World</strong><span class="arrow">→</span><span><b>Dependency graph</b> marks only affected derivations stale → relevant domain capabilities can run next → new proposals return through the same lifecycle.</span></div>
+            <div class="interaction-rule"><b>Interaction rule:</b> domain languages do not call one another or mutate the world directly. They communicate through shared world state, typed operations, dependencies, claims and evidence.</div>
+          </section>
+
+          <section class="language-band">
+            <div class="band-head">
+              <div><div class="eyebrow">Worked interactions</div><h3>How languages affect one another without coupling</h3><p>The world and dependency graph mediate cross-domain consequences.</p></div>
+              <div class="band-tag">causal examples</div>
+            </div>
+            <div class="example-grid">
+              <div class="example-card"><h4>Site → hydrology analysis</h4><div class="example-flow"><span>Site: grade terrain</span><i>→</i><span>semantic operation</span><i>→</i><span>world revision</span><i>→</i><span>hydrology stale</span><i>→</i><span>Analysis: solve drainage</span><i>→</i><span>claim + field + evidence</span><i>→</i><span>validate + commit</span></div></div>
+              <div class="example-card"><h4>Assembly → geometry → multiple consequences</h4><div class="example-flow"><span>Assembly: open wall</span><i>→</i><span>semantic operation</span><i>→</i><span>Geometry Resolver</span><i>→</i><span>world revision</span><i>→</i><span>structure / thermal / docs stale</span><i>→</i><span>evaluators recompute as needed</span></div></div>
+            </div>
+          </section>
         </div>
-        <div class="language-rule">Languages share semantics, not implementation. Cross-domain effects travel through typed operations and evidence.</div>
       </div>
 
       <div class="slice-strip" id="sliceStrip">
@@ -375,7 +459,14 @@ const details={
   language_geometry:{type:'Domain language',title:'Geometry Language',id:'LANG.GEO.001',description:'Engine-neutral spatial verbs compile into typed semantic operations handled by the Geometry Resolver.',maturity:'Vocabulary evolving',owner:'Geometry language'},
   language_site:{type:'Domain language',title:'Site Language',id:'LANG.SITE.001',description:'Site intent such as terrain, grading, setbacks, drainage and planting compiles into shared semantic operations.',maturity:'Vocabulary evolving',owner:'Site language'},
   language_assembly:{type:'Domain language',title:'Assembly Language',id:'LANG.ASM.001',description:'Composition and interface verbs operate on systems, subsystems, components and connectors without exploding the core verb set.',maturity:'Vocabulary evolving',owner:'Assembly language'},
-  language_analysis:{type:'Domain language',title:'Analysis Language',id:'LANG.ANA.001',description:'Analysis verbs request sampling, solving, mapping, comparison and validation and return typed claims and evidence.',maturity:'Vocabulary evolving',owner:'Analysis language'}
+  language_analysis:{type:'Domain language',title:'Analysis Language',id:'LANG.ANA.001',description:'Analysis verbs request sampling, solving, mapping, comparison and validation and return typed claims and evidence.',maturity:'Vocabulary evolving',owner:'Analysis language'},
+  core_query:{type:'Cross-cutting language',title:'Query / Selection Language',id:'LANG.CORE.QUERY',description:'Selects and binds stable semantic references by identity, role, topology, relation, region or predicate.',maturity:'Reference model',owner:'Shared language layer'},
+  core_change:{type:'Cross-cutting language',title:'Change / Operation Language',id:'LANG.CORE.CHANGE',description:'Expresses proposed state changes as typed operations; proposals never mutate canonical world state directly.',maturity:'Reference model',owner:'Shared language layer'},
+  core_constraint:{type:'Cross-cutting language',title:'Constraint Language',id:'LANG.CORE.CONSTRAINT',description:'Expresses admissible ranges, rules and invariants independently of the engine used to evaluate them.',maturity:'Reference model',owner:'Shared language layer'},
+  core_measurement:{type:'Cross-cutting language',title:'Measurement Language',id:'LANG.CORE.MEASURE',description:'Defines observations and derived values with units, method, spatial or temporal resolution and uncertainty.',maturity:'Reference model',owner:'Shared language layer'},
+  core_evidence:{type:'Cross-cutting language',title:'Evidence / Claim Language',id:'LANG.CORE.EVIDENCE',description:'Represents claims, sources, methods, confidence, timestamps and derived-from relationships.',maturity:'Reference model',owner:'Shared language layer'},
+  core_representation:{type:'Cross-cutting language',title:'Representation Language',id:'LANG.CORE.REP',description:'Requests and describes derived views without allowing a representation to become a second source of truth.',maturity:'Reference model',owner:'Shared language layer'},
+  core_history:{type:'Cross-cutting language',title:'History / Revision Language',id:'LANG.CORE.HISTORY',description:'Queries revisions, diffs, committed operations, branches and provenance through time.',maturity:'Reference model',owner:'Shared language layer'}
 };
 
 const relations=[
@@ -460,57 +551,25 @@ document.querySelectorAll('.view-tabs button:not([data-view])').forEach(btn=>btn
 document.querySelectorAll('.tool:not(#relationshipsToggle)').forEach(btn=>btn.addEventListener('click',()=>btn.classList.toggle('active')));
 
 const languageMap=document.getElementById('languageMap');
-const languageSvg=document.getElementById('languageWireLayer');
 const overviewCanvas=document.getElementById('canvas');
 const sliceStrip=document.getElementById('sliceStrip');
+const centerPanel=document.querySelector('.center');
+const viewTitle=document.getElementById('viewTitle');
+const viewSubtitle=document.getElementById('viewSubtitle');
 let currentView='overview';
 
-function rectInLanguageMap(el){
-  const r=el.getBoundingClientRect(), c=languageMap.getBoundingClientRect(), z=uiZoom||1;
-  return {left:(r.left-c.left)/z,top:(r.top-c.top)/z,width:r.width/z,height:r.height/z,right:(r.right-c.left)/z,bottom:(r.bottom-c.top)/z,cx:(r.left-c.left+r.width/2)/z,cy:(r.top-c.top+r.height/2)/z};
+function updateInspector(d){
+  if(!d)return;
+  document.getElementById('detail-type').textContent=d.type;
+  document.getElementById('detail-title').textContent=d.title;
+  document.getElementById('detail-id').textContent=d.id;
+  document.getElementById('detail-description').textContent=d.description;
+  document.getElementById('detail-maturity').textContent=d.maturity;
+  document.getElementById('detail-owner').textContent=d.owner;
 }
-function languagePort(rect,side,frac=.5){
-  if(side==='top') return {x:rect.left+rect.width*frac,y:rect.top};
-  if(side==='bottom') return {x:rect.left+rect.width*frac,y:rect.bottom};
-  if(side==='left') return {x:rect.left,y:rect.top+rect.height*frac};
-  return {x:rect.right,y:rect.top+rect.height*frac};
-}
-const languageRelations=[
-  {from:'site',to:'hub',label:'site intent',kind:'operation',fromSide:'right',toSide:'left',lane:-12},
-  {from:'assembly',to:'hub',label:'composition intent',kind:'agent',fromSide:'left',toSide:'right',lane:-12},
-  {from:'geometry',to:'hub',label:'spatial intent',kind:'spatial',fromSide:'right',toSide:'left',lane:12},
-  {from:'analysis',to:'hub',label:'evaluation intent',kind:'external',fromSide:'left',toSide:'right',lane:12},
-  {from:'world',to:'hub',label:'semantic references + constraints',kind:'derived',fromSide:'bottom',toSide:'top',lane:0},
-  {from:'hub',to:'execution',label:'typed operation',kind:'operation',fromSide:'bottom',toSide:'top',lane:0},
-  {from:'execution',to:'hub',label:'result + evidence',kind:'external',fromSide:'top',toSide:'bottom',lane:22}
-];
-function drawLanguageWires(){
-  if(currentView!=='languages') return;
-  languageSvg.innerHTML='';
-  const defs=svgEl('defs');
-  ['operation','agent','derived','external','spatial'].forEach(kind=>{
-    const marker=svgEl('marker',{id:`lang-arrow-${kind}`,viewBox:'0 0 10 10',refX:'8',refY:'5',markerWidth:'6',markerHeight:'6',orient:'auto-start-reverse'});
-    marker.appendChild(svgEl('path',{d:'M 0 0 L 10 5 L 0 10 z',class:`wire-${kind}`}));defs.appendChild(marker);
-  });languageSvg.appendChild(defs);
-  languageRelations.forEach(rel=>{
-    const aEl=document.querySelector(`[data-language-card="${rel.from}"]`), bEl=document.querySelector(`[data-language-card="${rel.to}"]`);
-    if(!aEl||!bEl)return;
-    const a=rectInLanguageMap(aEl),b=rectInLanguageMap(bEl);
-    const p1=languagePort(a,rel.fromSide),p2=languagePort(b,rel.toSide);
-    let d,tx,ty;
-    if(rel.fromSide==='left'||rel.fromSide==='right'){
-      const midX=(p1.x+p2.x)/2+(rel.lane||0);
-      d=`M ${p1.x} ${p1.y} L ${midX} ${p1.y} L ${midX} ${p2.y} L ${p2.x} ${p2.y}`;
-      tx=midX;ty=(p1.y+p2.y)/2-5;
-    }else{
-      const midY=(p1.y+p2.y)/2+(rel.lane||0);
-      d=`M ${p1.x} ${p1.y} L ${p1.x} ${midY} L ${p2.x} ${midY} L ${p2.x} ${p2.y}`;
-      tx=(p1.x+p2.x)/2;ty=midY-5;
-    }
-    const path=svgEl('path',{d,class:`wire-path wire-${rel.kind}`,'marker-end':`url(#lang-arrow-${rel.kind})`});languageSvg.appendChild(path);
-    const label=svgEl('g',{class:'wire-label'});const text=svgEl('text',{x:tx,y:ty+2,'text-anchor':'middle'});text.textContent=rel.label;label.appendChild(text);languageSvg.appendChild(label);
-    const bb=text.getBBox();label.insertBefore(svgEl('rect',{x:bb.x-5,y:bb.y-3,width:bb.width+10,height:bb.height+6}),text);
-  });
+function clearLanguageSelection(){
+  document.querySelectorAll('.tree-item[data-language],.tree-item[data-core-language]').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('[data-language-card],[data-core-card]').forEach(x=>x.classList.remove('selected'));
 }
 function setView(view){
   currentView=view;
@@ -518,26 +577,33 @@ function setView(view){
   overviewCanvas.style.display=languages?'none':'block';
   languageMap.classList.toggle('active',languages);
   sliceStrip.style.display=languages?'none':'grid';
+  centerPanel.classList.toggle('language-mode',languages);
+  viewTitle.textContent=languages?'Language architecture':'System overview';
+  viewSubtitle.textContent=languages?'domain + cross-cutting languages · operation lifecycle · causal interaction':'Atlas sheet 01 · authority + execution boundaries';
   document.querySelectorAll('.view-tabs button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
-  if(languages) requestAnimationFrame(drawLanguageWires); else requestAnimationFrame(drawWires);
+  if(!languages)requestAnimationFrame(drawWires);
 }
 document.querySelectorAll('.view-tabs button[data-view]').forEach(btn=>btn.addEventListener('click',()=>setView(btn.dataset.view)));
+
 document.querySelectorAll('.tree-item[data-language]').forEach(btn=>btn.addEventListener('click',()=>{
-  setView('languages');
+  setView('languages'); clearLanguageSelection();
+  btn.classList.add('active');
   const key=btn.dataset.language;
-  document.querySelectorAll('.tree-item[data-language]').forEach(x=>x.classList.toggle('active',x===btn));
-  document.querySelectorAll('[data-language-card]').forEach(card=>card.classList.toggle('selected',card.dataset.languageCard===key));
-  const d=details['language_'+key];
-  if(d){
-    document.getElementById('detail-type').textContent=d.type;document.getElementById('detail-title').textContent=d.title;document.getElementById('detail-id').textContent=d.id;document.getElementById('detail-description').textContent=d.description;document.getElementById('detail-maturity').textContent=d.maturity;document.getElementById('detail-owner').textContent=d.owner;
-  }
-  requestAnimationFrame(drawLanguageWires);
+  const card=document.querySelector(`[data-language-card="${key}"]`); if(card)card.classList.add('selected');
+  updateInspector(details['language_'+key]);
+}));
+document.querySelectorAll('.tree-item[data-core-language]').forEach(btn=>btn.addEventListener('click',()=>{
+  setView('languages'); clearLanguageSelection();
+  btn.classList.add('active');
+  const key=btn.dataset.coreLanguage;
+  const card=document.querySelector(`[data-core-card="${key}"]`); if(card)card.classList.add('selected');
+  updateInspector(details['core_'+key]);
 }));
 document.querySelectorAll('[data-language-card]').forEach(card=>card.addEventListener('click',()=>{
-  const key=card.dataset.languageCard;
-  if(['site','geometry','assembly','analysis'].includes(key)){
-    const nav=document.querySelector(`.tree-item[data-language="${key}"]`);if(nav)nav.click();
-  }
+  const nav=document.querySelector(`.tree-item[data-language="${card.dataset.languageCard}"]`);if(nav)nav.click();
+}));
+document.querySelectorAll('[data-core-card]').forEach(card=>card.addEventListener('click',()=>{
+  const nav=document.querySelector(`.tree-item[data-core-language="${card.dataset.coreCard}"]`);if(nav)nav.click();
 }));
 
 const root=document.documentElement,themeToggle=document.getElementById('themeToggle'),themeLabel=document.getElementById('themeLabel');
@@ -552,7 +618,7 @@ function setZoom(value){
   root.style.setProperty('--ui-zoom',uiZoom);
   zoomLabel.textContent=Math.round(uiZoom*100)+'%';
   localStorage.setItem('plasma-atlas-zoom',uiZoom);
-  requestAnimationFrame(drawWires);requestAnimationFrame(drawLanguageWires);
+  requestAnimationFrame(drawWires);
 }
 function fitZoom(){
   const target=Math.max(.55,Math.min(1,(window.innerWidth-24)/820));
@@ -565,7 +631,7 @@ document.getElementById('zoomFit').addEventListener('click',fitZoom);
 setZoom(uiZoom);
 
 const ro=new ResizeObserver(()=>requestAnimationFrame(drawWires));ro.observe(canvas);
-window.addEventListener('resize',()=>{requestAnimationFrame(drawWires);requestAnimationFrame(drawLanguageWires)});
+window.addEventListener('resize',()=>{requestAnimationFrame(drawWires)});
 requestAnimationFrame(()=>{applyFocus();drawWires()});
 </script>
 </body>
