@@ -132,7 +132,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
                 const from=item(rel.from),to=item(rel.to);
                 const active=route.type==='relationship'&&route.id===rel.id;
                 return `<button class="relation-card ${active?'selected':''}" data-atlas-type="relationship" data-atlas-id="${esc(rel.id)}">
-                  <div class="relation-route"><b>${esc(from.name)}</b><span>→</span><b>${esc(to.name)}</b></div>
+                  <div class="relation-route"><b>${esc(from.name)}</b><span>${rel.direction==='bidirectional'?'↔':'→'}</span><b>${esc(to.name)}</b></div>
                   <strong>${esc(rel.label)}</strong>
                   <span>${esc(rel.payload)}</span>
                   <small>${esc(rel.authoritySemantics)}</small>
