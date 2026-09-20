@@ -76,7 +76,12 @@ for(const language of atlas.languages.domain){
 }
 
 for(const evidence of atlas.evidence){
-  assert(['unlinked','linked','verified','failed','superseded'].includes(evidence.state),`evidence ${evidence.id} has unsupported state ${evidence.state}`);
+  const status=evidence.verification?.status;
+  assert(['unlinked','linked','verified','failed','stale','superseded'].includes(status),`evidence ${evidence.id} has unsupported verification status ${status}`);
+  assert(evidence.claim,`evidence ${evidence.id} must declare a claim`);
+  assert(evidence.verification?.method,`evidence ${evidence.id} must declare a verification method`);
+  const criteriaIds=(evidence.acceptanceCriteria||[]).map(x=>x.id);
+  assert(new Set(criteriaIds).size===criteriaIds.length,`evidence ${evidence.id} contains duplicate acceptance criterion ids`);
 }
 
 for(const slice of atlas.slices){
@@ -95,7 +100,21 @@ for(const link of atlas.links){
   assert(hasRef(link.from),`integration link ${link.id} has invalid from ref ${link.from?.type}:${link.from?.id}`);
   assert(hasRef(link.to),`integration link ${link.id} has invalid to ref ${link.to?.type}:${link.to?.id}`);
   assert(['defined','partial','planned'].includes(link.architectureState),`integration link ${link.id} has unsupported architecture state`);
-  assert(['verified','linked','unlinked'].includes(link.evidenceState),`integration link ${link.id} has unsupported evidence state`);
+  assert(!('evidenceState' in link),`integration link ${link.id} must derive evidence state rather than store evidenceState`);
+  assert(['all-required','any-required','threshold'].includes(link.evidencePolicy?.mode),`integration link ${link.id} has unsupported evidence policy`);
+  if(link.evidencePolicy?.mode==='threshold')assert(Number.isInteger(link.evidencePolicy.minimumVerified)&&link.evidencePolicy.minimumVerified>0,`integration link ${link.id} threshold policy requires minimumVerified`);
+  const refIds=(link.evidenceRefs||[]).map(x=>x.id);
+  assert(new Set(refIds).size===refIds.length,`integration link ${link.id} contains duplicate evidenceRefs`);
+  for(const evidenceRef of link.evidenceRefs||[]){
+    assert(evidenceIds.has(evidenceRef.id),`integration link ${link.id} references missing evidence ${evidenceRef.id}`);
+    assert(['required','supporting'].includes(evidenceRef.requirement),`integration link ${link.id} has invalid evidence requirement ${evidenceRef.requirement}`);
+    const evidence=atlas.evidence.find(x=>x.id===evidenceRef.id);
+    const criteriaIds=new Set((evidence?.acceptanceCriteria||[]).map(x=>x.id));
+    for(const criterion of evidenceRef.proves||[])assert(criteriaIds.has(criterion),`integration link ${link.id} references missing criterion ${criterion} on evidence ${evidenceRef.id}`);
+  }
+  if(link.role==='exercises'&&link.criticality==='core'&&link.architectureState!=='planned'){
+    assert((link.evidenceRefs||[]).some(x=>x.requirement==='required'),`core defined/partial integration link ${link.id} must declare required evidence`);
+  }
 }
 for(const row of atlas.integration.matrixRows){
   assert(hasRef(row.ref),`integration matrix row ${row.label} references missing Atlas item ${row.ref?.type}:${row.ref?.id}`);
@@ -137,7 +156,16 @@ assert(runtimeModel.search('submit transaction').some(ref=>ref.type==='contract'
 assert(runtimeModel.search('transaction proposal').some(ref=>ref.type==='relationship'||ref.type==='contract'),'search must safely include relationships without names');
 assert(runtimeModel.linksFor('slice','window-door-system').length>0,'window/door slice must expose graph links');
 assert(runtimeModel.related('component','geometry').some(item=>item.ref.type==='slice'),'reverse graph navigation must expose slices from components');
-assert(runtimeModel.search('window fabrication').some(ref=>ref.id==='window-door-system'||ref.id==='fabrication'),'search must include graph-connected integration terms');
+assert(runtimeModel.search('window fabrication').some(ref=>ref.id==='window-door-system'||ref.id==='fabrication'||ref.type==='integrationLink'),'search must include graph-connected integration terms');
+const windowGeometryLink=runtimeModel.integrationCoverage('window-door-system',{type:'component',id:'geometry'});
+assert(windowGeometryLink,'window/door → geometry integration relationship must exist');
+assert(!('evidenceState' in windowGeometryLink),'integration relationship must not store evidenceState');
+const windowGeometryCoverage=runtimeModel.deriveEvidenceCoverage(windowGeometryLink);
+assert(windowGeometryCoverage.state==='unlinked','unverified window/door → geometry evidence must derive as unlinked');
+assert(windowGeometryCoverage.required>=2,'window/door → geometry must require slice and geometry boundary evidence');
+assert(runtimeModel.evidenceUsers('ev-slice-window-resize').some(item=>item.link.id===windowGeometryLink.id),'evidence reverse navigation must resolve window resize back to geometry relationship');
+const integrationLinkRoute=parseHash(`#integration/link/${encodeURIComponent(windowGeometryLink.id)}`);
+assert(integrationLinkRoute.view==='integration'&&integrationLinkRoute.type==='integrationLink'&&integrationLinkRoute.id===windowGeometryLink.id,'integration link deep-link must parse');
 const integrationInsights=runtimeModel.integrationInsights();
 assert(integrationInsights.unlinkedEvidence.length>=10,'integration insights must expose unlinked evidence');
 
