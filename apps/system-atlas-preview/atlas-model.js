@@ -23,8 +23,8 @@ export function createAtlasModel(data) {
       type,
       id: item.id,
       atlasId: item.atlasId || item.id,
-      name: item.name,
-      summary: item.summary || item.description || item.semantics || '',
+      name: item.name || item.label || item.id,
+      summary: item.summary || item.description || item.semantics || item.explanation || '',
       explanation: item.explanation || item.description || item.semantics || item.summary || '',
       raw: item,
       aliases
@@ -73,7 +73,7 @@ export function createAtlasModel(data) {
         return { ref, score: exactName + starts + tokenScore };
       })
       .filter(x => x.score > 0)
-      .sort((a, b) => b.score - a.score || a.ref.name.localeCompare(b.ref.name))
+      .sort((a, b) => b.score - a.score || String(a.ref.name || '').localeCompare(String(b.ref.name || '')))
       .slice(0, limit)
       .map(x => x.ref);
   }
