@@ -967,6 +967,140 @@
       "explanation": "This is the primary site/context proving slice. It is deliberately broader than a terrain editor: the important test is whether real-world evidence can be turned into dependable, editable, authoritative site state and then safely drive downstream design decisions."
     },
     {
+      "id": "townhouse-system",
+      "name": "Townhouse system → compliant site ensemble",
+      "domain": "Medium-density housing",
+      "summary": "Parcel + planning + dwelling system → site layout → access / parking / landscape → coordinated townhouse ensemble → feasibility evidence.",
+      "purpose": "Prove that Plasma can generate and continuously coordinate a real medium-density townhouse project from site evidence and planning constraints through dwelling layout, shared access, private open space, parking, landscape, servicing, documentation and feasibility.",
+      "whyThisSlice": "Townhouses are a strong building-scale proving ground because they combine repeated dwelling systems with highly site-specific planning geometry. A viable result depends on interactions between setbacks, overlooking, solar access, vehicle movement, private open space, deep planting, levels, drainage, dwelling amenity, construction systems and economics. Optimising any one of these in isolation is not enough.",
+      "flow": [
+        "site + planning evidence",
+        "development intent + dwelling yield target",
+        "site capacity / constraint field",
+        "townhouse typology + dwelling systems",
+        "massing + orientation + private open space",
+        "vehicle / pedestrian access + parking",
+        "landscape + drainage + services",
+        "amenity / planning / geometry validation",
+        "cost + yield + feasibility evaluation",
+        "candidate scheme commit + derived documentation"
+      ],
+      "proves": [
+        "site-specific constraints and reusable dwelling systems can interact without collapsing into one monolithic generator",
+        "a repeated townhouse type can vary by orientation, frontage, level and boundary condition while retaining semantic lineage",
+        "planning, amenity, access, landscape, drainage and economics can evaluate the same candidate world rather than separate models",
+        "high-level operations such as change yield, widen driveway or increase private open space can propagate through dependent geometry and analysis",
+        "multiple viable alternatives can be retained as comparable branches with explicit evidence rather than a single opaque optimum"
+      ],
+      "stressPoints": [
+        "irregular parcels, slope and constrained frontage",
+        "conflicts between dwelling yield, private open space, deep planting and vehicle access",
+        "overlooking, daylight, shadow and boundary relationships between closely spaced dwellings",
+        "shared versus private infrastructure and ownership boundaries",
+        "late planning or consultant changes invalidating many dependent assumptions at once",
+        "keeping feasibility fast while exact geometry and compliance checks progressively refine"
+      ],
+      "successCriteria": [
+        "a site can move from imported context to several coherent townhouse options without manually rebuilding each discipline model",
+        "changing dwelling count or site circulation produces traceable updates to affected setbacks, access, landscape, drainage, quantities and feasibility",
+        "each dwelling retains identity and can vary locally without breaking the repeated system",
+        "failed planning or geometry conditions identify the causal entities and constraints rather than only returning a generic scheme failure",
+        "a selected scheme can derive coordinated plans, sections, schedules, quantities and consultant-ready world slices from the same authoritative state",
+        "alternative schemes can be compared on yield, amenity, compliance risk and cost with their assumptions and evidence visible"
+      ],
+      "keySystems": [
+        "Site Language",
+        "World + Authority Plane",
+        "Geometry Resolver",
+        "Constraint Runtime",
+        "Assembly Language",
+        "Analysis Language",
+        "Representations",
+        "External Systems"
+      ],
+      "declaredState": "target vertical slice",
+      "evidenceState": "not-linked",
+      "checks": {
+        "spec": "declared",
+        "contracts": "partial",
+        "code": "not-linked",
+        "unitTests": "not-linked",
+        "e2e": "not-linked",
+        "benchmark": "not-linked"
+      },
+      "explanation": "The townhouse slice is Plasma's primary medium-density housing test. It is not merely a floor-plan generator: it tests whether site, planning, dwelling systems, access, landscape, infrastructure, amenity and economics can remain causally connected while the design changes. It should eventually support rapid feasibility through coordinated documentation without hiding the evidence behind each decision."
+    },
+    {
+      "id": "apartment-system",
+      "name": "Apartment system → coordinated vertical building",
+      "domain": "Multi-residential housing",
+      "summary": "Site + unit mix + cores + structure + services + envelope → stacked building system → whole-building validation → documentation and feasibility.",
+      "purpose": "Prove that Plasma can coordinate a multi-storey apartment building as interacting spatial and technical systems across floors, rather than as repeated plans with disconnected consultant models.",
+      "whyThisSlice": "Apartments introduce vertical coupling and shared systems at a scale townhouses do not. Unit layouts depend on structural grids, cores, egress, fire compartments, risers, façade, daylight, acoustics, services distribution, parking, plant, circulation, buildability and economics. A small change to one system can propagate through many storeys and disciplines.",
+      "flow": [
+        "site + regulatory / context evidence",
+        "brief + unit mix + yield / area targets",
+        "massing + floorplate + vertical zoning",
+        "core / egress / circulation system",
+        "unit typologies + stacking rules",
+        "structure + façade + services / risers",
+        "parking / loading / plant / waste systems",
+        "fire / accessibility / amenity / environmental analysis",
+        "whole-building dependency validation",
+        "cost / efficiency / yield comparison",
+        "authoritative scheme commit + coordinated documentation"
+      ],
+      "proves": [
+        "Plasma can represent one building as nested interacting systems rather than one giant parametric object",
+        "repeated unit types can maintain identity while adapting to corners, façade orientation, structure and service conditions",
+        "vertical dependencies such as risers, columns, cores and fire paths can propagate across many floors without global regeneration of unrelated systems",
+        "specialist structural, fire, services and environmental solvers can contribute claims and candidate changes without becoming authoritative state",
+        "building-wide metrics such as net-to-gross efficiency, unit mix, circulation area and façade performance can remain traceable to authoritative geometry",
+        "documentation can be derived from the same building state used for feasibility and analysis"
+      ],
+      "stressPoints": [
+        "vertical propagation of core, riser, column and shaft changes across many storeys",
+        "conflicting structural, fire, accessibility, acoustic, façade and services requirements",
+        "unit repetition with local exceptions and changing floorplate geometry",
+        "large dependency graphs where a small edit must not trigger whole-building recomputation",
+        "basement parking, loading and services interfaces with superstructure grids",
+        "maintaining responsiveness while high-fidelity analyses run asynchronously",
+        "design alternatives with materially different cores, grids and unit mixes"
+      ],
+      "successCriteria": [
+        "changing a core, grid or riser produces bounded, explainable invalidation across affected floors and systems",
+        "unit types can be reused and adapted without losing apartment identity, area metrics or documentation references",
+        "egress, accessibility, services, structure, envelope and amenity checks can evaluate a shared provisional world before commit",
+        "the system can compare alternative floorplates and unit mixes without flattening them into a single optimisation score",
+        "a committed building scheme can derive coordinated floor plans, sections, elevations, schedules, quantities and consultant-specific views",
+        "performance remains interactive for design operations while expensive analysis and documentation regenerate progressively",
+        "the Atlas can trace any major building decision back to the operation, evidence and revision that caused it"
+      ],
+      "keySystems": [
+        "World + Authority Plane",
+        "Geometry Resolver",
+        "Constraint Runtime",
+        "Assembly Language",
+        "Analysis Language",
+        "Query / Selection Language",
+        "Evidence / Claim Language",
+        "Representations",
+        "External Systems",
+        "Intelligence Plane"
+      ],
+      "declaredState": "target vertical slice",
+      "evidenceState": "not-linked",
+      "checks": {
+        "spec": "declared",
+        "contracts": "partial",
+        "code": "not-linked",
+        "unitTests": "not-linked",
+        "e2e": "not-linked",
+        "benchmark": "not-linked"
+      },
+      "explanation": "The apartment slice is Plasma's primary whole-building coordination test. It asks whether many coupled systems can evolve together across floors while authority, identity, evidence and performance remain controlled. It should ultimately connect early feasibility to coordinated documentation without creating separate incompatible models for architecture, structure, services, fire, façade and analysis."
+    },
+    {
       "id": "wall-assembly",
       "name": "Wall assembly",
       "domain": "Building systems",
