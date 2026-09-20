@@ -456,7 +456,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         <div class="evidence-list">${model.data.evidence.map(e=>{
           const status=e.verification?.status||'unlinked';
           const usage=model.evidenceUsers(e.id).length;
-          return `<button class="evidence-card ${selected===e.id?'selected':''}" data-atlas-type="evidence" data-atlas-id="${esc(e.id)}">
+          return `<button class="evidence-card evidence-${esc(status)} ${selected===e.id?'selected':''}" data-atlas-type="evidence" data-atlas-id="${esc(e.id)}">
             <div><span class="eyebrow">${esc(labelize(e.kind))}</span><h3>${esc(e.name)}</h3><p>${esc(e.description)}</p></div>
             <div class="evidence-side">${statusBadge(status,status==='verified'?'good':status==='failed'?'danger':'warn')}<small>${usage} integration relationship${usage===1?'':'s'}</small></div>
           </button>`;
