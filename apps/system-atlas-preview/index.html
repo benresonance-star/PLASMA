@@ -711,6 +711,15 @@ function preferredHelpVoice(){
     || helpVoices.find(v=>/^en/i.test(v.lang))
     || null;
 }
+function configureHelpAudioSession(){
+  try{
+    if(navigator.audioSession && 'type' in navigator.audioSession){
+      navigator.audioSession.type='playback';
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
 function stopHelpVoice(){
   if('speechSynthesis' in window)window.speechSynthesis.cancel();
   helpLauncher.classList.remove('speaking');
@@ -722,6 +731,7 @@ function speakHelp(info){
   helpTitle.textContent=info.title;
   helpText.textContent=info.text;
   helpPanel.classList.add('open');
+  configureHelpAudioSession();
   if(!('speechSynthesis' in window)){
     helpStatus.textContent='Voice is not available in this browser';
     return;
@@ -731,7 +741,7 @@ function speakHelp(info){
   const voice=preferredHelpVoice();
   if(voice){utterance.voice=voice;utterance.lang=voice.lang}else{utterance.lang='en-AU'}
   utterance.rate=.96;utterance.pitch=1;
-  utterance.onstart=()=>{helpLauncher.classList.add('speaking');helpStatus.textContent='Speaking · tap another component at any time'};
+  utterance.onstart=()=>{helpLauncher.classList.add('speaking');helpStatus.textContent='Speaking through the active media audio route'};
   utterance.onend=()=>{helpLauncher.classList.remove('speaking');helpStatus.textContent='Ready'};
   utterance.onerror=()=>{helpLauncher.classList.remove('speaking');helpStatus.textContent='Voice playback was interrupted'};
   window.speechSynthesis.speak(utterance);
@@ -779,7 +789,10 @@ function helpInfoFor(target){
 }
 const helpTargetSelector='.node[data-node],[data-language-card],[data-core-card],.slice,.life-stage,.anatomy-card,.levels-card,.dependency-loop,.interaction-rule,.example-card,.language-band,.left .panel-head,.right .panel-head,.atlas-toolbar';
 
-helpLauncher.addEventListener('click',()=>setHelpMode(!helpMode));
+helpLauncher.addEventListener('click',()=>{
+  configureHelpAudioSession();
+  setHelpMode(!helpMode);
+});
 helpClose.addEventListener('click',()=>{stopHelpVoice();helpPanel.classList.remove('open')});
 helpReplay.addEventListener('click',()=>speakHelp(activeHelp));
 helpStop.addEventListener('click',stopHelpVoice);
