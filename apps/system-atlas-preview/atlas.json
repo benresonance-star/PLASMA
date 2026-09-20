@@ -1159,6 +1159,85 @@
       "explanation": "This slice tests whether Plasma's general entity/composition/interface model is strong enough to replace object-specific CAD logic. The aim is not merely to draw a wall, but to prove that complex assemblies can remain editable, explainable and fabrication-aware."
     },
     {
+      "id": "window-door-system",
+      "name": "Window + door system → hosted opening → fabrication",
+      "domain": "Building envelope / product systems",
+      "summary": "Hosted wall opening → configurable frame / leaf / sash / glazing / hardware system → performance validation → fabrication and installation evidence.",
+      "purpose": "Prove that Plasma can treat windows and doors as nested configurable product systems that are hosted in building assemblies, cut and maintain openings, preserve semantic relationships through edits, carry performance and lifecycle data, and produce fabrication-ready outputs without hard-wiring one manufacturer or geometry engine into the kernel.",
+      "whyThisSlice": "Windows and doors sit at the intersection of architecture, envelope performance, user interaction, geometry, manufacturing and procurement. They are simple enough to understand visually but technically rich enough to stress hosting, openings, exact solids, persistent references, parametric dimensions, material systems, seals, drainage, hardware, thermal breaks, certification, cost and fabrication. Earlier Plasma studies repeatedly identified them as an ideal real CAD and product-system benchmark.",
+      "flow": [
+        "wall / façade host + opening intent",
+        "window or door role + performance brief",
+        "system family + configuration space",
+        "frame / sash / leaf / glazing / panel components",
+        "opening subtraction + hosted semantic relationships",
+        "hardware / seals / drainage / thermal-break interfaces",
+        "dimension + clearance + operation validation",
+        "thermal / solar / acoustic / airtightness / accessibility analysis",
+        "cost + supplier + lead-time / manufacturability evaluation",
+        "fabrication geometry + machine / shop adapter",
+        "installation interfaces + inspection evidence",
+        "committed product instance + schedules / details / lifecycle data"
+      ],
+      "proves": [
+        "hosted relationships can survive edits to both the wall and the window or door without degrading into fragile geometry references",
+        "opening creation, Boolean subtraction and exact geometry can remain downstream of semantic intent rather than defining the object model",
+        "a reusable product system can contain frame, sash or leaf, glazing or panel, seals, spacers, drainage, hardware, fixings and installation interfaces as nested entities",
+        "direct human edits and agent edits can use the same canonical operations, resolver, validation and commit path",
+        "parametric dimensions and higher-level system intent can coexist with direct manipulation such as move, resize, offset and replace",
+        "performance properties such as U-value, solar heat gain, light transmission, airtightness, acoustic rating and drainage can be attached to the same system that drives geometry and fabrication",
+        "manufacturer- or machine-specific output can be generated through adapters without embedding supplier logic in the kernel",
+        "cost, lead time, embodied impact, maintenance and replacement history can remain linked to the authoritative product instance"
+      ],
+      "stressPoints": [
+        "wall thickness or composition changing after a window or door has been placed",
+        "opening topology changing while dimensions, annotations and performance references must persist",
+        "frame depth, sill, jamb and head conditions adapting to host construction",
+        "operable leaves or sashes with clearances, swing, hinge and hardware constraints",
+        "doors intersecting accessibility, egress, threshold and fire or acoustic requirements",
+        "windows combining orientation, daylight, solar gain, framed view, privacy, ventilation and shading",
+        "custom grid or mullion patterns while retaining manufacturable component logic",
+        "switching between aluminium, timber, aluminium-clad timber or steel systems with different thermal and fabrication rules",
+        "high-detail fabrication geometry versus lightweight interactive and documentation representations",
+        "supplier substitutions or product revisions after documentation has already been produced"
+      ],
+      "successCriteria": [
+        "placing a window or door creates and maintains a hosted semantic relationship to the wall or façade and a valid opening through the host",
+        "resizing, moving or replacing the hosted system updates the opening, junctions, dimensions, schedules and affected analyses without manual reconstruction",
+        "changing wall thickness or assembly updates head, jamb, sill or threshold conditions while preserving the product instance and its lineage",
+        "the system can represent frame, sash or leaf, glazing or panel, seals, hardware, fixings and interfaces as queryable nested components",
+        "a user or agent can manipulate the same instance with shared operations and obtain deterministic undo, replay and provenance",
+        "thermal, solar, acoustic, airtightness, drainage, accessibility and relevant compliance checks can evaluate a provisional configuration before commit",
+        "the same authoritative instance can generate design geometry, detailed sections, schedules, quantities, cost data and fabrication output as separate representations",
+        "a manufacturer or machine adapter can produce production geometry or instructions without taking ownership of the authoritative system model",
+        "physical installation or commissioning evidence can be attached back to the originating instance and revision"
+      ],
+      "keySystems": [
+        "World + Authority Plane",
+        "Geometry Resolver",
+        "Constraint Runtime",
+        "Assembly Language",
+        "Geometry Language",
+        "Analysis Language",
+        "Query / Selection Language",
+        "Measurement Language",
+        "Evidence / Claim Language",
+        "Representations",
+        "External Systems"
+      ],
+      "declaredState": "target vertical slice",
+      "evidenceState": "not-linked",
+      "checks": {
+        "spec": "declared",
+        "contracts": "partial",
+        "code": "not-linked",
+        "unitTests": "not-linked",
+        "e2e": "not-linked",
+        "benchmark": "not-linked"
+      },
+      "explanation": "This slice consolidates earlier Plasma window and door studies into one demanding product-system benchmark. A wall hosts the system, the system owns a semantic opening requirement, and exact opening subtraction is resolved geometrically. The product itself is nested: frame, sash or leaf, glazing or panel, seals, spacers, drainage, hardware, fixings and installation interfaces. Orientation and time-dependent light can inform analysis and views; thermal, acoustic, airtightness and solar properties can become evidence; and cost, supplier capability, fabrication and installation remain linked without becoming kernel concepts. The decisive test is that ordinary CAD actions and higher-level product intent remain compatible while identity, history and evidence survive regeneration."
+    },
+    {
       "id": "annotations",
       "name": "Persistent annotations",
       "domain": "Documentation / semantics",
