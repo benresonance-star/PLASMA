@@ -64,7 +64,15 @@ for(const evidence of atlas.evidence){
 for(const slice of atlas.slices){
   assert(!('progress' in slice)&&!('percentage' in slice),`slice ${slice.id} must not contain unsupported completion percentages`);
   assert(slice.evidenceState,`slice ${slice.id} missing evidenceState`);
+  assert(slice.domain&&slice.purpose&&slice.whyThisSlice,`slice ${slice.id} must explain domain, purpose and why it matters`);
+  assert(Array.isArray(slice.flow)&&slice.flow.length>=4,`slice ${slice.id} must declare an end-to-end flow`);
+  assert(Array.isArray(slice.proves)&&slice.proves.length>=3,`slice ${slice.id} must declare architectural claims to prove`);
+  assert(Array.isArray(slice.stressPoints)&&slice.stressPoints.length>=3,`slice ${slice.id} must declare stress points`);
+  assert(Array.isArray(slice.successCriteria)&&slice.successCriteria.length>=3,`slice ${slice.id} must declare success criteria`);
+  assert(Array.isArray(slice.keySystems)&&slice.keySystems.length>=2,`slice ${slice.id} must declare key systems`);
 }
+assert(atlas.slices.some(slice=>slice.id==='clothing-fabrication'),'vertical slices must include the clothing-to-fabrication generalisation test');
+assert(atlas.slices.some(slice=>slice.id==='botanical-growth'),'vertical slices must include the botanical growth living-system test');
 
 const expectedViews=['overview','languages','transactions','components','contracts','slices','evidence'];
 for(const id of expectedViews)assert(atlas.views.some(v=>v.id===id),`missing functional view ${id}`);
