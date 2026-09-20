@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" />
 <title>Plasma — System Atlas Preview v2</title>
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
@@ -23,6 +23,7 @@
     --authority:#27343d; --authority-soft:#eef1f2;
     --shadow:0 8px 28px rgba(15,27,34,.08);
     --shadow-soft:0 3px 12px rgba(15,27,34,.045);
+    --ui-zoom:1;
   }
   html[data-theme="dark"]{
     --bg:#0c1115; --panel:#11181d; --panel-strong:#151e24; --canvas:#0f161b;
@@ -45,7 +46,8 @@
     font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   }
   button{font:inherit;color:inherit;cursor:pointer}
-  .app{height:100vh;display:grid;grid-template-rows:58px 1fr}
+  a{color:inherit}
+  .app{height:100vh;display:grid;grid-template-rows:58px 1fr;zoom:var(--ui-zoom);transform-origin:0 0}
 
   /* Top bar */
   .topbar{
@@ -77,7 +79,9 @@
 
   /* Tree */
   .tree{padding:9px;overflow:auto}.tree-group{margin-bottom:12px}.tree-label{padding:6px 7px;color:var(--faint);font-size:8px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
-  .tree-item{width:100%;display:flex;align-items:center;gap:8px;border:0;background:transparent;padding:8px;border-radius:8px;text-align:left;color:var(--muted);font-size:10px}
+  .tree-item{width:100%;display:flex;align-items:center;gap:8px;border:0;background:transparent;padding:8px;border-radius:8px;text-align:left;color:var(--muted);font-size:10px;text-decoration:none}
+  .tree-item.section-link{border:1px solid var(--line);background:var(--panel-strong);margin-bottom:5px}.tree-item.section-link:hover{border-color:var(--accent);background:var(--accent-soft)}
+  .tree-item .external-mark{margin-left:auto;color:var(--faint);font-size:11px;font-weight:900}
   .tree-item:hover,.tree-item.active{background:var(--accent-soft);color:var(--accent-strong)}
   .dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--line-strong);background:var(--panel-strong);flex:none}
   .tree-item.active .dot{background:var(--accent);border-color:var(--accent)}
@@ -95,16 +99,14 @@
   .canvas{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),var(--canvas);background-size:30px 30px;box-shadow:var(--shadow-soft)}
   .canvas-head{position:absolute;left:15px;right:15px;top:11px;display:flex;justify-content:space-between;align-items:center;z-index:6;pointer-events:none}
   .canvas-title{color:var(--faint);font-size:8px;letter-spacing:.17em;font-weight:900}.canvas-note{font-size:8px;color:var(--muted);background:var(--panel-strong);border:1px solid var(--line);padding:5px 8px;border-radius:999px}
-  .plane-note{position:absolute;z-index:1;font-size:8px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
-  .plane-note.runtime{left:3.5%;top:12.5%}.plane-note.agent{right:3.5%;top:12.5%}.plane-note.core{left:50%;top:31.2%;transform:translateX(-50%)}
 
   #wireLayer{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}
-  .wire-path{fill:none;stroke-width:1.4;opacity:.9;vector-effect:non-scaling-stroke}
+  .wire-path{fill:none;stroke-width:1.35;opacity:.76;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
   .wire-operation{stroke:var(--accent)}.wire-agent{stroke:var(--violet)}.wire-derived{stroke:var(--line-strong)}.wire-external{stroke:var(--green)}.wire-spatial{stroke:var(--amber)}
-  .wire-path.faded{opacity:.14}.wire-path.hot{stroke-width:2.2;opacity:1}
-  .wire-label rect{fill:var(--canvas);stroke:var(--line);stroke-width:.8;rx:5}.wire-label text{font-size:8px;fill:var(--muted);font-weight:700;letter-spacing:.01em}.wire-label.faded{opacity:.18}.wire-label.hot text{fill:var(--ink)}
+  .wire-path.faded{opacity:.09}.wire-path.hot{stroke-width:2;opacity:1}
+  .wire-label rect{fill:var(--panel-strong);stroke:var(--line-strong);stroke-width:.8;rx:7;filter:drop-shadow(0 2px 4px rgba(0,0,0,.12))}.wire-label text{font-size:8px;fill:var(--ink);font-weight:780;letter-spacing:.01em}.wire-label.faded{opacity:.12}.wire-label.hot text{fill:var(--ink)}
 
-  .architecture{position:absolute;inset:42px 25px 21px;display:grid;grid-template-columns:1fr 1.05fr 1.05fr 1fr;grid-template-rows:1fr 1.2fr 1fr;gap:16px 20px;z-index:2}
+  .architecture{position:absolute;inset:48px 28px 28px;display:grid;grid-template-columns:1fr 1.05fr 1.05fr 1fr;grid-template-rows:1fr 1.12fr 1fr;gap:34px 24px;z-index:2}
   .node{position:relative;border:1px solid var(--line-strong);border-radius:11px;background:var(--panel-strong);padding:11px;box-shadow:var(--shadow-soft);transition:transform .16s ease,opacity .16s ease,border .16s ease,box-shadow .16s ease;z-index:3;overflow:hidden}
   .node:hover{transform:translateY(-1px);box-shadow:var(--shadow)}.node.selected{outline:2px solid color-mix(in srgb,var(--accent) 26%,transparent);border-color:var(--accent)}.node.faded{opacity:.28}.node.related{border-color:color-mix(in srgb,var(--accent) 46%,var(--line))}
   .node:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line-strong)}
@@ -123,6 +125,11 @@
   /* Inspector */
   .inspector{padding:13px;overflow:auto}.inspector-head{display:flex;justify-content:space-between;gap:9px;align-items:flex-start}.inspector h2{font-size:15px;margin:4px 0}.idtag{font-size:7.5px;color:var(--muted);background:var(--authority-soft);border:1px solid var(--line);padding:4px 6px;border-radius:6px}.inspector p{font-size:9.5px;line-height:1.5;color:var(--muted)}.section{margin-top:14px;padding-top:11px;border-top:1px solid var(--line)}.section h3{margin:0 0 8px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}.kv{display:grid;grid-template-columns:86px 1fr;gap:7px 8px;font-size:8.5px;line-height:1.35}.kv dt{color:var(--faint)}.kv dd{margin:0;color:var(--ink);font-weight:680}.contract{border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;background:var(--panel-strong)}.contract strong{display:block;font-size:8.5px;margin-bottom:3px}.contract span{font-size:7.7px;color:var(--muted)}.evidence{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--line);font-size:8.5px}.evidence:last-child{border-bottom:0}.evicon{width:17px;height:17px;display:grid;place-items:center;border-radius:50%;font-size:8px;font-weight:900}.evicon.ok{background:var(--green-soft);color:var(--green)}.evicon.warn{background:var(--amber-soft);color:var(--amber)}.evicon.off{background:var(--authority-soft);color:var(--faint)}.footer-action{margin-top:auto;border-top:1px solid var(--line);padding:9px;display:flex;gap:6px;background:var(--panel)}.footer-action button{flex:1;border:1px solid var(--line);background:var(--panel-strong);border-radius:8px;padding:8px;font-size:8px;font-weight:800;color:var(--muted)}
 
+  .viewport-controls{position:fixed;right:14px;bottom:16px;z-index:1000;display:flex;align-items:center;gap:4px;padding:5px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--panel-strong) 94%,transparent);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+  .viewport-controls button{min-width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-size:12px;font-weight:850}
+  .viewport-controls .zoom-value{min-width:52px;color:var(--muted);font-size:10px}
+  .viewport-controls .fit{padding:0 10px;color:var(--accent-strong)}
+
   /* Mobile / narrow-screen exploration: preserve the full Atlas sheet and let the
      browser viewport pan across it like a large drawing rather than clipping it. */
   @media(max-width:1100px){
@@ -133,7 +140,7 @@
       -webkit-overflow-scrolling:touch;
       overscroll-behavior:auto;
     }
-    body{touch-action:pan-x pan-y}
+    body{touch-action:pan-x pan-y pinch-zoom}
     .app{
       width:1280px;
       min-width:1280px;
@@ -160,8 +167,9 @@
     }
     .canvas{
       min-height:640px;
-      touch-action:pan-x pan-y;
+      touch-action:pan-x pan-y pinch-zoom;
     }
+    .viewport-controls{right:12px;bottom:calc(104px + env(safe-area-inset-bottom))}
   }
 </style>
 </head>
@@ -186,8 +194,12 @@
     <aside class="panel left">
       <div class="panel-head"><div class="eyebrow">Atlas index</div><h2>Plasma architecture</h2><p>Systems, contracts, evidence and implementation slices.</p></div>
       <div class="tree">
+        <div class="tree-group"><div class="tree-label">Plasma sections</div>
+          <button class="tree-item active"><span class="dot"></span>System Atlas</button>
+          <a class="tree-item section-link" href="https://benresonance-star.github.io/AI_DEV_OPS/#build" target="_blank" rel="noopener"><span class="dot"></span>Build · AI Dev Ops<span class="external-mark">↗</span></a>
+        </div>
         <div class="tree-group"><div class="tree-label">Planes</div>
-          <button class="tree-item active" data-select="authority"><span class="dot"></span>Authority plane<span class="count">7</span></button>
+          <button class="tree-item" data-select="authority"><span class="dot"></span>Authority plane<span class="count">7</span></button>
           <button class="tree-item" data-select="interaction"><span class="dot"></span>Interaction plane<span class="count">4</span></button>
           <button class="tree-item" data-select="intelligence"><span class="dot"></span>Intelligence plane<span class="count">5</span></button>
         </div>
@@ -214,8 +226,7 @@
       </div>
 
       <div class="canvas" id="canvas">
-        <div class="canvas-head"><div class="canvas-title">SYSTEM ATLAS · LIVE PROJECTION</div><div class="canvas-note">Arrows show data / authority direction · semantic zoom L1</div></div>
-        <div class="plane-note runtime">Human / interaction runtime</div><div class="plane-note agent">Agent / reasoning runtime</div><div class="plane-note core">Authoritative boundary</div>
+        <div class="canvas-head"><div class="canvas-title">SYSTEM ATLAS · LIVE PROJECTION</div><div class="canvas-note">Tap a node to isolate its relationships</div></div>
         <svg id="wireLayer" aria-hidden="true"></svg>
 
         <div class="architecture">
@@ -246,7 +257,7 @@
           <article class="node representation" data-node="representation"><div class="type">Derived</div><h3>Representations</h3><p>Viewports, drawings, schedules and annotations derived from the authoritative world; never a second source of truth.</p><div class="chips"><span class="chip">3D</span><span class="chip">2D</span><span class="chip">documentation</span></div></article>
           <article class="node external" data-node="external"><div class="type">Boundary</div><h3>External Systems</h3><p>Solvers, regulations, fabrication systems and data sources connected through explicit, typed contracts.</p><div class="chips"><span class="chip good">solver API</span><span class="chip good">evidence import</span><span class="chip">Functional Mock-up Interface (FMI)</span><span class="chip">Universal Scene Description (USD)</span></div></article>
         </div>
-        <div class="hint">Select a node to isolate its direct relationships · select it again to clear focus</div>
+        <div class="hint">Relationships route through dedicated lanes · tap a node to focus</div>
       </div>
 
       <div class="slice-strip">
@@ -273,6 +284,12 @@
     </aside>
   </main>
 </div>
+<div class="viewport-controls" aria-label="Atlas zoom controls">
+  <button id="zoomOut" aria-label="Zoom out">−</button>
+  <button id="zoomReset" class="zoom-value" aria-label="Reset zoom"><span id="zoomLabel">100%</span></button>
+  <button id="zoomIn" aria-label="Zoom in">+</button>
+  <button id="zoomFit" class="fit" aria-label="Fit Atlas for small screen">Fit</button>
+</div>
 
 <script>
 const details={
@@ -286,30 +303,30 @@ const details={
 };
 
 const relations=[
-  {id:'op',from:'interaction',to:'authority',label:'semantic operations',kind:'operation'},
-  {id:'agent',from:'intelligence',to:'authority',label:'proposals + evaluation',kind:'agent'},
-  {id:'geo-out',from:'authority',to:'geometry',label:'resolve operation',kind:'spatial'},
-  {id:'geo-in',from:'geometry',to:'authority',label:'validated geometry',kind:'spatial',bend:-26},
-  {id:'constraints',from:'authority',to:'constraints',label:'validate invariants',kind:'spatial'},
-  {id:'repr',from:'authority',to:'representation',label:'derive projection',kind:'derived'},
-  {id:'external',from:'external',to:'authority',label:'results + evidence',kind:'external'}
-];
+  {id:'op',from:'interaction',to:'authority',label:'semantic operation proposal',kind:'operation',fromSide:'bottom',fromFrac:.72,toSide:'top',toFrac:.28,lane:-8},
+  {id:'agent',from:'intelligence',to:'authority',label:'transaction proposal',kind:'agent',fromSide:'bottom',fromFrac:.28,toSide:'top',toFrac:.72,lane:8},
+  {id:'geometry',from:'authority',to:'geometry',label:'resolve / validated result',kind:'spatial',fromSide:'bottom',fromFrac:.14,toSide:'top',toFrac:.5,lane:-13,bidirectional:true},
+  {id:'constraints',from:'authority',to:'constraints',label:'validate / pass-fail',kind:'spatial',fromSide:'bottom',fromFrac:.38,toSide:'top',toFrac:.5,lane:-3,bidirectional:true},
+  {id:'repr',from:'authority',to:'representation',label:'derive projection',kind:'derived',fromSide:'bottom',fromFrac:.63,toSide:'top',toFrac:.5,lane:8},
+  {id:'external',from:'external',to:'authority',label:'results + evidence',kind:'external',fromSide:'top',fromFrac:.5,toSide:'bottom',toFrac:.87,lane:18}
+]
 
 const canvas=document.getElementById('canvas');
 const svg=document.getElementById('wireLayer');
-let selected='authority';
-let focused=true;
+let selected=null;
+let focused=false;
 let showRelationships=true;
+let uiZoom=Number(localStorage.getItem('plasma-atlas-zoom'))||1;
 
 function rectInCanvas(el){
-  const r=el.getBoundingClientRect(), c=canvas.getBoundingClientRect();
-  return {left:r.left-c.left,top:r.top-c.top,width:r.width,height:r.height,right:r.right-c.left,bottom:r.bottom-c.top,cx:r.left-c.left+r.width/2,cy:r.top-c.top+r.height/2};
+  const r=el.getBoundingClientRect(), c=canvas.getBoundingClientRect(), z=uiZoom||1;
+  return {left:(r.left-c.left)/z,top:(r.top-c.top)/z,width:r.width/z,height:r.height/z,right:(r.right-c.left)/z,bottom:(r.bottom-c.top)/z,cx:(r.left-c.left+r.width/2)/z,cy:(r.top-c.top+r.height/2)/z};
 }
-function edgePoint(rect,target){
-  const dx=target.x-rect.cx,dy=target.y-rect.cy;
-  const ax=Math.abs(dx)||.001, ay=Math.abs(dy)||.001;
-  const scale=Math.min((rect.width/2)/ax,(rect.height/2)/ay);
-  return {x:rect.cx+dx*scale,y:rect.cy+dy*scale};
+function portPoint(rect,side='bottom',frac=.5){
+  if(side==='top') return {x:rect.left+rect.width*frac,y:rect.top};
+  if(side==='left') return {x:rect.left,y:rect.top+rect.height*frac};
+  if(side==='right') return {x:rect.right,y:rect.top+rect.height*frac};
+  return {x:rect.left+rect.width*frac,y:rect.bottom};
 }
 function svgEl(tag,attrs={}){const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,v);return el}
 
@@ -325,25 +342,25 @@ function drawWires(){
   relations.forEach(rel=>{
     const fromEl=document.querySelector(`[data-node="${rel.from}"]`),toEl=document.querySelector(`[data-node="${rel.to}"]`); if(!fromEl||!toEl)return;
     const a=rectInCanvas(fromEl),b=rectInCanvas(toEl);
-    const p1=edgePoint(a,{x:b.cx,y:b.cy}), p2=edgePoint(b,{x:a.cx,y:a.cy});
-    const mx=(p1.x+p2.x)/2,my=(p1.y+p2.y)/2;
-    const dx=p2.x-p1.x,dy=p2.y-p1.y,len=Math.hypot(dx,dy)||1;
-    const nx=-dy/len,ny=dx/len,bend=rel.bend??((rel.id==='geo-out')?18:0);
-    const qx=mx+nx*bend,qy=my+ny*bend;
-    const d=`M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} Q ${qx.toFixed(1)} ${qy.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+    const p1=portPoint(a,rel.fromSide,rel.fromFrac), p2=portPoint(b,rel.toSide,rel.toFrac);
+    const gap=p2.y-p1.y;
+    const laneY=p1.y+(gap*.5)+(rel.lane||0);
+    const d=`M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} L ${p1.x.toFixed(1)} ${laneY.toFixed(1)} L ${p2.x.toFixed(1)} ${laneY.toFixed(1)} L ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
     const isHot=!focused || rel.from===selected || rel.to===selected;
-    const path=svgEl('path',{d,class:`wire-path wire-${rel.kind} ${focused?(isHot?'hot':'faded'):''}`,'marker-end':`url(#arrow-${rel.kind})`,'data-rel':rel.id}); svg.appendChild(path);
+    const attrs={d,class:`wire-path wire-${rel.kind} ${focused?(isHot?'hot':'faded'):''}`,'marker-end':`url(#arrow-${rel.kind})`,'data-rel':rel.id};
+    if(rel.bidirectional) attrs['marker-start']=`url(#arrow-${rel.kind})`;
+    const path=svgEl('path',attrs); svg.appendChild(path);
 
     const label=svgEl('g',{class:`wire-label ${focused?(isHot?'hot':'faded'):''}`,'data-rel':rel.id});
-    const tx=qx,ty=qy; const text=svgEl('text',{x:tx,y:ty+2,'text-anchor':'middle'}); text.textContent=rel.label; label.appendChild(text); svg.appendChild(label);
+    const tx=(p1.x+p2.x)/2,ty=laneY-5; const text=svgEl('text',{x:tx,y:ty+2,'text-anchor':'middle'}); text.textContent=rel.label; label.appendChild(text); svg.appendChild(label);
     const bb=text.getBBox(); const rect=svgEl('rect',{x:bb.x-5,y:bb.y-3,width:bb.width+10,height:bb.height+6}); label.insertBefore(rect,text);
   });
 }
 
 function applyFocus(){
   document.querySelectorAll('.node').forEach(n=>{
-    const key=n.dataset.node; const related=relations.some(r=>(r.from===selected&&r.to===key)||(r.to===selected&&r.from===key));
-    n.classList.toggle('selected',key===selected);
+    const key=n.dataset.node; const related=selected&&relations.some(r=>(r.from===selected&&r.to===key)||(r.to===selected&&r.from===key));
+    n.classList.toggle('selected',Boolean(selected)&&key===selected);
     n.classList.toggle('related',focused&&related);
     n.classList.toggle('faded',focused&&key!==selected&&!related);
   });
@@ -371,6 +388,24 @@ function setTheme(theme){root.dataset.theme=theme;themeLabel.textContent=theme==
 const saved=localStorage.getItem('plasma-atlas-theme');
 setTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
 themeToggle.addEventListener('click',()=>setTheme(root.dataset.theme==='dark'?'light':'dark'));
+
+const zoomLabel=document.getElementById('zoomLabel');
+function setZoom(value){
+  uiZoom=Math.max(.55,Math.min(1.6,Math.round(value*20)/20));
+  root.style.setProperty('--ui-zoom',uiZoom);
+  zoomLabel.textContent=Math.round(uiZoom*100)+'%';
+  localStorage.setItem('plasma-atlas-zoom',uiZoom);
+  requestAnimationFrame(drawWires);
+}
+function fitZoom(){
+  const target=Math.max(.55,Math.min(1,(window.innerWidth-24)/820));
+  setZoom(target);
+}
+document.getElementById('zoomOut').addEventListener('click',()=>setZoom(uiZoom-.1));
+document.getElementById('zoomIn').addEventListener('click',()=>setZoom(uiZoom+.1));
+document.getElementById('zoomReset').addEventListener('click',()=>setZoom(1));
+document.getElementById('zoomFit').addEventListener('click',fitZoom);
+setZoom(uiZoom);
 
 const ro=new ResizeObserver(()=>requestAnimationFrame(drawWires));ro.observe(canvas);
 window.addEventListener('resize',()=>requestAnimationFrame(drawWires));
