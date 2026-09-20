@@ -239,7 +239,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
               <span class="legend-state evidence-key"><i></i>evidence unlinked</span>
               <span class="legend-state none">— not materially exercised</span>
             </div>
-            <div class="integration-matrix">
+            <div class="integration-matrix" style="grid-template-columns:150px repeat(${slices.length},minmax(86px,1fr))">
               <div class="matrix-corner">Capability</div>
               ${slices.map(slice=>`<button class="matrix-slice-head ${selectedKey===`slice:${slice.id}`?'selected':''}" data-atlas-type="slice" data-atlas-id="${esc(slice.id)}"><span>${esc(slice.name)}</span></button>`).join('')}
               ${rows.map(row=>{
