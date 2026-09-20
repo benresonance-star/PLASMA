@@ -20,6 +20,8 @@ assert(Array.isArray(atlas.relationships),'relationships are required');
 assert(Array.isArray(atlas.contracts),'contracts are required');
 assert(Array.isArray(atlas.slices),'slices are required');
 assert(Array.isArray(atlas.evidence),'evidence is required');
+assert(Array.isArray(atlas.links),'typed integration links are required');
+assert(atlas.integration?.matrixRows?.length,'integration matrix rows are required');
 
 unique(atlas.views,'views');
 unique(atlas.components,'components');
@@ -30,11 +32,26 @@ unique(atlas.languages.crossCutting,'cross-cutting languages');
 unique(atlas.transactions.stages,'transaction stages');
 unique(atlas.slices,'slices');
 unique(atlas.evidence,'evidence');
+unique(atlas.links,'integration links');
 
 const componentIds=new Set(atlas.components.map(x=>x.id));
 const contractIds=new Set(atlas.contracts.map(x=>x.id));
 const evidenceIds=new Set(atlas.evidence.map(x=>x.id));
 const coreLanguageIds=new Set(atlas.languages.crossCutting.map(x=>x.id));
+const domainLanguageIds=new Set(atlas.languages.domain.map(x=>x.id));
+const stageIds=new Set(atlas.transactions.stages.map(x=>x.id));
+const sliceIds=new Set(atlas.slices.map(x=>x.id));
+const refSets={
+  component:componentIds,
+  relationship:new Set(atlas.relationships.map(x=>x.id)),
+  contract:contractIds,
+  domainLanguage:domainLanguageIds,
+  coreLanguage:coreLanguageIds,
+  stage:stageIds,
+  slice:sliceIds,
+  evidence:evidenceIds
+};
+const hasRef=(ref)=>Boolean(ref&&refSets[ref.type]?.has(ref.id));
 
 for(const component of atlas.components){
   assert(component.atlasId,`component ${component.id} missing atlasId`);
@@ -55,6 +72,7 @@ for(const relationship of atlas.relationships){
 for(const language of atlas.languages.domain){
   for(const use of language.uses||[])assert(coreLanguageIds.has(use),`domain language ${language.id} references missing cross-cutting language ${use}`);
   assert(language.types?.length&&language.verbs?.length&&language.constraints?.length,`domain language ${language.id} must separate types, verbs and constraints`);
+  assert(['active','emerging','planned','research'].includes(language.maturity),`domain language ${language.id} must declare a supported maturity state`);
 }
 
 for(const evidence of atlas.evidence){
@@ -70,14 +88,42 @@ for(const slice of atlas.slices){
   assert(Array.isArray(slice.stressPoints)&&slice.stressPoints.length>=3,`slice ${slice.id} must declare stress points`);
   assert(Array.isArray(slice.successCriteria)&&slice.successCriteria.length>=3,`slice ${slice.id} must declare success criteria`);
   assert(Array.isArray(slice.keySystems)&&slice.keySystems.length>=2,`slice ${slice.id} must declare key systems`);
+  assert(Array.isArray(slice.integrationEvidence)&&slice.integrationEvidence.length>0,`slice ${slice.id} must link at least one integration evidence scenario`);
+  for(const evidenceId of slice.integrationEvidence||[])assert(evidenceIds.has(evidenceId),`slice ${slice.id} references missing integration evidence ${evidenceId}`);
 }
+for(const link of atlas.links){
+  assert(hasRef(link.from),`integration link ${link.id} has invalid from ref ${link.from?.type}:${link.from?.id}`);
+  assert(hasRef(link.to),`integration link ${link.id} has invalid to ref ${link.to?.type}:${link.to?.id}`);
+  assert(['defined','partial','planned'].includes(link.architectureState),`integration link ${link.id} has unsupported architecture state`);
+  assert(['verified','linked','unlinked'].includes(link.evidenceState),`integration link ${link.id} has unsupported evidence state`);
+}
+for(const row of atlas.integration.matrixRows){
+  assert(hasRef(row.ref),`integration matrix row ${row.label} references missing Atlas item ${row.ref?.type}:${row.ref?.id}`);
+}
+for(const slice of atlas.slices){
+  const scenarioLinks=atlas.links.filter(link=>link.from.type==='slice'&&link.from.id===slice.id&&link.role==='proved-by');
+  assert(scenarioLinks.length>0,`slice ${slice.id} must have a typed proved-by evidence link`);
+}
+assert(atlas.languages.futureDomains.length===0,'maturity-tracked domain languages must replace future-domain placeholder labels');
+assert(domainLanguageIds.has('planning'),'Planning / Regulation Language must be a first-class Atlas node');
+assert(domainLanguageIds.has('space-program'),'Space / Program Language must be a first-class Atlas node');
+assert(domainLanguageIds.has('structure'),'Structure Language must be a first-class Atlas node');
+assert(domainLanguageIds.has('envelope'),'Envelope Language must be a first-class Atlas node');
+assert(domainLanguageIds.has('services'),'Services Language must be a first-class Atlas node');
+assert(domainLanguageIds.has('materials'),'Materials Language must be a first-class Atlas node');
+assert(domainLanguageIds.has('fabrication'),'Fabrication Language must be a first-class Atlas node');
+assert(domainLanguageIds.has('economics'),'Economics / Feasibility Language must be a first-class Atlas node');
+assert(domainLanguageIds.has('construction'),'Construction Language must be a first-class Atlas node');
+assert(domainLanguageIds.has('operation'),'Operation / Lifecycle Language must be a first-class Atlas node');
+assert(domainLanguageIds.has('botanical'),'Botanical / Ecology Language must be a first-class Atlas node');
+
 assert(atlas.slices.some(slice=>slice.id==='townhouse-system'),'vertical slices must include the townhouse medium-density housing test');
 assert(atlas.slices.some(slice=>slice.id==='apartment-system'),'vertical slices must include the apartment whole-building coordination test');
 assert(atlas.slices.some(slice=>slice.id==='window-door-system'),'vertical slices must include the window and door hosted product-system test');
 assert(atlas.slices.some(slice=>slice.id==='clothing-fabrication'),'vertical slices must include the clothing-to-fabrication generalisation test');
 assert(atlas.slices.some(slice=>slice.id==='botanical-growth'),'vertical slices must include the botanical growth living-system test');
 
-const expectedViews=['overview','languages','transactions','components','contracts','slices','evidence'];
+const expectedViews=['overview','integration','languages','transactions','components','contracts','slices','evidence'];
 for(const id of expectedViews)assert(atlas.views.some(v=>v.id===id),`missing functional view ${id}`);
 
 assert(atlas.transactions.candidatePatch?.fields?.includes('base_revision'),'CandidatePatch must declare base_revision');
@@ -89,6 +135,12 @@ assert(atlas.transactions.invariants?.length>=8,'transaction model must expose k
 const runtimeModel=createAtlasModel(atlas);
 assert(runtimeModel.search('submit transaction').some(ref=>ref.type==='contract'&&ref.id==='submit-transaction'),'search must resolve submitTransaction contract');
 assert(runtimeModel.search('transaction proposal').some(ref=>ref.type==='relationship'||ref.type==='contract'),'search must safely include relationships without names');
+assert(runtimeModel.linksFor('slice','window-door-system').length>0,'window/door slice must expose graph links');
+assert(runtimeModel.related('component','geometry').some(item=>item.ref.type==='slice'),'reverse graph navigation must expose slices from components');
+assert(runtimeModel.search('window fabrication').some(ref=>ref.id==='window-door-system'||ref.id==='fabrication'),'search must include graph-connected integration terms');
+const integrationInsights=runtimeModel.integrationInsights();
+assert(integrationInsights.unlinkedEvidence.length>=10,'integration insights must expose unlinked evidence');
+
 const authorityRoute=parseHash('#overview/component/authority');
 assert(authorityRoute.view==='overview'&&authorityRoute.type==='component'&&authorityRoute.id==='authority','overview component deep-link must parse');
 const languageRoute=parseHash('#languages/domain/site');
@@ -99,4 +151,4 @@ if(errors.length){
   errors.forEach(error=>console.error(` - ${error}`));
   process.exit(1);
 }
-console.log(`Atlas ${atlas.meta.version} valid: ${atlas.components.length} components, ${atlas.relationships.length} relationships, ${atlas.contracts.length} contracts, ${atlas.slices.length} slices, ${atlas.evidence.length} evidence requirements.`);
+console.log(`Atlas ${atlas.meta.version} valid: ${atlas.components.length} components, ${atlas.languages.domain.length} domain languages, ${atlas.relationships.length} relationships, ${atlas.contracts.length} contracts, ${atlas.slices.length} slices, ${atlas.evidence.length} evidence requirements, ${atlas.links.length} typed integration links.`);
