@@ -119,6 +119,26 @@
   .geometry{grid-column:1;grid-row:3}.constraints{grid-column:2;grid-row:3}.representation{grid-column:3;grid-row:3}.external{grid-column:4;grid-row:3}
   .hint{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);padding:4px 8px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--panel-strong) 92%,transparent);color:var(--faint);font-size:7.5px;z-index:7;white-space:nowrap}
 
+  /* Language map */
+  .language-map{display:none;position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),var(--canvas);background-size:30px 30px;box-shadow:var(--shadow-soft);padding:46px 24px 24px}
+  .language-map.active{display:block}
+  .language-head{position:absolute;left:15px;right:15px;top:11px;display:flex;justify-content:space-between;align-items:center}
+  .language-grid{height:100%;display:grid;grid-template-columns:1fr 1.15fr 1fr;grid-template-rows:1fr 1fr 1fr;gap:18px 22px;align-items:stretch}
+  .language-card,.language-hub,.language-boundary{position:relative;border:1px solid var(--line-strong);border-radius:11px;background:var(--panel-strong);padding:12px;box-shadow:var(--shadow-soft);overflow:hidden}
+  .language-card:before,.language-hub:before,.language-boundary:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+  .language-card h3,.language-hub h3,.language-boundary h3{font-size:12px;margin:4px 0 5px}
+  .language-card p,.language-hub p,.language-boundary p{margin:0;color:var(--muted);font-size:8.5px;line-height:1.42}
+  .language-card .verb-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+  .verb{font-size:7.5px;font-weight:760;color:var(--muted);background:var(--authority-soft);border:1px solid var(--line);padding:3px 5px;border-radius:999px}
+  .language-site{grid-column:1;grid-row:1}.language-geometry{grid-column:1;grid-row:3}.language-assembly{grid-column:3;grid-row:1}.language-analysis{grid-column:3;grid-row:3}
+  .language-hub{grid-column:2;grid-row:2;border-color:var(--accent);box-shadow:0 10px 24px rgba(20,30,36,.10)}
+  .language-hub:before{background:var(--authority)}
+  .language-boundary.top{grid-column:2;grid-row:1}.language-boundary.bottom{grid-column:2;grid-row:3}
+  .language-boundary.top:before{background:var(--violet)}.language-boundary.bottom:before{background:var(--green)}
+  #languageWireLayer{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}
+  .language-grid>*{z-index:2}
+  .language-rule{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);padding:4px 8px;border:1px solid var(--line);border-radius:999px;background:var(--panel-strong);color:var(--faint);font-size:7.5px;white-space:nowrap;z-index:4}
+
   /* Slice strip */
   .slice-strip{display:grid;grid-template-columns:1.35fr repeat(4,.9fr);gap:8px;min-width:0}.slice{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;overflow:hidden;box-shadow:var(--shadow-soft)}.slice .kicker{font-size:7.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-weight:900}.slice h4{margin:4px 0 3px;font-size:10px}.slice p{margin:0;color:var(--muted);font-size:7.5px;line-height:1.35}.slice.hero{background:linear-gradient(135deg,var(--panel-strong),var(--accent-soft))}.slice.hero h4{font-size:12px}.metric-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}.metric{font-size:7px;color:var(--muted);border:1px solid var(--line);background:var(--panel-strong);border-radius:5px;padding:4px 5px}.progress{position:absolute;left:9px;right:9px;bottom:9px;height:3px;background:var(--authority-soft);border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--accent);border-radius:99px}
 
@@ -181,7 +201,7 @@
       <div class="brand-copy"><strong>PLASMA</strong><span>System Atlas</span></div>
     </div>
     <nav class="view-tabs" aria-label="Atlas views">
-      <button class="active">Overview</button><button>Components</button><button>Contracts</button><button>Vertical slices</button><button>Evidence</button>
+      <button class="active" data-view="overview">Overview</button><button data-view="languages">Languages</button><button>Components</button><button>Contracts</button><button>Vertical slices</button><button>Evidence</button>
     </nav>
     <div class="top-actions">
       <span class="status">Foundation · evolving</span>
@@ -210,10 +230,10 @@
           <button class="tree-item" data-select="external"><span class="dot"></span>External systems<span class="count">14</span></button>
         </div>
         <div class="tree-group"><div class="tree-label">Languages</div>
-          <button class="tree-item"><span class="dot"></span>Geometry verbs<span class="count">18</span></button>
-          <button class="tree-item"><span class="dot"></span>Site verbs<span class="count">15</span></button>
-          <button class="tree-item"><span class="dot"></span>Assembly verbs<span class="count">16</span></button>
-          <button class="tree-item"><span class="dot"></span>Analysis verbs<span class="count">12</span></button>
+          <button class="tree-item" data-language="geometry"><span class="dot"></span>Geometry language<span class="count">18</span></button>
+          <button class="tree-item" data-language="site"><span class="dot"></span>Site language<span class="count">15</span></button>
+          <button class="tree-item" data-language="assembly"><span class="dot"></span>Assembly language<span class="count">16</span></button>
+          <button class="tree-item" data-language="analysis"><span class="dot"></span>Analysis language<span class="count">12</span></button>
         </div>
       </div>
       <div class="legend"><div><span class="sw authority"></span>authoritative</div><div><span class="sw runtime"></span>runtime</div><div><span class="sw agent"></span>agentic</div><div><span class="sw external"></span>external</div></div>
@@ -260,7 +280,59 @@
         <div class="hint">Relationships route through dedicated lanes · tap a node to focus</div>
       </div>
 
-      <div class="slice-strip">
+      <div class="language-map" id="languageMap">
+        <div class="language-head">
+          <div class="canvas-title">PLASMA SMALL LANGUAGES · INTERACTION MAP</div>
+          <div class="canvas-note">Languages compile to typed semantic operations — engines remain replaceable</div>
+        </div>
+        <svg id="languageWireLayer" aria-hidden="true"></svg>
+        <div class="language-grid">
+          <article class="language-card language-site" data-language-card="site">
+            <div class="type">Domain language</div><h3>Site Language</h3>
+            <p>Describes site-specific intent without encoding terrain or planning engine details.</p>
+            <div class="verb-row"><span class="verb">parcel</span><span class="verb">terrain</span><span class="verb">grade</span><span class="verb">setback</span><span class="verb">drain</span><span class="verb">plant</span></div>
+          </article>
+
+          <article class="language-boundary top" data-language-card="world">
+            <div class="type">Shared semantics</div><h3>World References + Constraints</h3>
+            <p>Stable entities, roles, relations, frames, invariants and bounded world slices are the common vocabulary.</p>
+            <div class="chips"><span class="chip">entity refs</span><span class="chip">relations</span><span class="chip">invariants</span></div>
+          </article>
+
+          <article class="language-card language-assembly" data-language-card="assembly">
+            <div class="type">Domain language</div><h3>Assembly Language</h3>
+            <p>Expresses composition and connection intent across systems, subsystems, components and interfaces.</p>
+            <div class="verb-row"><span class="verb">compose</span><span class="verb">connect</span><span class="verb">repeat</span><span class="verb">replace</span><span class="verb">open</span><span class="verb">join</span></div>
+          </article>
+
+          <article class="language-hub" data-language-card="hub">
+            <div class="type">Common contract</div><h3>Semantic Operation Contract</h3>
+            <p>Every language emits typed operations against semantic references. Plasma validates authority, scope and invariants before execution.</p>
+            <div class="chips"><span class="chip blue">target refs</span><span class="chip blue">intent</span><span class="chip blue">parameters</span><span class="chip blue">preconditions</span><span class="chip blue">evidence</span></div>
+          </article>
+
+          <article class="language-card language-geometry" data-language-card="geometry">
+            <div class="type">Domain language</div><h3>Geometry Language</h3>
+            <p>Spatial verbs remain engine-neutral and compile through the Geometry Resolver.</p>
+            <div class="verb-row"><span class="verb">select</span><span class="verb">offset</span><span class="verb">split</span><span class="verb">intersect</span><span class="verb">trim</span><span class="verb">transform</span></div>
+          </article>
+
+          <article class="language-boundary bottom" data-language-card="execution">
+            <div class="type">Execution + feedback</div><h3>Resolvers · Solvers · Evaluators</h3>
+            <p>Geometry, constraint, site and analysis engines execute bounded work and return typed results, claims and evidence.</p>
+            <div class="chips"><span class="chip warn">Geometry Resolver</span><span class="chip warn">Constraint Runtime</span><span class="chip good">analysis solvers</span></div>
+          </article>
+
+          <article class="language-card language-analysis" data-language-card="analysis">
+            <div class="type">Domain language</div><h3>Analysis Language</h3>
+            <p>Requests evaluation over world state and representations, then returns claims rather than silently mutating geometry.</p>
+            <div class="verb-row"><span class="verb">sample</span><span class="verb">solve</span><span class="verb">map</span><span class="verb">compare</span><span class="verb">validate</span><span class="verb">optimise</span></div>
+          </article>
+        </div>
+        <div class="language-rule">Languages share semantics, not implementation. Cross-domain effects travel through typed operations and evidence.</div>
+      </div>
+
+      <div class="slice-strip" id="sliceStrip">
         <div class="slice hero"><div class="kicker">Vertical slice</div><h4>Terrain → site foundation</h4><p>Interaction → transaction → geometry → evidence → representation.</p><div class="metric-row"><span class="metric">implemented 68%</span><span class="metric">evidence 54%</span><span class="metric">risk medium</span></div><div class="progress"><i style="width:68%"></i></div></div>
         <div class="slice"><div class="kicker">Slice</div><h4>Wall assembly</h4><p>system → subsystem → component</p><div class="progress"><i style="width:44%"></i></div></div>
         <div class="slice"><div class="kicker">Slice</div><h4>Annotations</h4><p>stable references through regeneration</p><div class="progress"><i style="width:37%"></i></div></div>
@@ -299,7 +371,11 @@ const details={
   geometry:{type:'Spatial execution',title:'Geometry Resolver',id:'SYS.GEO.006',description:'Resolves semantic operations into exact and approximate spatial representations and returns validated geometry results.',maturity:'Active implementation',owner:'Geometry resolver'},
   constraints:{type:'Validation',title:'Constraint Runtime',id:'SYS.CON.007',description:'Checks invariants, rules and admissible ranges before state can commit.',maturity:'Architecture defined',owner:'Constraint runtime'},
   representation:{type:'Derived',title:'Representations',id:'SYS.REP.004',description:'Produces viewports, drawings, schedules and annotations without becoming the source of truth.',maturity:'Architecture defined',owner:'Representation services'},
-  external:{type:'Boundary',title:'External Systems',id:'SYS.EXT.008',description:'Connects solvers, regulations, fabrication tools and external data through typed, reviewable contracts.',maturity:'Interface planning',owner:'Integration boundary'}
+  external:{type:'Boundary',title:'External Systems',id:'SYS.EXT.008',description:'Connects solvers, regulations, fabrication tools and external data through typed, reviewable contracts.',maturity:'Interface planning',owner:'Integration boundary'},
+  language_geometry:{type:'Domain language',title:'Geometry Language',id:'LANG.GEO.001',description:'Engine-neutral spatial verbs compile into typed semantic operations handled by the Geometry Resolver.',maturity:'Vocabulary evolving',owner:'Geometry language'},
+  language_site:{type:'Domain language',title:'Site Language',id:'LANG.SITE.001',description:'Site intent such as terrain, grading, setbacks, drainage and planting compiles into shared semantic operations.',maturity:'Vocabulary evolving',owner:'Site language'},
+  language_assembly:{type:'Domain language',title:'Assembly Language',id:'LANG.ASM.001',description:'Composition and interface verbs operate on systems, subsystems, components and connectors without exploding the core verb set.',maturity:'Vocabulary evolving',owner:'Assembly language'},
+  language_analysis:{type:'Domain language',title:'Analysis Language',id:'LANG.ANA.001',description:'Analysis verbs request sampling, solving, mapping, comparison and validation and return typed claims and evidence.',maturity:'Vocabulary evolving',owner:'Analysis language'}
 };
 
 const relations=[
@@ -380,8 +456,89 @@ document.querySelectorAll('.node').forEach(n=>n.addEventListener('click',()=>sel
 document.querySelectorAll('.tree-item[data-select]').forEach(n=>n.addEventListener('click',()=>selectNode(n.dataset.select,true)));
 document.getElementById('focusButton').addEventListener('click',()=>{focused=!focused;applyFocus()});
 document.getElementById('relationshipsToggle').addEventListener('click',e=>{showRelationships=!showRelationships;e.currentTarget.classList.toggle('active',showRelationships);drawWires()});
-document.querySelectorAll('.view-tabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.view-tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}));
+document.querySelectorAll('.view-tabs button:not([data-view])').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.view-tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}));
 document.querySelectorAll('.tool:not(#relationshipsToggle)').forEach(btn=>btn.addEventListener('click',()=>btn.classList.toggle('active')));
+
+const languageMap=document.getElementById('languageMap');
+const languageSvg=document.getElementById('languageWireLayer');
+const overviewCanvas=document.getElementById('canvas');
+const sliceStrip=document.getElementById('sliceStrip');
+let currentView='overview';
+
+function rectInLanguageMap(el){
+  const r=el.getBoundingClientRect(), c=languageMap.getBoundingClientRect(), z=uiZoom||1;
+  return {left:(r.left-c.left)/z,top:(r.top-c.top)/z,width:r.width/z,height:r.height/z,right:(r.right-c.left)/z,bottom:(r.bottom-c.top)/z,cx:(r.left-c.left+r.width/2)/z,cy:(r.top-c.top+r.height/2)/z};
+}
+function languagePort(rect,side,frac=.5){
+  if(side==='top') return {x:rect.left+rect.width*frac,y:rect.top};
+  if(side==='bottom') return {x:rect.left+rect.width*frac,y:rect.bottom};
+  if(side==='left') return {x:rect.left,y:rect.top+rect.height*frac};
+  return {x:rect.right,y:rect.top+rect.height*frac};
+}
+const languageRelations=[
+  {from:'site',to:'hub',label:'site intent',kind:'operation',fromSide:'right',toSide:'left',lane:-12},
+  {from:'assembly',to:'hub',label:'composition intent',kind:'agent',fromSide:'left',toSide:'right',lane:-12},
+  {from:'geometry',to:'hub',label:'spatial intent',kind:'spatial',fromSide:'right',toSide:'left',lane:12},
+  {from:'analysis',to:'hub',label:'evaluation intent',kind:'external',fromSide:'left',toSide:'right',lane:12},
+  {from:'world',to:'hub',label:'semantic references + constraints',kind:'derived',fromSide:'bottom',toSide:'top',lane:0},
+  {from:'hub',to:'execution',label:'typed operation',kind:'operation',fromSide:'bottom',toSide:'top',lane:0},
+  {from:'execution',to:'hub',label:'result + evidence',kind:'external',fromSide:'top',toSide:'bottom',lane:22}
+];
+function drawLanguageWires(){
+  if(currentView!=='languages') return;
+  languageSvg.innerHTML='';
+  const defs=svgEl('defs');
+  ['operation','agent','derived','external','spatial'].forEach(kind=>{
+    const marker=svgEl('marker',{id:`lang-arrow-${kind}`,viewBox:'0 0 10 10',refX:'8',refY:'5',markerWidth:'6',markerHeight:'6',orient:'auto-start-reverse'});
+    marker.appendChild(svgEl('path',{d:'M 0 0 L 10 5 L 0 10 z',class:`wire-${kind}`}));defs.appendChild(marker);
+  });languageSvg.appendChild(defs);
+  languageRelations.forEach(rel=>{
+    const aEl=document.querySelector(`[data-language-card="${rel.from}"]`), bEl=document.querySelector(`[data-language-card="${rel.to}"]`);
+    if(!aEl||!bEl)return;
+    const a=rectInLanguageMap(aEl),b=rectInLanguageMap(bEl);
+    const p1=languagePort(a,rel.fromSide),p2=languagePort(b,rel.toSide);
+    let d,tx,ty;
+    if(rel.fromSide==='left'||rel.fromSide==='right'){
+      const midX=(p1.x+p2.x)/2+(rel.lane||0);
+      d=`M ${p1.x} ${p1.y} L ${midX} ${p1.y} L ${midX} ${p2.y} L ${p2.x} ${p2.y}`;
+      tx=midX;ty=(p1.y+p2.y)/2-5;
+    }else{
+      const midY=(p1.y+p2.y)/2+(rel.lane||0);
+      d=`M ${p1.x} ${p1.y} L ${p1.x} ${midY} L ${p2.x} ${midY} L ${p2.x} ${p2.y}`;
+      tx=(p1.x+p2.x)/2;ty=midY-5;
+    }
+    const path=svgEl('path',{d,class:`wire-path wire-${rel.kind}`,'marker-end':`url(#lang-arrow-${rel.kind})`});languageSvg.appendChild(path);
+    const label=svgEl('g',{class:'wire-label'});const text=svgEl('text',{x:tx,y:ty+2,'text-anchor':'middle'});text.textContent=rel.label;label.appendChild(text);languageSvg.appendChild(label);
+    const bb=text.getBBox();label.insertBefore(svgEl('rect',{x:bb.x-5,y:bb.y-3,width:bb.width+10,height:bb.height+6}),text);
+  });
+}
+function setView(view){
+  currentView=view;
+  const languages=view==='languages';
+  overviewCanvas.style.display=languages?'none':'block';
+  languageMap.classList.toggle('active',languages);
+  sliceStrip.style.display=languages?'none':'grid';
+  document.querySelectorAll('.view-tabs button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
+  if(languages) requestAnimationFrame(drawLanguageWires); else requestAnimationFrame(drawWires);
+}
+document.querySelectorAll('.view-tabs button[data-view]').forEach(btn=>btn.addEventListener('click',()=>setView(btn.dataset.view)));
+document.querySelectorAll('.tree-item[data-language]').forEach(btn=>btn.addEventListener('click',()=>{
+  setView('languages');
+  const key=btn.dataset.language;
+  document.querySelectorAll('.tree-item[data-language]').forEach(x=>x.classList.toggle('active',x===btn));
+  document.querySelectorAll('[data-language-card]').forEach(card=>card.classList.toggle('selected',card.dataset.languageCard===key));
+  const d=details['language_'+key];
+  if(d){
+    document.getElementById('detail-type').textContent=d.type;document.getElementById('detail-title').textContent=d.title;document.getElementById('detail-id').textContent=d.id;document.getElementById('detail-description').textContent=d.description;document.getElementById('detail-maturity').textContent=d.maturity;document.getElementById('detail-owner').textContent=d.owner;
+  }
+  requestAnimationFrame(drawLanguageWires);
+}));
+document.querySelectorAll('[data-language-card]').forEach(card=>card.addEventListener('click',()=>{
+  const key=card.dataset.languageCard;
+  if(['site','geometry','assembly','analysis'].includes(key)){
+    const nav=document.querySelector(`.tree-item[data-language="${key}"]`);if(nav)nav.click();
+  }
+}));
 
 const root=document.documentElement,themeToggle=document.getElementById('themeToggle'),themeLabel=document.getElementById('themeLabel');
 function setTheme(theme){root.dataset.theme=theme;themeLabel.textContent=theme==='dark'?'Light':'Dark';localStorage.setItem('plasma-atlas-theme',theme);requestAnimationFrame(drawWires)}
@@ -395,7 +552,7 @@ function setZoom(value){
   root.style.setProperty('--ui-zoom',uiZoom);
   zoomLabel.textContent=Math.round(uiZoom*100)+'%';
   localStorage.setItem('plasma-atlas-zoom',uiZoom);
-  requestAnimationFrame(drawWires);
+  requestAnimationFrame(drawWires);requestAnimationFrame(drawLanguageWires);
 }
 function fitZoom(){
   const target=Math.max(.55,Math.min(1,(window.innerWidth-24)/820));
@@ -408,7 +565,7 @@ document.getElementById('zoomFit').addEventListener('click',fitZoom);
 setZoom(uiZoom);
 
 const ro=new ResizeObserver(()=>requestAnimationFrame(drawWires));ro.observe(canvas);
-window.addEventListener('resize',()=>requestAnimationFrame(drawWires));
+window.addEventListener('resize',()=>{requestAnimationFrame(drawWires);requestAnimationFrame(drawLanguageWires)});
 requestAnimationFrame(()=>{applyFocus();drawWires()});
 </script>
 </body>
