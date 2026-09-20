@@ -53,7 +53,7 @@ try{
   await page.click('[data-atlas-id="window-door-system"]');
   await page.waitForFunction(()=>location.hash.includes('slices/window-door-system'));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Window integration: resize hosted window'));
-  assert((await page.locator('#inspector').innerText()).includes('Integration evidence'),'Slice-specific integration evidence is not linked in inspector');
+  assert(((await page.locator('#inspector').textContent())||'').includes('Integration evidence'),'Slice-specific integration evidence is not linked in inspector');
 
   await page.click('[data-atlas-id="clothing-fabrication"]');
   await page.waitForFunction(()=>location.hash.includes('slices/clothing-fabrication'));
