@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Plasma — System Atlas Preview v2</title>
+<style>
+  :root{
+    --bg:#f3f5f6; --panel:#fbfcfc; --panel-strong:#ffffff; --canvas:#f8fafb;
+    --ink:#121920; --muted:#68747d; --faint:#8f9aa2;
+    --line:#d7dee2; --line-strong:#bcc7cd; --grid:rgba(24,42,52,.038);
+    --accent:#118ec8; --accent-strong:#0b6f9f; --accent-soft:#e8f4fa;
+    --violet:#7159ba; --violet-soft:#f0ecfb;
+    --green:#2d845f; --green-soft:#eaf5ef;
+    --amber:#b97916; --amber-soft:#fff3df;
+    --red:#b35252; --red-soft:#faeaea;
+    --authority:#27343d; --authority-soft:#eef1f2;
+    --shadow:0 8px 28px rgba(15,27,34,.08);
+    --shadow-soft:0 3px 12px rgba(15,27,34,.045);
+  }
+  html[data-theme="dark"]{
+    --bg:#0c1115; --panel:#11181d; --panel-strong:#151e24; --canvas:#0f161b;
+    --ink:#edf2f5; --muted:#9ba7af; --faint:#738089;
+    --line:#26323a; --line-strong:#3b4a54; --grid:rgba(220,235,244,.035);
+    --accent:#45b6e9; --accent-strong:#6ec9ef; --accent-soft:#102c39;
+    --violet:#a494e2; --violet-soft:#241f39;
+    --green:#62b68e; --green-soft:#152b22;
+    --amber:#deb05d; --amber-soft:#342814;
+    --red:#dd7c7c; --red-soft:#351d1d;
+    --authority:#dce5e9; --authority-soft:#192228;
+    --shadow:0 12px 34px rgba(0,0,0,.32);
+    --shadow-soft:0 4px 14px rgba(0,0,0,.18);
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; overflow:hidden; color:var(--ink); background:var(--bg);
+    font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  button{font:inherit;color:inherit;cursor:pointer}
+  .app{height:100vh;display:grid;grid-template-rows:58px 1fr}
+
+  /* Top bar */
+  .topbar{
+    display:grid;grid-template-columns:300px 1fr 390px;align-items:center;gap:16px;
+    padding:0 16px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 94%, transparent);
+    backdrop-filter:blur(16px);z-index:20;
+  }
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .mark{width:31px;height:31px;display:grid;place-items:center;border:1px solid var(--ink);font-size:13px;font-weight:900}
+  .brand-copy{line-height:1;min-width:0}.brand-copy strong{font-size:17px;letter-spacing:.18em}.brand-copy span{display:block;margin-top:5px;color:var(--muted);font-size:9px;letter-spacing:.18em;text-transform:uppercase}
+  .view-tabs{display:flex;justify-content:center;gap:4px}
+  .view-tabs button{border:1px solid transparent;background:transparent;color:var(--muted);padding:8px 10px;border-radius:8px;font-size:11px;font-weight:720}
+  .view-tabs button.active{background:var(--panel-strong);border-color:var(--line);color:var(--ink);box-shadow:var(--shadow-soft)}
+  .top-actions{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+  .status{white-space:nowrap;border:1px solid color-mix(in srgb,var(--green) 35%,var(--line));background:var(--green-soft);color:var(--green);padding:7px 9px;border-radius:999px;font-size:10px;font-weight:800}
+  .icon-btn,.primary-btn{height:34px;border:1px solid var(--line);background:var(--panel-strong);border-radius:8px;padding:0 10px;font-size:11px;font-weight:750}
+  .icon-btn:hover{border-color:var(--line-strong)}
+  .theme-btn{display:flex;align-items:center;gap:7px;min-width:78px;justify-content:center}
+  .theme-icon{font-size:13px;line-height:1}
+  .primary-btn{border-color:var(--accent-strong);background:var(--accent);color:white}
+
+  /* Main layout */
+  .workspace{min-height:0;display:grid;grid-template-columns:232px minmax(640px,1fr) 306px;gap:11px;padding:11px}
+  .panel{min-height:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-soft)}
+  .left,.right{display:flex;flex-direction:column;overflow:hidden}
+  .panel-head{padding:13px 13px 10px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--faint);font-weight:850}
+  .panel-head h2{margin:6px 0 2px;font-size:14px}.panel-head p{margin:0;color:var(--muted);font-size:10px;line-height:1.45}
+
+  /* Tree */
+  .tree{padding:9px;overflow:auto}.tree-group{margin-bottom:12px}.tree-label{padding:6px 7px;color:var(--faint);font-size:8px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
+  .tree-item{width:100%;display:flex;align-items:center;gap:8px;border:0;background:transparent;padding:8px;border-radius:8px;text-align:left;color:var(--muted);font-size:10px}
+  .tree-item:hover,.tree-item.active{background:var(--accent-soft);color:var(--accent-strong)}
+  .dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--line-strong);background:var(--panel-strong);flex:none}
+  .tree-item.active .dot{background:var(--accent);border-color:var(--accent)}
+  .count{margin-left:auto;font-size:8px;color:var(--faint);background:var(--authority-soft);border:1px solid var(--line);border-radius:999px;padding:2px 6px}
+  .legend{margin-top:auto;border-top:1px solid var(--line);padding:11px;display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .legend div{font-size:8px;color:var(--muted);display:flex;gap:6px;align-items:center}.sw{width:8px;height:8px;border-radius:50%}.sw.authority{background:var(--authority)}.sw.runtime{background:var(--accent)}.sw.agent{background:var(--violet)}.sw.external{background:var(--green)}
+
+  /* Center */
+  .center{min-width:0;min-height:0;display:grid;grid-template-rows:43px minmax(0,1fr) 126px;gap:9px}
+  .atlas-toolbar{display:flex;align-items:center;justify-content:space-between;padding:0 11px;background:var(--panel);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow-soft)}
+  .titleline{display:flex;align-items:baseline;gap:9px;min-width:0}.titleline strong{font-size:13px}.titleline span{font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tools{display:flex;gap:5px}.tool{border:1px solid var(--line);background:var(--panel-strong);border-radius:7px;padding:6px 8px;font-size:9px;color:var(--muted);font-weight:800}.tool.active{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 35%,var(--line));color:var(--accent-strong)}
+
+  /* Graph canvas */
+  .canvas{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),var(--canvas);background-size:30px 30px;box-shadow:var(--shadow-soft)}
+  .canvas-head{position:absolute;left:15px;right:15px;top:11px;display:flex;justify-content:space-between;align-items:center;z-index:6;pointer-events:none}
+  .canvas-title{color:var(--faint);font-size:8px;letter-spacing:.17em;font-weight:900}.canvas-note{font-size:8px;color:var(--muted);background:var(--panel-strong);border:1px solid var(--line);padding:5px 8px;border-radius:999px}
+  .plane-note{position:absolute;z-index:1;font-size:8px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .plane-note.runtime{left:3.5%;top:12.5%}.plane-note.agent{right:3.5%;top:12.5%}.plane-note.core{left:50%;top:31.2%;transform:translateX(-50%)}
+
+  #wireLayer{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}
+  .wire-path{fill:none;stroke-width:1.4;opacity:.9;vector-effect:non-scaling-stroke}
+  .wire-operation{stroke:var(--accent)}.wire-agent{stroke:var(--violet)}.wire-derived{stroke:var(--line-strong)}.wire-external{stroke:var(--green)}.wire-spatial{stroke:var(--amber)}
+  .wire-path.faded{opacity:.14}.wire-path.hot{stroke-width:2.2;opacity:1}
+  .wire-label rect{fill:var(--canvas);stroke:var(--line);stroke-width:.8;rx:5}.wire-label text{font-size:8px;fill:var(--muted);font-weight:700;letter-spacing:.01em}.wire-label.faded{opacity:.18}.wire-label.hot text{fill:var(--ink)}
+
+  .architecture{position:absolute;inset:42px 25px 21px;display:grid;grid-template-columns:1fr 1.05fr 1.05fr 1fr;grid-template-rows:1fr 1.2fr 1fr;gap:16px 20px;z-index:2}
+  .node{position:relative;border:1px solid var(--line-strong);border-radius:11px;background:var(--panel-strong);padding:11px;box-shadow:var(--shadow-soft);transition:transform .16s ease,opacity .16s ease,border .16s ease,box-shadow .16s ease;z-index:3;overflow:hidden}
+  .node:hover{transform:translateY(-1px);box-shadow:var(--shadow)}.node.selected{outline:2px solid color-mix(in srgb,var(--accent) 26%,transparent);border-color:var(--accent)}.node.faded{opacity:.28}.node.related{border-color:color-mix(in srgb,var(--accent) 46%,var(--line))}
+  .node:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line-strong)}
+  .node.interaction:before{background:var(--accent)}.node.intelligence:before{background:var(--violet)}.node.external:before{background:var(--green)}.node.geometry:before,.node.constraints:before{background:var(--amber)}.node.authority:before{background:var(--authority)}
+  .node .type{font-size:7.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}.node h3{font-size:12px;margin:4px 0 5px}.node p{margin:0;color:var(--muted);font-size:8.5px;line-height:1.42}.node .role{position:absolute;right:8px;top:8px;border:1px solid var(--line);border-radius:999px;padding:3px 5px;font-size:7px;font-weight:900;color:var(--faint);background:var(--panel)}
+  .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}.chip{font-size:7.5px;font-weight:760;color:var(--muted);background:var(--authority-soft);border:1px solid var(--line);padding:3px 5px;border-radius:999px}.chip.good{background:var(--green-soft);color:var(--green)}.chip.warn{background:var(--amber-soft);color:var(--amber)}.chip.violet{background:var(--violet-soft);color:var(--violet)}.chip.blue{background:var(--accent-soft);color:var(--accent-strong)}
+
+  .interaction{grid-column:1 / span 2;grid-row:1}.intelligence{grid-column:3 / span 2;grid-row:1}
+  .authority{grid-column:2 / span 2;grid-row:2;border:1.6px solid var(--authority);box-shadow:0 10px 24px rgba(20,30,36,.10)}.authority h3{font-size:16px}.authority p{font-size:9px}.authority-band{margin-top:9px;border-top:1px solid var(--line);padding-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.mini{padding:6px;border:1px solid var(--line);border-radius:7px;background:var(--panel);font-size:7.5px;color:var(--muted);line-height:1.3}.mini strong{display:block;color:var(--ink);font-size:7.5px;margin-bottom:2px}
+  .geometry{grid-column:1;grid-row:3}.constraints{grid-column:2;grid-row:3}.representation{grid-column:3;grid-row:3}.external{grid-column:4;grid-row:3}
+  .hint{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);padding:4px 8px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--panel-strong) 92%,transparent);color:var(--faint);font-size:7.5px;z-index:7;white-space:nowrap}
+
+  /* Slice strip */
+  .slice-strip{display:grid;grid-template-columns:1.35fr repeat(4,.9fr);gap:8px;min-width:0}.slice{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;overflow:hidden;box-shadow:var(--shadow-soft)}.slice .kicker{font-size:7.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-weight:900}.slice h4{margin:4px 0 3px;font-size:10px}.slice p{margin:0;color:var(--muted);font-size:7.5px;line-height:1.35}.slice.hero{background:linear-gradient(135deg,var(--panel-strong),var(--accent-soft))}.slice.hero h4{font-size:12px}.metric-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}.metric{font-size:7px;color:var(--muted);border:1px solid var(--line);background:var(--panel-strong);border-radius:5px;padding:4px 5px}.progress{position:absolute;left:9px;right:9px;bottom:9px;height:3px;background:var(--authority-soft);border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--accent);border-radius:99px}
+
+  /* Inspector */
+  .inspector{padding:13px;overflow:auto}.inspector-head{display:flex;justify-content:space-between;gap:9px;align-items:flex-start}.inspector h2{font-size:15px;margin:4px 0}.idtag{font-size:7.5px;color:var(--muted);background:var(--authority-soft);border:1px solid var(--line);padding:4px 6px;border-radius:6px}.inspector p{font-size:9.5px;line-height:1.5;color:var(--muted)}.section{margin-top:14px;padding-top:11px;border-top:1px solid var(--line)}.section h3{margin:0 0 8px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}.kv{display:grid;grid-template-columns:86px 1fr;gap:7px 8px;font-size:8.5px;line-height:1.35}.kv dt{color:var(--faint)}.kv dd{margin:0;color:var(--ink);font-weight:680}.contract{border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;background:var(--panel-strong)}.contract strong{display:block;font-size:8.5px;margin-bottom:3px}.contract span{font-size:7.7px;color:var(--muted)}.evidence{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--line);font-size:8.5px}.evidence:last-child{border-bottom:0}.evicon{width:17px;height:17px;display:grid;place-items:center;border-radius:50%;font-size:8px;font-weight:900}.evicon.ok{background:var(--green-soft);color:var(--green)}.evicon.warn{background:var(--amber-soft);color:var(--amber)}.evicon.off{background:var(--authority-soft);color:var(--faint)}.footer-action{margin-top:auto;border-top:1px solid var(--line);padding:9px;display:flex;gap:6px;background:var(--panel)}.footer-action button{flex:1;border:1px solid var(--line);background:var(--panel-strong);border-radius:8px;padding:8px;font-size:8px;font-weight:800;color:var(--muted)}
+
+  @media(max-width:1100px){.topbar{grid-template-columns:250px 1fr 260px}.view-tabs button:nth-child(n+4){display:none}.workspace{grid-template-columns:210px minmax(640px,1fr)}.right{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="mark">P</div>
+      <div class="brand-copy"><strong>PLASMA</strong><span>System Atlas</span></div>
+    </div>
+    <nav class="view-tabs" aria-label="Atlas views">
+      <button class="active">Overview</button><button>Components</button><button>Contracts</button><button>Vertical slices</button><button>Evidence</button>
+    </nav>
+    <div class="top-actions">
+      <span class="status">Foundation · evolving</span>
+      <button class="icon-btn theme-btn" id="themeToggle" aria-label="Toggle dark mode"><span class="theme-icon" id="themeIcon">◐</span><span id="themeLabel">Dark</span></button>
+      <button class="icon-btn">History</button><button class="primary-btn">New sheet</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <aside class="panel left">
+      <div class="panel-head"><div class="eyebrow">Atlas index</div><h2>Plasma architecture</h2><p>Systems, contracts, evidence and implementation slices.</p></div>
+      <div class="tree">
+        <div class="tree-group"><div class="tree-label">Planes</div>
+          <button class="tree-item active" data-select="authority"><span class="dot"></span>Authority plane<span class="count">7</span></button>
+          <button class="tree-item" data-select="interaction"><span class="dot"></span>Interaction plane<span class="count">4</span></button>
+          <button class="tree-item" data-select="intelligence"><span class="dot"></span>Intelligence plane<span class="count">5</span></button>
+        </div>
+        <div class="tree-group"><div class="tree-label">Execution</div>
+          <button class="tree-item" data-select="geometry"><span class="dot"></span>Geometry resolver<span class="count">8</span></button>
+          <button class="tree-item" data-select="constraints"><span class="dot"></span>Constraint runtime<span class="count">10</span></button>
+          <button class="tree-item" data-select="representation"><span class="dot"></span>Representations<span class="count">6</span></button>
+          <button class="tree-item" data-select="external"><span class="dot"></span>External systems<span class="count">14</span></button>
+        </div>
+        <div class="tree-group"><div class="tree-label">Languages</div>
+          <button class="tree-item"><span class="dot"></span>Geometry verbs<span class="count">18</span></button>
+          <button class="tree-item"><span class="dot"></span>Site verbs<span class="count">15</span></button>
+          <button class="tree-item"><span class="dot"></span>Assembly verbs<span class="count">16</span></button>
+          <button class="tree-item"><span class="dot"></span>Analysis verbs<span class="count">12</span></button>
+        </div>
+      </div>
+      <div class="legend"><div><span class="sw authority"></span>authoritative</div><div><span class="sw runtime"></span>runtime</div><div><span class="sw agent"></span>agentic</div><div><span class="sw external"></span>external</div></div>
+    </aside>
+
+    <section class="center">
+      <div class="atlas-toolbar">
+        <div class="titleline"><strong>System overview</strong><span>Atlas sheet 01 · authority + execution boundaries</span></div>
+        <div class="tools"><button class="tool active" id="relationshipsToggle">Relationships</button><button class="tool">Evidence</button><button class="tool">Health</button><button class="tool">Diff</button></div>
+      </div>
+
+      <div class="canvas" id="canvas">
+        <div class="canvas-head"><div class="canvas-title">SYSTEM ATLAS · LIVE PROJECTION</div><div class="canvas-note">Arrows show data / authority direction · semantic zoom L1</div></div>
+        <div class="plane-note runtime">Human / interaction runtime</div><div class="plane-note agent">Agent / reasoning runtime</div><div class="plane-note core">Authoritative boundary</div>
+        <svg id="wireLayer" aria-hidden="true"></svg>
+
+        <div class="architecture">
+          <article class="node interaction" data-node="interaction">
+            <span class="role">non-authoritative</span><div class="type">Runtime</div><h3>Interaction Plane</h3>
+            <p>Immediate human interaction and speculative feedback. It can propose operations, but cannot directly own world state.</p>
+            <div class="chips"><span class="chip blue">Interaction Reflex Runtime (IRR)</span><span class="chip blue">Interactive Presentation Surface (IPS)</span></div>
+          </article>
+
+          <article class="node intelligence" data-node="intelligence">
+            <span class="role">non-authoritative</span><div class="type">Agentic</div><h3>Intelligence Plane</h3>
+            <p>Planners, critics and evaluators observe bounded world slices and submit reviewable transaction proposals.</p>
+            <div class="chips"><span class="chip violet">planner</span><span class="chip violet">critic</span><span class="chip violet">evaluator</span><span class="chip">governor</span></div>
+          </article>
+
+          <article class="node authority selected" data-node="authority">
+            <span class="role">source of truth</span><div class="type">Authoritative core</div><h3>World + Authority Plane</h3>
+            <p>Owns canonical identity, state, relations, invariants, events, evidence and the transaction boundary.</p>
+            <div class="authority-band">
+              <div class="mini"><strong>Entity</strong>stable identity + type</div><div class="mini"><strong>State</strong>versioned values</div><div class="mini"><strong>Relation</strong>typed graph edges</div>
+              <div class="mini"><strong>Invariant</strong>must remain true</div><div class="mini"><strong>Event</strong>why state changed</div><div class="mini"><strong>Evidence</strong>why it is trusted</div>
+            </div>
+            <div class="chips"><span class="chip good">transaction safe</span><span class="chip good">event sourced</span><span class="chip warn">kernel spec evolving</span></div>
+          </article>
+
+          <article class="node geometry" data-node="geometry"><div class="type">Spatial execution</div><h3>Geometry Resolver</h3><p>Converts semantic operations into exact / approximate geometry, heals and returns a validated transaction result.</p><div class="chips"><span class="chip">OpenCascade</span><span class="chip">mesh</span><span class="chip">topology map</span></div></article>
+          <article class="node constraints" data-node="constraints"><div class="type">Validation</div><h3>Constraint Runtime</h3><p>Evaluates local and global rules, invariants and admissible ranges before a change can commit.</p><div class="chips"><span class="chip warn">local checks</span><span class="chip">global checks</span><span class="chip">Z3-style logic</span></div></article>
+          <article class="node representation" data-node="representation"><div class="type">Derived</div><h3>Representations</h3><p>Viewports, drawings, schedules and annotations derived from the authoritative world; never a second source of truth.</p><div class="chips"><span class="chip">3D</span><span class="chip">2D</span><span class="chip">documentation</span></div></article>
+          <article class="node external" data-node="external"><div class="type">Boundary</div><h3>External Systems</h3><p>Solvers, regulations, fabrication systems and data sources connected through explicit, typed contracts.</p><div class="chips"><span class="chip good">solver API</span><span class="chip good">evidence import</span><span class="chip">Functional Mock-up Interface (FMI)</span><span class="chip">Universal Scene Description (USD)</span></div></article>
+        </div>
+        <div class="hint">Select a node to isolate its direct relationships · select it again to clear focus</div>
+      </div>
+
+      <div class="slice-strip">
+        <div class="slice hero"><div class="kicker">Vertical slice</div><h4>Terrain → site foundation</h4><p>Interaction → transaction → geometry → evidence → representation.</p><div class="metric-row"><span class="metric">implemented 68%</span><span class="metric">evidence 54%</span><span class="metric">risk medium</span></div><div class="progress"><i style="width:68%"></i></div></div>
+        <div class="slice"><div class="kicker">Slice</div><h4>Wall assembly</h4><p>system → subsystem → component</p><div class="progress"><i style="width:44%"></i></div></div>
+        <div class="slice"><div class="kicker">Slice</div><h4>Annotations</h4><p>stable references through regeneration</p><div class="progress"><i style="width:37%"></i></div></div>
+        <div class="slice"><div class="kicker">Slice</div><h4>Solar mapping</h4><p>analysis → field → surface representation</p><div class="progress"><i style="width:28%"></i></div></div>
+        <div class="slice"><div class="kicker">Slice</div><h4>Multi-agent</h4><p>bounded work → transaction → evidence</p><div class="progress"><i style="width:22%"></i></div></div>
+      </div>
+    </section>
+
+    <aside class="panel right">
+      <div class="panel-head"><div class="eyebrow">Inspector</div><h2>Selected component</h2><p>Purpose, contracts, dependencies and evidence.</p></div>
+      <div class="inspector">
+        <div class="inspector-head"><div><div class="eyebrow" id="detail-type">Authoritative core</div><h2 id="detail-title">World + Authority Plane</h2></div><span class="idtag" id="detail-id">SYS.AUTH.001</span></div>
+        <p id="detail-description">Owns canonical world state and defines the rules by which any operation may become authoritative.</p>
+        <div class="section"><h3>Current state</h3><dl class="kv"><dt>Maturity</dt><dd id="detail-maturity">Specified / partial implementation</dd><dt>Owner</dt><dd id="detail-owner">Kernel + world state</dd><dt>Criticality</dt><dd>Foundational</dd><dt>Revision</dt><dd>Atlas v0.2 preview</dd></dl></div>
+        <div class="section"><h3>Contracts</h3><div class="contract"><strong>submitTransaction()</strong><span>candidate changes → validated commit or rejection</span></div><div class="contract"><strong>readWorldSlice()</strong><span>bounded authoritative state + provenance</span></div><div class="contract"><strong>resolveReference()</strong><span>stable semantic identity across revisions</span></div></div>
+        <div class="section"><h3>Dependencies</h3><div class="chips"><span class="chip">identity</span><span class="chip">events</span><span class="chip">invariants</span><span class="chip">permissions</span><span class="chip">provenance</span></div></div>
+        <div class="section"><h3>Evidence</h3><div class="evidence"><span class="evicon ok">✓</span><span>Transaction rollback contract</span></div><div class="evidence"><span class="evicon ok">✓</span><span>Stable identity test</span></div><div class="evidence"><span class="evicon warn">△</span><span>Cross-agent conflict suite</span></div><div class="evidence"><span class="evicon off">—</span><span>Long-run recovery benchmark</span></div></div>
+        <div class="section"><h3>Reading rule</h3><p>Follow arrowheads to see which subsystem is allowed to propose, validate, return or derive information across the authoritative boundary.</p></div>
+      </div>
+      <div class="footer-action"><button>Open specification</button><button id="focusButton">Focus relationships</button></div>
+    </aside>
+  </main>
+</div>
+
+<script>
+const details={
+  authority:{type:'Authoritative core',title:'World + Authority Plane',id:'SYS.AUTH.001',description:'Owns canonical world state and defines the rules by which any operation may become authoritative.',maturity:'Specified / partial implementation',owner:'Kernel + world state'},
+  interaction:{type:'Runtime',title:'Interaction Plane',id:'SYS.INT.003',description:'Provides immediate speculative feedback for human interaction while keeping authoritative state isolated.',maturity:'Prototype / evolving',owner:'Interaction Reflex Runtime + Interactive Presentation Surface'},
+  intelligence:{type:'Agentic',title:'Intelligence Plane',id:'SYS.AGT.002',description:'Coordinates planners, critics and evaluators that observe bounded world slices and submit transaction proposals.',maturity:'Architecture defined',owner:'Agent fabric'},
+  geometry:{type:'Spatial execution',title:'Geometry Resolver',id:'SYS.GEO.006',description:'Resolves semantic operations into exact and approximate spatial representations and returns validated geometry results.',maturity:'Active implementation',owner:'Geometry resolver'},
+  constraints:{type:'Validation',title:'Constraint Runtime',id:'SYS.CON.007',description:'Checks invariants, rules and admissible ranges before state can commit.',maturity:'Architecture defined',owner:'Constraint runtime'},
+  representation:{type:'Derived',title:'Representations',id:'SYS.REP.004',description:'Produces viewports, drawings, schedules and annotations without becoming the source of truth.',maturity:'Architecture defined',owner:'Representation services'},
+  external:{type:'Boundary',title:'External Systems',id:'SYS.EXT.008',description:'Connects solvers, regulations, fabrication tools and external data through typed, reviewable contracts.',maturity:'Interface planning',owner:'Integration boundary'}
+};
+
+const relations=[
+  {id:'op',from:'interaction',to:'authority',label:'semantic operations',kind:'operation'},
+  {id:'agent',from:'intelligence',to:'authority',label:'proposals + evaluation',kind:'agent'},
+  {id:'geo-out',from:'authority',to:'geometry',label:'resolve operation',kind:'spatial'},
+  {id:'geo-in',from:'geometry',to:'authority',label:'validated geometry',kind:'spatial',bend:-26},
+  {id:'constraints',from:'authority',to:'constraints',label:'validate invariants',kind:'spatial'},
+  {id:'repr',from:'authority',to:'representation',label:'derive projection',kind:'derived'},
+  {id:'external',from:'external',to:'authority',label:'results + evidence',kind:'external'}
+];
+
+const canvas=document.getElementById('canvas');
+const svg=document.getElementById('wireLayer');
+let selected='authority';
+let focused=true;
+let showRelationships=true;
+
+function rectInCanvas(el){
+  const r=el.getBoundingClientRect(), c=canvas.getBoundingClientRect();
+  return {left:r.left-c.left,top:r.top-c.top,width:r.width,height:r.height,right:r.right-c.left,bottom:r.bottom-c.top,cx:r.left-c.left+r.width/2,cy:r.top-c.top+r.height/2};
+}
+function edgePoint(rect,target){
+  const dx=target.x-rect.cx,dy=target.y-rect.cy;
+  const ax=Math.abs(dx)||.001, ay=Math.abs(dy)||.001;
+  const scale=Math.min((rect.width/2)/ax,(rect.height/2)/ay);
+  return {x:rect.cx+dx*scale,y:rect.cy+dy*scale};
+}
+function svgEl(tag,attrs={}){const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,v);return el}
+
+function drawWires(){
+  svg.innerHTML='';
+  const defs=svgEl('defs');
+  ['operation','agent','derived','external','spatial'].forEach(kind=>{
+    const marker=svgEl('marker',{id:`arrow-${kind}`,viewBox:'0 0 10 10',refX:'8',refY:'5',markerWidth:'6',markerHeight:'6',orient:'auto-start-reverse'});
+    marker.appendChild(svgEl('path',{d:'M 0 0 L 10 5 L 0 10 z',class:`wire-${kind}`})); defs.appendChild(marker);
+  }); svg.appendChild(defs);
+  if(!showRelationships) return;
+
+  relations.forEach(rel=>{
+    const fromEl=document.querySelector(`[data-node="${rel.from}"]`),toEl=document.querySelector(`[data-node="${rel.to}"]`); if(!fromEl||!toEl)return;
+    const a=rectInCanvas(fromEl),b=rectInCanvas(toEl);
+    const p1=edgePoint(a,{x:b.cx,y:b.cy}), p2=edgePoint(b,{x:a.cx,y:a.cy});
+    const mx=(p1.x+p2.x)/2,my=(p1.y+p2.y)/2;
+    const dx=p2.x-p1.x,dy=p2.y-p1.y,len=Math.hypot(dx,dy)||1;
+    const nx=-dy/len,ny=dx/len,bend=rel.bend??((rel.id==='geo-out')?18:0);
+    const qx=mx+nx*bend,qy=my+ny*bend;
+    const d=`M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} Q ${qx.toFixed(1)} ${qy.toFixed(1)} ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
+    const isHot=!focused || rel.from===selected || rel.to===selected;
+    const path=svgEl('path',{d,class:`wire-path wire-${rel.kind} ${focused?(isHot?'hot':'faded'):''}`,'marker-end':`url(#arrow-${rel.kind})`,'data-rel':rel.id}); svg.appendChild(path);
+
+    const label=svgEl('g',{class:`wire-label ${focused?(isHot?'hot':'faded'):''}`,'data-rel':rel.id});
+    const tx=qx,ty=qy; const text=svgEl('text',{x:tx,y:ty+2,'text-anchor':'middle'}); text.textContent=rel.label; label.appendChild(text); svg.appendChild(label);
+    const bb=text.getBBox(); const rect=svgEl('rect',{x:bb.x-5,y:bb.y-3,width:bb.width+10,height:bb.height+6}); label.insertBefore(rect,text);
+  });
+}
+
+function applyFocus(){
+  document.querySelectorAll('.node').forEach(n=>{
+    const key=n.dataset.node; const related=relations.some(r=>(r.from===selected&&r.to===key)||(r.to===selected&&r.from===key));
+    n.classList.toggle('selected',key===selected);
+    n.classList.toggle('related',focused&&related);
+    n.classList.toggle('faded',focused&&key!==selected&&!related);
+  });
+  drawWires();
+}
+
+function selectNode(key,forceFocus=true){
+  if(selected===key && focused && !forceFocus){focused=false;} else {selected=key;focused=forceFocus;}
+  document.querySelectorAll('.tree-item[data-select]').forEach(n=>n.classList.toggle('active',n.dataset.select===selected));
+  const d=details[selected]; if(d){
+    document.getElementById('detail-type').textContent=d.type;document.getElementById('detail-title').textContent=d.title;document.getElementById('detail-id').textContent=d.id;document.getElementById('detail-description').textContent=d.description;document.getElementById('detail-maturity').textContent=d.maturity;document.getElementById('detail-owner').textContent=d.owner;
+  }
+  applyFocus();
+}
+
+document.querySelectorAll('.node').forEach(n=>n.addEventListener('click',()=>selectNode(n.dataset.node,false)));
+document.querySelectorAll('.tree-item[data-select]').forEach(n=>n.addEventListener('click',()=>selectNode(n.dataset.select,true)));
+document.getElementById('focusButton').addEventListener('click',()=>{focused=!focused;applyFocus()});
+document.getElementById('relationshipsToggle').addEventListener('click',e=>{showRelationships=!showRelationships;e.currentTarget.classList.toggle('active',showRelationships);drawWires()});
+document.querySelectorAll('.view-tabs button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.view-tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}));
+document.querySelectorAll('.tool:not(#relationshipsToggle)').forEach(btn=>btn.addEventListener('click',()=>btn.classList.toggle('active')));
+
+const root=document.documentElement,themeToggle=document.getElementById('themeToggle'),themeLabel=document.getElementById('themeLabel');
+function setTheme(theme){root.dataset.theme=theme;themeLabel.textContent=theme==='dark'?'Light':'Dark';localStorage.setItem('plasma-atlas-theme',theme);requestAnimationFrame(drawWires)}
+const saved=localStorage.getItem('plasma-atlas-theme');
+setTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
+themeToggle.addEventListener('click',()=>setTheme(root.dataset.theme==='dark'?'light':'dark'));
+
+const ro=new ResizeObserver(()=>requestAnimationFrame(drawWires));ro.observe(canvas);
+window.addEventListener('resize',()=>requestAnimationFrame(drawWires));
+requestAnimationFrame(()=>{applyFocus();drawWires()});
+</script>
+</body>
+</html>
