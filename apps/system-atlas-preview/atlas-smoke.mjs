@@ -38,7 +38,8 @@ try{
   await page.click('[data-atlas-id="clothing-fabrication"]');
   await page.waitForFunction(()=>location.hash.includes('slices/clothing-fabrication'));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Stress points'));
-  assert((await page.locator('#inspector').innerText()).includes('Success criteria'),'Expanded slice detail did not render in inspector');
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Success criteria'));
+  assert((await page.locator('#inspector h4').filter({hasText:'Success criteria'}).count())===1,'Expanded slice detail did not render in inspector');
 
   await page.click('.view-tab[data-view="overview"]');
   await page.waitForSelector('.overview-graph',{state:'visible'});
