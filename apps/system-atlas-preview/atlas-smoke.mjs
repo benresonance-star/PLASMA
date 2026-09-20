@@ -42,12 +42,33 @@ try{
   assert(headerStyle.transform==='none','Integration matrix header must not be rotated');
   assert(headerStyle.writingMode==='vertical-rl','Integration matrix header should remain vertical top-to-bottom');
   assert((await page.locator('.maturity-card[data-atlas-id="planning"]').count())===1,'Planning language is not a first-class maturity node');
+  const windowGeometryCell=page.locator('.matrix-cell[data-atlas-type="integrationLink"][title*="Window + door"][title*="Geometry"]').first();
+  assert(await windowGeometryCell.isVisible(),'Window/door → Geometry evidence-linked cell is missing');
+  assert((await windowGeometryCell.innerText()).includes('0/2'),'Window/door → Geometry should show derived 0/2 required evidence');
+  await windowGeometryCell.click();
+  await page.waitForFunction(()=>location.hash.startsWith('#integration/link/'));
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Required evidence'));
+  const linkInspector=(await page.locator('#inspector').textContent())||'';
+  assert(linkInspector.includes('Window integration: resize hosted window'),'Integration relationship inspector is missing slice evidence');
+  assert(linkInspector.includes('Geometry candidate isolation'),'Integration relationship inspector is missing geometry boundary evidence');
+  assert(linkInspector.includes('Unlinked · 0/2'),'Integration relationship inspector did not derive unlinked 0/2 coverage');
   await page.click('.matrix-row-head[data-atlas-id="geometry"]');
   await page.waitForFunction(()=>location.hash.includes('integration/component/geometry'));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Geometry Resolver'));
   const integrationInspectorText=(await page.locator('#inspector').textContent())||'';
   assert(integrationInspectorText.includes('Integration graph'),'Reverse integration graph is missing from inspector');
   assert(integrationInspectorText.includes('Window + door system'),'Geometry reverse navigation does not expose the window/door slice');
+
+  await page.goto(base+'#evidence/ev-slice-window-resize',{waitUntil:'networkidle'});
+  await page.waitForFunction(()=>Boolean(window.__PLASMA_ATLAS__));
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Used by Integration relationships'));
+  const evidenceInspector=(await page.locator('#inspector').textContent())||'';
+  assert(evidenceInspector.includes('Window + door system → Geometry Resolver'),'Evidence reverse navigation does not expose Window/Door → Geometry');
+  const reverseLink=page.locator('#inspector [data-atlas-type="integrationLink"]').filter({hasText:'Geometry Resolver'}).first();
+  assert(await reverseLink.isVisible(),'Reverse Integration relationship button is missing');
+  await reverseLink.click();
+  await page.waitForFunction(()=>location.hash.startsWith('#integration/link/'));
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Required evidence'));
 
   await page.click('.view-tab[data-view="slices"]');
   await page.waitForSelector('.slice-catalogue',{state:'visible'});
