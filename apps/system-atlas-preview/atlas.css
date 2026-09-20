@@ -95,6 +95,15 @@ a{color:inherit}
 /* Integration */
 .integration-stage{min-width:1320px}
 .integration-summary{background:color-mix(in srgb,var(--panel) 97%,transparent)}
+.repository-evidence-summary{background:linear-gradient(180deg,color-mix(in srgb,var(--accent-soft) 32%,var(--panel)),var(--panel))}
+.repository-status-grid{display:grid;grid-template-columns:1.7fr repeat(5,1fr);gap:7px}
+.repository-status-card{min-height:82px;border:1px solid var(--line);border-radius:9px;background:var(--panel-strong);padding:9px;display:flex;flex-direction:column;gap:4px}
+.repository-status-card>span{font-size:6.3px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint);font-weight:800}.repository-status-card>b{font-size:18px;line-height:1;color:var(--ink)}.repository-status-card>small{font-size:6.2px;line-height:1.35;color:var(--muted)}
+.repository-status-card.verified>b{color:var(--green)}.repository-status-card.stale>b,.repository-status-card.linked>b{color:var(--amber)}.repository-status-card.failed>b{color:var(--red)}.repository-status-card.unlinked>b{color:var(--faint)}.repository-status-card.repository-head>b{font-size:10px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.repository-status-note{margin:8px 0 0;font-size:6.6px;line-height:1.45;color:var(--muted)}
+.repository-binding h5{margin:10px 0 5px;font-size:6px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}
+.binding-paths{display:grid;gap:4px}.binding-paths>div{display:grid;grid-template-columns:80px 1fr;gap:6px;border:1px solid var(--line);border-radius:6px;background:var(--panel-strong);padding:6px}.binding-paths span{font-size:5.8px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}.binding-paths b{font-size:6.2px;line-height:1.35;word-break:break-word}
+.evidence-warning{border-left:2px solid var(--amber);padding-left:7px;color:var(--amber)!important}.repo-run-link{display:inline-flex;margin-top:6px;font-size:6.4px;font-weight:800;color:var(--accent-strong);text-decoration:none}.repo-run-link:hover{text-decoration:underline}
 .integration-insights{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
 .integration-insights article{min-height:118px;border:1px solid var(--line);border-radius:9px;background:var(--panel-strong);padding:9px}
 .integration-insights article>b{display:block;font-size:20px;line-height:1;color:var(--ink)}
@@ -183,7 +192,7 @@ body.help-mode [data-atlas-type][data-atlas-id]{cursor:help!important}body.help-
   body.nav-open .left-panel{display:flex}body.inspector-open .right-panel{display:flex}
   .view-stage{padding:13px}.view-intro h2{font-size:15px}.view-intro p{font-size:8px}.principle{font-size:7px}
   .slice-checks{grid-template-columns:repeat(3,1fr)}.slice-flow>span{min-width:132px}
-  .integration-insights{grid-template-columns:1fr 1fr}.maturity-grid{grid-template-columns:repeat(3,1fr)}
+  .integration-insights{grid-template-columns:1fr 1fr}.maturity-grid{grid-template-columns:repeat(3,1fr)}.repository-status-grid{grid-template-columns:1fr 1fr}.repository-status-card.repository-head{grid-column:1 / -1}
   .help-panel{top:auto;bottom:calc(58px + env(safe-area-inset-bottom));right:8px;width:calc(100vw - 16px);max-height:48vh}
   .zoom-controls{right:8px;bottom:calc(8px + env(safe-area-inset-bottom))}
 }
