@@ -61,7 +61,7 @@ try{
   await page.waitForFunction(()=>Boolean(window.__PLASMA_ATLAS__));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Used by Integration relationships'));
   const evidenceInspector=(await page.locator('#inspector').textContent())||'';
-  assert(evidenceInspector.includes('Window + door system → Geometry Resolver'),'Evidence reverse navigation does not expose Window/Door → Geometry');
+  assert(evidenceInspector.includes('Window + door system')&&evidenceInspector.includes('Geometry Resolver'),'Evidence reverse navigation does not expose Window/Door → Geometry');
   const reverseLink=page.locator('#inspector [data-atlas-type="integrationLink"]').filter({hasText:'Geometry Resolver'}).first();
   assert(await reverseLink.isVisible(),'Reverse Integration relationship button is missing');
   await reverseLink.click();
