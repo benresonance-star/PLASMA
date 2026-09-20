@@ -1,5 +1,5 @@
-const CACHE_KEY='plasma-atlas-live-evidence-v1';
-const CACHE_MS=120000;
+const CACHE_KEY='plasma-atlas-live-evidence-v2';
+const CACHE_MS=30000;
 
 function globToRegExp(glob){
   const value=String(glob);
@@ -49,7 +49,7 @@ function observationFromRun({binding,run,job,step,headSha,stale=false,statusOver
     else if(step.status!=='completed') status=stale?'stale':'linked';
     else if(install&&install.conclusion!=='success') status=stale?'stale':'linked';
     else if(step.conclusion==='success') status=stale?'stale':'verified';
-    else if(step.conclusion==='failure') status='failed';
+    else if(step.conclusion==='failure') status=stale?'stale':'failed';
     else status=stale?'stale':'linked';
   }
   return {
@@ -130,7 +130,9 @@ export async function loadRepositoryEvidenceStatus(bindingsDoc){
         const job=findJob(jobsByRun.get(run.id),binding.ci.job);
         const step=findStep(job,binding.ci.step);
         const install=findStep(job,'Install');
-        if(step?.conclusion==='success'&&(!install||install.conclusion==='success')){ previous={run,job,step}; break; }
+        const terminalObservation=step?.status==='completed'&&(step.conclusion==='success'||step.conclusion==='failure');
+        const infrastructureReady=!install||install.conclusion==='success';
+        if(terminalObservation&&infrastructureReady){ previous={run,job,step}; break; }
       }
 
       if(!previous){
