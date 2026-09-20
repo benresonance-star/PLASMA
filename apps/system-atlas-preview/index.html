@@ -52,7 +52,7 @@
   /* Top bar */
   .topbar{
     display:grid;grid-template-columns:300px 1fr 390px;align-items:center;gap:16px;
-    padding:0 16px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 94%, transparent);
+    padding:0 60px 0 16px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 94%, transparent);
     backdrop-filter:blur(16px);z-index:20;
   }
   .brand{display:flex;align-items:center;gap:12px;min-width:0}
@@ -162,6 +162,31 @@
 
   /* Inspector */
   .inspector{padding:13px;overflow:auto}.inspector-head{display:flex;justify-content:space-between;gap:9px;align-items:flex-start}.inspector h2{font-size:15px;margin:4px 0}.idtag{font-size:7.5px;color:var(--muted);background:var(--authority-soft);border:1px solid var(--line);padding:4px 6px;border-radius:6px}.inspector p{font-size:9.5px;line-height:1.5;color:var(--muted)}.section{margin-top:14px;padding-top:11px;border-top:1px solid var(--line)}.section h3{margin:0 0 8px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}.kv{display:grid;grid-template-columns:86px 1fr;gap:7px 8px;font-size:8.5px;line-height:1.35}.kv dt{color:var(--faint)}.kv dd{margin:0;color:var(--ink);font-weight:680}.contract{border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;background:var(--panel-strong)}.contract strong{display:block;font-size:8.5px;margin-bottom:3px}.contract span{font-size:7.7px;color:var(--muted)}.evidence{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--line);font-size:8.5px}.evidence:last-child{border-bottom:0}.evicon{width:17px;height:17px;display:grid;place-items:center;border-radius:50%;font-size:8px;font-weight:900}.evicon.ok{background:var(--green-soft);color:var(--green)}.evicon.warn{background:var(--amber-soft);color:var(--amber)}.evicon.off{background:var(--authority-soft);color:var(--faint)}.footer-action{margin-top:auto;border-top:1px solid var(--line);padding:9px;display:flex;gap:6px;background:var(--panel)}.footer-action button{flex:1;border:1px solid var(--line);background:var(--panel-strong);border-radius:8px;padding:8px;font-size:8px;font-weight:800;color:var(--muted)}
+
+  /* Contextual voice help */
+  .help-launcher{position:fixed;right:14px;top:11px;z-index:1200;width:36px;height:36px;border:1px solid var(--line-strong);border-radius:50%;background:color-mix(in srgb,var(--panel-strong) 96%,transparent);color:var(--ink);box-shadow:var(--shadow-soft);font-size:17px;font-weight:900;display:grid;place-items:center;backdrop-filter:blur(12px)}
+  .help-launcher:hover{border-color:var(--accent);color:var(--accent-strong)}
+  .help-launcher.active{background:var(--accent);color:white;border-color:var(--accent-strong);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent),var(--shadow)}
+  .help-launcher.speaking:after{content:"";position:absolute;inset:-5px;border:2px solid var(--accent);border-radius:50%;animation:helpPulse 1.25s ease-out infinite}
+  @keyframes helpPulse{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.25);opacity:0}}
+  .help-banner{display:none;position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:1190;max-width:min(560px,calc(100vw - 120px));padding:8px 12px;border:1px solid color-mix(in srgb,var(--accent) 42%,var(--line));border-radius:999px;background:color-mix(in srgb,var(--panel-strong) 96%,transparent);box-shadow:var(--shadow-soft);backdrop-filter:blur(12px);font-size:10px;font-weight:760;color:var(--muted);pointer-events:none}
+  body.help-mode .help-banner{display:block}
+  .help-panel{display:none;position:fixed;right:14px;top:58px;z-index:1210;width:min(370px,calc(100vw - 28px));max-height:min(520px,60vh);overflow:auto;border:1px solid var(--line-strong);border-radius:14px;background:color-mix(in srgb,var(--panel-strong) 98%,transparent);box-shadow:var(--shadow);backdrop-filter:blur(18px)}
+  .help-panel.open{display:block}
+  .help-panel-head{display:flex;align-items:flex-start;gap:10px;padding:13px 13px 9px;border-bottom:1px solid var(--line)}
+  .help-orb{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--accent-soft);color:var(--accent-strong);font-size:12px;font-weight:900}
+  .help-panel-head .copy{min-width:0;flex:1}.help-panel-head .eyebrow{margin-bottom:3px}.help-panel-head h3{margin:0;font-size:13px}
+  .help-close{width:28px;height:28px;border:1px solid var(--line);background:var(--panel);border-radius:7px;font-weight:900;color:var(--muted)}
+  .help-body{padding:12px 13px}.help-body p{margin:0;color:var(--muted);font-size:10.5px;line-height:1.55}
+  .help-status{margin-top:9px;font-size:8px;color:var(--faint);display:flex;align-items:center;gap:6px}.help-status i{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block}
+  .help-actions{display:flex;gap:6px;padding:0 13px 13px}.help-actions button{flex:1;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px;font-size:9px;font-weight:800;color:var(--muted)}.help-actions button:first-child{border-color:color-mix(in srgb,var(--accent) 38%,var(--line));color:var(--accent-strong)}
+  body.help-mode .node,body.help-mode [data-language-card],body.help-mode [data-core-card],body.help-mode .slice,body.help-mode .life-stage,body.help-mode .anatomy-card,body.help-mode .levels-card,body.help-mode .dependency-loop,body.help-mode .interaction-rule,body.help-mode .example-card,body.help-mode .language-band,body.help-mode .panel-head,body.help-mode .atlas-toolbar{cursor:help}
+  body.help-mode .node:hover,body.help-mode [data-language-card]:hover,body.help-mode [data-core-card]:hover,body.help-mode .slice:hover,body.help-mode .life-stage:hover,body.help-mode .anatomy-card:hover,body.help-mode .levels-card:hover,body.help-mode .dependency-loop:hover,body.help-mode .interaction-rule:hover,body.help-mode .example-card:hover,body.help-mode .language-band:hover,body.help-mode .panel-head:hover,body.help-mode .atlas-toolbar:hover{outline:2px solid var(--accent);outline-offset:2px}
+  @media(max-width:700px){
+    .help-launcher{right:10px;top:10px}
+    .help-banner{top:55px;max-width:calc(100vw - 20px);white-space:normal;text-align:center;border-radius:10px}
+    .help-panel{right:10px;top:auto;bottom:calc(82px + env(safe-area-inset-bottom));width:calc(100vw - 20px);max-height:46vh}
+  }
 
   .viewport-controls{position:fixed;right:14px;bottom:16px;z-index:1000;display:flex;align-items:center;gap:4px;padding:5px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--panel-strong) 94%,transparent);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
   .viewport-controls button{min-width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-size:12px;font-weight:850}
@@ -440,6 +465,23 @@
     </aside>
   </main>
 </div>
+<button class="help-launcher help-ui" id="helpLauncher" type="button" aria-label="Voice help" aria-pressed="false" title="Voice help">?</button>
+<div class="help-banner help-ui" id="helpBanner">Voice help is on · tap an Atlas component to hear what it does</div>
+<aside class="help-panel help-ui" id="helpPanel" aria-live="polite">
+  <div class="help-panel-head">
+    <div class="help-orb">AI</div>
+    <div class="copy"><div class="eyebrow">Contextual voice help</div><h3 id="helpTitle">Select a component</h3></div>
+    <button class="help-close" id="helpClose" type="button" aria-label="Close help">×</button>
+  </div>
+  <div class="help-body">
+    <p id="helpText">Activate help, then select a system, language, lifecycle stage or vertical slice.</p>
+    <div class="help-status"><i></i><span id="helpStatus">Ready</span></div>
+  </div>
+  <div class="help-actions">
+    <button id="helpReplay" type="button">Replay voice</button>
+    <button id="helpStop" type="button">Stop</button>
+  </div>
+</aside>
 <div class="viewport-controls" aria-label="Atlas zoom controls">
   <button id="zoomOut" aria-label="Zoom out">−</button>
   <button id="zoomReset" class="zoom-value" aria-label="Reset zoom"><span id="zoomLabel">100%</span></button>
@@ -605,6 +647,153 @@ document.querySelectorAll('[data-language-card]').forEach(card=>card.addEventLis
 document.querySelectorAll('[data-core-card]').forEach(card=>card.addEventListener('click',()=>{
   const nav=document.querySelector(`.tree-item[data-core-language="${card.dataset.coreCard}"]`);if(nav)nav.click();
 }));
+
+const helpNarratives={
+  authority:{title:'World and Authority Plane',text:'This is Plasma’s source of truth. It owns stable identity, canonical state, relations, invariants, revisions and provenance. Every human, agent, solver and geometry engine may propose changes, but none can directly mutate this world. A change becomes real only after it passes the transaction and validation boundary.'},
+  interaction:{title:'Interaction Plane',text:'This is the low-latency layer between the human and Plasma. It provides immediate selection, handles, snapping and speculative previews so interaction feels fluid. Its feedback is intentionally non-authoritative: it proposes semantic operations, then waits for the authoritative world to accept or reject them.'},
+  intelligence:{title:'Intelligence Plane',text:'This is where planners, critics, evaluators and other agents reason about bounded slices of the world. Agents may suggest operations, compare alternatives and request analysis, but they do not own canonical state. Their output crosses the same transaction boundary as a human action.'},
+  geometry:{title:'Geometry Resolver',text:'The Geometry Resolver converts semantic spatial intent into actual geometry. It chooses an execution strategy, binds semantic references, applies tolerances, creates exact or approximate geometry, validates and heals it, then returns a candidate result. Geometry only becomes authoritative after the world transaction accepts it.'},
+  constraints:{title:'Constraint Runtime',text:'The Constraint Runtime asks whether a proposed world state is allowed. It checks local rules, global invariants, admissible ranges and cross-domain constraints. A failed constraint produces evidence for rejection or repair; it should never leave the world partially changed.'},
+  representation:{title:'Representations',text:'Representations are views of the world rather than competing sources of truth. Three-dimensional viewports, drawings, schedules and annotations are derived from authoritative entities. When their inputs change they can be marked stale and regenerated without rewriting the meaning of the world.'},
+  external:{title:'External Systems',text:'This boundary connects Plasma to solvers, regulations, fabrication systems and outside data. External tools return measurements, claims, candidate patches or evidence. They never receive direct authority to change the world, which keeps integrations replaceable and auditable.'},
+
+  language_site:{title:'Site Language',text:'The Site Language expresses intent about parcels, terrain, easements, trees, grading, drainage and planning constraints. It separates domain meaning from the particular terrain or planning engine. Site operations ultimately compile to shared semantic operations against stable world references.'},
+  language_geometry:{title:'Geometry Language',text:'The Geometry Language is Plasma’s engine-neutral vocabulary for spatial change. Verbs such as offset, split, trim and transform describe intent without embedding OpenCascade or another kernel into the language. The Geometry Resolver decides how to execute them.'},
+  language_assembly:{title:'Assembly Language',text:'The Assembly Language describes how systems, subsystems, components, interfaces and connectors are composed. It lets a wall, façade or product behave as a nested system without adding a unique spatial verb for every construction detail.'},
+  language_analysis:{title:'Analysis Language',text:'The Analysis Language asks questions of the world. It can sample, solve, map and compare results. Analysis normally returns measurements, fields, claims and evidence rather than silently changing geometry. A separate operation can use that evidence to propose a design change.'},
+
+  core_query:{title:'Query and Selection Language',text:'This cross-cutting language identifies exactly what an operation is talking about. It can bind entities by stable identity, semantic role, topology, relation, region or predicate. Reliable selection is what lets higher-level languages survive regeneration and changing geometry.'},
+  core_change:{title:'Change and Operation Language',text:'This language represents a proposed change as a typed operation. It records target references, intent, parameters and preconditions. The important rule is that an operation is a proposal, not a mutation; the authoritative transaction system decides whether it becomes real.'},
+  core_constraint:{title:'Constraint Language',text:'This language describes permitted and forbidden states independently of a particular solver. It covers invariants, ranges, logical conditions and domain rules so that geometry, assemblies, analyses and agents can all be judged against consistent requirements.'},
+  core_measurement:{title:'Measurement Language',text:'The Measurement Language describes observations and derived values together with units, method, resolution and uncertainty. A number without its measurement context is not enough for Plasma to treat it as dependable technical evidence.'},
+  core_evidence:{title:'Evidence and Claim Language',text:'This language records what is being claimed, why it should be believed, where it came from, how confident it is and which earlier evidence it depends on. It is the bridge between computation and trust.'},
+  core_representation:{title:'Representation Language',text:'This language asks Plasma to express authoritative state as a viewport, drawing, schedule, field, report or another projection. The representation can be replaced or regenerated without becoming a second canonical model.'},
+  core_history:{title:'History and Revision Language',text:'This language makes change inspectable through time. It can query revisions, diffs, branches, committed operations and provenance, allowing Plasma to explain not only what the world is now, but how and why it became that way.'},
+
+  atlas_index:{title:'Atlas Index',text:'The Atlas Index is the navigation map for Plasma’s architecture. It groups authoritative planes, execution systems and languages so you can move from a high-level system boundary to the smaller contracts beneath it.'},
+  inspector:{title:'Inspector',text:'The Inspector explains the currently selected component. It surfaces purpose, maturity, ownership, contracts, dependencies and supporting evidence. Over time this should be generated from the same machine-readable Atlas data rather than maintained as separate documentation.'},
+  toolbar:{title:'Atlas View Controls',text:'These controls change how the same architecture is projected. Relationships expose causal connections; evidence can show why claims are trusted; health can expose implementation status; and diff can compare revisions of the architecture without changing the underlying Atlas model.'},
+  lifecycle:{title:'Authoritative Operation Lifecycle',text:'This lifecycle is Plasma’s commit loop. A semantic operation reads a bounded world slice, executes outside the source of truth, returns a candidate result, passes validation and then crosses an atomic transaction gate. Only after commit does Plasma create a new revision and invalidate affected dependencies.'},
+  language_contract:{title:'Machine-readable Language Contract',text:'A language contract makes vocabulary executable and testable. It defines identity and version, types, references, verbs, parameters, units, preconditions, invariants, result types, evidence requirements and conformance tests.'},
+  operation_levels:{title:'Operation Levels',text:'Plasma distinguishes primitive, compound and workflow operations. Primitive verbs are small and stable. Compound verbs compose primitives into domain actions. Workflows orchestrate many operations and evaluations. Keeping these levels separate prevents the core language from exploding as capabilities grow.'},
+  dependency_loop:{title:'Dependency Invalidation Loop',text:'After an authoritative commit, Plasma follows actual dependency edges to determine which derived results may no longer be trusted. Those results become stale first; recomputation is scheduled only when useful. Invalidation and recomputation are deliberately separate.'},
+  interaction_rule:{title:'Cross-language Interaction Rule',text:'Domain languages do not invoke one another directly. They affect shared authoritative world state through typed operations. The dependency graph then reveals which other capabilities have become relevant or stale, keeping the languages loosely coupled.'}
+};
+
+const sliceNarratives={
+  'Terrain → site foundation':'This vertical slice tests whether Plasma can carry a site action all the way from interaction through a transaction, geometry, evidence and representation. It is useful because it exercises multiple architectural boundaries with one real capability.',
+  'Wall assembly':'This slice tests nested systems, subsystems and components, including interfaces, openings and connections. It is a proving ground for composition without creating a large special-purpose verb vocabulary.',
+  'Annotations':'This slice tests whether dimensions, notes, callouts and markups can remain attached to semantic meaning while geometry regenerates and identifiers evolve.',
+  'Solar mapping':'This slice tests the analysis pathway: geometry and world state are sampled, a solar field is calculated, evidence is retained and the result is projected back onto surfaces without becoming canonical geometry.',
+  'Multi-agent':'This slice tests bounded parallel work. Agents read limited world slices, propose transactions and return evidence while the authority layer prevents conflicting or unsafe edits from corrupting canonical state.'
+};
+
+const helpLauncher=document.getElementById('helpLauncher');
+const helpPanel=document.getElementById('helpPanel');
+const helpTitle=document.getElementById('helpTitle');
+const helpText=document.getElementById('helpText');
+const helpStatus=document.getElementById('helpStatus');
+const helpReplay=document.getElementById('helpReplay');
+const helpStop=document.getElementById('helpStop');
+const helpClose=document.getElementById('helpClose');
+let helpMode=false;
+let activeHelp=null;
+let helpVoices=[];
+
+function loadHelpVoices(){if('speechSynthesis' in window)helpVoices=window.speechSynthesis.getVoices()||[]}
+loadHelpVoices();
+if('speechSynthesis' in window)window.speechSynthesis.addEventListener?.('voiceschanged',loadHelpVoices);
+
+function preferredHelpVoice(){
+  return helpVoices.find(v=>/^en-AU$/i.test(v.lang)&&/siri|enhanced|premium|natural|karen|matilda|catherine|gordon/i.test(v.name))
+    || helpVoices.find(v=>/^en-AU$/i.test(v.lang))
+    || helpVoices.find(v=>/^en-(GB|US)$/i.test(v.lang)&&/enhanced|premium|natural/i.test(v.name))
+    || helpVoices.find(v=>/^en/i.test(v.lang))
+    || null;
+}
+function stopHelpVoice(){
+  if('speechSynthesis' in window)window.speechSynthesis.cancel();
+  helpLauncher.classList.remove('speaking');
+  helpStatus.textContent='Ready';
+}
+function speakHelp(info){
+  if(!info)return;
+  activeHelp=info;
+  helpTitle.textContent=info.title;
+  helpText.textContent=info.text;
+  helpPanel.classList.add('open');
+  if(!('speechSynthesis' in window)){
+    helpStatus.textContent='Voice is not available in this browser';
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance=new SpeechSynthesisUtterance(info.title+'. '+info.text);
+  const voice=preferredHelpVoice();
+  if(voice){utterance.voice=voice;utterance.lang=voice.lang}else{utterance.lang='en-AU'}
+  utterance.rate=.96;utterance.pitch=1;
+  utterance.onstart=()=>{helpLauncher.classList.add('speaking');helpStatus.textContent='Speaking · tap another component at any time'};
+  utterance.onend=()=>{helpLauncher.classList.remove('speaking');helpStatus.textContent='Ready'};
+  utterance.onerror=()=>{helpLauncher.classList.remove('speaking');helpStatus.textContent='Voice playback was interrupted'};
+  window.speechSynthesis.speak(utterance);
+}
+function setHelpMode(on){
+  helpMode=Boolean(on);
+  document.body.classList.toggle('help-mode',helpMode);
+  helpLauncher.classList.toggle('active',helpMode);
+  helpLauncher.setAttribute('aria-pressed',String(helpMode));
+  helpLauncher.textContent=helpMode?'×':'?';
+  if(!helpMode){stopHelpVoice();helpPanel.classList.remove('open')}
+}
+function helpInfoFor(target){
+  if(!target)return null;
+  if(target.matches('.node[data-node]'))return helpNarratives[target.dataset.node]||null;
+  if(target.matches('[data-language-card]'))return helpNarratives['language_'+target.dataset.languageCard]||null;
+  if(target.matches('[data-core-card]'))return helpNarratives['core_'+target.dataset.coreCard]||null;
+  if(target.matches('.slice')){
+    const title=target.querySelector('h4')?.textContent?.trim();
+    return title?{title,text:sliceNarratives[title]||target.querySelector('p')?.textContent?.trim()||'This is a vertical slice used to test an end-to-end Plasma capability.'}:null;
+  }
+  if(target.matches('.life-stage')){
+    const title=target.querySelector('h4')?.textContent?.trim()||'Operation lifecycle stage';
+    const text=target.querySelector('p')?.textContent?.trim()||'This is one stage in the authoritative operation lifecycle.';
+    return {title,text:'This is stage '+(target.querySelector('.step')?.textContent||'')+' of the commit loop. '+text};
+  }
+  if(target.matches('.anatomy-card'))return helpNarratives.language_contract;
+  if(target.matches('.levels-card'))return helpNarratives.operation_levels;
+  if(target.matches('.dependency-loop'))return helpNarratives.dependency_loop;
+  if(target.matches('.interaction-rule'))return helpNarratives.interaction_rule;
+  if(target.matches('.example-card')){
+    const title=target.querySelector('h4')?.textContent?.trim()||'Worked language interaction';
+    return {title,text:'This example shows cross-domain causality without direct language-to-language calls. The first operation changes authoritative world state, dependency invalidation identifies what became stale, and only the relevant downstream evaluator or language runs next.'};
+  }
+  if(target.matches('.language-band')){
+    const title=target.querySelector('.band-head h3')?.textContent?.trim()||'Language architecture band';
+    const text=target.querySelector('.band-head p')?.textContent?.trim()||'This band groups related parts of the Plasma language architecture.';
+    if(/Authoritative operation lifecycle/i.test(title))return helpNarratives.lifecycle;
+    return {title,text};
+  }
+  if(target.matches('.left .panel-head'))return helpNarratives.atlas_index;
+  if(target.matches('.right .panel-head'))return helpNarratives.inspector;
+  if(target.matches('.atlas-toolbar'))return helpNarratives.toolbar;
+  return null;
+}
+const helpTargetSelector='.node[data-node],[data-language-card],[data-core-card],.slice,.life-stage,.anatomy-card,.levels-card,.dependency-loop,.interaction-rule,.example-card,.language-band,.left .panel-head,.right .panel-head,.atlas-toolbar';
+
+helpLauncher.addEventListener('click',()=>setHelpMode(!helpMode));
+helpClose.addEventListener('click',()=>{stopHelpVoice();helpPanel.classList.remove('open')});
+helpReplay.addEventListener('click',()=>speakHelp(activeHelp));
+helpStop.addEventListener('click',stopHelpVoice);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&helpMode)setHelpMode(false)});
+document.addEventListener('click',e=>{
+  if(!helpMode||e.target.closest('.help-ui,.viewport-controls'))return;
+  const target=e.target.closest(helpTargetSelector);
+  if(!target)return;
+  const info=helpInfoFor(target);
+  if(!info)return;
+  e.preventDefault();
+  e.stopPropagation();
+  speakHelp(info);
+},true);
 
 const root=document.documentElement,themeToggle=document.getElementById('themeToggle'),themeLabel=document.getElementById('themeLabel');
 function setTheme(theme){root.dataset.theme=theme;themeLabel.textContent=theme==='dark'?'Light':'Dark';localStorage.setItem('plasma-atlas-theme',theme);requestAnimationFrame(drawWires)}
