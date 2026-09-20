@@ -1,7 +1,7 @@
 {
   "meta": {
     "id": "PLASMA.SYSTEM_ATLAS",
-    "version": "0.6.0",
+    "version": "0.7.0",
     "title": "Plasma System Atlas",
     "status": "foundation-evolving",
     "description": "A machine-readable architecture model projected into multiple interactive Atlas views.",
@@ -14,7 +14,8 @@
       "Every Atlas view is a projection of one typed integration graph.",
       "Architecture coverage and implementation evidence are tracked separately.",
       "Integration evidence state is derived from referenced evidence records, never authored independently.",
-      "Repository evidence is bound to source paths and stable test identifiers; CI observations for main determine live verification, failure and staleness."
+      "Repository evidence is bound to source paths and stable test identifiers; CI observations for main determine live verification, failure and staleness.",
+      "Evidence proves specific implementation claims, not general architectural completeness; required evidence gates a relationship, while supporting evidence corroborates it without gating."
     ]
   },
   "views": [
@@ -2675,7 +2676,15 @@
         "label": "Failed",
         "description": "At least one required evidence item currently disproves the relationship claim."
       }
-    ]
+    ],
+    "evidenceSemantics": {
+      "definition": "Evidence is a traceable observation that a named implementation claim holds for a specific repository state. It is not an opinion, completion percentage, or proof of the whole system.",
+      "scope": "Each evidence record proves only its stated claim and acceptance criteria. A passing item must not be interpreted as proving unrelated behavior.",
+      "required": "Required evidence is part of the relationship's verification contract. Failed required evidence makes the relationship Failed; stale required evidence makes it Stale; all required evidence must satisfy the evidence policy before the relationship can be Verified.",
+      "supporting": "Supporting evidence independently corroborates adjacent properties, downstream behavior, or stress conditions relevant to the relationship. It is shown with its own live status, but it does not change the relationship's aggregate verification state.",
+      "repositoryBacked": "Repository-backed evidence identifies source paths, stable test identifiers, the exact tested commit and continuous-integration run. If relevant bound inputs change without re-verification, previously valid evidence becomes Stale.",
+      "unlinked": "Unlinked means the claim or evidence requirement exists in the Atlas but there is not yet an applicable executable repository observation proving it."
+    }
   },
   "links": [
     {
@@ -4270,6 +4279,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent-originated changes cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative user interaction cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves authority behavior when overlapping proposals compete."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency and recovery under long-running concurrent operation."
         }
       ]
     },
@@ -4298,6 +4327,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agents must enter through the governed transaction boundary."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction requires an explicit transaction before becoming canonical."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction conflict, stale-candidate, rebase and retry behavior."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction recovery and consistency over long-running operation."
         }
       ]
     },
@@ -4326,6 +4375,16 @@
         {
           "id": "ev-stable-identity",
           "requirement": "required"
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that downstream derived outputs remain revision-aware when references cross revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves reference continuity and recovery behavior during long-running concurrent operation."
         }
       ]
     },
@@ -4354,6 +4413,21 @@
         {
           "id": "ev-geometry-candidate-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates semantic/topological continuity across geometry regeneration."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry candidates are judged through typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry changes correctly invalidate dependent representations."
         }
       ]
     },
@@ -4382,6 +4456,16 @@
         {
           "id": "ev-validation-pipeline",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected constraint outcomes cannot partially mutate canonical state."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that constraints operate on candidate geometry rather than hidden direct mutations."
         }
       ]
     },
@@ -4406,6 +4490,21 @@
         {
           "id": "ev-slice-terrain-site",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis/solver outputs return evidence or proposals rather than direct authoritative writes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis results expose revision dependence and become stale after relevant changes."
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis claims remain attached to traceable semantic subjects across revisions."
         }
       ]
     },
@@ -4430,6 +4529,21 @@
         {
           "id": "ev-slice-terrain-site",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates provenance boundaries for evidence imported from external tools."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates typed findings and explicit validation outcomes rather than implicit truth claims."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that derived evidence exposes the revision on which it depends."
         }
       ]
     },
@@ -4458,6 +4572,16 @@
         {
           "id": "ev-representation-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that representations remain bound to traceable semantic references."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that representations derive from accepted geometry rather than silently owning canonical geometry."
         }
       ]
     },
@@ -4486,6 +4610,21 @@
         {
           "id": "ev-external-authority-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected external results cannot leave partial canonical changes."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that imported results pass typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that externally-derived outputs retain revision/freshness semantics."
         }
       ]
     },
@@ -4510,6 +4649,26 @@
         {
           "id": "ev-slice-terrain-site",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of identity across recorded revisions."
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected changes do not create false canonical history."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Corroborates attribution and conflict behavior across concurrent revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency of recovery/history under long-running concurrent operation."
         }
       ]
     },
@@ -4538,6 +4697,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent-originated changes cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative user interaction cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves authority behavior when overlapping proposals compete."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency and recovery under long-running concurrent operation."
         }
       ]
     },
@@ -4566,6 +4745,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agents must enter through the governed transaction boundary."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction requires an explicit transaction before becoming canonical."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction conflict, stale-candidate, rebase and retry behavior."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction recovery and consistency over long-running operation."
         }
       ]
     },
@@ -4594,6 +4793,16 @@
         {
           "id": "ev-stable-identity",
           "requirement": "required"
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that downstream derived outputs remain revision-aware when references cross revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves reference continuity and recovery behavior during long-running concurrent operation."
         }
       ]
     },
@@ -4622,6 +4831,21 @@
         {
           "id": "ev-geometry-candidate-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates semantic/topological continuity across geometry regeneration."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry candidates are judged through typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry changes correctly invalidate dependent representations."
         }
       ]
     },
@@ -4650,6 +4874,16 @@
         {
           "id": "ev-validation-pipeline",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected constraint outcomes cannot partially mutate canonical state."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that constraints operate on candidate geometry rather than hidden direct mutations."
         }
       ]
     },
@@ -4674,6 +4908,26 @@
         {
           "id": "ev-slice-townhouse-yield",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of semantic parts and references through assembly regeneration."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that assembly geometry remains candidate state until accepted."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that generated assemblies are checked by typed validation."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that assembly changes propagate to dependent schedules and representations."
         }
       ]
     },
@@ -4698,6 +4952,21 @@
         {
           "id": "ev-slice-townhouse-yield",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis/solver outputs return evidence or proposals rather than direct authoritative writes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis results expose revision dependence and become stale after relevant changes."
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis claims remain attached to traceable semantic subjects across revisions."
         }
       ]
     },
@@ -4722,6 +4991,21 @@
         {
           "id": "ev-slice-townhouse-yield",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates provenance boundaries for evidence imported from external tools."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates typed findings and explicit validation outcomes rather than implicit truth claims."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that derived evidence exposes the revision on which it depends."
         }
       ]
     },
@@ -4750,6 +5034,16 @@
         {
           "id": "ev-representation-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that representations remain bound to traceable semantic references."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that representations derive from accepted geometry rather than silently owning canonical geometry."
         }
       ]
     },
@@ -4778,6 +5072,21 @@
         {
           "id": "ev-external-authority-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected external results cannot leave partial canonical changes."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that imported results pass typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that externally-derived outputs retain revision/freshness semantics."
         }
       ]
     },
@@ -4802,6 +5111,26 @@
         {
           "id": "ev-slice-townhouse-yield",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of identity across recorded revisions."
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected changes do not create false canonical history."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Corroborates attribution and conflict behavior across concurrent revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency of recovery/history under long-running concurrent operation."
         }
       ]
     },
@@ -4849,6 +5178,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent-originated changes cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative user interaction cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves authority behavior when overlapping proposals compete."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency and recovery under long-running concurrent operation."
         }
       ]
     },
@@ -4877,6 +5226,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agents must enter through the governed transaction boundary."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction requires an explicit transaction before becoming canonical."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction conflict, stale-candidate, rebase and retry behavior."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction recovery and consistency over long-running operation."
         }
       ]
     },
@@ -4905,6 +5274,16 @@
         {
           "id": "ev-stable-identity",
           "requirement": "required"
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that downstream derived outputs remain revision-aware when references cross revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves reference continuity and recovery behavior during long-running concurrent operation."
         }
       ]
     },
@@ -4933,6 +5312,21 @@
         {
           "id": "ev-geometry-candidate-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates semantic/topological continuity across geometry regeneration."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry candidates are judged through typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry changes correctly invalidate dependent representations."
         }
       ]
     },
@@ -4961,6 +5355,16 @@
         {
           "id": "ev-validation-pipeline",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected constraint outcomes cannot partially mutate canonical state."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that constraints operate on candidate geometry rather than hidden direct mutations."
         }
       ]
     },
@@ -4985,6 +5389,26 @@
         {
           "id": "ev-slice-apartment-core",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of semantic parts and references through assembly regeneration."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that assembly geometry remains candidate state until accepted."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that generated assemblies are checked by typed validation."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that assembly changes propagate to dependent schedules and representations."
         }
       ]
     },
@@ -5009,6 +5433,21 @@
         {
           "id": "ev-slice-apartment-core",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis/solver outputs return evidence or proposals rather than direct authoritative writes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis results expose revision dependence and become stale after relevant changes."
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis claims remain attached to traceable semantic subjects across revisions."
         }
       ]
     },
@@ -5033,6 +5472,21 @@
         {
           "id": "ev-slice-apartment-core",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates provenance boundaries for evidence imported from external tools."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates typed findings and explicit validation outcomes rather than implicit truth claims."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that derived evidence exposes the revision on which it depends."
         }
       ]
     },
@@ -5061,6 +5515,16 @@
         {
           "id": "ev-representation-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that representations remain bound to traceable semantic references."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that representations derive from accepted geometry rather than silently owning canonical geometry."
         }
       ]
     },
@@ -5089,6 +5553,21 @@
         {
           "id": "ev-external-authority-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected external results cannot leave partial canonical changes."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that imported results pass typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that externally-derived outputs retain revision/freshness semantics."
         }
       ]
     },
@@ -5132,6 +5611,26 @@
         {
           "id": "ev-slice-apartment-core",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of identity across recorded revisions."
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected changes do not create false canonical history."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Corroborates attribution and conflict behavior across concurrent revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency of recovery/history under long-running concurrent operation."
         }
       ]
     },
@@ -5160,6 +5659,26 @@
         {
           "id": "ev-cross-agent-conflict",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates atomic rejection behavior at the authority gate."
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent proposals cannot bypass the gate."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction cannot bypass the gate."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves gate/recovery behavior over long-running concurrent operation."
         }
       ]
     },
@@ -5188,6 +5707,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent-originated changes cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative user interaction cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves authority behavior when overlapping proposals compete."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency and recovery under long-running concurrent operation."
         }
       ]
     },
@@ -5216,6 +5755,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agents must enter through the governed transaction boundary."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction requires an explicit transaction before becoming canonical."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction conflict, stale-candidate, rebase and retry behavior."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction recovery and consistency over long-running operation."
         }
       ]
     },
@@ -5244,6 +5803,16 @@
         {
           "id": "ev-stable-identity",
           "requirement": "required"
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that downstream derived outputs remain revision-aware when references cross revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves reference continuity and recovery behavior during long-running concurrent operation."
         }
       ]
     },
@@ -5272,6 +5841,21 @@
         {
           "id": "ev-geometry-candidate-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates semantic/topological continuity across geometry regeneration."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry candidates are judged through typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry changes correctly invalidate dependent representations."
         }
       ]
     },
@@ -5300,6 +5884,16 @@
         {
           "id": "ev-validation-pipeline",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected constraint outcomes cannot partially mutate canonical state."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that constraints operate on candidate geometry rather than hidden direct mutations."
         }
       ]
     },
@@ -5324,6 +5918,26 @@
         {
           "id": "ev-slice-wall-opening",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of semantic parts and references through assembly regeneration."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that assembly geometry remains candidate state until accepted."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that generated assemblies are checked by typed validation."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that assembly changes propagate to dependent schedules and representations."
         }
       ]
     },
@@ -5348,6 +5962,21 @@
         {
           "id": "ev-slice-wall-opening",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates provenance boundaries for evidence imported from external tools."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates typed findings and explicit validation outcomes rather than implicit truth claims."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that derived evidence exposes the revision on which it depends."
         }
       ]
     },
@@ -5376,6 +6005,16 @@
         {
           "id": "ev-representation-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that representations remain bound to traceable semantic references."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that representations derive from accepted geometry rather than silently owning canonical geometry."
         }
       ]
     },
@@ -5400,6 +6039,26 @@
         {
           "id": "ev-slice-wall-opening",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates traceability from fabrication output back to stable semantic product identity."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that fabrication outputs are re-derived when their source revision changes."
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that machine/CAM adapters remain derived outputs rather than direct world-state authorities."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that fabrication geometry derives from governed geometry state."
         }
       ]
     },
@@ -5424,6 +6083,26 @@
         {
           "id": "ev-slice-wall-opening",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of identity across recorded revisions."
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected changes do not create false canonical history."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Corroborates attribution and conflict behavior across concurrent revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency of recovery/history under long-running concurrent operation."
         }
       ]
     },
@@ -5452,6 +6131,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent-originated changes cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative user interaction cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves authority behavior when overlapping proposals compete."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency and recovery under long-running concurrent operation."
         }
       ]
     },
@@ -5480,6 +6179,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agents must enter through the governed transaction boundary."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction requires an explicit transaction before becoming canonical."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction conflict, stale-candidate, rebase and retry behavior."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction recovery and consistency over long-running operation."
         }
       ]
     },
@@ -5511,6 +6230,16 @@
         {
           "id": "ev-stable-identity",
           "requirement": "required"
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that downstream derived outputs remain revision-aware when references cross revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves reference continuity and recovery behavior during long-running concurrent operation."
         }
       ]
     },
@@ -5543,6 +6272,21 @@
         {
           "id": "ev-geometry-candidate-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates semantic/topological continuity across geometry regeneration."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry candidates are judged through typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry changes correctly invalidate dependent representations."
         }
       ]
     },
@@ -5571,6 +6315,16 @@
         {
           "id": "ev-validation-pipeline",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected constraint outcomes cannot partially mutate canonical state."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that constraints operate on candidate geometry rather than hidden direct mutations."
         }
       ]
     },
@@ -5595,6 +6349,26 @@
         {
           "id": "ev-slice-window-resize",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of semantic parts and references through assembly regeneration."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that assembly geometry remains candidate state until accepted."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that generated assemblies are checked by typed validation."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that assembly changes propagate to dependent schedules and representations."
         }
       ]
     },
@@ -5619,6 +6393,21 @@
         {
           "id": "ev-slice-window-resize",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis/solver outputs return evidence or proposals rather than direct authoritative writes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis results expose revision dependence and become stale after relevant changes."
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis claims remain attached to traceable semantic subjects across revisions."
         }
       ]
     },
@@ -5643,6 +6432,21 @@
         {
           "id": "ev-slice-window-resize",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates provenance boundaries for evidence imported from external tools."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates typed findings and explicit validation outcomes rather than implicit truth claims."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that derived evidence exposes the revision on which it depends."
         }
       ]
     },
@@ -5674,6 +6478,16 @@
         {
           "id": "ev-representation-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that representations remain bound to traceable semantic references."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that representations derive from accepted geometry rather than silently owning canonical geometry."
         }
       ]
     },
@@ -5702,6 +6516,21 @@
         {
           "id": "ev-external-authority-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected external results cannot leave partial canonical changes."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that imported results pass typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that externally-derived outputs retain revision/freshness semantics."
         }
       ]
     },
@@ -5729,6 +6558,26 @@
           "proves": [
             "criterion-04-schedule-and-fabrication-representations-re-derive-from-"
           ]
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates traceability from fabrication output back to stable semantic product identity."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that fabrication outputs are re-derived when their source revision changes."
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that machine/CAM adapters remain derived outputs rather than direct world-state authorities."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that fabrication geometry derives from governed geometry state."
         }
       ]
     },
@@ -5753,6 +6602,26 @@
         {
           "id": "ev-slice-window-resize",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of identity across recorded revisions."
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected changes do not create false canonical history."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Corroborates attribution and conflict behavior across concurrent revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency of recovery/history under long-running concurrent operation."
         }
       ]
     },
@@ -5800,6 +6669,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent-originated changes cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative user interaction cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves authority behavior when overlapping proposals compete."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency and recovery under long-running concurrent operation."
         }
       ]
     },
@@ -5828,6 +6717,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agents must enter through the governed transaction boundary."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction requires an explicit transaction before becoming canonical."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction conflict, stale-candidate, rebase and retry behavior."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction recovery and consistency over long-running operation."
         }
       ]
     },
@@ -5856,6 +6765,16 @@
         {
           "id": "ev-stable-identity",
           "requirement": "required"
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that downstream derived outputs remain revision-aware when references cross revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves reference continuity and recovery behavior during long-running concurrent operation."
         }
       ]
     },
@@ -5884,6 +6803,16 @@
         {
           "id": "ev-validation-pipeline",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected constraint outcomes cannot partially mutate canonical state."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that constraints operate on candidate geometry rather than hidden direct mutations."
         }
       ]
     },
@@ -5908,6 +6837,21 @@
         {
           "id": "ev-slice-annotations-regeneration",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates provenance boundaries for evidence imported from external tools."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates typed findings and explicit validation outcomes rather than implicit truth claims."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that derived evidence exposes the revision on which it depends."
         }
       ]
     },
@@ -5936,6 +6880,16 @@
         {
           "id": "ev-representation-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that representations remain bound to traceable semantic references."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that representations derive from accepted geometry rather than silently owning canonical geometry."
         }
       ]
     },
@@ -5960,6 +6914,26 @@
         {
           "id": "ev-slice-annotations-regeneration",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of identity across recorded revisions."
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected changes do not create false canonical history."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Corroborates attribution and conflict behavior across concurrent revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency of recovery/history under long-running concurrent operation."
         }
       ]
     },
@@ -5988,6 +6962,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent-originated changes cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative user interaction cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves authority behavior when overlapping proposals compete."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency and recovery under long-running concurrent operation."
         }
       ]
     },
@@ -6016,6 +7010,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agents must enter through the governed transaction boundary."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction requires an explicit transaction before becoming canonical."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction conflict, stale-candidate, rebase and retry behavior."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction recovery and consistency over long-running operation."
         }
       ]
     },
@@ -6044,6 +7058,16 @@
         {
           "id": "ev-stable-identity",
           "requirement": "required"
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that downstream derived outputs remain revision-aware when references cross revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves reference continuity and recovery behavior during long-running concurrent operation."
         }
       ]
     },
@@ -6072,6 +7096,21 @@
         {
           "id": "ev-geometry-candidate-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates semantic/topological continuity across geometry regeneration."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry candidates are judged through typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry changes correctly invalidate dependent representations."
         }
       ]
     },
@@ -6096,6 +7135,21 @@
         {
           "id": "ev-slice-solar-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis/solver outputs return evidence or proposals rather than direct authoritative writes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis results expose revision dependence and become stale after relevant changes."
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis claims remain attached to traceable semantic subjects across revisions."
         }
       ]
     },
@@ -6120,6 +7174,21 @@
         {
           "id": "ev-slice-solar-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates provenance boundaries for evidence imported from external tools."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates typed findings and explicit validation outcomes rather than implicit truth claims."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that derived evidence exposes the revision on which it depends."
         }
       ]
     },
@@ -6148,6 +7217,16 @@
         {
           "id": "ev-representation-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that representations remain bound to traceable semantic references."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that representations derive from accepted geometry rather than silently owning canonical geometry."
         }
       ]
     },
@@ -6176,6 +7255,21 @@
         {
           "id": "ev-external-authority-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected external results cannot leave partial canonical changes."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that imported results pass typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that externally-derived outputs retain revision/freshness semantics."
         }
       ]
     },
@@ -6200,6 +7294,26 @@
         {
           "id": "ev-slice-solar-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of identity across recorded revisions."
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected changes do not create false canonical history."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Corroborates attribution and conflict behavior across concurrent revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency of recovery/history under long-running concurrent operation."
         }
       ]
     },
@@ -6228,6 +7342,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent-originated changes cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative user interaction cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves authority behavior when overlapping proposals compete."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency and recovery under long-running concurrent operation."
         }
       ]
     },
@@ -6256,6 +7390,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agents must enter through the governed transaction boundary."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction requires an explicit transaction before becoming canonical."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction conflict, stale-candidate, rebase and retry behavior."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction recovery and consistency over long-running operation."
         }
       ]
     },
@@ -6284,6 +7438,16 @@
         {
           "id": "ev-stable-identity",
           "requirement": "required"
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that downstream derived outputs remain revision-aware when references cross revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves reference continuity and recovery behavior during long-running concurrent operation."
         }
       ]
     },
@@ -6312,6 +7476,16 @@
         {
           "id": "ev-validation-pipeline",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected constraint outcomes cannot partially mutate canonical state."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that constraints operate on candidate geometry rather than hidden direct mutations."
         }
       ]
     },
@@ -6336,6 +7510,21 @@
         {
           "id": "ev-slice-multi-agent-conflict",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates provenance boundaries for evidence imported from external tools."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates typed findings and explicit validation outcomes rather than implicit truth claims."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that derived evidence exposes the revision on which it depends."
         }
       ]
     },
@@ -6360,6 +7549,26 @@
         {
           "id": "ev-slice-multi-agent-conflict",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of identity across recorded revisions."
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected changes do not create false canonical history."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Corroborates attribution and conflict behavior across concurrent revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency of recovery/history under long-running concurrent operation."
         }
       ]
     },
@@ -6388,6 +7597,26 @@
         {
           "id": "ev-cross-agent-conflict",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates atomic rejection behavior at the authority gate."
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent proposals cannot bypass the gate."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction cannot bypass the gate."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves gate/recovery behavior over long-running concurrent operation."
         }
       ]
     },
@@ -6416,6 +7645,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent-originated changes cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative user interaction cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves authority behavior when overlapping proposals compete."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency and recovery under long-running concurrent operation."
         }
       ]
     },
@@ -6444,6 +7693,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agents must enter through the governed transaction boundary."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction requires an explicit transaction before becoming canonical."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction conflict, stale-candidate, rebase and retry behavior."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction recovery and consistency over long-running operation."
         }
       ]
     },
@@ -6472,6 +7741,16 @@
         {
           "id": "ev-stable-identity",
           "requirement": "required"
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that downstream derived outputs remain revision-aware when references cross revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves reference continuity and recovery behavior during long-running concurrent operation."
         }
       ]
     },
@@ -6500,6 +7779,21 @@
         {
           "id": "ev-geometry-candidate-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates semantic/topological continuity across geometry regeneration."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry candidates are judged through typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry changes correctly invalidate dependent representations."
         }
       ]
     },
@@ -6528,6 +7822,16 @@
         {
           "id": "ev-validation-pipeline",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected constraint outcomes cannot partially mutate canonical state."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that constraints operate on candidate geometry rather than hidden direct mutations."
         }
       ]
     },
@@ -6552,6 +7856,26 @@
         {
           "id": "ev-slice-clothing-resize",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of semantic parts and references through assembly regeneration."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that assembly geometry remains candidate state until accepted."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that generated assemblies are checked by typed validation."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that assembly changes propagate to dependent schedules and representations."
         }
       ]
     },
@@ -6576,6 +7900,21 @@
         {
           "id": "ev-slice-clothing-resize",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis/solver outputs return evidence or proposals rather than direct authoritative writes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis results expose revision dependence and become stale after relevant changes."
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis claims remain attached to traceable semantic subjects across revisions."
         }
       ]
     },
@@ -6600,6 +7939,21 @@
         {
           "id": "ev-slice-clothing-resize",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates provenance boundaries for evidence imported from external tools."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates typed findings and explicit validation outcomes rather than implicit truth claims."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that derived evidence exposes the revision on which it depends."
         }
       ]
     },
@@ -6628,6 +7982,16 @@
         {
           "id": "ev-representation-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that representations remain bound to traceable semantic references."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that representations derive from accepted geometry rather than silently owning canonical geometry."
         }
       ]
     },
@@ -6656,6 +8020,21 @@
         {
           "id": "ev-external-authority-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected external results cannot leave partial canonical changes."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that imported results pass typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that externally-derived outputs retain revision/freshness semantics."
         }
       ]
     },
@@ -6680,6 +8059,26 @@
         {
           "id": "ev-slice-clothing-resize",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates traceability from fabrication output back to stable semantic product identity."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that fabrication outputs are re-derived when their source revision changes."
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that machine/CAM adapters remain derived outputs rather than direct world-state authorities."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that fabrication geometry derives from governed geometry state."
         }
       ]
     },
@@ -6704,6 +8103,26 @@
         {
           "id": "ev-slice-clothing-resize",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of identity across recorded revisions."
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected changes do not create false canonical history."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Corroborates attribution and conflict behavior across concurrent revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency of recovery/history under long-running concurrent operation."
         }
       ]
     },
@@ -6732,6 +8151,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agent-originated changes cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative user interaction cannot bypass canonical authority."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves authority behavior when overlapping proposals compete."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency and recovery under long-running concurrent operation."
         }
       ]
     },
@@ -6760,6 +8199,26 @@
         {
           "id": "ev-transaction-rollback",
           "requirement": "required"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that agents must enter through the governed transaction boundary."
+        },
+        {
+          "id": "ev-interaction-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that speculative interaction requires an explicit transaction before becoming canonical."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction conflict, stale-candidate, rebase and retry behavior."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves transaction recovery and consistency over long-running operation."
         }
       ]
     },
@@ -6788,6 +8247,16 @@
         {
           "id": "ev-stable-identity",
           "requirement": "required"
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that downstream derived outputs remain revision-aware when references cross revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves reference continuity and recovery behavior during long-running concurrent operation."
         }
       ]
     },
@@ -6816,6 +8285,21 @@
         {
           "id": "ev-geometry-candidate-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates semantic/topological continuity across geometry regeneration."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry candidates are judged through typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that geometry changes correctly invalidate dependent representations."
         }
       ]
     },
@@ -6844,6 +8328,16 @@
         {
           "id": "ev-validation-pipeline",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected constraint outcomes cannot partially mutate canonical state."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that constraints operate on candidate geometry rather than hidden direct mutations."
         }
       ]
     },
@@ -6868,6 +8362,21 @@
         {
           "id": "ev-slice-botanical-age",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis/solver outputs return evidence or proposals rather than direct authoritative writes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis results expose revision dependence and become stale after relevant changes."
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that analysis claims remain attached to traceable semantic subjects across revisions."
         }
       ]
     },
@@ -6892,6 +8401,21 @@
         {
           "id": "ev-slice-botanical-age",
           "requirement": "required"
+        },
+        {
+          "id": "ev-external-authority-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates provenance boundaries for evidence imported from external tools."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates typed findings and explicit validation outcomes rather than implicit truth claims."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that derived evidence exposes the revision on which it depends."
         }
       ]
     },
@@ -6920,6 +8444,16 @@
         {
           "id": "ev-representation-freshness",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates that representations remain bound to traceable semantic references."
+        },
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "requirement": "supporting",
+          "note": "Corroborates that representations derive from accepted geometry rather than silently owning canonical geometry."
         }
       ]
     },
@@ -6948,6 +8482,21 @@
         {
           "id": "ev-external-authority-boundary",
           "requirement": "required"
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected external results cannot leave partial canonical changes."
+        },
+        {
+          "id": "ev-validation-pipeline",
+          "requirement": "supporting",
+          "note": "Corroborates that imported results pass typed validation before authority changes."
+        },
+        {
+          "id": "ev-representation-freshness",
+          "requirement": "supporting",
+          "note": "Corroborates that externally-derived outputs retain revision/freshness semantics."
         }
       ]
     },
@@ -6972,6 +8521,26 @@
         {
           "id": "ev-slice-botanical-age",
           "requirement": "required"
+        },
+        {
+          "id": "ev-stable-identity",
+          "requirement": "supporting",
+          "note": "Corroborates continuity of identity across recorded revisions."
+        },
+        {
+          "id": "ev-transaction-rollback",
+          "requirement": "supporting",
+          "note": "Corroborates that rejected changes do not create false canonical history."
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "requirement": "supporting",
+          "note": "Corroborates attribution and conflict behavior across concurrent revisions."
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "requirement": "supporting",
+          "note": "Stress-proves consistency of recovery/history under long-running concurrent operation."
         }
       ]
     },
