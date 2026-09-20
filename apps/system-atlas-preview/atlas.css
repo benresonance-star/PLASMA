@@ -109,7 +109,7 @@ a{color:inherit}
 .integration-matrix{display:grid;border:1px solid var(--line);border-radius:9px;overflow:auto;background:var(--panel-strong)}
 .matrix-corner,.matrix-slice-head,.matrix-row-head,.matrix-cell{min-height:44px;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel-strong)}
 .matrix-corner{display:flex;align-items:center;padding:8px;font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);font-weight:900;position:sticky;left:0;z-index:4}
-.matrix-slice-head{padding:6px 5px;text-align:left;writing-mode:vertical-rl;transform:rotate(180deg);min-height:122px;font-size:6.8px;color:var(--muted)}
+.matrix-slice-head{padding:7px 6px;text-align:left;writing-mode:vertical-rl;transform:none;min-height:122px;font-size:6.8px;line-height:1.25;color:var(--muted)}
 .matrix-slice-head:hover,.matrix-slice-head.selected{background:var(--accent-soft);color:var(--accent-strong)}
 .matrix-row-head{position:sticky;left:0;z-index:3;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:7px;text-align:left;box-shadow:1px 0 0 var(--line)}
 .matrix-row-head b{font-size:7.5px}.matrix-row-head small{font-size:5.8px;color:var(--faint);margin-top:2px}
