@@ -126,7 +126,7 @@ export function createAtlasModel(data) {
           link.evidenceState,
           link.explanation
         ]);
-        const haystack = [
+        const primaryHaystack = [
           ref.name,
           ref.atlasId,
           ref.summary,
@@ -145,12 +145,13 @@ export function createAtlasModel(data) {
           ...(raw.supports || []),
           ...(raw.flow || []),
           ...(raw.proves || []),
-          ...(raw.keySystems || []),
-          ...graphTerms
+          ...(raw.keySystems || [])
         ].filter(Boolean).join(' ').toLowerCase();
+        const graphHaystack = graphTerms.filter(Boolean).join(' ').toLowerCase();
         const exactName = String(ref.name || '').toLowerCase() === q ? 12 : 0;
         const starts = String(ref.name || '').toLowerCase().startsWith(q) ? 6 : 0;
-        const tokenScore = tokens.reduce((score, token) => score + (haystack.includes(token) ? 1 : 0), 0);
+        const tokenScore = tokens.reduce((score, token) =>
+          score + (primaryHaystack.includes(token) ? 3 : 0) + (graphHaystack.includes(token) ? 1 : 0), 0);
         return { ref, score: exactName + starts + tokenScore };
       })
       .filter(x => x.score > 0)
