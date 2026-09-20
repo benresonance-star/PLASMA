@@ -147,8 +147,19 @@ for(const link of atlas.links){
   }
   if(link.role==='exercises'&&link.criticality==='core'&&link.architectureState!=='planned'){
     assert((link.evidenceRefs||[]).some(x=>x.requirement==='required'),`core defined/partial integration link ${link.id} must declare required evidence`);
+    assert((link.evidenceRefs||[]).some(x=>x.requirement==='supporting'),`core defined/partial integration link ${link.id} must declare supporting evidence`);
+  }
+  for(const evidenceRef of (link.evidenceRefs||[]).filter(x=>x.requirement==='supporting')){
+    assert(typeof evidenceRef.note==='string'&&evidenceRef.note.trim().length>0,`supporting evidence ${evidenceRef.id} on ${link.id} must explain why it supports this relationship`);
   }
 }
+assert(atlas.integration.evidenceSemantics?.definition,'integration evidence semantics must define what evidence means');
+assert(atlas.integration.evidenceSemantics?.scope,'integration evidence semantics must define evidence scope');
+assert(atlas.integration.evidenceSemantics?.required,'integration evidence semantics must define required evidence');
+assert(atlas.integration.evidenceSemantics?.supporting,'integration evidence semantics must define supporting evidence');
+assert(atlas.integration.evidenceSemantics?.repositoryBacked,'integration evidence semantics must define repository-backed proof');
+assert(atlas.integration.evidenceSemantics?.unlinked,'integration evidence semantics must define unlinked evidence');
+
 for(const row of atlas.integration.matrixRows){
   assert(hasRef(row.ref),`integration matrix row ${row.label} references missing Atlas item ${row.ref?.type}:${row.ref?.id}`);
 }
@@ -196,6 +207,16 @@ assert(!('evidenceState' in windowGeometryLink),'integration relationship must n
 const windowGeometryCoverage=runtimeModel.deriveEvidenceCoverage(windowGeometryLink);
 assert(windowGeometryCoverage.state==='unlinked','unverified window/door → geometry evidence must derive as unlinked');
 assert(windowGeometryCoverage.required>=2,'window/door → geometry must require slice and geometry boundary evidence');
+assert(windowGeometryCoverage.supporting>=2,'window/door → geometry must expose independent supporting evidence');
+assert(windowGeometryCoverage.supportingItems.every(item=>item.ref.note),'supporting evidence must carry relationship-specific rationale');
+const supportingSnapshot=windowGeometryCoverage.state;
+const supportingEvidence=windowGeometryCoverage.supportingItems[0]?.evidence;
+if(supportingEvidence){
+  const originalStatus=supportingEvidence.verification.status;
+  supportingEvidence.verification.status='failed';
+  assert(runtimeModel.deriveEvidenceCoverage(windowGeometryLink).state===supportingSnapshot,'supporting evidence failure must not change aggregate relationship verification state');
+  supportingEvidence.verification.status=originalStatus;
+}
 assert(runtimeModel.evidenceUsers('ev-slice-window-resize').some(item=>item.link.id===windowGeometryLink.id),'evidence reverse navigation must resolve window resize back to geometry relationship');
 const integrationLinkRoute=parseHash(`#integration/link/${encodeURIComponent(windowGeometryLink.id)}`);
 assert(integrationLinkRoute.view==='integration'&&integrationLinkRoute.type==='integrationLink'&&integrationLinkRoute.id===windowGeometryLink.id,'integration link deep-link must parse');
