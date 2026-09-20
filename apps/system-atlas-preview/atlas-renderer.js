@@ -12,6 +12,21 @@ function statusBadge(value, tone = '') {
   return `<span class="status-badge ${tone}">${esc(labelize(value))}</span>`;
 }
 
+function evidenceCoverageLabel(coverage) {
+  if (!coverage) return 'No evidence';
+  if (coverage.state === 'verified') return `✓ ${coverage.verified}/${coverage.required}`;
+  if (coverage.state === 'failed') return `× ${coverage.failed} failed`;
+  if (coverage.state === 'stale') return '! stale';
+  if (coverage.state === 'partial') return `◐ ${coverage.verified}/${coverage.required}`;
+  if (coverage.state === 'not-required') return '—';
+  return `○ ${coverage.verified}/${coverage.required}`;
+}
+
+function evidenceCoverageBadge(coverage) {
+  const state=coverage?.state||'unlinked';
+  return `<span class="evidence-coverage ${esc(state)}"><b>${esc(evidenceCoverageLabel(coverage))}</b><small>${esc(labelize(state))}</small></span>`;
+}
+
 function refButton(type, id, label, cls = 'ref-chip') {
   return `<button class="${cls}" type="button" data-atlas-type="${esc(type)}" data-atlas-id="${esc(id)}">${esc(label)}</button>`;
 }
@@ -236,8 +251,11 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
             <div class="section-heading"><div><div class="eyebrow">Coverage matrix</div><h3>Which architectural capabilities each vertical slice exercises</h3></div><span>click a row, slice or cell to inspect its graph connections</span></div>
             <div class="integration-legend">
               ${model.data.integration.architectureStates.map(x=>`<span class="legend-state ${esc(x.id)}"><b>${stateSymbol[x.id]||'·'}</b>${esc(x.label)}</span>`).join('')}
-              <span class="legend-state evidence-key"><i></i>evidence unlinked</span>
-              <span class="legend-state none">— not materially exercised</span>
+              <span class="legend-state evidence-key">✓ n/n verified</span>
+              <span class="legend-state evidence-key">◐ n/n partial</span>
+              <span class="legend-state evidence-key">○ 0/n unlinked</span>
+              <span class="legend-state evidence-key">× failed</span>
+              <span class="legend-state none">— not materially exercised / not required</span>
             </div>
             <div class="integration-matrix" style="grid-template-columns:150px repeat(${slices.length},minmax(86px,1fr))">
               <div class="matrix-corner">Capability</div>
@@ -249,7 +267,9 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
                   ${slices.map(slice=>{
                     const link=model.integrationCoverage(slice.id,row.ref);
                     if(!link)return `<span class="matrix-cell none" title="Not materially exercised">—</span>`;
-                    return `<button class="matrix-cell ${stateTone[link.architectureState]||''}" data-atlas-type="${esc(row.ref.type)}" data-atlas-id="${esc(row.ref.id)}" title="${esc(slice.name)} → ${esc(row.label)} · ${esc(link.architectureState)} · evidence ${esc(link.evidenceState)}"><b>${stateSymbol[link.architectureState]||'·'}</b><i class="evidence-dot ${esc(link.evidenceState)}"></i></button>`;
+                    const evidence=model.deriveEvidenceCoverage(link);
+                    const selected=route.type==='integrationLink'&&route.id===link.id;
+                    return `<button class="matrix-cell ${stateTone[link.architectureState]||''} evidence-${esc(evidence.state)} ${selected?'selected':''}" data-atlas-type="integrationLink" data-atlas-id="${esc(link.id)}" title="${esc(slice.name)} → ${esc(row.label)} · architecture ${esc(link.architectureState)} · evidence ${esc(evidence.state)} ${evidence.verified}/${evidence.required}"><b class="matrix-architecture">${stateSymbol[link.architectureState]||'·'}</b><span class="matrix-evidence">${esc(evidenceCoverageLabel(evidence))}</span></button>`;
                   }).join('')}`;
               }).join('')}
             </div>
@@ -410,14 +430,18 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
 
   function renderEvidence(route) {
     const selected=route.type==='evidence'?route.id:null;
-    const linked=model.data.evidence.filter(x=>x.state==='linked'||x.state==='verified').length;
+    const linked=model.data.evidence.filter(x=>['linked','verified'].includes(x.verification?.status)).length;
     viewHost.innerHTML=`
       <div class="view-scroll"><section class="view-stage catalogue-stage" data-base-width="960">
-        <div class="view-intro"><div><div class="eyebrow">Evidence ledger</div><h2>What is trusted, and why?</h2><p>Evidence requirements are explicit. An unlinked requirement is shown as unknown rather than silently treated as verified.</p></div><div class="evidence-summary"><b>${linked}</b><span>linked of ${model.data.evidence.length}</span></div></div>
-        <div class="evidence-list">${model.data.evidence.map(e=>`<button class="evidence-card ${selected===e.id?'selected':''}" data-atlas-type="evidence" data-atlas-id="${esc(e.id)}">
-          <div><span class="eyebrow">${esc(labelize(e.kind))}</span><h3>${esc(e.name)}</h3><p>${esc(e.description)}</p></div>
-          <div class="evidence-side">${statusBadge(e.state,e.state==='verified'?'good':'warn')}<small>${esc(e.supports.join(' · '))}</small></div>
-        </button>`).join('')}</div>
+        <div class="view-intro"><div><div class="eyebrow">Evidence ledger</div><h2>What is trusted, and why?</h2><p>Evidence records carry verification status. Integration relationships derive their evidence state from these records; no matrix state is authored separately.</p></div><div class="evidence-summary"><b>${linked}</b><span>linked or verified of ${model.data.evidence.length}</span></div></div>
+        <div class="evidence-list">${model.data.evidence.map(e=>{
+          const status=e.verification?.status||'unlinked';
+          const usage=model.evidenceUsers(e.id).length;
+          return `<button class="evidence-card ${selected===e.id?'selected':''}" data-atlas-type="evidence" data-atlas-id="${esc(e.id)}">
+            <div><span class="eyebrow">${esc(labelize(e.kind))}</span><h3>${esc(e.name)}</h3><p>${esc(e.description)}</p></div>
+            <div class="evidence-side">${statusBadge(status,status==='verified'?'good':status==='failed'?'danger':'warn')}<small>${usage} integration relationship${usage===1?'':'s'}</small></div>
+          </button>`;
+        }).join('')}</div>
       </section></div>`;
   }
 
@@ -470,21 +494,46 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         <section><h4>Key systems</h4><div class="chip-row">${chips(r.keySystems)}</div></section>
         <section><h4>Integration evidence</h4><div class="ref-list">${(r.integrationEvidence||[]).map(id=>{const e=model.by.evidence.get(id);return e?refButton('evidence',id,e.name):''}).join('')||'<span class="muted">No scenario linked</span>'}</div></section>
         <section><h4>Evidence checks</h4><div class="check-list">${Object.entries(r.checks).map(([k,v])=>`<div><span>${esc(labelize(k))}</span>${evidenceCell(v)}</div>`).join('')}</div></section>`;
+    } else if(ref.type==='integrationLink'){
+      const coverage=model.deriveEvidenceCoverage(r);
+      const from=model.resolve(r.from.type,r.from.id);
+      const to=model.resolve(r.to.type,r.to.id);
+      const renderEvidenceItems=(items,empty)=>items.length?`<div class="evidence-ref-list">${items.map(({ref:evidenceRef,evidence})=>`
+        <button type="button" data-atlas-type="evidence" data-atlas-id="${esc(evidence.id)}">
+          <span>${esc(labelize(evidenceRef.requirement))}</span>
+          <b>${esc(evidence.name)}</b>
+          <small>${esc(labelize(evidence.verification?.status||'unlinked'))}${evidenceRef.proves?.length?` · ${evidenceRef.proves.length} criteria`:''}</small>
+        </button>`).join('')}</div>`:`<span class="muted">${esc(empty)}</span>`;
+      body=`
+        <div class="inspector-kv"><span>Role</span><b>${esc(labelize(r.role))}</b><span>Architecture</span><b>${esc(labelize(r.architectureState))}</b><span>Evidence</span><b>${esc(labelize(coverage.state))} · ${coverage.verified}/${coverage.required}</b><span>Policy</span><b>${esc(labelize(coverage.policy.mode))}</b></div>
+        <section><h4>From → To</h4><div class="ref-list">${from?refButton(from.type,from.id,from.name):''}${to?refButton(to.type,to.id,to.name):''}</div></section>
+        <section><h4>Required evidence</h4>${renderEvidenceItems(coverage.requiredItems,'No required evidence yet.')}</section>
+        <section><h4>Supporting evidence</h4>${renderEvidenceItems(coverage.supportingItems,'No supporting evidence linked.')}</section>
+        <section><h4>Coverage</h4>${evidenceCoverageBadge(coverage)}</section>`;
     } else if(ref.type==='evidence'){
-      body=`<div class="inspector-kv"><span>Kind</span><b>${esc(labelize(r.kind))}</b><span>State</span><b>${esc(labelize(r.state))}</b></div>
+      const status=r.verification?.status||'unlinked';
+      const users=model.evidenceUsers(r.id);
+      body=`<div class="inspector-kv"><span>Kind</span><b>${esc(labelize(r.kind))}</b><span>State</span><b>${esc(labelize(status))}</b><span>Method</span><b>${esc(labelize(r.verification?.method||'unknown'))}</b></div>
+        <section><h4>Claim</h4><p>${esc(r.claim)}</p></section>
         <section><h4>Supports</h4><div class="chip-row">${chips(r.supports)}</div></section>
         ${r.scenario?`<section><h4>Scenario</h4><p>${esc(r.scenario)}</p></section>`:''}
-        ${Array.isArray(r.acceptanceCriteria)?`<section><h4>Acceptance criteria</h4><div class="inspector-list success-list">${r.acceptanceCriteria.map((item,index)=>`<div><span>${String(index+1).padStart(2,'0')}</span><p>${esc(item)}</p></div>`).join('')}</div></section>`:''}
-        <section><h4>Source</h4><p>${r.source?esc(r.source):'No repository source linked yet.'}</p></section>`;
+        ${Array.isArray(r.acceptanceCriteria)?`<section><h4>Acceptance criteria</h4><div class="inspector-list success-list">${r.acceptanceCriteria.map((item,index)=>`<div><span>${String(index+1).padStart(2,'0')}</span><p><b>${esc(item.id)}</b><br>${esc(item.text)}</p></div>`).join('')}</div></section>`:''}
+        <section><h4>Verification source</h4><p>${r.verification?.source?esc(r.verification.source):'No repository source linked yet.'}</p></section>
+        <section><h4>Used by Integration relationships · ${users.length}</h4><div class="integration-evidence-users">${users.length?users.map(({link,ref:linkRef,evidenceRef})=>`
+          <button type="button" data-atlas-type="integrationLink" data-atlas-id="${esc(link.id)}">
+            <span>${esc(labelize(evidenceRef.requirement))}</span>
+            <b>${esc(linkRef?.name||link.id)}</b>
+            <small>${esc(labelize(link.architectureState))} · ${esc(labelize(model.deriveEvidenceCoverage(link).state))}</small>
+          </button>`).join(''):'<span class="muted">No Integration relationships reference this evidence.</span>'}</div></section>`;
     }
 
-    const graphLinks=model.related(ref.type,ref.id);
+    const graphLinks=ref.type==='integrationLink'?[]:model.related(ref.type,ref.id);
     const graphSection=graphLinks.length?`
       <section class="inspector-graph"><h4>Integration graph · ${graphLinks.length}</h4>
         <div class="integration-link-list">${graphLinks
           .filter((item,index,array)=>array.findIndex(other=>other.ref.type===item.ref.type&&other.ref.id===item.ref.id&&other.link.role===item.link.role)===index)
           .slice(0,36)
-          .map(({link,ref:linked})=>`<button type="button" data-atlas-type="${esc(linked.type)}" data-atlas-id="${esc(linked.id)}"><span class="integration-link-role">${esc(labelize(link.role))}</span><b>${esc(linked.name)}</b><small>${esc(labelize(link.architectureState))} · evidence ${esc(link.evidenceState)}</small></button>`).join('')}
+          .map(({link,ref:linked})=>{const coverage=model.deriveEvidenceCoverage(link);return `<button type="button" data-atlas-type="${esc(linked.type)}" data-atlas-id="${esc(linked.id)}"><span class="integration-link-role">${esc(labelize(link.role))}</span><b>${esc(linked.name)}</b><small>${esc(labelize(link.architectureState))} · evidence ${esc(labelize(coverage.state))} ${coverage.verified}/${coverage.required}</small></button>`}).join('')}
         </div>
       </section>`:'';
 
