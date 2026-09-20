@@ -35,6 +35,7 @@ try{
   await page.waitForSelector('.overview-graph',{state:'visible'});
   await page.click('[data-overview-id="authority"]');
   await page.waitForFunction(()=>location.hash.includes('overview/component/authority'));
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('World + Authority Plane'));
   assert((await page.locator('#inspector').innerText()).includes('World + Authority Plane'),'Inspector did not resolve Authority');
 
   await page.fill('#atlasSearch','submit transaction');
