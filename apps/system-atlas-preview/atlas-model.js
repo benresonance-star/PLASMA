@@ -5,6 +5,8 @@ export async function loadAtlas() {
   return createAtlasModel(data);
 }
 
+const keyFor = (type, id) => `${type}:${id}`;
+
 export function createAtlasModel(data) {
   const by = {
     component: new Map(data.components.map(x => [x.id, x])),
@@ -18,7 +20,7 @@ export function createAtlasModel(data) {
   };
 
   const refs = [];
-  const push = (type, items, aliases = []) => items.forEach(item => {
+  const push = (type, items) => items.forEach(item => {
     refs.push({
       type,
       id: item.id,
@@ -26,8 +28,7 @@ export function createAtlasModel(data) {
       name: item.name || item.label || item.id,
       summary: item.summary || item.description || item.semantics || item.explanation || '',
       explanation: item.explanation || item.description || item.semantics || item.summary || '',
-      raw: item,
-      aliases
+      raw: item
     });
   });
 
@@ -40,10 +41,74 @@ export function createAtlasModel(data) {
   push('slice', data.slices);
   push('evidence', data.evidence);
 
-  const refMap = new Map(refs.map(ref => [`${ref.type}:${ref.id}`, ref]));
+  const refMap = new Map(refs.map(ref => [keyFor(ref.type, ref.id), ref]));
+  const links = Array.isArray(data.links) ? data.links : [];
+  const linkIndex = new Map();
+  for (const link of links) {
+    for (const endpoint of [link.from, link.to]) {
+      const key = keyFor(endpoint.type, endpoint.id);
+      const list = linkIndex.get(key) || [];
+      list.push(link);
+      linkIndex.set(key, list);
+    }
+  }
 
   function resolve(type, id) {
-    return refMap.get(`${type}:${id}`) || null;
+    return refMap.get(keyFor(type, id)) || null;
+  }
+
+  function linksFor(type, id, options = {}) {
+    const list = linkIndex.get(keyFor(type, id)) || [];
+    return list.filter(link => {
+      if (options.role && link.role !== options.role) return false;
+      if (options.direction === 'out' && !(link.from.type === type && link.from.id === id)) return false;
+      if (options.direction === 'in' && !(link.to.type === type && link.to.id === id)) return false;
+      return true;
+    });
+  }
+
+  function otherRef(link, type, id) {
+    const isFrom = link.from.type === type && link.from.id === id;
+    return resolve(isFrom ? link.to.type : link.from.type, isFrom ? link.to.id : link.from.id);
+  }
+
+  function related(type, id, options = {}) {
+    return linksFor(type, id, options)
+      .map(link => ({ link, ref: otherRef(link, type, id) }))
+      .filter(item => item.ref);
+  }
+
+  function integrationCoverage(sliceId, rowRef) {
+    return links.find(link =>
+      link.role === 'exercises' &&
+      link.from.type === 'slice' &&
+      link.from.id === sliceId &&
+      link.to.type === rowRef.type &&
+      link.to.id === rowRef.id
+    ) || null;
+  }
+
+  function integrationInsights() {
+    const rows = data.integration?.matrixRows || [];
+    const slices = data.slices || [];
+    const rowCoverage = rows.map(row => {
+      const coveredBy = slices
+        .map(slice => ({ slice, link: integrationCoverage(slice.id, row.ref) }))
+        .filter(item => item.link);
+      return { row, coveredBy };
+    });
+    const partialOrPlanned = links.filter(link =>
+      link.role === 'exercises' && (link.architectureState === 'partial' || link.architectureState === 'planned')
+    );
+    const unlinkedEvidence = data.evidence.filter(item => item.state === 'unlinked');
+    const slicesWithoutScenario = slices.filter(slice => !(slice.integrationEvidence || []).length);
+    return {
+      uncovered: rowCoverage.filter(item => item.coveredBy.length === 0),
+      singleSlice: rowCoverage.filter(item => item.coveredBy.length === 1),
+      partialOrPlanned,
+      unlinkedEvidence,
+      slicesWithoutScenario
+    };
   }
 
   function search(query, limit = 12) {
@@ -53,6 +118,14 @@ export function createAtlasModel(data) {
     return refs
       .map(ref => {
         const raw = ref.raw;
+        const graphTerms = related(ref.type, ref.id).flatMap(({ link, ref: linked }) => [
+          linked.name,
+          linked.atlasId,
+          link.role,
+          link.architectureState,
+          link.evidenceState,
+          link.explanation
+        ]);
         const haystack = [
           ref.name,
           ref.atlasId,
@@ -61,14 +134,22 @@ export function createAtlasModel(data) {
           raw.kind,
           raw.authority,
           raw.owner,
+          raw.maturity,
+          raw.domain,
+          raw.declaredState,
+          raw.evidenceState,
           ...(raw.tags || []),
           ...(raw.types || []),
           ...(raw.verbs || []),
           ...(raw.constraints || []),
-          ...(raw.supports || [])
+          ...(raw.supports || []),
+          ...(raw.flow || []),
+          ...(raw.proves || []),
+          ...(raw.keySystems || []),
+          ...graphTerms
         ].filter(Boolean).join(' ').toLowerCase();
-        const exactName = ref.name?.toLowerCase() === q ? 12 : 0;
-        const starts = ref.name?.toLowerCase().startsWith(q) ? 6 : 0;
+        const exactName = String(ref.name || '').toLowerCase() === q ? 12 : 0;
+        const starts = String(ref.name || '').toLowerCase().startsWith(q) ? 6 : 0;
         const tokenScore = tokens.reduce((score, token) => score + (haystack.includes(token) ? 1 : 0), 0);
         return { ref, score: exactName + starts + tokenScore };
       })
@@ -78,7 +159,18 @@ export function createAtlasModel(data) {
       .map(x => x.ref);
   }
 
-  return { data, by, refs, resolve, search };
+  return {
+    data,
+    by,
+    refs,
+    links,
+    resolve,
+    linksFor,
+    related,
+    integrationCoverage,
+    integrationInsights,
+    search
+  };
 }
 
 export function routeForRef(ref) {
@@ -104,6 +196,7 @@ export function parseHash(hash) {
 
   if (view === 'overview' && parts[1] === 'component') return { view, type: 'component', id: parts[2] || null };
   if (view === 'overview' && parts[1] === 'relationship') return { view, type: 'relationship', id: parts[2] || null };
+  if (view === 'integration' && parts[1] && parts[2]) return { view, type: parts[1], id: parts[2] };
   if (view === 'languages' && parts[1] === 'domain') return { view, type: 'domainLanguage', id: parts[2] || null };
   if (view === 'languages' && parts[1] === 'core') return { view, type: 'coreLanguage', id: parts[2] || null };
   if (view === 'transactions' && parts[1] === 'stage') return { view, type: 'stage', id: parts[2] || null };
@@ -111,11 +204,12 @@ export function parseHash(hash) {
   if (view === 'contracts') return { view, type: 'contract', id: parts[1] || null };
   if (view === 'slices') return { view, type: 'slice', id: parts[1] || null };
   if (view === 'evidence') return { view, type: 'evidence', id: parts[1] || null };
-  return { view: ['overview','languages','transactions','components','contracts','slices','evidence'].includes(view) ? view : 'overview', type: null, id: null };
+  return { view: ['overview','integration','languages','transactions','components','contracts','slices','evidence'].includes(view) ? view : 'overview', type: null, id: null };
 }
 
 export function routeForSelection(type, id, currentView = 'overview') {
   if (!type || !id) return `#${currentView}`;
+  if (currentView === 'integration') return `#integration/${encodeURIComponent(type)}/${encodeURIComponent(id)}`;
   if (type === 'component') return currentView === 'overview' ? `#overview/component/${encodeURIComponent(id)}` : `#components/${encodeURIComponent(id)}`;
   if (type === 'relationship') return `#overview/relationship/${encodeURIComponent(id)}`;
   if (type === 'domainLanguage') return `#languages/domain/${encodeURIComponent(id)}`;
