@@ -35,6 +35,12 @@ try{
   await page.click('.view-tab[data-view="integration"]');
   await page.waitForSelector('.integration-matrix',{state:'visible'});
   assert((await page.locator('.matrix-slice-head[data-atlas-id="window-door-system"]').count())===1,'Window/door slice missing from integration matrix');
+  const headerStyle=await page.locator('.matrix-slice-head[data-atlas-id="window-door-system"]').evaluate(el=>({
+    transform:getComputedStyle(el).transform,
+    writingMode:getComputedStyle(el).writingMode
+  }));
+  assert(headerStyle.transform==='none','Integration matrix header must not be rotated');
+  assert(headerStyle.writingMode==='vertical-rl','Integration matrix header should remain vertical top-to-bottom');
   assert((await page.locator('.maturity-card[data-atlas-id="planning"]').count())===1,'Planning language is not a first-class maturity node');
   await page.click('.matrix-row-head[data-atlas-id="geometry"]');
   await page.waitForFunction(()=>location.hash.includes('integration/component/geometry'));
