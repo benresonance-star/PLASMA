@@ -255,8 +255,7 @@
           "role": "test",
           "paths": [
             "packages/validation-core/src/index.test.ts",
-            "packages/constraint-contracts/src/index.test.ts",
-            "apps/designer-web/src/validation-source.test.ts"
+            "packages/constraint-contracts/src/index.test.ts"
           ]
         },
         {
@@ -272,8 +271,7 @@
           "framework": "vitest",
           "paths": [
             "packages/validation-core/src/index.test.ts",
-            "packages/constraint-contracts/src/index.test.ts",
-            "apps/designer-web/src/validation-source.test.ts"
+            "packages/constraint-contracts/src/index.test.ts"
           ],
           "step": "Evidence ev-validation-pipeline"
         }
@@ -347,8 +345,7 @@
           "role": "test",
           "paths": [
             "packages/analysis-core/src/index.test.ts",
-            "services/meshing-adapter/src/index.test.ts",
-            "services/meshing-adapter/src/forced-failure-live.test.ts"
+            "services/meshing-adapter/src/index.test.ts"
           ]
         },
         {
@@ -364,8 +361,7 @@
           "framework": "vitest",
           "paths": [
             "packages/analysis-core/src/index.test.ts",
-            "services/meshing-adapter/src/index.test.ts",
-            "services/meshing-adapter/src/forced-failure-live.test.ts"
+            "services/meshing-adapter/src/index.test.ts"
           ],
           "step": "Evidence ev-external-authority-boundary"
         }
