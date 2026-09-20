@@ -117,7 +117,46 @@
   /* Inspector */
   .inspector{padding:13px;overflow:auto}.inspector-head{display:flex;justify-content:space-between;gap:9px;align-items:flex-start}.inspector h2{font-size:15px;margin:4px 0}.idtag{font-size:7.5px;color:var(--muted);background:var(--authority-soft);border:1px solid var(--line);padding:4px 6px;border-radius:6px}.inspector p{font-size:9.5px;line-height:1.5;color:var(--muted)}.section{margin-top:14px;padding-top:11px;border-top:1px solid var(--line)}.section h3{margin:0 0 8px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}.kv{display:grid;grid-template-columns:86px 1fr;gap:7px 8px;font-size:8.5px;line-height:1.35}.kv dt{color:var(--faint)}.kv dd{margin:0;color:var(--ink);font-weight:680}.contract{border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;background:var(--panel-strong)}.contract strong{display:block;font-size:8.5px;margin-bottom:3px}.contract span{font-size:7.7px;color:var(--muted)}.evidence{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--line);font-size:8.5px}.evidence:last-child{border-bottom:0}.evicon{width:17px;height:17px;display:grid;place-items:center;border-radius:50%;font-size:8px;font-weight:900}.evicon.ok{background:var(--green-soft);color:var(--green)}.evicon.warn{background:var(--amber-soft);color:var(--amber)}.evicon.off{background:var(--authority-soft);color:var(--faint)}.footer-action{margin-top:auto;border-top:1px solid var(--line);padding:9px;display:flex;gap:6px;background:var(--panel)}.footer-action button{flex:1;border:1px solid var(--line);background:var(--panel-strong);border-radius:8px;padding:8px;font-size:8px;font-weight:800;color:var(--muted)}
 
-  @media(max-width:1100px){.topbar{grid-template-columns:250px 1fr 260px}.view-tabs button:nth-child(n+4){display:none}.workspace{grid-template-columns:210px minmax(640px,1fr)}.right{display:none}}
+  /* Mobile / narrow-screen exploration: preserve the full Atlas sheet and let the
+     browser viewport pan across it like a large drawing rather than clipping it. */
+  @media(max-width:1100px){
+    html,body{
+      height:auto;
+      min-height:100%;
+      overflow:auto;
+      -webkit-overflow-scrolling:touch;
+      overscroll-behavior:auto;
+    }
+    body{touch-action:pan-x pan-y}
+    .app{
+      width:1280px;
+      min-width:1280px;
+      height:auto;
+      min-height:920px;
+      grid-template-rows:58px auto;
+    }
+    .topbar{
+      position:sticky;
+      top:0;
+      grid-template-columns:300px 1fr 390px;
+      min-width:1280px;
+    }
+    .view-tabs button{display:block}
+    .workspace{
+      grid-template-columns:232px minmax(700px,1fr) 306px;
+      min-width:1280px;
+      min-height:850px;
+    }
+    .right{display:flex}
+    .center{
+      grid-template-rows:43px 640px 126px;
+      min-height:826px;
+    }
+    .canvas{
+      min-height:640px;
+      touch-action:pan-x pan-y;
+    }
+  }
 </style>
 </head>
 <body>
