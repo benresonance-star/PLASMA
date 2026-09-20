@@ -39,8 +39,9 @@ try{
   await page.click('.matrix-row-head[data-atlas-id="geometry"]');
   await page.waitForFunction(()=>location.hash.includes('integration/component/geometry'));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Geometry Resolver'));
-  assert((await page.locator('#inspector').innerText()).includes('Integration graph'),'Reverse integration graph is missing from inspector');
-  assert((await page.locator('#inspector').innerText()).includes('Window + door system'),'Geometry reverse navigation does not expose the window/door slice');
+  const integrationInspectorText=(await page.locator('#inspector').textContent())||'';
+  assert(integrationInspectorText.includes('Integration graph'),'Reverse integration graph is missing from inspector');
+  assert(integrationInspectorText.includes('Window + door system'),'Geometry reverse navigation does not expose the window/door slice');
 
   await page.click('.view-tab[data-view="slices"]');
   await page.waitForSelector('.slice-catalogue',{state:'visible'});
