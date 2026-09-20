@@ -80,6 +80,20 @@ try{
   assert((await page.locator('#inspector').textContent()||'').includes('Geometry Resolver'),'Geometry capability inspector did not render');
 
   await page.goto(base+'#evidence/ev-transaction-rollback',{waitUntil:'networkidle'});
+  const failedEvidenceStyle=await page.locator('.evidence-card').first().evaluate(el=>{
+    el.classList.add('evidence-failed');
+    const style=getComputedStyle(el);
+    const probe=document.createElement('span');
+    probe.style.color='var(--red)';
+    probe.style.backgroundColor='var(--red-soft)';
+    document.body.appendChild(probe);
+    const probeStyle=getComputedStyle(probe);
+    const result={borderColor:style.borderTopColor,backgroundColor:style.backgroundColor,red:probeStyle.color,redSoft:probeStyle.backgroundColor};
+    probe.remove();
+    return result;
+  });
+  assert(failedEvidenceStyle.borderColor===failedEvidenceStyle.red,'Failed Evidence card border must use the red status token');
+  assert(failedEvidenceStyle.backgroundColor===failedEvidenceStyle.redSoft,'Failed Evidence card background must use the red-soft status token');
   await page.waitForFunction(()=>Boolean(window.__PLASMA_ATLAS__));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Repository binding'));
   const repositoryInspector=(await page.locator('#inspector').textContent())||'';
