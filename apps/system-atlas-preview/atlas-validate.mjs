@@ -5,6 +5,8 @@ import { createAtlasModel, parseHash } from './atlas-model.js';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const atlas=JSON.parse(fs.readFileSync(path.join(here,'atlas.json'),'utf8'));
+const repositoryEvidence=JSON.parse(fs.readFileSync(path.join(here,'repository-evidence.json'),'utf8'));
+const evidenceWorkflow=fs.readFileSync(path.resolve(here,'../../.github/workflows/atlas-evidence.yml'),'utf8');
 const errors=[];
 const assert=(condition,message)=>{if(!condition)errors.push(message)};
 const unique=(items,label)=>{
@@ -33,6 +35,37 @@ unique(atlas.transactions.stages,'transaction stages');
 unique(atlas.slices,'slices');
 unique(atlas.evidence,'evidence');
 unique(atlas.links,'integration links');
+
+assert(repositoryEvidence.schemaVersion==='1.0','repository evidence contract must use schemaVersion 1.0');
+assert(repositoryEvidence.repository?.provider==='github','repository evidence contract currently requires github provider');
+assert(repositoryEvidence.repository?.owner==='benresonance-star'&&repositoryEvidence.repository?.name==='PLASMA','repository evidence contract must target benresonance-star/PLASMA');
+assert(repositoryEvidence.workflow?.file==='atlas-evidence.yml','repository evidence workflow file must be atlas-evidence.yml');
+const bindingIds=repositoryEvidence.bindings.map(binding=>binding.id);
+assert(new Set(bindingIds).size===bindingIds.length,'repository evidence bindings contain duplicate ids');
+const boundEvidenceIds=repositoryEvidence.bindings.map(binding=>binding.evidenceId);
+assert(new Set(boundEvidenceIds).size===boundEvidenceIds.length,'repository evidence must bind each evidence id at most once');
+assert(boundEvidenceIds.length===atlas.evidence.length,'repository evidence must contain one binding record for every Atlas evidence item');
+for(const evidence of atlas.evidence)assert(boundEvidenceIds.includes(evidence.id),`repository evidence missing binding for ${evidence.id}`);
+for(const binding of repositoryEvidence.bindings){
+  assert(atlas.evidence.some(evidence=>evidence.id===binding.evidenceId),`repository binding ${binding.id} references missing evidence ${binding.evidenceId}`);
+  assert(Array.isArray(binding.sources)&&binding.sources.length>0,`repository binding ${binding.id} must declare source paths`);
+  assert(['source-change','max-age','source-change-or-max-age','manual-expiry'].includes(binding.freshnessPolicy?.mode),`repository binding ${binding.id} has invalid freshness policy`);
+  const testIds=(binding.tests||[]).map(test=>test.id);
+  assert(new Set(testIds).size===testIds.length,`repository binding ${binding.id} contains duplicate test identifiers`);
+  for(const test of binding.tests||[]){
+    assert(test.step===binding.ci?.step,`repository binding ${binding.id} test step must match CI step`);
+    for(const testPath of test.paths||[]){
+      assert(fs.existsSync(path.resolve(here,'../..',testPath)),`repository binding ${binding.id} references missing test path ${testPath}`);
+    }
+  }
+  if((binding.tests||[]).length){
+    assert(binding.ci?.workflow==='atlas-evidence',`repository binding ${binding.id} executable tests must use atlas-evidence workflow`);
+    assert(binding.ci?.job==='evidence',`repository binding ${binding.id} executable tests must use evidence job`);
+    assert(evidenceWorkflow.includes(`name: ${binding.ci.step}`),`repository binding ${binding.id} CI step ${binding.ci.step} is missing from workflow`);
+  } else {
+    assert(binding.ci===null,`repository binding ${binding.id} without tests must not claim executable CI evidence`);
+  }
+}
 
 const componentIds=new Set(atlas.components.map(x=>x.id));
 const contractIds=new Set(atlas.contracts.map(x=>x.id));
@@ -179,4 +212,4 @@ if(errors.length){
   errors.forEach(error=>console.error(` - ${error}`));
   process.exit(1);
 }
-console.log(`Atlas ${atlas.meta.version} valid: ${atlas.components.length} components, ${atlas.languages.domain.length} domain languages, ${atlas.relationships.length} relationships, ${atlas.contracts.length} contracts, ${atlas.slices.length} slices, ${atlas.evidence.length} evidence requirements, ${atlas.links.length} typed integration links.`);
+console.log(`Atlas ${atlas.meta.version} valid: ${atlas.components.length} components, ${atlas.languages.domain.length} domain languages, ${atlas.relationships.length} relationships, ${atlas.contracts.length} contracts, ${atlas.slices.length} slices, ${atlas.evidence.length} evidence requirements, ${atlas.links.length} typed integration links, ${repositoryEvidence.bindings.filter(binding=>binding.ci).length} executable repository evidence bindings.`);

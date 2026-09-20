@@ -1,0 +1,654 @@
+{
+  "schemaVersion": "1.0",
+  "repository": {
+    "provider": "github",
+    "owner": "benresonance-star",
+    "name": "PLASMA",
+    "defaultBranch": "main"
+  },
+  "workflow": {
+    "file": "atlas-evidence.yml",
+    "name": "atlas-evidence",
+    "job": "evidence"
+  },
+  "bindings": [
+    {
+      "id": "repo-ev-transaction-rollback",
+      "evidenceId": "ev-transaction-rollback",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/transaction-core/src/**"
+          ]
+        },
+        {
+          "role": "test",
+          "paths": [
+            "packages/transaction-core/src/engine.test.ts"
+          ]
+        },
+        {
+          "role": "workflow",
+          "paths": [
+            ".github/workflows/atlas-evidence.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "id": "TEST.TXN.ROLLBACK.001",
+          "framework": "vitest",
+          "paths": [
+            "packages/transaction-core/src/engine.test.ts"
+          ],
+          "step": "Evidence ev-transaction-rollback"
+        }
+      ],
+      "ci": {
+        "workflow": "atlas-evidence",
+        "job": "evidence",
+        "step": "Evidence ev-transaction-rollback"
+      },
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-stable-identity",
+      "evidenceId": "ev-stable-identity",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/topology-provenance/src/**",
+            "packages/selectors/src/**"
+          ]
+        },
+        {
+          "role": "test",
+          "paths": [
+            "packages/topology-provenance/src/g3b.test.ts",
+            "packages/topology-provenance/src/g6a-torture.test.ts",
+            "packages/selectors/src/resolve.test.ts"
+          ]
+        },
+        {
+          "role": "workflow",
+          "paths": [
+            ".github/workflows/atlas-evidence.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "id": "TEST.IDENTITY.CONTINUITY.001",
+          "framework": "vitest",
+          "paths": [
+            "packages/topology-provenance/src/g3b.test.ts",
+            "packages/topology-provenance/src/g6a-torture.test.ts",
+            "packages/selectors/src/resolve.test.ts"
+          ],
+          "step": "Evidence ev-stable-identity"
+        }
+      ],
+      "ci": {
+        "workflow": "atlas-evidence",
+        "job": "evidence",
+        "step": "Evidence ev-stable-identity"
+      },
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-agent-boundary",
+      "evidenceId": "ev-agent-boundary",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/ai-interface/src/**",
+            "apps/api/src/ai-*.ts"
+          ]
+        },
+        {
+          "role": "test",
+          "paths": [
+            "packages/ai-interface/src/changeset-accept.test.ts",
+            "packages/ai-interface/src/live-compile.test.ts",
+            "apps/api/src/ai-changeset-accept.test.ts"
+          ]
+        },
+        {
+          "role": "workflow",
+          "paths": [
+            ".github/workflows/atlas-evidence.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "id": "TEST.AGENT.AUTHORITY.001",
+          "framework": "vitest",
+          "paths": [
+            "packages/ai-interface/src/changeset-accept.test.ts",
+            "packages/ai-interface/src/live-compile.test.ts",
+            "apps/api/src/ai-changeset-accept.test.ts"
+          ],
+          "step": "Evidence ev-agent-boundary"
+        }
+      ],
+      "ci": {
+        "workflow": "atlas-evidence",
+        "job": "evidence",
+        "step": "Evidence ev-agent-boundary"
+      },
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-interaction-boundary",
+      "evidenceId": "ev-interaction-boundary",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "apps/designer-web/src/**"
+          ]
+        },
+        {
+          "role": "test",
+          "paths": [
+            "apps/designer-web/src/pending-changeset-preview.test.ts",
+            "apps/designer-web/src/what-if-session.test.ts",
+            "apps/designer-web/src/transaction-status.test.ts"
+          ]
+        },
+        {
+          "role": "workflow",
+          "paths": [
+            ".github/workflows/atlas-evidence.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "id": "TEST.INTERACTION.SPECULATION.001",
+          "framework": "vitest",
+          "paths": [
+            "apps/designer-web/src/pending-changeset-preview.test.ts",
+            "apps/designer-web/src/what-if-session.test.ts",
+            "apps/designer-web/src/transaction-status.test.ts"
+          ],
+          "step": "Evidence ev-interaction-boundary"
+        }
+      ],
+      "ci": {
+        "workflow": "atlas-evidence",
+        "job": "evidence",
+        "step": "Evidence ev-interaction-boundary"
+      },
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-geometry-candidate-boundary",
+      "evidenceId": "ev-geometry-candidate-boundary",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/geometry-client/src/**",
+            "services/geometry-occt/src/**",
+            "packages/transaction-core/src/**"
+          ]
+        },
+        {
+          "role": "test",
+          "paths": [
+            "packages/geometry-client/src/client.test.ts",
+            "services/geometry-occt/src/client-boundary.test.ts"
+          ]
+        },
+        {
+          "role": "workflow",
+          "paths": [
+            ".github/workflows/atlas-evidence.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "id": "TEST.GEO.CANDIDATE_ISOLATION.001",
+          "framework": "vitest",
+          "paths": [
+            "packages/geometry-client/src/client.test.ts",
+            "services/geometry-occt/src/client-boundary.test.ts"
+          ],
+          "step": "Evidence ev-geometry-candidate-boundary"
+        }
+      ],
+      "ci": {
+        "workflow": "atlas-evidence",
+        "job": "evidence",
+        "step": "Evidence ev-geometry-candidate-boundary"
+      },
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-validation-pipeline",
+      "evidenceId": "ev-validation-pipeline",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/validation-core/src/**",
+            "packages/constraint-contracts/src/**"
+          ]
+        },
+        {
+          "role": "test",
+          "paths": [
+            "packages/validation-core/src/index.test.ts",
+            "packages/constraint-contracts/src/index.test.ts"
+          ]
+        },
+        {
+          "role": "workflow",
+          "paths": [
+            ".github/workflows/atlas-evidence.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "id": "TEST.VALIDATION.PIPELINE.001",
+          "framework": "vitest",
+          "paths": [
+            "packages/validation-core/src/index.test.ts",
+            "packages/constraint-contracts/src/index.test.ts"
+          ],
+          "step": "Evidence ev-validation-pipeline"
+        }
+      ],
+      "ci": {
+        "workflow": "atlas-evidence",
+        "job": "evidence",
+        "step": "Evidence ev-validation-pipeline"
+      },
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-representation-freshness",
+      "evidenceId": "ev-representation-freshness",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/representation-core/src/**",
+            "packages/dependency-graph/src/**"
+          ]
+        },
+        {
+          "role": "test",
+          "paths": [
+            "packages/representation-core/src/domains.test.ts",
+            "packages/dependency-graph/src/invalidation.test.ts"
+          ]
+        },
+        {
+          "role": "workflow",
+          "paths": [
+            ".github/workflows/atlas-evidence.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "id": "TEST.REP.FRESHNESS.001",
+          "framework": "vitest",
+          "paths": [
+            "packages/representation-core/src/domains.test.ts",
+            "packages/dependency-graph/src/invalidation.test.ts"
+          ],
+          "step": "Evidence ev-representation-freshness"
+        }
+      ],
+      "ci": {
+        "workflow": "atlas-evidence",
+        "job": "evidence",
+        "step": "Evidence ev-representation-freshness"
+      },
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-external-authority-boundary",
+      "evidenceId": "ev-external-authority-boundary",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/analysis-core/src/**",
+            "services/meshing-adapter/src/**"
+          ]
+        },
+        {
+          "role": "test",
+          "paths": [
+            "packages/analysis-core/src/index.test.ts",
+            "services/meshing-adapter/src/index.test.ts"
+          ]
+        },
+        {
+          "role": "workflow",
+          "paths": [
+            ".github/workflows/atlas-evidence.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "id": "TEST.EXTERNAL.AUTHORITY.001",
+          "framework": "vitest",
+          "paths": [
+            "packages/analysis-core/src/index.test.ts",
+            "services/meshing-adapter/src/index.test.ts"
+          ],
+          "step": "Evidence ev-external-authority-boundary"
+        }
+      ],
+      "ci": {
+        "workflow": "atlas-evidence",
+        "job": "evidence",
+        "step": "Evidence ev-external-authority-boundary"
+      },
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-cross-agent-conflict",
+      "evidenceId": "ev-cross-agent-conflict",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/concurrency-core/src/**",
+            "apps/api/src/ai-branch-seed.ts",
+            "apps/api/src/ai-changeset-accept.ts"
+          ]
+        },
+        {
+          "role": "test",
+          "paths": [
+            "packages/concurrency-core/src/head.test.ts",
+            "apps/api/src/ai-branch-seed.test.ts",
+            "apps/api/src/ai-changeset-accept.test.ts"
+          ]
+        },
+        {
+          "role": "workflow",
+          "paths": [
+            ".github/workflows/atlas-evidence.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "id": "TEST.AGENT.CONFLICT.001",
+          "framework": "vitest",
+          "paths": [
+            "packages/concurrency-core/src/head.test.ts",
+            "apps/api/src/ai-branch-seed.test.ts",
+            "apps/api/src/ai-changeset-accept.test.ts"
+          ],
+          "step": "Evidence ev-cross-agent-conflict"
+        }
+      ],
+      "ci": {
+        "workflow": "atlas-evidence",
+        "job": "evidence",
+        "step": "Evidence ev-cross-agent-conflict"
+      },
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-recovery-benchmark",
+      "evidenceId": "ev-recovery-benchmark",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "benchmarks/src/**",
+            "packages/concurrency-core/src/**",
+            "packages/transaction-core/src/**"
+          ]
+        },
+        {
+          "role": "benchmark",
+          "paths": [
+            "benchmarks/src/b17-recovery.test.ts"
+          ]
+        },
+        {
+          "role": "workflow",
+          "paths": [
+            ".github/workflows/atlas-evidence.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "id": "BENCH.RECOVERY.001",
+          "framework": "vitest",
+          "paths": [
+            "benchmarks/src/b17-recovery.test.ts"
+          ],
+          "step": "Evidence ev-recovery-benchmark"
+        }
+      ],
+      "ci": {
+        "workflow": "atlas-evidence",
+        "job": "evidence",
+        "step": "Evidence ev-recovery-benchmark"
+      },
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-slice-terrain-site",
+      "evidenceId": "ev-slice-terrain-site",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/**/src/**",
+            "apps/**/src/**"
+          ]
+        }
+      ],
+      "tests": [],
+      "ci": null,
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-slice-townhouse-yield",
+      "evidenceId": "ev-slice-townhouse-yield",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/**/src/**",
+            "apps/**/src/**"
+          ]
+        }
+      ],
+      "tests": [],
+      "ci": null,
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-slice-apartment-core",
+      "evidenceId": "ev-slice-apartment-core",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/**/src/**",
+            "apps/**/src/**"
+          ]
+        }
+      ],
+      "tests": [],
+      "ci": null,
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-slice-wall-opening",
+      "evidenceId": "ev-slice-wall-opening",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/assembly-core/src/**",
+            "packages/geometry-*/src/**"
+          ]
+        }
+      ],
+      "tests": [],
+      "ci": null,
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-slice-window-resize",
+      "evidenceId": "ev-slice-window-resize",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/assembly-core/src/**",
+            "packages/geometry-*/src/**",
+            "packages/dimension-core/src/**"
+          ]
+        }
+      ],
+      "tests": [],
+      "ci": null,
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-slice-annotations-regeneration",
+      "evidenceId": "ev-slice-annotations-regeneration",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/dimension-core/src/**",
+            "packages/topology-provenance/src/**",
+            "packages/representation-core/src/**"
+          ]
+        }
+      ],
+      "tests": [],
+      "ci": null,
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-slice-solar-freshness",
+      "evidenceId": "ev-slice-solar-freshness",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/analysis-core/src/**",
+            "packages/representation-core/src/**"
+          ]
+        }
+      ],
+      "tests": [],
+      "ci": null,
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-slice-multi-agent-conflict",
+      "evidenceId": "ev-slice-multi-agent-conflict",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/concurrency-core/src/**",
+            "packages/transaction-core/src/**"
+          ]
+        }
+      ],
+      "tests": [],
+      "ci": null,
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-slice-clothing-resize",
+      "evidenceId": "ev-slice-clothing-resize",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/fabrication-core/src/**",
+            "packages/analysis-core/src/**",
+            "packages/assembly-core/src/**"
+          ]
+        }
+      ],
+      "tests": [],
+      "ci": null,
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-slice-botanical-age",
+      "evidenceId": "ev-slice-botanical-age",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/analysis-core/src/**",
+            "packages/representation-core/src/**"
+          ]
+        }
+      ],
+      "tests": [],
+      "ci": null,
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    }
+  ]
+}

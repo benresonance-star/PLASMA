@@ -34,6 +34,10 @@ try{
 
   await page.click('.view-tab[data-view="integration"]');
   await page.waitForSelector('.integration-matrix',{state:'visible'});
+  assert((await page.locator('.repository-evidence-summary').count())===1,'Repository evidence status summary is missing');
+  const repositorySummary=(await page.locator('.repository-evidence-summary').textContent())||'';
+  assert(repositorySummary.includes('Current Plasma implementation status'),'Repository evidence status heading is missing');
+  assert(repositorySummary.includes('offline'),'Local smoke test should clearly report repository evidence as offline rather than inventing live status');
   assert((await page.locator('.matrix-slice-head[data-atlas-id="window-door-system"]').count())===1,'Window/door slice missing from integration matrix');
   const headerStyle=await page.locator('.matrix-slice-head[data-atlas-id="window-door-system"]').evaluate(el=>({
     transform:getComputedStyle(el).transform,
@@ -56,6 +60,14 @@ try{
   await page.waitForFunction(()=>location.hash.includes('integration/component/geometry'));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Geometry Resolver'));
   assert((await page.locator('#inspector').textContent()||'').includes('Geometry Resolver'),'Geometry capability inspector did not render');
+
+  await page.goto(base+'#evidence/ev-transaction-rollback',{waitUntil:'networkidle'});
+  await page.waitForFunction(()=>Boolean(window.__PLASMA_ATLAS__));
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Repository binding'));
+  const repositoryInspector=(await page.locator('#inspector').textContent())||'';
+  assert(repositoryInspector.includes('repo-ev-transaction-rollback'),'Evidence inspector is missing repository binding id');
+  assert(repositoryInspector.includes('TEST.TXN.ROLLBACK.001'),'Evidence inspector is missing stable repository test identifier');
+  assert(repositoryInspector.includes('atlas-evidence'),'Evidence inspector is missing CI workflow binding');
 
   await page.goto(base+'#evidence/ev-slice-window-resize',{waitUntil:'networkidle'});
   await page.waitForFunction(()=>Boolean(window.__PLASMA_ATLAS__));

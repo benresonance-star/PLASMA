@@ -1,0 +1,94 @@
+name: atlas-evidence
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --use-system-ca
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Evidence ev-transaction-rollback
+        if: always()
+        run: |
+          pnpm turbo run build --filter=@spds/transaction-core...
+          pnpm --filter @spds/transaction-core exec vitest run src/engine.test.ts
+
+      - name: Evidence ev-stable-identity
+        if: always()
+        run: |
+          pnpm turbo run build --filter=@spds/topology-provenance... --filter=@spds/selectors...
+          pnpm --filter @spds/topology-provenance exec vitest run src/g3b.test.ts src/g6a-torture.test.ts
+          pnpm --filter @spds/selectors exec vitest run src/resolve.test.ts
+
+      - name: Evidence ev-agent-boundary
+        if: always()
+        run: |
+          pnpm turbo run build --filter=@spds/ai-interface... --filter=@spds/api...
+          pnpm --filter @spds/ai-interface exec vitest run src/changeset-accept.test.ts src/live-compile.test.ts
+          pnpm --filter @spds/api exec vitest run src/ai-changeset-accept.test.ts
+
+      - name: Evidence ev-interaction-boundary
+        if: always()
+        run: |
+          pnpm turbo run build --filter=@spds/designer-web...
+          pnpm --filter @spds/designer-web exec vitest run src/pending-changeset-preview.test.ts src/what-if-session.test.ts src/transaction-status.test.ts
+
+      - name: Evidence ev-geometry-candidate-boundary
+        if: always()
+        run: |
+          pnpm turbo run build --filter=@spds/geometry-client... --filter=@spds/geometry-occt...
+          pnpm --filter @spds/geometry-client exec vitest run src/client.test.ts
+          pnpm --filter @spds/geometry-occt exec vitest run src/client-boundary.test.ts
+
+      - name: Evidence ev-validation-pipeline
+        if: always()
+        run: |
+          pnpm turbo run build --filter=@spds/validation-core... --filter=@spds/constraint-contracts...
+          pnpm --filter @spds/validation-core exec vitest run src/index.test.ts
+          pnpm --filter @spds/constraint-contracts exec vitest run src/index.test.ts
+
+      - name: Evidence ev-representation-freshness
+        if: always()
+        run: |
+          pnpm turbo run build --filter=@spds/representation-core... --filter=@spds/dependency-graph...
+          pnpm --filter @spds/representation-core exec vitest run src/domains.test.ts
+          pnpm --filter @spds/dependency-graph exec vitest run src/invalidation.test.ts
+
+      - name: Evidence ev-external-authority-boundary
+        if: always()
+        run: |
+          pnpm turbo run build --filter=@spds/analysis-core... --filter=@spds/meshing-adapter...
+          pnpm --filter @spds/analysis-core exec vitest run src/index.test.ts
+          pnpm --filter @spds/meshing-adapter exec vitest run src/index.test.ts
+
+      - name: Evidence ev-cross-agent-conflict
+        if: always()
+        run: |
+          pnpm turbo run build --filter=@spds/concurrency-core... --filter=@spds/api...
+          pnpm --filter @spds/concurrency-core exec vitest run src/head.test.ts
+          pnpm --filter @spds/api exec vitest run src/ai-branch-seed.test.ts src/ai-changeset-accept.test.ts
+
+      - name: Evidence ev-recovery-benchmark
+        if: always()
+        run: |
+          pnpm turbo run build --filter=@spds/benchmarks...
+          pnpm --filter @spds/benchmarks exec vitest run src/b17-recovery.test.ts

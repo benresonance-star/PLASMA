@@ -1,14 +1,39 @@
+import { loadRepositoryEvidenceBindings, loadRepositoryEvidenceStatus } from './repository-evidence.js';
+
 export async function loadAtlas() {
   const response = await fetch('./atlas.json', { cache: 'no-store' });
   if (!response.ok) throw new Error(`Atlas model failed to load: ${response.status}`);
   const data = await response.json();
-  return createAtlasModel(data);
+
+  let repositoryEvidence = null;
+  try {
+    const bindings = await loadRepositoryEvidenceBindings();
+    repositoryEvidence = await loadRepositoryEvidenceStatus(bindings);
+    const bindingByEvidence = new Map((bindings.bindings || []).map(binding => [binding.evidenceId, binding]));
+    for (const evidence of data.evidence || []) {
+      evidence.repositoryBinding = bindingByEvidence.get(evidence.id) || null;
+      const observation = repositoryEvidence.observations?.[evidence.id];
+      if (observation) evidence.verification = { ...evidence.verification, ...observation };
+    }
+  } catch (error) {
+    repositoryEvidence = {
+      mode: 'degraded',
+      available: false,
+      message: error instanceof Error ? error.message : String(error),
+      headSha: null,
+      updatedAt: new Date().toISOString(),
+      bindings: null,
+      observations: {}
+    };
+  }
+
+  return createAtlasModel(data, repositoryEvidence);
 }
 
 const keyFor = (type, id) => `${type}:${id}`;
 const evidenceStatus = evidence => evidence?.verification?.status || 'unlinked';
 
-export function createAtlasModel(data) {
+export function createAtlasModel(data, repositoryEvidence = null) {
   const links = Array.isArray(data.links) ? data.links : [];
   const by = {
     component: new Map(data.components.map(x => [x.id, x])),
@@ -288,7 +313,11 @@ export function createAtlasModel(data) {
     deriveEvidenceCoverage,
     integrationCoverage,
     integrationInsights,
-    search
+    search,
+    repositoryEvidence,
+    bindingForEvidence(evidenceId) {
+      return by.evidence.get(evidenceId)?.repositoryBinding || null;
+    }
   };
 }
 

@@ -221,6 +221,12 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
     const rows=model.data.integration.matrixRows;
     const slices=model.data.slices;
     const insights=model.integrationInsights();
+    const repositoryEvidence=model.repositoryEvidence;
+    const repoCounts=model.data.evidence.reduce((acc,evidence)=>{
+      const state=evidence.verification?.status||'unlinked';
+      acc[state]=(acc[state]||0)+1;
+      return acc;
+    },{});
     const stateSymbol={defined:'●',partial:'◐',planned:'○'};
     const stateTone={defined:'good',partial:'warn',planned:'planned'};
     const selectedKey=route.type&&route.id?`${route.type}:${route.id}`:'';
@@ -236,6 +242,19 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
             <p>${esc(model.data.integration.principle)} Architecture state and evidence state are deliberately separate.</p></div>
             <div class="principle">Views are projections of one graph</div>
           </div>
+
+          <section class="atlas-section repository-evidence-summary">
+            <div class="section-heading"><div><div class="eyebrow">Repository evidence</div><h3>Current Plasma implementation status</h3></div><span>${repositoryEvidence?.available?'live main read':repositoryEvidence?.mode||'offline'}</span></div>
+            <div class="repository-status-grid">
+              <article class="repository-status-card repository-head"><span>Repository head</span><b>${repositoryEvidence?.headSha?esc(repositoryEvidence.headSha.slice(0,12)):'not available'}</b><small>${esc(repositoryEvidence?.message||'No live repository status available.')}</small></article>
+              <article class="repository-status-card verified"><span>Verified</span><b>${repoCounts.verified||0}</b><small>passing evidence for current source state</small></article>
+              <article class="repository-status-card stale"><span>Stale</span><b>${repoCounts.stale||0}</b><small>previous proof invalidated by relevant change</small></article>
+              <article class="repository-status-card failed"><span>Failed</span><b>${repoCounts.failed||0}</b><small>current evidence test failed</small></article>
+              <article class="repository-status-card linked"><span>Linked</span><b>${repoCounts.linked||0}</b><small>repository proof exists but is not verified yet</small></article>
+              <article class="repository-status-card unlinked"><span>Unlinked</span><b>${repoCounts.unlinked||0}</b><small>no executable repository proof yet</small></article>
+            </div>
+            <p class="repository-status-note">Evidence states are read from GitHub Actions for <b>main</b> when available. A passing older observation remains valid only when its bound implementation, test, Atlas evidence definition and repository binding have not changed.</p>
+          </section>
 
           <section class="atlas-section integration-summary">
             <div class="section-heading"><div><div class="eyebrow">Live graph queries</div><h3>Where integration is thin</h3></div><span>${model.links.length} typed links</span></div>
@@ -513,12 +532,18 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
     } else if(ref.type==='evidence'){
       const status=r.verification?.status||'unlinked';
       const users=model.evidenceUsers(r.id);
+      const binding=r.repositoryBinding;
+      const repo=r.verification?.repository;
+      const sourceRows=(binding?.sources||[]).map(source=>`<div><span>${esc(labelize(source.role))}</span><b>${esc((source.paths||[]).join(' · '))}</b></div>`).join('');
+      const testRows=(binding?.tests||[]).map(test=>`<div><span>${esc(test.id)}</span><b>${esc((test.paths||[]).join(' · '))}</b></div>`).join('');
       body=`<div class="inspector-kv"><span>Kind</span><b>${esc(labelize(r.kind))}</b><span>State</span><b>${esc(labelize(status))}</b><span>Method</span><b>${esc(labelize(r.verification?.method||'unknown'))}</b></div>
         <section><h4>Claim</h4><p>${esc(r.claim)}</p></section>
         <section><h4>Supports</h4><div class="chip-row">${chips(r.supports)}</div></section>
         ${r.scenario?`<section><h4>Scenario</h4><p>${esc(r.scenario)}</p></section>`:''}
         ${Array.isArray(r.acceptanceCriteria)?`<section><h4>Acceptance criteria</h4><div class="inspector-list success-list">${r.acceptanceCriteria.map((item,index)=>`<div><span>${String(index+1).padStart(2,'0')}</span><p><b>${esc(item.id)}</b><br>${esc(item.text)}</p></div>`).join('')}</div></section>`:''}
-        <section><h4>Verification source</h4><p>${r.verification?.source?esc(r.verification.source):'No repository source linked yet.'}</p></section>
+        <section><h4>Repository binding</h4>${binding?`<div class="repository-binding"><div class="inspector-kv"><span>Binding</span><b>${esc(binding.id)}</b><span>Freshness</span><b>${esc(labelize(binding.freshnessPolicy?.mode||'unknown'))}</b><span>CI</span><b>${esc(binding.ci?`${binding.ci.workflow} · ${binding.ci.job} · ${binding.ci.step}`:'No executable CI binding yet')}</b></div>${sourceRows?`<h5>Source paths</h5><div class="binding-paths">${sourceRows}</div>`:''}${testRows?`<h5>Test identifiers</h5><div class="binding-paths">${testRows}</div>`:''}</div>`:'<span class="muted">No repository binding declared.</span>'}</section>
+        <section><h4>Latest repository observation</h4><div class="inspector-kv"><span>State</span><b>${esc(labelize(status))}</b><span>Tested commit</span><b>${esc(repo?.testedCommitSha?.slice(0,12)||r.verification?.subjectRevision?.slice(0,12)||'—')}</b><span>Main head</span><b>${esc(repo?.headSha?.slice(0,12)||model.repositoryEvidence?.headSha?.slice(0,12)||'—')}</b><span>CI run</span><b>${esc(repo?.workflowRunId?String(repo.workflowRunId):'—')}</b><span>Result</span><b>${esc(r.verification?.result||'—')}</b></div>${r.verification?.staleReason?`<p class="evidence-warning">${esc(r.verification.staleReason)}</p>`:''}${repo?.workflowUrl?`<a class="repo-run-link" href="${esc(repo.workflowUrl)}" target="_blank" rel="noreferrer">Open CI run ↗</a>`:''}</section>
+        <section><h4>Verification source</h4><p>${r.verification?.source?esc(r.verification.source):'No repository test source linked yet.'}</p></section>
         <section><h4>Used by Integration relationships · ${users.length}</h4><div class="integration-evidence-users">${users.length?users.map(({link,ref:linkRef,evidenceRef})=>`
           <button type="button" data-atlas-type="integrationLink" data-atlas-id="${esc(link.id)}">
             <span>${esc(labelize(evidenceRef.requirement))}</span>

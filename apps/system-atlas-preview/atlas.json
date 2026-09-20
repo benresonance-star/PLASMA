@@ -1,7 +1,7 @@
 {
   "meta": {
     "id": "PLASMA.SYSTEM_ATLAS",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "title": "Plasma System Atlas",
     "status": "foundation-evolving",
     "description": "A machine-readable architecture model projected into multiple interactive Atlas views.",
@@ -13,7 +13,8 @@
       "Evidence state must be explicit; unknown is not treated as verified.",
       "Every Atlas view is a projection of one typed integration graph.",
       "Architecture coverage and implementation evidence are tracked separately.",
-      "Integration evidence state is derived from referenced evidence records, never authored independently."
+      "Integration evidence state is derived from referenced evidence records, never authored independently.",
+      "Repository evidence is bound to source paths and stable test identifiers; CI observations for main determine live verification, failure and staleness."
     ]
   },
   "views": [
