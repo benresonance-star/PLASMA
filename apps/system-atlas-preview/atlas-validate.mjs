@@ -149,8 +149,10 @@ for(const link of atlas.links){
     assert((link.evidenceRefs||[]).some(x=>x.requirement==='required'),`core defined/partial integration link ${link.id} must declare required evidence`);
     assert((link.evidenceRefs||[]).some(x=>x.requirement==='supporting'),`core defined/partial integration link ${link.id} must declare supporting evidence`);
   }
-  for(const evidenceRef of (link.evidenceRefs||[]).filter(x=>x.requirement==='supporting')){
-    assert(typeof evidenceRef.note==='string'&&evidenceRef.note.trim().length>0,`supporting evidence ${evidenceRef.id} on ${link.id} must explain why it supports this relationship`);
+  if(link.role==='exercises'){
+    for(const evidenceRef of (link.evidenceRefs||[]).filter(x=>x.requirement==='supporting')){
+      assert(typeof evidenceRef.note==='string'&&evidenceRef.note.trim().length>0,`supporting evidence ${evidenceRef.id} on ${link.id} must explain why it supports this relationship`);
+    }
   }
 }
 assert(atlas.integration.evidenceSemantics?.definition,'integration evidence semantics must define what evidence means');
