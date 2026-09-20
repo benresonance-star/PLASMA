@@ -87,9 +87,9 @@ async function boot() {
         render();
       });
     } else if (state.route.view === 'integration') {
-      els.viewControls.innerHTML = `<span class="toolbar-note">Search includes connected slices, languages, contracts and evidence.</span>`;
+      els.viewControls.innerHTML = `<span class="toolbar-note">Cell evidence states are derived from linked Evidence records. Click a cell to inspect its proof requirements.</span>`;
     } else if (state.route.view === 'evidence') {
-      els.viewControls.innerHTML = `<span class="toolbar-note">Unlinked evidence is shown as unknown, never verified.</span>`;
+      els.viewControls.innerHTML = `<span class="toolbar-note">Evidence records show verification status and every Integration relationship that depends on them.</span>`;
     } else if (state.route.view === 'slices') {
       els.viewControls.innerHTML = `<span class="toolbar-note">No implementation percentages without linked evidence.</span>`;
     } else {
