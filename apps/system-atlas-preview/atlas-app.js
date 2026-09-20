@@ -86,6 +86,8 @@ async function boot() {
         localStorage.setItem('plasma-atlas-relationships', state.showRelationships ? 'on' : 'off');
         render();
       });
+    } else if (state.route.view === 'integration') {
+      els.viewControls.innerHTML = `<span class="toolbar-note">Search includes connected slices, languages, contracts and evidence.</span>`;
     } else if (state.route.view === 'evidence') {
       els.viewControls.innerHTML = `<span class="toolbar-note">Unlinked evidence is shown as unknown, never verified.</span>`;
     } else if (state.route.view === 'slices') {

@@ -37,6 +37,7 @@ function languageCard(item, type, selected = false) {
       <div class="card-kicker">${type === 'domainLanguage' ? 'Domain language' : 'Cross-cutting language'}</div>
       <h3>${esc(item.name)}</h3>
       <p>${esc(item.summary)}</p>
+      ${type === 'domainLanguage' && item.maturity ? `<div class="language-maturity">${statusBadge(item.maturity,item.maturity==='active'?'good':item.maturity==='planned'?'warn':'')}</div>` : ''}
       ${tokenSets}
     </button>`;
 }
@@ -89,7 +90,8 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
 
   function renderView(route, options = {}) {
     const view = route.view;
-    if (view === 'languages') renderLanguages(route);
+    if (view === 'integration') renderIntegration(route);
+    else if (view === 'languages') renderLanguages(route);
     else if (view === 'transactions') renderTransactions(route);
     else if (view === 'components') renderComponents(route);
     else if (view === 'contracts') renderContracts(route);
@@ -200,6 +202,69 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
     });
   }
 
+  function renderIntegration(route) {
+    const rows=model.data.integration.matrixRows;
+    const slices=model.data.slices;
+    const insights=model.integrationInsights();
+    const stateSymbol={defined:'●',partial:'◐',planned:'○'};
+    const stateTone={defined:'good',partial:'warn',planned:'planned'};
+    const selectedKey=route.type&&route.id?`${route.type}:${route.id}`:'';
+    const insightList=(items,empty='None')=>items.length
+      ? `<div class="integration-insight-list">${items.map(item=>`<span>${esc(item)}</span>`).join('')}</div>`
+      : `<span class="integration-none">${esc(empty)}</span>`;
+
+    viewHost.innerHTML=`
+      <div class="view-scroll">
+        <section class="view-stage integration-stage" data-base-width="1320">
+          <div class="view-intro">
+            <div><div class="eyebrow">Integration graph</div><h2>One architecture, tested through many slices</h2>
+            <p>${esc(model.data.integration.principle)} Architecture state and evidence state are deliberately separate.</p></div>
+            <div class="principle">Views are projections of one graph</div>
+          </div>
+
+          <section class="atlas-section integration-summary">
+            <div class="section-heading"><div><div class="eyebrow">Live graph queries</div><h3>Where integration is thin</h3></div><span>${model.links.length} typed links</span></div>
+            <div class="integration-insights">
+              <article><b>${insights.uncovered.length}</b><span>capabilities with no slice coverage</span>${insightList(insights.uncovered.map(x=>x.row.label),'All matrix capabilities have slice coverage')}</article>
+              <article><b>${insights.singleSlice.length}</b><span>capabilities covered by one slice only</span>${insightList(insights.singleSlice.map(x=>`${x.row.label} → ${x.coveredBy[0].slice.name}`),'No single-slice dependencies')}</article>
+              <article><b>${insights.partialOrPlanned.length}</b><span>partial / planned slice links</span>${insightList(insights.partialOrPlanned.slice(0,8).map(x=>`${model.by.slice.get(x.from.id)?.name||x.from.id} → ${model.resolve(x.to.type,x.to.id)?.name||x.to.id} [${x.architectureState}]`),'No partial integrations')}</article>
+              <article><b>${insights.unlinkedEvidence.length}</b><span>evidence requirements still unlinked</span>${insightList(insights.unlinkedEvidence.slice(0,8).map(x=>x.name),'All evidence is linked')}</article>
+            </div>
+          </section>
+
+          <section class="atlas-section integration-matrix-section">
+            <div class="section-heading"><div><div class="eyebrow">Coverage matrix</div><h3>Which architectural capabilities each vertical slice exercises</h3></div><span>click a row, slice or cell to inspect its graph connections</span></div>
+            <div class="integration-legend">
+              ${model.data.integration.architectureStates.map(x=>`<span class="legend-state ${esc(x.id)}"><b>${stateSymbol[x.id]||'·'}</b>${esc(x.label)}</span>`).join('')}
+              <span class="legend-state evidence-key"><i></i>evidence unlinked</span>
+              <span class="legend-state none">— not materially exercised</span>
+            </div>
+            <div class="integration-matrix" style="grid-template-columns:150px repeat(${slices.length},minmax(86px,1fr))">
+              <div class="matrix-corner">Capability</div>
+              ${slices.map(slice=>`<button class="matrix-slice-head ${selectedKey===`slice:${slice.id}`?'selected':''}" data-atlas-type="slice" data-atlas-id="${esc(slice.id)}"><span>${esc(slice.name)}</span></button>`).join('')}
+              ${rows.map(row=>{
+                const rowRef=model.resolve(row.ref.type,row.ref.id);
+                return `
+                  <button class="matrix-row-head ${selectedKey===`${row.ref.type}:${row.ref.id}`?'selected':''}" data-atlas-type="${esc(row.ref.type)}" data-atlas-id="${esc(row.ref.id)}"><b>${esc(row.label)}</b><small>${esc(rowRef?.name||row.ref.id)}</small></button>
+                  ${slices.map(slice=>{
+                    const link=model.integrationCoverage(slice.id,row.ref);
+                    if(!link)return `<span class="matrix-cell none" title="Not materially exercised">—</span>`;
+                    return `<button class="matrix-cell ${stateTone[link.architectureState]||''}" data-atlas-type="${esc(row.ref.type)}" data-atlas-id="${esc(row.ref.id)}" title="${esc(slice.name)} → ${esc(row.label)} · ${esc(link.architectureState)} · evidence ${esc(link.evidenceState)}"><b>${stateSymbol[link.architectureState]||'·'}</b><i class="evidence-dot ${esc(link.evidenceState)}"></i></button>`;
+                  }).join('')}`;
+              }).join('')}
+            </div>
+          </section>
+
+          <section class="atlas-section maturity-section">
+            <div class="section-heading"><div><div class="eyebrow">Domain integration</div><h3>Language maturity</h3></div><span>promoted from future labels to addressable Atlas nodes</span></div>
+            <div class="maturity-grid">
+              ${model.data.languages.domain.map(lang=>`<button class="maturity-card" data-atlas-type="domainLanguage" data-atlas-id="${esc(lang.id)}"><span class="eyebrow">${esc(lang.atlasId)}</span><b>${esc(lang.name)}</b>${statusBadge(lang.maturity,lang.maturity==='active'?'good':lang.maturity==='planned'?'warn':'')}</button>`).join('')}
+            </div>
+          </section>
+        </section>
+      </div>`;
+  }
+
   function renderLanguages(route) {
     const domainSelected=route.type==='domainLanguage'?route.id:null;
     const coreSelected=route.type==='coreLanguage'?route.id:null;
@@ -216,7 +281,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
           <section class="atlas-section">
             <div class="section-heading"><div><div class="eyebrow">Band 1</div><h3>Domain languages</h3></div><span>Replaceable vocabularies</span></div>
             <div class="domain-language-grid">${lang.domain.map(x=>languageCard(x,'domainLanguage',domainSelected===x.id)).join('')}</div>
-            <div class="future-row"><b>Future domains</b>${lang.futureDomains.map(x=>`<span>${esc(x)}</span>`).join('')}</div>
+            ${lang.futureDomains.length ? `<div class="future-row"><b>Future domains</b>${lang.futureDomains.map(x=>`<span>${esc(x)}</span>`).join('')}</div>` : ''}
           </section>
 
           <section class="atlas-section">
@@ -385,7 +450,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         <section><h4>Output</h4><code class="block-code">${esc(r.output)}</code></section>
         <section><h4>Failure behavior</h4><p>${esc(r.failure)}</p></section>`;
     } else if(ref.type==='domainLanguage'){
-      body=`<div class="inspector-kv"><span>ID</span><b>${esc(r.atlasId)}</b><span>Uses</span><b>${esc(r.uses.join(', '))}</b></div>
+      body=`<div class="inspector-kv"><span>ID</span><b>${esc(r.atlasId)}</b><span>Maturity</span><b>${esc(labelize(r.maturity))}</b><span>Uses</span><b>${esc(r.uses.join(', '))}</b></div>
         <section><h4>Types</h4><div class="chip-row">${chips(r.types,'type-token')}</div></section>
         <section><h4>Verbs</h4><div class="chip-row">${chips(r.verbs,'verb-token')}</div></section>
         <section><h4>Constraints</h4><div class="chip-row">${chips(r.constraints,'constraint-token')}</div></section>`;
@@ -403,10 +468,25 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         <section><h4>Stress points</h4>${orderedList(r.stressPoints,'stress-list')}</section>
         <section><h4>Success criteria</h4>${orderedList(r.successCriteria,'success-list')}</section>
         <section><h4>Key systems</h4><div class="chip-row">${chips(r.keySystems)}</div></section>
+        <section><h4>Integration evidence</h4><div class="ref-list">${(r.integrationEvidence||[]).map(id=>{const e=model.by.evidence.get(id);return e?refButton('evidence',id,e.name):''}).join('')||'<span class="muted">No scenario linked</span>'}</div></section>
         <section><h4>Evidence checks</h4><div class="check-list">${Object.entries(r.checks).map(([k,v])=>`<div><span>${esc(labelize(k))}</span>${evidenceCell(v)}</div>`).join('')}</div></section>`;
     } else if(ref.type==='evidence'){
-      body=`<div class="inspector-kv"><span>Kind</span><b>${esc(labelize(r.kind))}</b><span>State</span><b>${esc(labelize(r.state))}</b></div><section><h4>Supports</h4><div class="chip-row">${chips(r.supports)}</div></section><section><h4>Source</h4><p>${r.source?esc(r.source):'No repository source linked yet.'}</p></section>`;
+      body=`<div class="inspector-kv"><span>Kind</span><b>${esc(labelize(r.kind))}</b><span>State</span><b>${esc(labelize(r.state))}</b></div>
+        <section><h4>Supports</h4><div class="chip-row">${chips(r.supports)}</div></section>
+        ${r.scenario?`<section><h4>Scenario</h4><p>${esc(r.scenario)}</p></section>`:''}
+        ${Array.isArray(r.acceptanceCriteria)?`<section><h4>Acceptance criteria</h4><div class="inspector-list success-list">${r.acceptanceCriteria.map((item,index)=>`<div><span>${String(index+1).padStart(2,'0')}</span><p>${esc(item)}</p></div>`).join('')}</div></section>`:''}
+        <section><h4>Source</h4><p>${r.source?esc(r.source):'No repository source linked yet.'}</p></section>`;
     }
+
+    const graphLinks=model.related(ref.type,ref.id);
+    const graphSection=graphLinks.length?`
+      <section class="inspector-graph"><h4>Integration graph · ${graphLinks.length}</h4>
+        <div class="integration-link-list">${graphLinks
+          .filter((item,index,array)=>array.findIndex(other=>other.ref.type===item.ref.type&&other.ref.id===item.ref.id&&other.link.role===item.link.role)===index)
+          .slice(0,36)
+          .map(({link,ref:linked})=>`<button type="button" data-atlas-type="${esc(linked.type)}" data-atlas-id="${esc(linked.id)}"><span class="integration-link-role">${esc(labelize(link.role))}</span><b>${esc(linked.name)}</b><small>${esc(labelize(link.architectureState))} · evidence ${esc(link.evidenceState)}</small></button>`).join('')}
+        </div>
+      </section>`:'';
 
     inspector.innerHTML=`
       <div class="inspector-content" data-help-root="true">
@@ -415,6 +495,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         <p class="inspector-summary">${esc(ref.summary)}</p>
         <p class="inspector-explanation">${esc(ref.explanation)}</p>
         ${body}
+        ${graphSection}
       </div>`;
   }
 

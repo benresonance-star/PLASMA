@@ -15,9 +15,10 @@ try{
 
   assert(await visible('.overview-graph'),'Overview graph is not visible');
   assert(await visible('[data-overview-id="authority"]'),'Authority component is not visible');
-  assert((await page.locator('.view-tab').count())===7,'Expected seven functional top-level views');
+  assert((await page.locator('.view-tab').count())===8,'Expected eight functional top-level views');
 
   const views=[
+    ['integration','.integration-matrix'],
     ['languages','.domain-language-grid'],
     ['transactions','.transaction-flow'],
     ['components','.catalogue-grid'],
@@ -31,6 +32,17 @@ try{
     assert((await locationHash(page))===`#${view}`,`Unexpected hash after opening ${view}`);
   }
 
+  await page.click('.view-tab[data-view="integration"]');
+  await page.waitForSelector('.integration-matrix',{state:'visible'});
+  assert((await page.locator('.matrix-slice-head[data-atlas-id="window-door-system"]').count())===1,'Window/door slice missing from integration matrix');
+  assert((await page.locator('.maturity-card[data-atlas-id="planning"]').count())===1,'Planning language is not a first-class maturity node');
+  await page.click('.matrix-row-head[data-atlas-id="geometry"]');
+  await page.waitForFunction(()=>location.hash.includes('integration/component/geometry'));
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Geometry Resolver'));
+  const integrationInspectorText=(await page.locator('#inspector').textContent())||'';
+  assert(integrationInspectorText.includes('Integration graph'),'Reverse integration graph is missing from inspector');
+  assert(integrationInspectorText.includes('Window + door system'),'Geometry reverse navigation does not expose the window/door slice');
+
   await page.click('.view-tab[data-view="slices"]');
   await page.waitForSelector('.slice-catalogue',{state:'visible'});
   assert((await page.locator('[data-atlas-id="townhouse-system"]').count())===1,'Townhouse system slice is missing');
@@ -38,6 +50,11 @@ try{
   assert((await page.locator('[data-atlas-id="window-door-system"]').count())===1,'Window and door system slice is missing');
   assert((await page.locator('[data-atlas-id="clothing-fabrication"]').count())===1,'Clothing fabrication slice is missing');
   assert((await page.locator('[data-atlas-id="botanical-growth"]').count())===1,'Botanical growth slice is missing');
+  await page.click('[data-atlas-id="window-door-system"]');
+  await page.waitForFunction(()=>location.hash.includes('slices/window-door-system'));
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Window integration: resize hosted window'));
+  assert(((await page.locator('#inspector').textContent())||'').includes('Integration evidence'),'Slice-specific integration evidence is not linked in inspector');
+
   await page.click('[data-atlas-id="clothing-fabrication"]');
   await page.waitForFunction(()=>location.hash.includes('slices/clothing-fabrication'));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Stress points'));
@@ -54,6 +71,10 @@ try{
   await page.fill('#atlasSearch','submit transaction');
   await page.waitForSelector('#searchResults.open .search-result',{state:'visible'});
   assert((await page.locator('#searchResults .search-result').count())>0,'Search returned no results');
+  await page.fill('#atlasSearch','');
+  await page.fill('#atlasSearch','window fabrication');
+  await page.waitForSelector('#searchResults.open .search-result',{state:'visible'});
+  assert((await page.locator('#searchResults').innerText()).includes('Window + door')||(await page.locator('#searchResults').innerText()).includes('Fabrication'),'Integration-aware search did not surface connected graph terms');
   await page.fill('#atlasSearch','');
   await page.keyboard.press('Escape');
 

@@ -12,7 +12,9 @@
     "languages",
     "transactions",
     "slices",
-    "evidence"
+    "evidence",
+    "links",
+    "integration"
   ],
   "properties": {
     "meta": {
@@ -149,6 +151,88 @@
       "items": {
         "$ref": "#/$defs/evidence"
       }
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/link"
+      }
+    },
+    "integration": {
+      "type": "object",
+      "required": [
+        "principle",
+        "matrixRows",
+        "architectureStates",
+        "evidenceStates"
+      ],
+      "properties": {
+        "principle": {
+          "type": "string"
+        },
+        "matrixRows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "label",
+              "ref"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "ref": {
+                "$ref": "#/$defs/typedRef"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "architectureStates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "label",
+              "description"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "evidenceStates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "label"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
     }
   },
   "$defs": {
@@ -363,7 +447,8 @@
         "types",
         "verbs",
         "constraints",
-        "uses"
+        "uses",
+        "maturity"
       ],
       "properties": {
         "id": {
@@ -404,6 +489,14 @@
           "items": {
             "type": "string"
           }
+        },
+        "maturity": {
+          "enum": [
+            "active",
+            "emerging",
+            "planned",
+            "research"
+          ]
         }
       },
       "additionalProperties": false
@@ -457,7 +550,8 @@
         "declaredState",
         "evidenceState",
         "checks",
-        "explanation"
+        "explanation",
+        "integrationEvidence"
       ],
       "properties": {
         "id": {
@@ -524,6 +618,12 @@
         },
         "explanation": {
           "type": "string"
+        },
+        "integrationEvidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       },
       "additionalProperties": false
@@ -568,6 +668,81 @@
         }
       },
       "additionalProperties": true
+    },
+    "typedRef": {
+      "type": "object",
+      "required": [
+        "type",
+        "id"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "component",
+            "relationship",
+            "contract",
+            "domainLanguage",
+            "coreLanguage",
+            "stage",
+            "slice",
+            "evidence"
+          ]
+        },
+        "id": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "link": {
+      "type": "object",
+      "required": [
+        "id",
+        "from",
+        "to",
+        "role",
+        "architectureState",
+        "evidenceState",
+        "criticality"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "from": {
+          "$ref": "#/$defs/typedRef"
+        },
+        "to": {
+          "$ref": "#/$defs/typedRef"
+        },
+        "role": {
+          "type": "string"
+        },
+        "architectureState": {
+          "enum": [
+            "defined",
+            "partial",
+            "planned"
+          ]
+        },
+        "evidenceState": {
+          "enum": [
+            "verified",
+            "linked",
+            "unlinked"
+          ]
+        },
+        "criticality": {
+          "enum": [
+            "core",
+            "supporting"
+          ]
+        },
+        "explanation": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
     }
   }
 }
