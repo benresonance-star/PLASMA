@@ -1,0 +1,67 @@
+name: atlas-evidence
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  evidence:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --use-system-ca
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Evidence ev-transaction-rollback
+        if: always()
+        run: pnpm exec vitest run packages/transaction-core/src/engine.test.ts
+
+      - name: Evidence ev-stable-identity
+        if: always()
+        run: pnpm exec vitest run packages/topology-provenance/src/g3b.test.ts packages/topology-provenance/src/g6a-torture.test.ts packages/selectors/src/resolve.test.ts
+
+      - name: Evidence ev-agent-boundary
+        if: always()
+        run: pnpm exec vitest run packages/ai-interface/src/changeset-accept.test.ts packages/ai-interface/src/live-compile.test.ts apps/api/src/ai-changeset-accept.test.ts
+
+      - name: Evidence ev-interaction-boundary
+        if: always()
+        run: pnpm exec vitest run apps/designer-web/src/pending-changeset-preview.test.ts apps/designer-web/src/what-if-session.test.ts apps/designer-web/src/transaction-status.test.ts
+
+      - name: Evidence ev-geometry-candidate-boundary
+        if: always()
+        run: pnpm exec vitest run packages/geometry-client/src/client.test.ts services/geometry-occt/src/client-boundary.test.ts
+
+      - name: Evidence ev-validation-pipeline
+        if: always()
+        run: pnpm exec vitest run packages/validation-core/src/index.test.ts packages/constraint-contracts/src/index.test.ts apps/designer-web/src/validation-source.test.ts
+
+      - name: Evidence ev-representation-freshness
+        if: always()
+        run: pnpm exec vitest run packages/representation-core/src/domains.test.ts packages/dependency-graph/src/invalidation.test.ts
+
+      - name: Evidence ev-external-authority-boundary
+        if: always()
+        run: pnpm exec vitest run packages/analysis-core/src/index.test.ts services/meshing-adapter/src/index.test.ts services/meshing-adapter/src/forced-failure-live.test.ts
+
+      - name: Evidence ev-cross-agent-conflict
+        if: always()
+        run: pnpm exec vitest run packages/concurrency-core/src/head.test.ts apps/api/src/ai-branch-seed.test.ts apps/api/src/ai-changeset-accept.test.ts
+
+      - name: Evidence ev-recovery-benchmark
+        if: always()
+        run: pnpm exec vitest run benchmarks/src/b17-recovery.test.ts
