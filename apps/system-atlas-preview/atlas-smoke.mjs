@@ -31,6 +31,16 @@ try{
     assert((await locationHash(page))===`#${view}`,`Unexpected hash after opening ${view}`);
   }
 
+  await page.click('.view-tab[data-view="slices"]');
+  await page.waitForSelector('.slice-catalogue',{state:'visible'});
+  assert((await page.locator('[data-atlas-id="clothing-fabrication"]').count())===1,'Clothing fabrication slice is missing');
+  assert((await page.locator('[data-atlas-id="botanical-growth"]').count())===1,'Botanical growth slice is missing');
+  await page.click('[data-atlas-id="clothing-fabrication"]');
+  await page.waitForFunction(()=>location.hash.includes('slices/clothing-fabrication'));
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Stress points'));
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Success criteria'));
+  assert((await page.locator('#inspector h4').filter({hasText:'Success criteria'}).count())===1,'Expanded slice detail did not render in inspector');
+
   await page.click('.view-tab[data-view="overview"]');
   await page.waitForSelector('.overview-graph',{state:'visible'});
   await page.click('[data-overview-id="authority"]');

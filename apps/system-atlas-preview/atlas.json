@@ -911,7 +911,49 @@
     {
       "id": "terrain-site",
       "name": "Terrain → site foundation",
-      "summary": "Interaction → transaction → geometry → evidence → representation.",
+      "domain": "Site / context",
+      "summary": "From survey and site intent to authoritative terrain, constraints, evidence and derived context representations.",
+      "purpose": "Prove that Plasma can ingest imperfect real-world site information, create an authoritative semantic site model, support fast human editing, and propagate site changes through geometry, constraints, hydrology, evidence and representations.",
+      "whyThisSlice": "Site work touches almost every foundational concern at once: external evidence, spatial identity, editable geometry, planning constraints, fields, derived analyses and change propagation. If this slice is weak, downstream feasibility is built on unreliable context.",
+      "flow": [
+        "survey / GIS / user evidence",
+        "site entities + semantic references",
+        "terrain and grading operation",
+        "candidate geometry",
+        "constraint + hydrology validation",
+        "atomic commit",
+        "dependency invalidation",
+        "updated views / reports"
+      ],
+      "proves": [
+        "external evidence can become traceable world state without becoming unquestioned truth",
+        "terrain edits remain semantic operations rather than raw mesh manipulation",
+        "exact, approximate and field representations can coexist",
+        "planning, drainage and geometry checks can evaluate the same candidate world",
+        "site changes invalidate only causally dependent results"
+      ],
+      "stressPoints": [
+        "noisy or contradictory source data",
+        "large terrain meshes and contours",
+        "stable references after grading or topology change",
+        "interactive preview versus exact committed geometry",
+        "local edits with global drainage consequences"
+      ],
+      "successCriteria": [
+        "a site can be imported, corrected and graded without bypassing the transaction boundary",
+        "changing a pad, driveway or contour updates affected drainage and planning checks",
+        "all derived site representations expose freshness and provenance",
+        "annotations and references survive routine terrain regeneration",
+        "the workflow remains responsive on representative medium-density sites"
+      ],
+      "keySystems": [
+        "Interaction Plane",
+        "World + Authority Plane",
+        "Geometry Resolver",
+        "Constraint Runtime",
+        "Representations",
+        "External Systems"
+      ],
       "declaredState": "active implementation",
       "evidenceState": "not-linked",
       "checks": {
@@ -922,12 +964,54 @@
         "e2e": "not-linked",
         "benchmark": "not-linked"
       },
-      "explanation": "This slice is intended to prove an end-to-end site capability. The Atlas currently records declared architectural state but does not yet link repository evidence, so no completion percentage is asserted."
+      "explanation": "This is the primary site/context proving slice. It is deliberately broader than a terrain editor: the important test is whether real-world evidence can be turned into dependable, editable, authoritative site state and then safely drive downstream design decisions."
     },
     {
       "id": "wall-assembly",
       "name": "Wall assembly",
-      "summary": "System → subsystem → component → interface → operation.",
+      "domain": "Building systems",
+      "summary": "Nested system → subsystem → component → interface → operation, with geometry and fabrication consequences.",
+      "purpose": "Prove that Plasma can represent a wall as an editable system made from rules and interacting parts rather than as a single monolithic object.",
+      "whyThisSlice": "Walls expose the general composition problem found throughout buildings: systems contain subsystems and components, interfaces matter, repetition is rule-driven, and apparently simple edits create junction, opening, material and fabrication consequences.",
+      "flow": [
+        "wall-system intent",
+        "assembly definition",
+        "stud / lining / plate rules",
+        "interfaces + connectors",
+        "spatial operation",
+        "candidate component changes",
+        "junction / opening validation",
+        "commit",
+        "derived drawings / quantities"
+      ],
+      "proves": [
+        "nested composition does not require a special verb for every building product",
+        "interfaces and connectors can be first-class semantic entities",
+        "assembly rules can generate components while preserving identity and provenance",
+        "high-level edits can propagate into low-level fabrication geometry",
+        "derived drawings and quantities remain projections of the same authoritative system"
+      ],
+      "stressPoints": [
+        "corners, junctions and openings",
+        "rule-generated component identity after regeneration",
+        "curved or non-orthogonal walls",
+        "fasteners and connectors crossing system boundaries",
+        "local manual exceptions inside a procedural assembly"
+      ],
+      "successCriteria": [
+        "extend, trim, curve, join and cut-opening operations work at assembly level",
+        "component regeneration preserves semantic lineage where possible",
+        "a door opening updates framing, linings, quantities and relevant checks coherently",
+        "manual exceptions are explicit rather than silently lost on regeneration",
+        "the same assembly can produce design, documentation and fabrication representations"
+      ],
+      "keySystems": [
+        "World + Authority Plane",
+        "Geometry Resolver",
+        "Constraint Runtime",
+        "Assembly Language",
+        "Representations"
+      ],
       "declaredState": "architecture evolving",
       "evidenceState": "not-linked",
       "checks": {
@@ -938,12 +1022,52 @@
         "e2e": "not-linked",
         "benchmark": "not-linked"
       },
-      "explanation": "This slice tests nested composition and interfaces. Repository evidence must be linked before the Atlas can claim implementation maturity."
+      "explanation": "This slice tests whether Plasma's general entity/composition/interface model is strong enough to replace object-specific CAD logic. The aim is not merely to draw a wall, but to prove that complex assemblies can remain editable, explainable and fabrication-aware."
     },
     {
       "id": "annotations",
-      "name": "Annotations",
-      "summary": "Stable semantic references through regeneration.",
+      "name": "Persistent annotations",
+      "domain": "Documentation / semantics",
+      "summary": "Dimensions, notes, callouts and markups remain attached to meaning while geometry and topology regenerate.",
+      "purpose": "Prove that user and automated annotations can persist through model evolution without being bound to brittle geometry IDs.",
+      "whyThisSlice": "A generative system is not useful for production documentation if every regeneration breaks dimensions and notes. Annotation persistence is therefore a direct test of stable semantic identity and revision-aware reference resolution.",
+      "flow": [
+        "author annotation",
+        "bind semantic reference",
+        "store intent + placement policy",
+        "world changes",
+        "reference lineage resolution",
+        "re-anchor or flag ambiguity",
+        "commit annotation update",
+        "regenerate drawing / viewport"
+      ],
+      "proves": [
+        "semantic references can outlive topology changes",
+        "annotation intent can be separated from screen coordinates",
+        "ambiguity can be surfaced instead of silently rebinding",
+        "manual documentation can coexist with generated geometry",
+        "representation regeneration does not erase authored information"
+      ],
+      "stressPoints": [
+        "face or edge splitting",
+        "deleted or merged entities",
+        "dimension witness points moving between revisions",
+        "view-specific placement conflicts",
+        "annotations that intentionally target derived rather than authoritative geometry"
+      ],
+      "successCriteria": [
+        "routine geometry regeneration does not orphan valid dimensions or notes",
+        "ambiguous references are flagged with lineage and repair options",
+        "annotations can be queried by entity, view and revision",
+        "changing a drawing lens does not change authoritative annotation meaning",
+        "undo, history and provenance explain why an annotation moved or became stale"
+      ],
+      "keySystems": [
+        "World + Authority Plane",
+        "Representations",
+        "Query / Selection Language",
+        "History / Revision Language"
+      ],
       "declaredState": "architecture evolving",
       "evidenceState": "not-linked",
       "checks": {
@@ -954,12 +1078,53 @@
         "e2e": "not-linked",
         "benchmark": "not-linked"
       },
-      "explanation": "This slice tests whether dimensions, notes and callouts can persist as topology and identifiers evolve."
+      "explanation": "This slice is a focused test of stable semantic references. It asks whether Plasma can support real production documentation in a world where geometry is expected to regenerate frequently."
     },
     {
       "id": "solar-mapping",
-      "name": "Solar mapping",
-      "summary": "Analysis → field → surface representation.",
+      "name": "Solar irradiance mapping",
+      "domain": "Analysis / fields",
+      "summary": "World geometry → analysis request → sampled field → claim + evidence → surface representation.",
+      "purpose": "Prove that specialist analysis can attach continuous or sampled data to geometry without contaminating authoritative geometry with solver-specific implementation details.",
+      "whyThisSlice": "Solar mapping is a compact example of the broader analysis problem: geometry is sampled, an external or internal solver computes a field, assumptions and units matter, results become evidence, and a representation maps that evidence back onto surfaces.",
+      "flow": [
+        "select surfaces",
+        "define weather + time assumptions",
+        "sample geometry",
+        "run irradiance solver",
+        "produce field + metrics",
+        "record claims + evidence",
+        "validate freshness",
+        "derive coloured surface representation"
+      ],
+      "proves": [
+        "Analysis Language can request work without directly mutating design state",
+        "field data can reference stable geometry semantically",
+        "units, assumptions, resolution and provenance travel with results",
+        "solver implementations remain replaceable",
+        "analysis results can later inform a separate design-change proposal"
+      ],
+      "stressPoints": [
+        "geometry changing after analysis",
+        "UV / surface parameterisation across regenerated faces",
+        "large sample sets",
+        "different solver fidelity levels",
+        "distinguishing visual interpolation from measured or solved values"
+      ],
+      "successCriteria": [
+        "irradiance results identify source world revision and analysis assumptions",
+        "changing affected geometry marks the result stale immediately",
+        "a replacement solver can satisfy the same contract",
+        "surface colour mapping can be regenerated independently from the analysis result",
+        "a downstream optimisation can cite the irradiance evidence without silently editing geometry"
+      ],
+      "keySystems": [
+        "Analysis Language",
+        "Evidence / Claim Language",
+        "Measurement Language",
+        "Representations",
+        "External Systems"
+      ],
       "declaredState": "conceptual slice",
       "evidenceState": "not-linked",
       "checks": {
@@ -970,12 +1135,54 @@
         "e2e": "not-linked",
         "benchmark": "not-linked"
       },
-      "explanation": "This slice tests analysis claims, fields and derived representations without allowing analysis output to become canonical geometry."
+      "explanation": "This is the canonical analysis-to-representation slice. It tests the separation between world state, analysis claims and visualisation while exercising fields, measurement semantics, provenance and freshness."
     },
     {
       "id": "multi-agent",
-      "name": "Multi-agent",
-      "summary": "Bounded work → proposal → transaction → evidence.",
+      "name": "Multi-agent concurrent work",
+      "domain": "Agentic runtime",
+      "summary": "Bounded world reads → parallel proposals → conflict detection → validated commits → evidence and history.",
+      "purpose": "Prove that many agents can work simultaneously on different or overlapping parts of Plasma without obtaining direct mutation authority or corrupting shared state.",
+      "whyThisSlice": "The long-term system may have hundreds of workers proposing geometry, analysis, documentation and optimisation changes. The central risk is not agent intelligence but concurrency, stale context, hidden coupling and unbounded recomputation.",
+      "flow": [
+        "partition bounded tasks",
+        "read revisioned world slices",
+        "parallel agent reasoning",
+        "candidate patches",
+        "dependency + conflict analysis",
+        "validation",
+        "commit / rebase / reject",
+        "revision + evidence",
+        "schedule affected follow-up work"
+      ],
+      "proves": [
+        "agents operate through the same authoritative commit loop as humans",
+        "read and write sets support conflict detection",
+        "stale work can be rejected or safely rebased",
+        "parallel work can remain local while global invariants still protect the world",
+        "agent actions remain attributable and reversible through history"
+      ],
+      "stressPoints": [
+        "two agents editing the same semantic entity",
+        "long-running analysis based on an old revision",
+        "cascading invalidation between domains",
+        "duplicate or contradictory proposals",
+        "runaway repair loops and agent-to-agent amplification"
+      ],
+      "successCriteria": [
+        "conflicting patches cannot partially commit",
+        "independent patches can commit without global locking",
+        "stale candidates receive structured rejection or rebase information",
+        "agent activity remains inspectable by task, revision and evidence",
+        "throughput scales without making every commit trigger global recomputation"
+      ],
+      "keySystems": [
+        "Intelligence Plane",
+        "World + Authority Plane",
+        "Constraint Runtime",
+        "History / Revision Language",
+        "Evidence / Claim Language"
+      ],
       "declaredState": "architecture defined",
       "evidenceState": "not-linked",
       "checks": {
@@ -986,7 +1193,125 @@
         "e2e": "not-linked",
         "benchmark": "not-linked"
       },
-      "explanation": "This slice tests concurrency, bounded reads, conflict handling and agent proposals under the same authority rules as human operations."
+      "explanation": "This slice tests Plasma as a concurrent authoritative system rather than as a single-user CAD application. It is the proving ground for bounded reasoning, candidate patches, conflicts, rejection, provenance and scalable recomputation."
+    },
+    {
+      "id": "clothing-fabrication",
+      "name": "Clothing → fabrication",
+      "domain": "Parametric product / textile",
+      "summary": "Garment intent → body / maquette → parametric garment → material behaviour → pattern or knit structure → machine-ready fabrication.",
+      "purpose": "Prove that Plasma's kernel, languages and multi-representation model generalise beyond buildings into a materially different designed product with soft geometry, sizing, drape and fabrication constraints.",
+      "whyThisSlice": "Clothing is a strong anti-overfitting test. It forces Plasma to handle deformable form, body-relative geometry, material behaviour, repeated discrete structure and manufacturing output without adding clothing-specific concepts to the authoritative kernel.",
+      "flow": [
+        "garment intent + body parameters",
+        "semantic garment regions",
+        "parametric 3D maquette",
+        "material / yarn model",
+        "fast drape simulation",
+        "pattern or knit topology",
+        "design mapping",
+        "fabrication adapter",
+        "sample / inspection evidence"
+      ],
+      "proves": [
+        "the same kernel can support a new domain through replaceable languages and adapters",
+        "multiple representations can describe one garment: 3D maquette, flat pattern, stitch graph and fabrication instructions",
+        "continuous shape can translate into discrete knit or cut-and-sew structure",
+        "material properties and fit analysis can return evidence rather than own state",
+        "fabrication feedback can update the authoritative design through normal transactions"
+      ],
+      "stressPoints": [
+        "size changes without destroying design intent",
+        "seams, ease and stretch",
+        "mapping motifs across changing garment topology",
+        "fast approximate drape versus slower high-fidelity simulation",
+        "machine-specific constraints such as needle beds, stitch operations and yarn limits"
+      ],
+      "successCriteria": [
+        "one garment definition can regenerate across a useful size range while preserving semantic design regions",
+        "changing yarn or material parameters visibly changes predicted drape and fabrication constraints",
+        "2D pattern / stitch topology remains traceable to 3D garment regions",
+        "machine output is generated through an adapter rather than embedded into the kernel",
+        "a physical sample can return measurements and defects as evidence against the originating revision"
+      ],
+      "keySystems": [
+        "World + Authority Plane",
+        "Geometry Resolver",
+        "Analysis Language",
+        "Assembly Language",
+        "Representations",
+        "External Systems"
+      ],
+      "declaredState": "research slice",
+      "evidenceState": "not-linked",
+      "checks": {
+        "spec": "declared",
+        "contracts": "partial",
+        "code": "not-linked",
+        "unitTests": "not-linked",
+        "e2e": "not-linked",
+        "benchmark": "not-linked"
+      },
+      "explanation": "The clothing slice is deliberately outside architecture. If it works without changing the core authority model, it demonstrates that Plasma is genuinely a general intent-to-reality system rather than a building application with a generic vocabulary."
+    },
+    {
+      "id": "botanical-growth",
+      "name": "Botanical growth → living site system",
+      "domain": "Botanical / ecology",
+      "summary": "Species + site conditions + deterministic seed → growth state → procedural geometry / fields → ecological interactions → multi-level representation.",
+      "purpose": "Prove that living, time-dependent and partially stochastic entities can be first-class participants in the same world model as buildings and terrain.",
+      "whyThisSlice": "Plants are not static assets. They grow, branch, respond to light and water, vary between individuals, interact with site systems and may need representations ranging from botanical structure to millions of render instances. This makes them a demanding test of time, fields, determinism and scale.",
+      "flow": [
+        "species / cultivar definition",
+        "site + climate inputs",
+        "individual seed + age",
+        "growth rules",
+        "botanical topology",
+        "geometry + canopy / root fields",
+        "light / water / clearance interactions",
+        "revisioned growth state",
+        "LOD / drawing / rendering representations"
+      ],
+      "proves": [
+        "time can be an explicit dimension of world state rather than an animation-only concern",
+        "controlled stochastic variation can remain reproducible through deterministic seeds",
+        "procedural living systems can preserve semantic identity across growth stages",
+        "field interactions such as light, water and root zones can coexist with geometry",
+        "one authoritative botanical entity can drive schematic, analytical and highly detailed representations"
+      ],
+      "stressPoints": [
+        "large populations of plants",
+        "season and age changes",
+        "branch and leaf topology changing constantly",
+        "balancing botanical fidelity against interactive performance",
+        "interactions with buildings, utilities, drainage, shade and planning protection rules"
+      ],
+      "successCriteria": [
+        "the same seed, species, age and environment reproduce the same plant state",
+        "age or environmental changes regenerate growth while preserving entity lineage",
+        "large landscapes use level-of-detail and instancing without losing semantic queryability",
+        "tree protection zones, canopy shade and root extents can participate in constraints and analysis",
+        "render geometry remains derived and replaceable rather than becoming authoritative botanical state"
+      ],
+      "keySystems": [
+        "Site Language",
+        "Analysis Language",
+        "Geometry Resolver",
+        "Measurement Language",
+        "Representations",
+        "World + Authority Plane"
+      ],
+      "declaredState": "research slice",
+      "evidenceState": "not-linked",
+      "checks": {
+        "spec": "declared",
+        "contracts": "partial",
+        "code": "not-linked",
+        "unitTests": "not-linked",
+        "e2e": "not-linked",
+        "benchmark": "not-linked"
+      },
+      "explanation": "This slice tests whether Plasma can treat nature as a first-class dynamic system rather than decorative geometry. It combines deterministic procedural generation, lifecycle state, ecological fields, huge instance counts and cross-domain site interactions."
     }
   ],
   "evidence": [

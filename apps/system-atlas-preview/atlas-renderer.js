@@ -325,15 +325,20 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
   function renderSlices(route) {
     const selected=route.type==='slice'?route.id:null;
     viewHost.innerHTML=`
-      <div class="view-scroll"><section class="view-stage catalogue-stage" data-base-width="980">
-        <div class="view-intro"><div><div class="eyebrow">Vertical slices</div><h2>Capability evidence, not percentages</h2><p>The Atlas no longer invents implementation percentages. Each slice exposes declared state separately from linked verification evidence.</p></div><div class="principle warning">Evidence links pending</div></div>
+      <div class="view-scroll"><section class="view-stage catalogue-stage slice-stage" data-base-width="1040">
+        <div class="view-intro"><div><div class="eyebrow">Vertical slices</div><h2>End-to-end capability proofs</h2><p>A vertical slice is not a feature list. Each one deliberately crosses multiple Plasma boundaries to prove that authority, languages, geometry, analysis, evidence, fabrication and representations work together coherently.</p></div><div class="principle warning">${model.data.slices.length} proving slices</div></div>
         <div class="slice-catalogue">${model.data.slices.map(s=>`<button class="slice-card ${selected===s.id?'selected':''}" data-atlas-type="slice" data-atlas-id="${esc(s.id)}">
-          <div class="slice-head"><div><span class="eyebrow">Vertical slice</span><h3>${esc(s.name)}</h3></div>${statusBadge(s.evidenceState,'warn')}</div>
-          <p>${esc(s.summary)}</p>
+          <div class="slice-head"><div><span class="eyebrow">${esc(s.domain)} · vertical slice</span><h3>${esc(s.name)}</h3></div>${statusBadge(s.evidenceState,'warn')}</div>
+          <p class="slice-summary">${esc(s.summary)}</p>
+          <div class="slice-purpose"><b>What it proves</b><p>${esc(s.purpose)}</p></div>
+          <div class="slice-flow">
+            ${s.flow.map((step,index)=>`<span><i>${String(index+1).padStart(2,'0')}</i>${esc(step)}</span>`).join('')}
+          </div>
+          <div class="slice-system-row"><b>Touches</b><div>${s.keySystems.map(system=>`<span class="chip">${esc(system)}</span>`).join('')}</div></div>
           <div class="slice-checks">
             ${Object.entries(s.checks).map(([k,v])=>`<div><span>${esc(labelize(k))}</span>${evidenceCell(v)}</div>`).join('')}
           </div>
-          <small>Declared state: ${esc(s.declaredState)}</small>
+          <small>Declared state: ${esc(s.declaredState)} · Select for stress points and success criteria</small>
         </button>`).join('')}</div>
       </section></div>`;
   }
@@ -389,7 +394,16 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
     } else if(ref.type==='stage'){
       body=`<div class="inspector-kv"><span>Step</span><b>${esc(r.step)}</b><span>Lifecycle</span><b>Authoritative commit loop</b></div>`;
     } else if(ref.type==='slice'){
-      body=`<div class="inspector-kv"><span>Declared</span><b>${esc(r.declaredState)}</b><span>Evidence</span><b>${esc(r.evidenceState)}</b></div><section><h4>Checks</h4><div class="check-list">${Object.entries(r.checks).map(([k,v])=>`<div><span>${esc(labelize(k))}</span>${evidenceCell(v)}</div>`).join('')}</div></section>`;
+      const orderedList=(items,cls='')=>`<div class="inspector-list ${cls}">${items.map((item,index)=>`<div><span>${String(index+1).padStart(2,'0')}</span><p>${esc(item)}</p></div>`).join('')}</div>`;
+      body=`
+        <div class="inspector-kv"><span>Domain</span><b>${esc(r.domain)}</b><span>Declared</span><b>${esc(r.declaredState)}</b><span>Evidence</span><b>${esc(r.evidenceState)}</b></div>
+        <section><h4>Why this slice</h4><p>${esc(r.whyThisSlice)}</p></section>
+        <section><h4>End-to-end flow</h4>${orderedList(r.flow,'flow-list')}</section>
+        <section><h4>Architectural claims it must prove</h4>${orderedList(r.proves)}</section>
+        <section><h4>Stress points</h4>${orderedList(r.stressPoints,'stress-list')}</section>
+        <section><h4>Success criteria</h4>${orderedList(r.successCriteria,'success-list')}</section>
+        <section><h4>Key systems</h4><div class="chip-row">${chips(r.keySystems)}</div></section>
+        <section><h4>Evidence checks</h4><div class="check-list">${Object.entries(r.checks).map(([k,v])=>`<div><span>${esc(labelize(k))}</span>${evidenceCell(v)}</div>`).join('')}</div></section>`;
     } else if(ref.type==='evidence'){
       body=`<div class="inspector-kv"><span>Kind</span><b>${esc(labelize(r.kind))}</b><span>State</span><b>${esc(labelize(r.state))}</b></div><section><h4>Supports</h4><div class="chip-row">${chips(r.supports)}</div></section><section><h4>Source</h4><p>${r.source?esc(r.source):'No repository source linked yet.'}</p></section>`;
     }
