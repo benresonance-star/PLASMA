@@ -1,27 +1,7 @@
 const CACHE_KEY='plasma-atlas-live-evidence-v1';
 const CACHE_MS=120000;
 
-function globToRegExp(glob){
-  const value=String(glob);
-  let out='^';
-  for(let i=0;i<value.length;i++){
-    const char=value[i];
-    if(char==='*'&&value[i+1]==='*'){
-      out+='.*';
-      i++;
-    }else if(char==='*'){
-      out+='[^/]*';
-    }else if(char==='?'){
-      out+='.';
-    }else if('\\.^$+()[]{}|'.includes(char)){
-      out+='\\\\'+char;
-    }else{
-      out+=char;
-    }
-  }
-  return new RegExp(out+'
-
-function pathMatches(path,patterns=[]){
+function globToRegExp(glob){\n  const value=String(glob);\n  let out='^';\n  for(let i=0;i<value.length;i++){\n    const char=value[i];\n    if(char==='*'&&value[i+1]==='*'){\n      out+='.*';\n      i++;\n    }else if(char==='*'){\n      out+='[^/]*';\n    }else if(char==='?'){\n      out+='.';\n    }else if('\\.^$+()[]{}|'.includes(char)){\n      out+='\\\\'+char;\n    }else{\n      out+=char;\n    }\n  }\n  return new RegExp(out+'$');\n}\nfunction pathMatches(path,patterns=[]){
   return patterns.some(pattern=>globToRegExp(pattern).test(path));
 }
 
