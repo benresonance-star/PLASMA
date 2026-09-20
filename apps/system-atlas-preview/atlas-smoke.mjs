@@ -38,6 +38,24 @@ try{
   const repositorySummary=(await page.locator('.repository-evidence-summary').textContent())||'';
   assert(repositorySummary.includes('Current Plasma implementation status'),'Repository evidence status heading is missing');
   assert(repositorySummary.includes('offline'),'Local smoke test should clearly report repository evidence as offline rather than inventing live status');
+  const failedCardStyle=await page.locator('.repository-status-card.failed').evaluate(el=>{
+    const style=getComputedStyle(el);
+    const probe=document.createElement('span');
+    probe.style.color='var(--red)';
+    probe.style.backgroundColor='var(--red-soft)';
+    document.body.appendChild(probe);
+    const probeStyle=getComputedStyle(probe);
+    const result={
+      borderColor:style.borderTopColor,
+      backgroundColor:style.backgroundColor,
+      red:probeStyle.color,
+      redSoft:probeStyle.backgroundColor
+    };
+    probe.remove();
+    return result;
+  });
+  assert(failedCardStyle.borderColor===failedCardStyle.red,'Failed repository evidence card border must use the red status token');
+  assert(failedCardStyle.backgroundColor===failedCardStyle.redSoft,'Failed repository evidence card background must use the red-soft status token');
   assert((await page.locator('.matrix-slice-head[data-atlas-id="window-door-system"]').count())===1,'Window/door slice missing from integration matrix');
   const headerStyle=await page.locator('.matrix-slice-head[data-atlas-id="window-door-system"]').evaluate(el=>({
     transform:getComputedStyle(el).transform,
