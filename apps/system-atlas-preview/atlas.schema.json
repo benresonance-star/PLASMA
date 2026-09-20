@@ -1,0 +1,521 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plasma.local/system-atlas/atlas.schema.json",
+  "title": "Plasma System Atlas",
+  "type": "object",
+  "required": [
+    "meta",
+    "views",
+    "components",
+    "relationships",
+    "contracts",
+    "languages",
+    "transactions",
+    "slices",
+    "evidence"
+  ],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": [
+        "id",
+        "version",
+        "title",
+        "status",
+        "description",
+        "principles"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "principles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "views": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/view"
+      }
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/component"
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/relationship"
+      }
+    },
+    "contracts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/contract"
+      }
+    },
+    "languages": {
+      "type": "object",
+      "required": [
+        "domain",
+        "crossCutting",
+        "futureDomains",
+        "contractShape",
+        "operationLevels",
+        "interactionRule"
+      ],
+      "properties": {
+        "domain": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/language"
+          }
+        },
+        "crossCutting": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/coreLanguage"
+          }
+        },
+        "futureDomains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "contractShape": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "operationLevels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "name",
+              "examples",
+              "description"
+            ]
+          }
+        },
+        "interactionRule": {
+          "type": "string"
+        }
+      }
+    },
+    "transactions": {
+      "type": "object",
+      "required": [
+        "principle",
+        "stages",
+        "candidatePatch",
+        "validation",
+        "rejectionPaths",
+        "invariants",
+        "freshnessStates"
+      ]
+    },
+    "slices": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/slice"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    }
+  },
+  "$defs": {
+    "view": {
+      "type": "object",
+      "required": [
+        "id",
+        "label",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "component": {
+      "type": "object",
+      "required": [
+        "id",
+        "atlasId",
+        "name",
+        "kind",
+        "authority",
+        "band",
+        "summary",
+        "explanation",
+        "status",
+        "owner",
+        "contracts",
+        "dependencies",
+        "evidence",
+        "tags"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "atlasId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "authority": {
+          "type": "string"
+        },
+        "band": {
+          "enum": [
+            "intent",
+            "authority",
+            "execution",
+            "projection"
+          ]
+        },
+        "summary": {
+          "type": "string"
+        },
+        "explanation": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "contracts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "relationship": {
+      "type": "object",
+      "required": [
+        "id",
+        "from",
+        "to",
+        "contract",
+        "direction",
+        "label",
+        "payload",
+        "mode",
+        "authoritySemantics",
+        "failure",
+        "explanation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "contract": {
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "forward",
+            "bidirectional"
+          ]
+        },
+        "label": {
+          "type": "string"
+        },
+        "payload": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "authoritySemantics": {
+          "type": "string"
+        },
+        "failure": {
+          "type": "string"
+        },
+        "explanation": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "contract": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "from",
+        "to",
+        "input",
+        "output",
+        "semantics",
+        "failure",
+        "explanation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
+        },
+        "input": {
+          "type": "string"
+        },
+        "output": {
+          "type": "string"
+        },
+        "semantics": {
+          "type": "string"
+        },
+        "failure": {
+          "type": "string"
+        },
+        "explanation": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "language": {
+      "type": "object",
+      "required": [
+        "id",
+        "atlasId",
+        "name",
+        "summary",
+        "explanation",
+        "types",
+        "verbs",
+        "constraints",
+        "uses"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "atlasId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "explanation": {
+          "type": "string"
+        },
+        "types": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "verbs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "uses": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "coreLanguage": {
+      "type": "object",
+      "required": [
+        "id",
+        "atlasId",
+        "name",
+        "verb",
+        "summary",
+        "explanation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "atlasId": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "verb": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "explanation": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "slice": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "summary",
+        "declaredState",
+        "evidenceState",
+        "checks",
+        "explanation"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "declaredState": {
+          "type": "string"
+        },
+        "evidenceState": {
+          "type": "string"
+        },
+        "checks": {
+          "type": "object"
+        },
+        "explanation": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "state",
+        "supports",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "kind": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "supports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "description": {
+          "type": "string"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}

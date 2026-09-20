@@ -28,6 +28,9 @@ jobs:
       - name: Licence check
         run: pnpm licence:check
 
+      - name: Atlas model check
+        run: node apps/system-atlas-preview/atlas-validate.mjs
+
       - name: Boundary check
         run: pnpm boundary:check
 

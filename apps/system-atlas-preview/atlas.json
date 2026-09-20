@@ -1,0 +1,1103 @@
+{
+  "meta": {
+    "id": "PLASMA.SYSTEM_ATLAS",
+    "version": "0.3.0",
+    "title": "Plasma System Atlas",
+    "status": "foundation-evolving",
+    "description": "A machine-readable architecture model projected into multiple interactive Atlas views.",
+    "principles": [
+      "One authoritative architecture model, many projections.",
+      "Proposal is not authority.",
+      "Derived representations never become a second source of truth.",
+      "Relationships are typed contracts, not decorative arrows.",
+      "Evidence state must be explicit; unknown is not treated as verified."
+    ]
+  },
+  "views": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "description": "Authority hierarchy and typed system relationships."
+    },
+    {
+      "id": "languages",
+      "label": "Languages",
+      "description": "Domain and cross-cutting languages and how they compose."
+    },
+    {
+      "id": "transactions",
+      "label": "Transactions",
+      "description": "Authoritative commit loop, rejection paths and dependency invalidation."
+    },
+    {
+      "id": "components",
+      "label": "Components",
+      "description": "Queryable catalogue of Plasma systems and responsibilities."
+    },
+    {
+      "id": "contracts",
+      "label": "Contracts",
+      "description": "Typed interfaces crossing component and authority boundaries."
+    },
+    {
+      "id": "slices",
+      "label": "Slices",
+      "description": "End-to-end capability slices with explicit evidence state."
+    },
+    {
+      "id": "evidence",
+      "label": "Evidence",
+      "description": "Claims, required evidence and current linkage state."
+    }
+  ],
+  "components": [
+    {
+      "id": "interaction",
+      "atlasId": "SYS.INT.003",
+      "name": "Interaction Plane",
+      "kind": "runtime",
+      "authority": "non-authoritative",
+      "band": "intent",
+      "summary": "Immediate human interaction and speculative feedback without owning canonical state.",
+      "explanation": "The Interaction Plane gives humans fast selection, handles, snapping and speculative previews. It may formulate semantic operations, but a preview is never world truth. Every durable change must pass through the same transaction boundary used by agents and external systems.",
+      "status": "prototype-evolving",
+      "owner": "Interaction Reflex Runtime (IRR) + Interactive Presentation Surface (IPS)",
+      "contracts": [
+        "semantic-operation-proposal"
+      ],
+      "dependencies": [
+        "authority"
+      ],
+      "evidence": [
+        "ev-interaction-boundary"
+      ],
+      "tags": [
+        "interaction",
+        "preview",
+        "speculation",
+        "human"
+      ]
+    },
+    {
+      "id": "intelligence",
+      "atlasId": "SYS.AGT.002",
+      "name": "Intelligence Plane",
+      "kind": "agentic",
+      "authority": "non-authoritative",
+      "band": "intent",
+      "summary": "Planners, critics and evaluators reason over bounded world slices and submit proposals.",
+      "explanation": "The Intelligence Plane coordinates machine reasoning without granting agents direct mutation rights. Agents read bounded state, form hypotheses, compare alternatives and submit typed transaction proposals. The authority layer decides whether any proposal becomes canonical.",
+      "status": "architecture-defined",
+      "owner": "Agent fabric",
+      "contracts": [
+        "read-world-slice",
+        "transaction-proposal"
+      ],
+      "dependencies": [
+        "authority"
+      ],
+      "evidence": [
+        "ev-agent-boundary"
+      ],
+      "tags": [
+        "agents",
+        "planner",
+        "critic",
+        "evaluator"
+      ]
+    },
+    {
+      "id": "authority",
+      "atlasId": "SYS.AUTH.001",
+      "name": "World + Authority Plane",
+      "kind": "authoritative-core",
+      "authority": "authoritative",
+      "band": "authority",
+      "summary": "Canonical identity, state, relations, invariants, events, evidence and transaction authority.",
+      "explanation": "This is Plasma's source of truth. It owns stable identity, canonical state, typed relations, revisions, provenance and the transaction boundary. Humans, agents, geometry engines and solvers may all propose changes, but only this plane may commit a new authoritative revision.",
+      "status": "specified-partial",
+      "owner": "Kernel + world state",
+      "contracts": [
+        "submit-transaction",
+        "read-world-slice",
+        "resolve-reference"
+      ],
+      "dependencies": [
+        "constraints"
+      ],
+      "evidence": [
+        "ev-transaction-rollback",
+        "ev-stable-identity"
+      ],
+      "tags": [
+        "kernel",
+        "world",
+        "identity",
+        "transactions",
+        "provenance"
+      ]
+    },
+    {
+      "id": "geometry",
+      "atlasId": "SYS.GEO.006",
+      "name": "Geometry Resolver",
+      "kind": "execution",
+      "authority": "non-authoritative",
+      "band": "execution",
+      "summary": "Resolves semantic spatial operations into candidate exact or approximate geometry.",
+      "explanation": "The Geometry Resolver translates engine-neutral spatial intent into geometry using the smallest competent strategy. It binds semantic references, applies tolerance policy, evaluates, validates and heals results, then returns a candidate geometry result. Geometry only becomes canonical when accepted by an authoritative transaction.",
+      "status": "active-implementation",
+      "owner": "Geometry resolver",
+      "contracts": [
+        "resolve-geometry"
+      ],
+      "dependencies": [
+        "authority",
+        "constraints"
+      ],
+      "evidence": [
+        "ev-geometry-candidate-boundary"
+      ],
+      "tags": [
+        "geometry",
+        "OpenCascade",
+        "mesh",
+        "topology"
+      ]
+    },
+    {
+      "id": "constraints",
+      "atlasId": "SYS.CON.007",
+      "name": "Constraint Runtime",
+      "kind": "validation",
+      "authority": "non-authoritative",
+      "band": "execution",
+      "summary": "Evaluates invariants, admissible ranges and local or global rules before commit.",
+      "explanation": "The Constraint Runtime evaluates whether a proposed provisional world is admissible. It may use deterministic rules, symbolic logic or specialist evaluators, but its result is evidence for the transaction gate rather than a direct mutation. Failed checks produce structured rejection or repair information.",
+      "status": "architecture-defined",
+      "owner": "Constraint runtime",
+      "contracts": [
+        "validate-candidate"
+      ],
+      "dependencies": [
+        "authority"
+      ],
+      "evidence": [
+        "ev-validation-pipeline"
+      ],
+      "tags": [
+        "constraints",
+        "invariants",
+        "validation",
+        "logic"
+      ]
+    },
+    {
+      "id": "representation",
+      "atlasId": "SYS.REP.004",
+      "name": "Representations",
+      "kind": "derived",
+      "authority": "derived",
+      "band": "projection",
+      "summary": "Viewports, drawings, schedules and annotations derived from authoritative world state.",
+      "explanation": "Representations make world state visible and useful without becoming a second source of truth. A viewport, drawing, schedule or annotation projection records the world revision it derives from. When dependencies change it becomes stale and can be regenerated independently.",
+      "status": "architecture-defined",
+      "owner": "Representation services",
+      "contracts": [
+        "derive-representation"
+      ],
+      "dependencies": [
+        "authority"
+      ],
+      "evidence": [
+        "ev-representation-freshness"
+      ],
+      "tags": [
+        "viewport",
+        "drawing",
+        "schedule",
+        "annotation",
+        "derived"
+      ]
+    },
+    {
+      "id": "external",
+      "atlasId": "SYS.EXT.008",
+      "name": "External Systems",
+      "kind": "boundary",
+      "authority": "external",
+      "band": "projection",
+      "summary": "Solvers, regulations, fabrication systems and data sources connected by typed adapters.",
+      "explanation": "External systems are treated as bounded sources of claims, measurements, candidate patches or evidence. They never receive direct authority to mutate the world. Typed adapters make the external tool replaceable while preserving provenance, units and failure semantics.",
+      "status": "interface-planning",
+      "owner": "Integration boundary",
+      "contracts": [
+        "external-evidence-import"
+      ],
+      "dependencies": [
+        "authority"
+      ],
+      "evidence": [
+        "ev-external-authority-boundary"
+      ],
+      "tags": [
+        "solver",
+        "regulation",
+        "fabrication",
+        "FMI",
+        "USD",
+        "adapter"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-interaction-authority",
+      "from": "interaction",
+      "to": "authority",
+      "contract": "semantic-operation-proposal",
+      "direction": "forward",
+      "label": "semantic operation proposal",
+      "payload": "SemanticOperation",
+      "mode": "async-or-sync",
+      "authoritySemantics": "proposal-only",
+      "failure": "Rejected or returned with validation evidence; world remains unchanged.",
+      "explanation": "Human interaction proposes semantic intent to the authority layer. The proposal may be previewed immediately, but it cannot directly change canonical state."
+    },
+    {
+      "id": "rel-intelligence-authority",
+      "from": "intelligence",
+      "to": "authority",
+      "contract": "transaction-proposal",
+      "direction": "forward",
+      "label": "transaction proposal",
+      "payload": "CandidatePatch | OperationIntent",
+      "mode": "async",
+      "authoritySemantics": "proposal-only",
+      "failure": "Rejected, superseded or returned for repair; agent has no direct write path.",
+      "explanation": "Agents submit reviewable proposals based on bounded world slices. The same validation and commit rules apply regardless of proposer."
+    },
+    {
+      "id": "rel-authority-geometry",
+      "from": "authority",
+      "to": "geometry",
+      "contract": "resolve-geometry",
+      "direction": "bidirectional",
+      "label": "resolve ↔ candidate geometry",
+      "payload": "SemanticOperation ↔ CandidateGeometryResult",
+      "mode": "sync-or-worker",
+      "authoritySemantics": "candidate-return",
+      "failure": "Resolver failure returns evidence; no authoritative geometry is changed.",
+      "explanation": "Authority delegates bounded spatial execution, then receives a candidate result that must still pass transaction validation."
+    },
+    {
+      "id": "rel-authority-constraints",
+      "from": "authority",
+      "to": "constraints",
+      "contract": "validate-candidate",
+      "direction": "bidirectional",
+      "label": "validate ↔ verdict + evidence",
+      "payload": "ProvisionalWorld ↔ ValidationResult",
+      "mode": "sync-or-worker",
+      "authoritySemantics": "validation-evidence",
+      "failure": "Failed checks generate structured rejection evidence or a repair request.",
+      "explanation": "Candidate state is validated outside the canonical world. The resulting verdict informs the transaction gate."
+    },
+    {
+      "id": "rel-authority-representation",
+      "from": "authority",
+      "to": "representation",
+      "contract": "derive-representation",
+      "direction": "forward",
+      "label": "derive projection",
+      "payload": "WorldSlice → Representation",
+      "mode": "async",
+      "authoritySemantics": "derived-only",
+      "failure": "Representation may fail or remain stale without damaging world truth.",
+      "explanation": "Representations are generated from an identified authoritative revision and carry freshness metadata."
+    },
+    {
+      "id": "rel-external-authority",
+      "from": "external",
+      "to": "authority",
+      "contract": "external-evidence-import",
+      "direction": "forward",
+      "label": "claims + evidence",
+      "payload": "ExternalResult | Evidence",
+      "mode": "async",
+      "authoritySemantics": "evidence-or-proposal",
+      "failure": "Invalid provenance, schema or units reject the import.",
+      "explanation": "External tools contribute evidence or proposals through typed adapters rather than direct mutation."
+    }
+  ],
+  "contracts": [
+    {
+      "id": "semantic-operation-proposal",
+      "name": "submitSemanticOperation()",
+      "from": "interaction",
+      "to": "authority",
+      "input": "SemanticOperation",
+      "output": "ProposalReceipt | RejectionRecord",
+      "semantics": "Express user intent against stable semantic references without direct mutation.",
+      "failure": "Malformed, unauthorized or stale operations are rejected before execution.",
+      "explanation": "The interaction runtime packages intent, targets, parameters and preconditions into a semantic operation proposal."
+    },
+    {
+      "id": "transaction-proposal",
+      "name": "proposeTransaction()",
+      "from": "intelligence",
+      "to": "authority",
+      "input": "OperationIntent | CandidatePatch",
+      "output": "ProposalReceipt | RejectionRecord",
+      "semantics": "Allow agents to propose bounded changes under identical authority rules to human actions.",
+      "failure": "Conflict, stale reads, insufficient evidence or invariant failure lead to structured rejection.",
+      "explanation": "Agents do not receive a privileged write route; their proposals enter the same transaction pipeline."
+    },
+    {
+      "id": "submit-transaction",
+      "name": "submitTransaction()",
+      "from": "any-proposer",
+      "to": "authority",
+      "input": "CandidatePatch",
+      "output": "CommitReceipt | RejectionRecord",
+      "semantics": "Validate and atomically commit an admissible candidate patch.",
+      "failure": "Any failed gate aborts the transaction with zero authoritative partial state.",
+      "explanation": "This is the hard mutation boundary of Plasma. Every authoritative change must pass through it."
+    },
+    {
+      "id": "read-world-slice",
+      "name": "readWorldSlice()",
+      "from": "authority",
+      "to": "consumer",
+      "input": "WorldQuery + revision selector",
+      "output": "WorldSlice + provenance",
+      "semantics": "Return the smallest authoritative state required for bounded reasoning or execution.",
+      "failure": "Unresolvable references, unauthorized scope or unavailable revision return a typed read failure.",
+      "explanation": "Bounded reads reduce coupling and make read sets explicit for concurrency and provenance."
+    },
+    {
+      "id": "resolve-reference",
+      "name": "resolveReference()",
+      "from": "consumer",
+      "to": "authority",
+      "input": "SemanticReference + revision",
+      "output": "ResolvedIdentity | ReferenceFailure",
+      "semantics": "Resolve stable semantic identity across revisions and topology changes.",
+      "failure": "Ambiguous, deleted or superseded references return lineage information instead of silently rebinding.",
+      "explanation": "Stable semantic references allow annotations, constraints and operations to survive regeneration."
+    },
+    {
+      "id": "resolve-geometry",
+      "name": "resolveGeometry()",
+      "from": "authority",
+      "to": "geometry",
+      "input": "SemanticOperation + WorldSlice",
+      "output": "CandidateGeometryResult + identity mapping + evidence",
+      "semantics": "Execute spatial intent without mutating canonical geometry.",
+      "failure": "Return resolver diagnostics, no partial authority.",
+      "explanation": "The resolver may use exact, mesh, field or other geometry strategies while preserving an engine-neutral contract."
+    },
+    {
+      "id": "validate-candidate",
+      "name": "validateCandidate()",
+      "from": "authority",
+      "to": "constraints",
+      "input": "ProvisionalWorld + CandidatePatch",
+      "output": "ValidationResult + evidence",
+      "semantics": "Evaluate the world that would exist after the patch, not the live world mid-mutation.",
+      "failure": "Return violated invariants, stale assumptions or missing evidence.",
+      "explanation": "Validation occurs over a provisional copy-on-write view so failed proposals cannot corrupt canonical state."
+    },
+    {
+      "id": "derive-representation",
+      "name": "deriveRepresentation()",
+      "from": "authority",
+      "to": "representation",
+      "input": "WorldSlice + projection request",
+      "output": "Representation + freshness metadata",
+      "semantics": "Produce a derived view bound to an authoritative revision.",
+      "failure": "Failed generation leaves the prior representation stale or unavailable.",
+      "explanation": "Derived outputs can be regenerated independently and never become a competing source of truth."
+    },
+    {
+      "id": "external-evidence-import",
+      "name": "importExternalResult()",
+      "from": "external",
+      "to": "authority",
+      "input": "Typed external result + provenance + units",
+      "output": "EvidenceRecord | CandidatePatch | RejectionRecord",
+      "semantics": "Convert outside computation into typed evidence or a proposal.",
+      "failure": "Reject missing provenance, incompatible units, stale inputs or unsupported schemas.",
+      "explanation": "External integrations contribute knowledge without obtaining direct authority."
+    }
+  ],
+  "languages": {
+    "domain": [
+      {
+        "id": "site",
+        "atlasId": "LANG.SITE.001",
+        "name": "Site Language",
+        "summary": "Site, terrain, landscape and planning intent.",
+        "explanation": "The Site Language expresses domain meaning about parcels, terrain, easements, trees, grading, drainage and site constraints without binding those concepts to one terrain engine.",
+        "types": [
+          "parcel",
+          "terrain",
+          "easement",
+          "tree",
+          "service",
+          "watercourse"
+        ],
+        "verbs": [
+          "import",
+          "grade",
+          "split",
+          "merge",
+          "drain",
+          "plant",
+          "excavate"
+        ],
+        "constraints": [
+          "setback",
+          "maximum slope",
+          "tree protection zone",
+          "easement exclusion"
+        ],
+        "uses": [
+          "query",
+          "change",
+          "constraint",
+          "measurement",
+          "evidence"
+        ]
+      },
+      {
+        "id": "geometry",
+        "atlasId": "LANG.GEO.001",
+        "name": "Geometry Language",
+        "summary": "Engine-neutral vocabulary for spatial intent.",
+        "explanation": "The Geometry Language expresses spatial operations such as offset, split, trim and transform while the Geometry Resolver chooses the implementation strategy and tolerance policy.",
+        "types": [
+          "curve",
+          "surface",
+          "solid",
+          "face",
+          "edge",
+          "frame"
+        ],
+        "verbs": [
+          "select",
+          "offset",
+          "split",
+          "intersect",
+          "trim",
+          "transform"
+        ],
+        "constraints": [
+          "tolerance",
+          "topology",
+          "continuity"
+        ],
+        "uses": [
+          "query",
+          "change",
+          "constraint",
+          "measurement"
+        ]
+      },
+      {
+        "id": "assembly",
+        "atlasId": "LANG.ASM.001",
+        "name": "Assembly Language",
+        "summary": "Composition, interfaces and connections across nested systems.",
+        "explanation": "The Assembly Language lets systems, subsystems, components and connectors be composed without adding a unique spatial verb for every construction detail.",
+        "types": [
+          "system",
+          "subsystem",
+          "component",
+          "interface",
+          "connector"
+        ],
+        "verbs": [
+          "compose",
+          "connect",
+          "repeat",
+          "replace",
+          "open",
+          "join"
+        ],
+        "constraints": [
+          "compatibility",
+          "spacing",
+          "interface rule"
+        ],
+        "uses": [
+          "query",
+          "change",
+          "constraint",
+          "evidence",
+          "history"
+        ]
+      },
+      {
+        "id": "analysis",
+        "atlasId": "LANG.ANA.001",
+        "name": "Analysis Language",
+        "summary": "Questions and evaluations over world state and derived representations.",
+        "explanation": "The Analysis Language requests sampling, solving, mapping and comparison, returning typed measurements, fields, claims and evidence rather than silently mutating geometry.",
+        "types": [
+          "metric",
+          "field",
+          "result",
+          "claim",
+          "assumption"
+        ],
+        "verbs": [
+          "sample",
+          "solve",
+          "map",
+          "compare",
+          "validate",
+          "optimise"
+        ],
+        "constraints": [
+          "assumption",
+          "tolerance",
+          "confidence"
+        ],
+        "uses": [
+          "query",
+          "measurement",
+          "evidence",
+          "representation",
+          "history"
+        ]
+      }
+    ],
+    "crossCutting": [
+      {
+        "id": "query",
+        "atlasId": "LANG.CORE.QUERY",
+        "name": "Query / Selection",
+        "verb": "Find",
+        "summary": "Bind stable entities by identity, role, topology, relation, region or predicate.",
+        "explanation": "Selection resolves what an operation is talking about and is the foundation for persistence across regeneration."
+      },
+      {
+        "id": "change",
+        "atlasId": "LANG.CORE.CHANGE",
+        "name": "Change / Operation",
+        "verb": "Propose",
+        "summary": "Describe a typed candidate change without mutating canonical state.",
+        "explanation": "Change operations carry target references, intent, parameters and preconditions. They remain proposals until committed."
+      },
+      {
+        "id": "constraint",
+        "atlasId": "LANG.CORE.CONSTRAINT",
+        "name": "Constraint",
+        "verb": "Permit",
+        "summary": "Express conditions, admissible ranges and invariants.",
+        "explanation": "Constraint semantics remain independent of the particular engine used to evaluate them."
+      },
+      {
+        "id": "measurement",
+        "atlasId": "LANG.CORE.MEASURE",
+        "name": "Measurement",
+        "verb": "Observe",
+        "summary": "Measure or derive values with units, method, resolution and uncertainty.",
+        "explanation": "A technical value is not treated as dependable evidence without its measurement context."
+      },
+      {
+        "id": "evidence",
+        "atlasId": "LANG.CORE.EVIDENCE",
+        "name": "Evidence / Claim",
+        "verb": "Believe",
+        "summary": "Represent assertions, source, method, confidence and lineage.",
+        "explanation": "Evidence separates what a tool computed from what Plasma may trust and why."
+      },
+      {
+        "id": "representation",
+        "atlasId": "LANG.CORE.REP",
+        "name": "Representation",
+        "verb": "Show",
+        "summary": "Request a derived view without creating a second source of truth.",
+        "explanation": "Views can be regenerated or replaced while authoritative semantics remain stable."
+      },
+      {
+        "id": "history",
+        "atlasId": "LANG.CORE.HISTORY",
+        "name": "History / Revision",
+        "verb": "Trace",
+        "summary": "Inspect revisions, diffs, operations, branches and provenance through time.",
+        "explanation": "History makes both state and causality queryable without mutating the current world."
+      }
+    ],
+    "futureDomains": [
+      "Structure",
+      "Envelope",
+      "Services",
+      "Materials",
+      "Fabrication",
+      "Construction",
+      "Operation",
+      "Botanical / ecology"
+    ],
+    "contractShape": [
+      "id + version",
+      "domain",
+      "types",
+      "references",
+      "verbs",
+      "parameters",
+      "units",
+      "preconditions",
+      "invariants",
+      "result types",
+      "evidence requirements",
+      "conformance tests"
+    ],
+    "operationLevels": [
+      {
+        "id": "primitive",
+        "name": "Primitive",
+        "examples": [
+          "split",
+          "sample",
+          "transform"
+        ],
+        "description": "Small stable operations with narrow semantics."
+      },
+      {
+        "id": "compound",
+        "name": "Compound",
+        "examples": [
+          "make opening",
+          "grade pad"
+        ],
+        "description": "Domain operations composed from smaller primitives."
+      },
+      {
+        "id": "workflow",
+        "name": "Workflow",
+        "examples": [
+          "resolve drainage",
+          "optimise façade"
+        ],
+        "description": "Orchestration across operations, evaluators and decision gates."
+      }
+    ],
+    "interactionRule": "Domain languages do not call one another or mutate the world directly. They communicate through shared world state, typed operations, dependencies, claims and evidence."
+  },
+  "transactions": {
+    "principle": "All authoritative mutation occurs through a validated atomic transaction.",
+    "stages": [
+      {
+        "id": "operation",
+        "step": 1,
+        "name": "Semantic operation",
+        "summary": "Intent, targets, parameters and preconditions.",
+        "explanation": "A human, agent or service expresses intent without modifying canonical state."
+      },
+      {
+        "id": "world-slice",
+        "step": 2,
+        "name": "World slice",
+        "summary": "Read bounded authoritative state at a known revision.",
+        "explanation": "The operation records the entities and facts it actually read, enabling provenance and conflict detection."
+      },
+      {
+        "id": "candidate",
+        "step": 3,
+        "name": "Candidate patch",
+        "summary": "Proposed writes, identity mappings, claims and evidence.",
+        "explanation": "The candidate patch describes what should change. It is not authoritative state and can be discarded safely."
+      },
+      {
+        "id": "provisional",
+        "step": 4,
+        "name": "Provisional world",
+        "summary": "Apply the patch to a copy-on-write overlay.",
+        "explanation": "Validation asks what would be true if the patch committed without touching the live world."
+      },
+      {
+        "id": "validate",
+        "step": 5,
+        "name": "Validation pipeline",
+        "summary": "Schema, identity, permission, freshness, types, geometry, invariants and evidence.",
+        "explanation": "Validation produces structured findings and never relies on partially mutating the canonical world."
+      },
+      {
+        "id": "gate",
+        "step": 6,
+        "name": "Transaction gate",
+        "summary": "Re-check concurrency and commit eligibility against the latest revision.",
+        "explanation": "The gate compares the candidate's base revision and read assumptions with current world state. Safe candidates may rebase; conflicting candidates are rejected or repaired."
+      },
+      {
+        "id": "commit",
+        "step": 7,
+        "name": "Atomic commit",
+        "summary": "Apply all accepted mutations or none.",
+        "explanation": "Identity updates, relations, evidence, provenance and events commit as one atomic revision. Partial authority is forbidden."
+      },
+      {
+        "id": "revision",
+        "step": 8,
+        "name": "New revision",
+        "summary": "Durable record of what changed, why and from which evidence.",
+        "explanation": "A commit creates a new revision with parent, patch, proposer, read and write sets, validation results and provenance."
+      },
+      {
+        "id": "invalidate",
+        "step": 9,
+        "name": "Dependency invalidation",
+        "summary": "Mark causally affected derived results stale.",
+        "explanation": "Invalidation is causal rather than spatially broad. Affected derivations become stale before any recomputation is scheduled."
+      },
+      {
+        "id": "schedule",
+        "step": 10,
+        "name": "Progressive recompute",
+        "summary": "Recompute only what is useful, blocking or user-visible.",
+        "explanation": "The scheduler separates invalidation from recomputation so expensive analysis can run later or on demand."
+      }
+    ],
+    "candidatePatch": {
+      "fields": [
+        "patch_id",
+        "operation_id",
+        "proposer",
+        "base_revision",
+        "intent",
+        "scope",
+        "reads[]",
+        "writes[]",
+        "preconditions[]",
+        "mutations[]",
+        "derived_results[]",
+        "claims[]",
+        "evidence[]",
+        "identity_mapping[]",
+        "expected_invalidations[]",
+        "tolerances",
+        "confidence",
+        "provenance"
+      ],
+      "explanation": "A CandidatePatch is the core mutation proposal. It declares what influenced the result, what it intends to write, the assumptions under which it was computed and the evidence supporting it."
+    },
+    "validation": [
+      {
+        "id": "schema",
+        "name": "Schema",
+        "question": "Is the patch structurally valid?"
+      },
+      {
+        "id": "identity",
+        "name": "Identity",
+        "question": "Do references resolve to the intended semantic entities?"
+      },
+      {
+        "id": "permission",
+        "name": "Permission",
+        "question": "May this proposer modify this scope?"
+      },
+      {
+        "id": "freshness",
+        "name": "Freshness",
+        "question": "Are the base revision and inputs sufficiently current?"
+      },
+      {
+        "id": "preconditions",
+        "name": "Preconditions",
+        "question": "Are the assumptions used to compute the patch still true?"
+      },
+      {
+        "id": "types-units",
+        "name": "Types + units",
+        "question": "Are values, units and relationships semantically valid?"
+      },
+      {
+        "id": "geometry",
+        "name": "Geometry",
+        "question": "Is the resulting spatial state valid and healable?"
+      },
+      {
+        "id": "local-invariants",
+        "name": "Local invariants",
+        "question": "Does the affected subsystem remain internally valid?"
+      },
+      {
+        "id": "cross-domain",
+        "name": "Cross-domain constraints",
+        "question": "Does the patch violate connected domain rules?"
+      },
+      {
+        "id": "evidence",
+        "name": "Evidence",
+        "question": "Has required supporting evidence been supplied?"
+      },
+      {
+        "id": "governance",
+        "name": "Governance",
+        "question": "Does this change require escalation or human approval?"
+      }
+    ],
+    "rejectionPaths": [
+      {
+        "id": "malformed",
+        "name": "Malformed",
+        "action": "Reject permanently",
+        "description": "Schema or type errors prevent the candidate entering the transaction."
+      },
+      {
+        "id": "unauthorized",
+        "name": "Unauthorized",
+        "action": "Reject or escalate",
+        "description": "The proposer lacks permission for the requested scope."
+      },
+      {
+        "id": "stale",
+        "name": "Stale",
+        "action": "Rebase or recompute",
+        "description": "Relevant world state changed after the candidate's base revision."
+      },
+      {
+        "id": "conflict",
+        "name": "Concurrent conflict",
+        "action": "Merge, retry or reject",
+        "description": "Another commit intersects the candidate's read assumptions or write set."
+      },
+      {
+        "id": "invariant",
+        "name": "Invariant violation",
+        "action": "Repair candidate",
+        "description": "The provisional world violates a required invariant or domain rule."
+      },
+      {
+        "id": "evidence",
+        "name": "Insufficient evidence",
+        "action": "Request evaluation",
+        "description": "Required evidence is missing, stale or below the acceptance threshold."
+      },
+      {
+        "id": "approval",
+        "name": "Approval required",
+        "action": "Await approval",
+        "description": "The candidate is technically valid but governance requires human authorization."
+      }
+    ],
+    "invariants": [
+      "No authoritative mutation outside a transaction.",
+      "No partial commit.",
+      "A commit always produces a revision.",
+      "A revision always identifies its cause.",
+      "A candidate identifies its base revision, read set and intended writes.",
+      "Stable identities may transform but may not silently disappear.",
+      "Failed candidates never modify authoritative state.",
+      "Derived values expose freshness.",
+      "Dependency invalidation follows committed changes.",
+      "External tools return proposals, claims or evidence, never direct authority.",
+      "History remains append-only even when current state deletes an entity."
+    ],
+    "freshnessStates": [
+      "fresh",
+      "stale",
+      "computing",
+      "failed",
+      "unknown",
+      "superseded"
+    ]
+  },
+  "slices": [
+    {
+      "id": "terrain-site",
+      "name": "Terrain → site foundation",
+      "summary": "Interaction → transaction → geometry → evidence → representation.",
+      "declaredState": "active implementation",
+      "evidenceState": "not-linked",
+      "checks": {
+        "spec": "declared",
+        "contracts": "declared",
+        "code": "declared",
+        "unitTests": "not-linked",
+        "e2e": "not-linked",
+        "benchmark": "not-linked"
+      },
+      "explanation": "This slice is intended to prove an end-to-end site capability. The Atlas currently records declared architectural state but does not yet link repository evidence, so no completion percentage is asserted."
+    },
+    {
+      "id": "wall-assembly",
+      "name": "Wall assembly",
+      "summary": "System → subsystem → component → interface → operation.",
+      "declaredState": "architecture evolving",
+      "evidenceState": "not-linked",
+      "checks": {
+        "spec": "declared",
+        "contracts": "partial",
+        "code": "not-linked",
+        "unitTests": "not-linked",
+        "e2e": "not-linked",
+        "benchmark": "not-linked"
+      },
+      "explanation": "This slice tests nested composition and interfaces. Repository evidence must be linked before the Atlas can claim implementation maturity."
+    },
+    {
+      "id": "annotations",
+      "name": "Annotations",
+      "summary": "Stable semantic references through regeneration.",
+      "declaredState": "architecture evolving",
+      "evidenceState": "not-linked",
+      "checks": {
+        "spec": "declared",
+        "contracts": "partial",
+        "code": "not-linked",
+        "unitTests": "not-linked",
+        "e2e": "not-linked",
+        "benchmark": "not-linked"
+      },
+      "explanation": "This slice tests whether dimensions, notes and callouts can persist as topology and identifiers evolve."
+    },
+    {
+      "id": "solar-mapping",
+      "name": "Solar mapping",
+      "summary": "Analysis → field → surface representation.",
+      "declaredState": "conceptual slice",
+      "evidenceState": "not-linked",
+      "checks": {
+        "spec": "declared",
+        "contracts": "partial",
+        "code": "not-linked",
+        "unitTests": "not-linked",
+        "e2e": "not-linked",
+        "benchmark": "not-linked"
+      },
+      "explanation": "This slice tests analysis claims, fields and derived representations without allowing analysis output to become canonical geometry."
+    },
+    {
+      "id": "multi-agent",
+      "name": "Multi-agent",
+      "summary": "Bounded work → proposal → transaction → evidence.",
+      "declaredState": "architecture defined",
+      "evidenceState": "not-linked",
+      "checks": {
+        "spec": "declared",
+        "contracts": "partial",
+        "code": "not-linked",
+        "unitTests": "not-linked",
+        "e2e": "not-linked",
+        "benchmark": "not-linked"
+      },
+      "explanation": "This slice tests concurrency, bounded reads, conflict handling and agent proposals under the same authority rules as human operations."
+    }
+  ],
+  "evidence": [
+    {
+      "id": "ev-transaction-rollback",
+      "name": "Transaction rollback contract",
+      "kind": "required-test",
+      "state": "unlinked",
+      "supports": [
+        "authority",
+        "submit-transaction"
+      ],
+      "description": "Proves that rejected or failed transactions leave canonical world state unchanged."
+    },
+    {
+      "id": "ev-stable-identity",
+      "name": "Stable identity continuity",
+      "kind": "required-test",
+      "state": "unlinked",
+      "supports": [
+        "authority",
+        "resolve-reference"
+      ],
+      "description": "Proves semantic references retain traceable continuity across revisions and topology changes."
+    },
+    {
+      "id": "ev-agent-boundary",
+      "name": "Agent authority boundary",
+      "kind": "required-test",
+      "state": "unlinked",
+      "supports": [
+        "intelligence",
+        "transaction-proposal"
+      ],
+      "description": "Proves agents have no direct mutation path around the transaction gate."
+    },
+    {
+      "id": "ev-interaction-boundary",
+      "name": "Interaction speculation boundary",
+      "kind": "required-test",
+      "state": "unlinked",
+      "supports": [
+        "interaction",
+        "semantic-operation-proposal"
+      ],
+      "description": "Proves speculative interaction cannot become canonical without commit."
+    },
+    {
+      "id": "ev-geometry-candidate-boundary",
+      "name": "Geometry candidate isolation",
+      "kind": "required-test",
+      "state": "unlinked",
+      "supports": [
+        "geometry",
+        "resolve-geometry"
+      ],
+      "description": "Proves geometry execution returns candidate results without mutating canonical geometry."
+    },
+    {
+      "id": "ev-validation-pipeline",
+      "name": "Validation pipeline coverage",
+      "kind": "required-test",
+      "state": "unlinked",
+      "supports": [
+        "constraints",
+        "validate-candidate"
+      ],
+      "description": "Proves validation stages produce typed findings and cannot partially mutate state."
+    },
+    {
+      "id": "ev-representation-freshness",
+      "name": "Representation freshness tracking",
+      "kind": "required-test",
+      "state": "unlinked",
+      "supports": [
+        "representation",
+        "derive-representation"
+      ],
+      "description": "Proves derived outputs expose the revision they depend on and become stale when dependencies change."
+    },
+    {
+      "id": "ev-external-authority-boundary",
+      "name": "External adapter authority boundary",
+      "kind": "required-test",
+      "state": "unlinked",
+      "supports": [
+        "external",
+        "external-evidence-import"
+      ],
+      "description": "Proves external tools return evidence or proposals rather than direct writes."
+    },
+    {
+      "id": "ev-cross-agent-conflict",
+      "name": "Cross-agent conflict suite",
+      "kind": "required-test",
+      "state": "unlinked",
+      "supports": [
+        "authority",
+        "intelligence"
+      ],
+      "description": "Exercises conflicting read and write sets, stale candidates, rebasing and retry behavior."
+    },
+    {
+      "id": "ev-recovery-benchmark",
+      "name": "Long-run recovery benchmark",
+      "kind": "required-benchmark",
+      "state": "unlinked",
+      "supports": [
+        "authority"
+      ],
+      "description": "Measures recovery and consistency under long-running concurrent operation."
+    }
+  ]
+}
