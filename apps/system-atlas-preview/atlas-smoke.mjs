@@ -38,6 +38,11 @@ try{
   const repositorySummary=(await page.locator('.repository-evidence-summary').textContent())||'';
   assert(repositorySummary.includes('Current Plasma implementation status'),'Repository evidence status heading is missing');
   assert(repositorySummary.includes('offline'),'Local smoke test should clearly report repository evidence as offline rather than inventing live status');
+  assert((await page.locator('.evidence-semantics').count())===1,'Integration view is missing explicit evidence semantics');
+  const semanticsText=(await page.locator('.evidence-semantics').textContent())||'';
+  assert(semanticsText.includes('Required evidence'),'Evidence semantics must explain required evidence');
+  assert(semanticsText.includes('Supporting evidence'),'Evidence semantics must explain supporting evidence');
+  assert(semanticsText.includes('does not change the relationship'),'Evidence semantics must state that supporting evidence is non-gating');
   const failedCardStyle=await page.locator('.repository-status-card.failed').evaluate(el=>{
     const style=getComputedStyle(el);
     const probe=document.createElement('span');
@@ -73,6 +78,12 @@ try{
   const linkInspector=(await page.locator('#inspector').textContent())||'';
   assert(linkInspector.includes('Window integration: resize hosted window'),'Integration relationship inspector is missing slice evidence');
   assert(linkInspector.includes('Geometry candidate isolation'),'Integration relationship inspector is missing geometry boundary evidence');
+  assert(linkInspector.includes('Supporting evidence'),'Integration relationship inspector is missing supporting evidence section');
+  assert(linkInspector.includes('Stable identity continuity'),'Window/Door → Geometry should show stable identity as supporting evidence');
+  assert(linkInspector.includes('Validation pipeline coverage'),'Window/Door → Geometry should show validation as supporting evidence');
+  assert(linkInspector.includes('Corroborates semantic/topological continuity'),'Supporting evidence must explain why it applies to the selected relationship');
+  assert(linkInspector.includes('Supporting evidence is independently corroborates')===false,'Supporting evidence copy contains malformed wording');
+  assert(linkInspector.includes('does not change the relationship'),'Inspector must state that supporting evidence is non-gating');
   assert(linkInspector.includes('Unlinked · 0/2'),'Integration relationship inspector did not derive unlinked 0/2 coverage');
   await page.click('.matrix-row-head[data-atlas-id="geometry"]');
   await page.waitForFunction(()=>location.hash.includes('integration/component/geometry'));

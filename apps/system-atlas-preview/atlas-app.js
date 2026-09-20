@@ -87,7 +87,7 @@ async function boot() {
         render();
       });
     } else if (state.route.view === 'integration') {
-      els.viewControls.innerHTML = `<span class="toolbar-note">Cell evidence states are derived from linked Evidence records. Click a cell to inspect its proof requirements.</span>`;
+      els.viewControls.innerHTML = `<span class="toolbar-note">Matrix status is gated by required evidence. Supporting evidence is corroborating context and never changes the relationship pass/fail state.</span>`;
     } else if (state.route.view === 'evidence') {
       els.viewControls.innerHTML = `<span class="toolbar-note">Evidence records show verification status and every Integration relationship that depends on them.</span>`;
     } else if (state.route.view === 'slices') {

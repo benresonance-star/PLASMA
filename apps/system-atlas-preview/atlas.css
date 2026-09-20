@@ -95,6 +95,13 @@ a{color:inherit}
 /* Integration */
 .integration-stage{min-width:1320px}
 .integration-summary{background:color-mix(in srgb,var(--panel) 97%,transparent)}
+.evidence-semantics{background:color-mix(in srgb,var(--panel) 96%,var(--violet-soft))}
+.evidence-definition{margin:0 0 8px;font-size:7.2px;line-height:1.5;color:var(--ink);max-width:980px}
+.evidence-semantics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.evidence-semantics-grid article{border:1px solid var(--line);border-radius:8px;background:var(--panel-strong);padding:8px}
+.evidence-semantics-grid article>span{display:block;margin-bottom:4px;font-size:6.2px;text-transform:uppercase;letter-spacing:.08em;font-weight:850;color:var(--faint)}
+.evidence-semantics-grid article>p,.evidence-semantics-foot{margin:0;font-size:6.5px;line-height:1.45;color:var(--muted)}
+.evidence-semantics-foot{margin-top:8px}
 .repository-evidence-summary{background:linear-gradient(180deg,color-mix(in srgb,var(--accent-soft) 32%,var(--panel)),var(--panel))}
 .repository-status-grid{display:grid;grid-template-columns:1.7fr repeat(5,1fr);gap:7px}
 .repository-status-card{min-height:82px;border:1px solid var(--line);border-radius:9px;background:var(--panel-strong);padding:9px;display:flex;flex-direction:column;gap:4px}
@@ -138,6 +145,13 @@ button.matrix-cell:hover{outline:1px solid var(--accent);outline-offset:-2px;bac
 .integration-link-list b{font-size:7px}.integration-link-list small{font-size:5.8px;color:var(--muted)}
 .evidence-coverage{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel-strong);padding:7px 9px}.evidence-coverage b{font-size:8px}.evidence-coverage small{font-size:6px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}.evidence-coverage.verified b{color:var(--green)}.evidence-coverage.partial b,.evidence-coverage.stale b{color:var(--amber)}.evidence-coverage.failed b{color:var(--red)}
 .evidence-ref-list,.integration-evidence-users{display:grid;gap:4px}.evidence-ref-list button,.integration-evidence-users button{display:grid;grid-template-columns:64px 1fr;gap:2px 6px;border:1px solid var(--line);border-radius:7px;background:var(--panel-strong);padding:6px;text-align:left}.evidence-ref-list button:hover,.integration-evidence-users button:hover{border-color:var(--accent);background:var(--accent-soft)}.evidence-ref-list span,.integration-evidence-users span{grid-row:1 / span 2;font-size:5.8px;text-transform:uppercase;letter-spacing:.08em;color:var(--faint)}.evidence-ref-list b,.integration-evidence-users b{font-size:7px}.evidence-ref-list small,.integration-evidence-users small{font-size:5.8px;color:var(--muted)}
+.evidence-ref-list .evidence-ref-item em{grid-column:2;font-size:5.9px;line-height:1.35;font-style:normal;color:var(--muted);margin-top:2px}
+.evidence-ref-list .evidence-ref-item.evidence-failed{border-color:var(--red);background:var(--red-soft)}.evidence-ref-list .evidence-ref-item.evidence-failed span,.evidence-ref-list .evidence-ref-item.evidence-failed b,.evidence-ref-list .evidence-ref-item.evidence-failed small,.evidence-ref-list .evidence-ref-item.evidence-failed em{color:var(--red)}
+.evidence-ref-list .evidence-ref-item.evidence-failed:hover{border-color:var(--red);background:var(--red-soft)}
+.evidence-ref-list .evidence-ref-item.evidence-stale{border-color:var(--amber);background:var(--amber-soft)}
+.evidence-ref-list .evidence-ref-item.evidence-verified b,.evidence-ref-list .evidence-ref-item.evidence-verified small{color:var(--green)}
+.inspector-help{margin:0 0 7px!important;font-size:6.2px!important;line-height:1.45!important;color:var(--muted)!important}
+.evidence-meaning.required{border-left:2px solid var(--accent);padding-left:8px}.evidence-meaning.supporting{border-left:2px solid var(--violet);padding-left:8px}
 
 /* Languages */
 .language-stage{min-width:960px}.domain-language-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.core-language-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}.language-card{min-height:128px}.core-language-grid .language-card{min-height:104px;padding:8px}.core-language-grid .language-card h3{font-size:9px}.core-language-grid .language-card p{font-size:7px}.language-verb{margin-top:9px;display:inline-block;border:1px solid var(--line);border-radius:999px;padding:3px 6px;font-size:7px;color:var(--accent-strong);background:var(--accent-soft)}
