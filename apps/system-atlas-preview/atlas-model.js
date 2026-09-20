@@ -218,7 +218,9 @@ export function createAtlasModel(data) {
   function search(query, limit = 12) {
     const q = String(query || '').trim().toLowerCase();
     if (!q) return [];
-    const tokens = q.split(/\s+/).filter(Boolean);
+    const normalize = value => String(value || '').toLowerCase().replace(/([a-z])([A-Z])/g,'$1 $2').replace(/[^a-z0-9]+/g,' ').trim();
+    const normalizedQuery = normalize(query);
+    const tokens = normalizedQuery.split(/\s+/).filter(Boolean);
     return refs
       .map(ref => {
         const raw = ref.raw;
@@ -260,8 +262,10 @@ export function createAtlasModel(data) {
           ...(raw.evidenceRefs || []).map(item => by.evidence.get(item.id)?.name)
         ].filter(Boolean).join(' ').toLowerCase();
         const graphHaystack = graphTerms.filter(Boolean).join(' ').toLowerCase();
-        const exactName = String(ref.name || '').toLowerCase() === q ? 12 : 0;
-        const starts = String(ref.name || '').toLowerCase().startsWith(q) ? 6 : 0;
+        const normalizedName = normalize(ref.name);
+        const normalizedId = normalize(ref.id);
+        const exactName = (normalizedName === normalizedQuery || normalizedId === normalizedQuery) ? 30 : 0;
+        const starts = (normalizedName.startsWith(normalizedQuery) || normalizedId.startsWith(normalizedQuery)) ? 12 : 0;
         const tokenScore = tokens.reduce((score, token) =>
           score + (primaryHaystack.includes(token) ? 3 : 0) + (graphHaystack.includes(token) ? 1 : 0), 0);
         return { ref, score: exactName + starts + tokenScore };
