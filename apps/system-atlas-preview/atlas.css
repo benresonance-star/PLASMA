@@ -106,7 +106,7 @@ a{color:inherit}
 .legend-state{display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:999px;background:var(--panel-strong);padding:4px 6px;font-size:6.7px;color:var(--muted)}
 .legend-state b{font-size:9px}.legend-state.defined b{color:var(--green)}.legend-state.partial b{color:var(--amber)}.legend-state.planned b{color:var(--faint)}
 .legend-state.evidence-key i,.evidence-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);display:inline-block}.evidence-dot.verified{background:var(--green)}.evidence-dot.linked{background:var(--accent)}.evidence-dot.unlinked{background:var(--amber)}
-.integration-matrix{display:grid;grid-template-columns:150px repeat(10,minmax(86px,1fr));border:1px solid var(--line);border-radius:9px;overflow:auto;background:var(--panel-strong)}
+.integration-matrix{display:grid;border:1px solid var(--line);border-radius:9px;overflow:auto;background:var(--panel-strong)}
 .matrix-corner,.matrix-slice-head,.matrix-row-head,.matrix-cell{min-height:44px;border:0;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--panel-strong)}
 .matrix-corner{display:flex;align-items:center;padding:8px;font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--faint);font-weight:900;position:sticky;left:0;z-index:4}
 .matrix-slice-head{padding:6px 5px;text-align:left;writing-mode:vertical-rl;transform:rotate(180deg);min-height:122px;font-size:6.8px;color:var(--muted)}
