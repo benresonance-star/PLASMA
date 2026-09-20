@@ -475,10 +475,10 @@
   </div>
   <div class="help-body">
     <p id="helpText">Activate help, then select a system, language, lifecycle stage or vertical slice.</p>
-    <div class="help-status"><i></i><span id="helpStatus">Ready</span></div>
+    <div class="help-status"><i></i><span id="helpStatus">Voice off · tap Play voice</span></div>
   </div>
   <div class="help-actions">
-    <button id="helpReplay" type="button">Replay voice</button>
+    <button id="helpReplay" type="button">Play voice</button>
     <button id="helpStop" type="button">Stop</button>
   </div>
 </aside>
@@ -723,7 +723,16 @@ function configureHelpAudioSession(){
 function stopHelpVoice(){
   if('speechSynthesis' in window)window.speechSynthesis.cancel();
   helpLauncher.classList.remove('speaking');
-  helpStatus.textContent='Ready';
+  helpStatus.textContent=activeHelp?'Voice off · tap Play voice':'Ready';
+}
+function presentHelp(info){
+  if(!info)return;
+  activeHelp=info;
+  helpTitle.textContent=info.title;
+  helpText.textContent=info.text;
+  helpPanel.classList.add('open');
+  helpLauncher.classList.remove('speaking');
+  helpStatus.textContent='Voice off · tap Play voice';
 }
 function speakHelp(info){
   if(!info)return;
@@ -742,7 +751,7 @@ function speakHelp(info){
   if(voice){utterance.voice=voice;utterance.lang=voice.lang}else{utterance.lang='en-AU'}
   utterance.rate=.96;utterance.pitch=1;
   utterance.onstart=()=>{helpLauncher.classList.add('speaking');helpStatus.textContent='Speaking through the active media audio route'};
-  utterance.onend=()=>{helpLauncher.classList.remove('speaking');helpStatus.textContent='Ready'};
+  utterance.onend=()=>{helpLauncher.classList.remove('speaking');helpStatus.textContent='Voice off · tap Play voice'};
   utterance.onerror=()=>{helpLauncher.classList.remove('speaking');helpStatus.textContent='Voice playback was interrupted'};
   window.speechSynthesis.speak(utterance);
 }
@@ -789,12 +798,12 @@ function helpInfoFor(target){
 }
 const helpTargetSelector='.node[data-node],[data-language-card],[data-core-card],.slice,.life-stage,.anatomy-card,.levels-card,.dependency-loop,.interaction-rule,.example-card,.language-band,.left .panel-head,.right .panel-head,.atlas-toolbar';
 
-helpLauncher.addEventListener('click',()=>{
-  configureHelpAudioSession();
-  setHelpMode(!helpMode);
-});
+helpLauncher.addEventListener('click',()=>setHelpMode(!helpMode));
 helpClose.addEventListener('click',()=>{stopHelpVoice();helpPanel.classList.remove('open')});
-helpReplay.addEventListener('click',()=>speakHelp(activeHelp));
+helpReplay.addEventListener('click',()=>{
+  configureHelpAudioSession();
+  speakHelp(activeHelp);
+});
 helpStop.addEventListener('click',stopHelpVoice);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&helpMode)setHelpMode(false)});
 document.addEventListener('click',e=>{
@@ -805,7 +814,7 @@ document.addEventListener('click',e=>{
   if(!info)return;
   e.preventDefault();
   e.stopPropagation();
-  speakHelp(info);
+  presentHelp(info);
 },true);
 
 const root=document.documentElement,themeToggle=document.getElementById('themeToggle'),themeLabel=document.getElementById('themeLabel');
