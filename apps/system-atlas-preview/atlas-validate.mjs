@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createAtlasModel, parseHash } from './atlas-model.js';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const atlas=JSON.parse(fs.readFileSync(path.join(here,'atlas.json'),'utf8'));
@@ -73,6 +74,14 @@ assert(atlas.transactions.candidatePatch?.fields?.includes('reads[]'),'Candidate
 assert(atlas.transactions.candidatePatch?.fields?.includes('writes[]'),'CandidatePatch must declare writes[]');
 assert(atlas.transactions.rejectionPaths?.length>=6,'transaction model must expose rejection paths');
 assert(atlas.transactions.invariants?.length>=8,'transaction model must expose kernel invariants');
+
+const runtimeModel=createAtlasModel(atlas);
+assert(runtimeModel.search('submit transaction').some(ref=>ref.type==='contract'&&ref.id==='submit-transaction'),'search must resolve submitTransaction contract');
+assert(runtimeModel.search('transaction proposal').some(ref=>ref.type==='relationship'||ref.type==='contract'),'search must safely include relationships without names');
+const authorityRoute=parseHash('#overview/component/authority');
+assert(authorityRoute.view==='overview'&&authorityRoute.type==='component'&&authorityRoute.id==='authority','overview component deep-link must parse');
+const languageRoute=parseHash('#languages/domain/site');
+assert(languageRoute.view==='languages'&&languageRoute.type==='domainLanguage'&&languageRoute.id==='site','language deep-link must parse');
 
 if(errors.length){
   console.error('Atlas validation failed:');
