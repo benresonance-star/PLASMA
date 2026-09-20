@@ -1,0 +1,44 @@
+name: atlas-smoke
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/system-atlas-preview/**"
+      - ".github/workflows/atlas-smoke.yml"
+  pull_request:
+    paths:
+      - "apps/system-atlas-preview/**"
+      - ".github/workflows/atlas-smoke.yml"
+
+jobs:
+  atlas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate Atlas model
+        run: node apps/system-atlas-preview/atlas-validate.mjs
+
+      - name: Install Playwright runtime
+        run: |
+          npm install --no-save --no-package-lock playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Start static Atlas server
+        run: |
+          python3 -m http.server 4173 --directory apps/system-atlas-preview > /tmp/atlas-server.log 2>&1 &
+          echo $! > /tmp/atlas-server.pid
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/atlas-server.log
+          exit 1
+
+      - name: Browser smoke test
+        run: node apps/system-atlas-preview/atlas-smoke.mjs
