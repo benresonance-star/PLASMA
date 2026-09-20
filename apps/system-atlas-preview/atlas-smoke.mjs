@@ -28,7 +28,7 @@ try{
   for(const [view,selector] of views){
     await page.click(`.view-tab[data-view="${view}"]`);
     await page.waitForSelector(selector,{state:'visible'});
-    assert(locationHash(await page)===`#${view}`,`Unexpected hash after opening ${view}`);
+    assert((await locationHash(page))===`#${view}`,`Unexpected hash after opening ${view}`);
   }
 
   await page.click('.view-tab[data-view="overview"]');
@@ -43,13 +43,13 @@ try{
   await page.fill('#atlasSearch','');
   await page.keyboard.press('Escape');
 
-  const hashBefore=locationHash(await page);
+  const hashBefore=await locationHash(page);
   await page.click('#helpLauncher');
   await page.click('[data-overview-id="authority"]');
   await page.waitForSelector('#helpPanel.open',{state:'visible'});
   assert((await page.locator('#helpTitle').innerText()).includes('World + Authority Plane'),'Context help did not use Atlas data');
   assert((await page.locator('#helpStatus').innerText()).includes('Voice off'),'Voice should be opt-in');
-  assert(locationHash(await page)===hashBefore,'Help mode should intercept selection rather than navigate');
+  assert((await locationHash(page))===hashBefore,'Help mode should intercept selection rather than navigate');
   await page.click('#helpLauncher');
 
   await page.setViewportSize({width:390,height:844});
