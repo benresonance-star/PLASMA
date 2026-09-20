@@ -634,9 +634,10 @@
         "id",
         "name",
         "kind",
-        "state",
         "supports",
-        "description"
+        "description",
+        "claim",
+        "verification"
       ],
       "properties": {
         "id": {
@@ -648,9 +649,6 @@
         "kind": {
           "type": "string"
         },
-        "state": {
-          "type": "string"
-        },
         "supports": {
           "type": "array",
           "items": {
@@ -660,14 +658,23 @@
         "description": {
           "type": "string"
         },
-        "source": {
-          "type": [
-            "string",
-            "null"
-          ]
+        "claim": {
+          "type": "string"
+        },
+        "scenario": {
+          "type": "string"
+        },
+        "acceptanceCriteria": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/acceptanceCriterion"
+          }
+        },
+        "verification": {
+          "$ref": "#/$defs/verification"
         }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     },
     "typedRef": {
       "type": "object",
@@ -702,8 +709,9 @@
         "to",
         "role",
         "architectureState",
-        "evidenceState",
-        "criticality"
+        "criticality",
+        "evidencePolicy",
+        "evidenceRefs"
       ],
       "properties": {
         "id": {
@@ -725,13 +733,6 @@
             "planned"
           ]
         },
-        "evidenceState": {
-          "enum": [
-            "verified",
-            "linked",
-            "unlinked"
-          ]
-        },
         "criticality": {
           "enum": [
             "core",
@@ -739,6 +740,130 @@
           ]
         },
         "explanation": {
+          "type": "string"
+        },
+        "evidencePolicy": {
+          "$ref": "#/$defs/evidencePolicy"
+        },
+        "evidenceRefs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/evidenceRef"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidenceRef": {
+      "type": "object",
+      "required": [
+        "id",
+        "requirement"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "requirement": {
+          "enum": [
+            "required",
+            "supporting"
+          ]
+        },
+        "proves": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidencePolicy": {
+      "type": "object",
+      "required": [
+        "mode"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "all-required",
+            "any-required",
+            "threshold"
+          ]
+        },
+        "minimumVerified": {
+          "type": "integer",
+          "minimum": 1
+        }
+      },
+      "additionalProperties": false
+    },
+    "verification": {
+      "type": "object",
+      "required": [
+        "status",
+        "method",
+        "source",
+        "subjectRevision",
+        "verifiedAt",
+        "result"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "unlinked",
+            "linked",
+            "verified",
+            "failed",
+            "stale",
+            "superseded"
+          ]
+        },
+        "method": {
+          "type": "string"
+        },
+        "source": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "subjectRevision": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "verifiedAt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "result": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "acceptanceCriterion": {
+      "type": "object",
+      "required": [
+        "id",
+        "text"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "text": {
           "type": "string"
         }
       },
