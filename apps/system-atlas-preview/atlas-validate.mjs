@@ -73,6 +73,7 @@ for(const slice of atlas.slices){
 }
 assert(atlas.slices.some(slice=>slice.id==='townhouse-system'),'vertical slices must include the townhouse medium-density housing test');
 assert(atlas.slices.some(slice=>slice.id==='apartment-system'),'vertical slices must include the apartment whole-building coordination test');
+assert(atlas.slices.some(slice=>slice.id==='window-door-system'),'vertical slices must include the window and door hosted product-system test');
 assert(atlas.slices.some(slice=>slice.id==='clothing-fabrication'),'vertical slices must include the clothing-to-fabrication generalisation test');
 assert(atlas.slices.some(slice=>slice.id==='botanical-growth'),'vertical slices must include the botanical growth living-system test');
 

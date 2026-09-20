@@ -35,6 +35,7 @@ try{
   await page.waitForSelector('.slice-catalogue',{state:'visible'});
   assert((await page.locator('[data-atlas-id="townhouse-system"]').count())===1,'Townhouse system slice is missing');
   assert((await page.locator('[data-atlas-id="apartment-system"]').count())===1,'Apartment system slice is missing');
+  assert((await page.locator('[data-atlas-id="window-door-system"]').count())===1,'Window and door system slice is missing');
   assert((await page.locator('[data-atlas-id="clothing-fabrication"]').count())===1,'Clothing fabrication slice is missing');
   assert((await page.locator('[data-atlas-id="botanical-growth"]').count())===1,'Botanical growth slice is missing');
   await page.click('[data-atlas-id="clothing-fabrication"]');
