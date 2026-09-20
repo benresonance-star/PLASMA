@@ -3,847 +3,95 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover" />
-<title>Plasma — System Atlas Preview v2</title>
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+<title>Plasma — System Atlas</title>
+<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
+<link rel="stylesheet" href="./atlas.css" />
 <meta name="apple-mobile-web-app-title" content="Plasma Atlas" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="theme-color" content="#0c1115" />
-<style>
-  :root{
-    --bg:#f3f5f6; --panel:#fbfcfc; --panel-strong:#ffffff; --canvas:#f8fafb;
-    --ink:#121920; --muted:#68747d; --faint:#8f9aa2;
-    --line:#d7dee2; --line-strong:#bcc7cd; --grid:rgba(24,42,52,.038);
-    --accent:#118ec8; --accent-strong:#0b6f9f; --accent-soft:#e8f4fa;
-    --violet:#7159ba; --violet-soft:#f0ecfb;
-    --green:#2d845f; --green-soft:#eaf5ef;
-    --amber:#b97916; --amber-soft:#fff3df;
-    --red:#b35252; --red-soft:#faeaea;
-    --authority:#27343d; --authority-soft:#eef1f2;
-    --shadow:0 8px 28px rgba(15,27,34,.08);
-    --shadow-soft:0 3px 12px rgba(15,27,34,.045);
-    --ui-zoom:1;
-  }
-  html[data-theme="dark"]{
-    --bg:#0c1115; --panel:#11181d; --panel-strong:#151e24; --canvas:#0f161b;
-    --ink:#edf2f5; --muted:#9ba7af; --faint:#738089;
-    --line:#26323a; --line-strong:#3b4a54; --grid:rgba(220,235,244,.035);
-    --accent:#45b6e9; --accent-strong:#6ec9ef; --accent-soft:#102c39;
-    --violet:#a494e2; --violet-soft:#241f39;
-    --green:#62b68e; --green-soft:#152b22;
-    --amber:#deb05d; --amber-soft:#342814;
-    --red:#dd7c7c; --red-soft:#351d1d;
-    --authority:#dce5e9; --authority-soft:#192228;
-    --shadow:0 12px 34px rgba(0,0,0,.32);
-    --shadow-soft:0 4px 14px rgba(0,0,0,.18);
-  }
-
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0; overflow:hidden; color:var(--ink); background:var(--bg);
-    font-family:Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  }
-  button{font:inherit;color:inherit;cursor:pointer}
-  a{color:inherit}
-  .app{height:100vh;display:grid;grid-template-rows:58px 1fr;zoom:var(--ui-zoom);transform-origin:0 0}
-
-  /* Top bar */
-  .topbar{
-    display:grid;grid-template-columns:300px 1fr 390px;align-items:center;gap:16px;
-    padding:0 60px 0 16px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 94%, transparent);
-    backdrop-filter:blur(16px);z-index:20;
-  }
-  .brand{display:flex;align-items:center;gap:12px;min-width:0}
-  .mark{width:31px;height:31px;display:grid;place-items:center;border:1px solid var(--ink);font-size:13px;font-weight:900}
-  .brand-copy{line-height:1;min-width:0}.brand-copy strong{font-size:17px;letter-spacing:.18em}.brand-copy span{display:block;margin-top:5px;color:var(--muted);font-size:9px;letter-spacing:.18em;text-transform:uppercase}
-  .view-tabs{display:flex;justify-content:center;gap:4px}
-  .view-tabs button{border:1px solid transparent;background:transparent;color:var(--muted);padding:8px 10px;border-radius:8px;font-size:11px;font-weight:720}
-  .view-tabs button.active{background:var(--panel-strong);border-color:var(--line);color:var(--ink);box-shadow:var(--shadow-soft)}
-  .top-actions{display:flex;justify-content:flex-end;align-items:center;gap:8px}
-  .status{white-space:nowrap;border:1px solid color-mix(in srgb,var(--green) 35%,var(--line));background:var(--green-soft);color:var(--green);padding:7px 9px;border-radius:999px;font-size:10px;font-weight:800}
-  .icon-btn,.primary-btn{height:34px;border:1px solid var(--line);background:var(--panel-strong);border-radius:8px;padding:0 10px;font-size:11px;font-weight:750}
-  .icon-btn:hover{border-color:var(--line-strong)}
-  .theme-btn{display:flex;align-items:center;gap:7px;min-width:78px;justify-content:center}
-  .theme-icon{font-size:13px;line-height:1}
-  .primary-btn{border-color:var(--accent-strong);background:var(--accent);color:white}
-
-  /* Main layout */
-  .workspace{min-height:0;display:grid;grid-template-columns:232px minmax(640px,1fr) 306px;gap:11px;padding:11px}
-  .panel{min-height:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-soft)}
-  .left,.right{display:flex;flex-direction:column;overflow:hidden}
-  .panel-head{padding:13px 13px 10px;border-bottom:1px solid var(--line)}
-  .eyebrow{font-size:9px;text-transform:uppercase;letter-spacing:.15em;color:var(--faint);font-weight:850}
-  .panel-head h2{margin:6px 0 2px;font-size:14px}.panel-head p{margin:0;color:var(--muted);font-size:10px;line-height:1.45}
-
-  /* Tree */
-  .tree{padding:9px;overflow:auto}.tree-group{margin-bottom:12px}.tree-label{padding:6px 7px;color:var(--faint);font-size:8px;font-weight:900;letter-spacing:.13em;text-transform:uppercase}
-  .tree-item{width:100%;display:flex;align-items:center;gap:8px;border:0;background:transparent;padding:8px;border-radius:8px;text-align:left;color:var(--muted);font-size:10px;text-decoration:none}
-  .tree-item.section-link{border:1px solid var(--line);background:var(--panel-strong);margin-bottom:5px}.tree-item.section-link:hover{border-color:var(--accent);background:var(--accent-soft)}
-  .tree-item .external-mark{margin-left:auto;color:var(--faint);font-size:11px;font-weight:900}
-  .tree-item:hover,.tree-item.active{background:var(--accent-soft);color:var(--accent-strong)}
-  .dot{width:8px;height:8px;border-radius:50%;border:1.5px solid var(--line-strong);background:var(--panel-strong);flex:none}
-  .tree-item.active .dot{background:var(--accent);border-color:var(--accent)}
-  .count{margin-left:auto;font-size:8px;color:var(--faint);background:var(--authority-soft);border:1px solid var(--line);border-radius:999px;padding:2px 6px}
-  .legend{margin-top:auto;border-top:1px solid var(--line);padding:11px;display:grid;grid-template-columns:1fr 1fr;gap:7px}
-  .legend div{font-size:8px;color:var(--muted);display:flex;gap:6px;align-items:center}.sw{width:8px;height:8px;border-radius:50%}.sw.authority{background:var(--authority)}.sw.runtime{background:var(--accent)}.sw.agent{background:var(--violet)}.sw.external{background:var(--green)}
-
-  /* Center */
-  .center{min-width:0;min-height:0;display:grid;grid-template-rows:43px minmax(0,1fr) 126px;gap:9px}
-  .atlas-toolbar{display:flex;align-items:center;justify-content:space-between;padding:0 11px;background:var(--panel);border:1px solid var(--line);border-radius:11px;box-shadow:var(--shadow-soft)}
-  .titleline{display:flex;align-items:baseline;gap:9px;min-width:0}.titleline strong{font-size:13px}.titleline span{font-size:9px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .tools{display:flex;gap:5px}.tool{border:1px solid var(--line);background:var(--panel-strong);border-radius:7px;padding:6px 8px;font-size:9px;color:var(--muted);font-weight:800}.tool.active{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 35%,var(--line));color:var(--accent-strong)}
-
-  /* Graph canvas */
-  .canvas{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:12px;background:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),var(--canvas);background-size:30px 30px;box-shadow:var(--shadow-soft)}
-  .canvas-head{position:absolute;left:15px;right:15px;top:11px;display:flex;justify-content:space-between;align-items:center;z-index:6;pointer-events:none}
-  .canvas-title{color:var(--faint);font-size:8px;letter-spacing:.17em;font-weight:900}.canvas-note{font-size:8px;color:var(--muted);background:var(--panel-strong);border:1px solid var(--line);padding:5px 8px;border-radius:999px}
-
-  #wireLayer{position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;overflow:visible}
-  .wire-path{fill:none;stroke-width:1.35;opacity:.76;vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
-  .wire-operation{stroke:var(--accent)}.wire-agent{stroke:var(--violet)}.wire-derived{stroke:var(--line-strong)}.wire-external{stroke:var(--green)}.wire-spatial{stroke:var(--amber)}
-  .wire-path.faded{opacity:.09}.wire-path.hot{stroke-width:2;opacity:1}
-  .wire-label rect{fill:var(--panel-strong);stroke:var(--line-strong);stroke-width:.8;rx:7;filter:drop-shadow(0 2px 4px rgba(0,0,0,.12))}.wire-label text{font-size:8px;fill:var(--ink);font-weight:780;letter-spacing:.01em}.wire-label.faded{opacity:.12}.wire-label.hot text{fill:var(--ink)}
-
-  .architecture{position:absolute;inset:48px 28px 28px;display:grid;grid-template-columns:1fr 1.05fr 1.05fr 1fr;grid-template-rows:1fr 1.12fr 1fr;gap:34px 24px;z-index:2}
-  .node{position:relative;border:1px solid var(--line-strong);border-radius:11px;background:var(--panel-strong);padding:11px;box-shadow:var(--shadow-soft);transition:transform .16s ease,opacity .16s ease,border .16s ease,box-shadow .16s ease;z-index:3;overflow:hidden}
-  .node:hover{transform:translateY(-1px);box-shadow:var(--shadow)}.node.selected{outline:2px solid color-mix(in srgb,var(--accent) 26%,transparent);border-color:var(--accent)}.node.faded{opacity:.28}.node.related{border-color:color-mix(in srgb,var(--accent) 46%,var(--line))}
-  .node:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--line-strong)}
-  .node.interaction:before{background:var(--accent)}.node.intelligence:before{background:var(--violet)}.node.external:before{background:var(--green)}.node.geometry:before,.node.constraints:before{background:var(--amber)}.node.authority:before{background:var(--authority)}
-  .node .type{font-size:7.5px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}.node h3{font-size:12px;margin:4px 0 5px}.node p{margin:0;color:var(--muted);font-size:8.5px;line-height:1.42}.node .role{position:absolute;right:8px;top:8px;border:1px solid var(--line);border-radius:999px;padding:3px 5px;font-size:7px;font-weight:900;color:var(--faint);background:var(--panel)}
-  .chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}.chip{font-size:7.5px;font-weight:760;color:var(--muted);background:var(--authority-soft);border:1px solid var(--line);padding:3px 5px;border-radius:999px}.chip.good{background:var(--green-soft);color:var(--green)}.chip.warn{background:var(--amber-soft);color:var(--amber)}.chip.violet{background:var(--violet-soft);color:var(--violet)}.chip.blue{background:var(--accent-soft);color:var(--accent-strong)}
-
-  .interaction{grid-column:1 / span 2;grid-row:1}.intelligence{grid-column:3 / span 2;grid-row:1}
-  .authority{grid-column:2 / span 2;grid-row:2;border:1.6px solid var(--authority);box-shadow:0 10px 24px rgba(20,30,36,.10)}.authority h3{font-size:16px}.authority p{font-size:9px}.authority-band{margin-top:9px;border-top:1px solid var(--line);padding-top:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.mini{padding:6px;border:1px solid var(--line);border-radius:7px;background:var(--panel);font-size:7.5px;color:var(--muted);line-height:1.3}.mini strong{display:block;color:var(--ink);font-size:7.5px;margin-bottom:2px}
-  .geometry{grid-column:1;grid-row:3}.constraints{grid-column:2;grid-row:3}.representation{grid-column:3;grid-row:3}.external{grid-column:4;grid-row:3}
-  .hint{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);padding:4px 8px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--panel-strong) 92%,transparent);color:var(--faint);font-size:7.5px;z-index:7;white-space:nowrap}
-
-  /* Language architecture */
-  .center.language-mode{grid-template-rows:43px minmax(0,1fr)}
-  .language-map{display:none;position:relative;overflow:auto;border:1px solid var(--line);border-radius:12px;background:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),var(--canvas);background-size:30px 30px;box-shadow:var(--shadow-soft);padding:45px 16px 18px}
-  .language-map.active{display:block}
-  .language-head{position:absolute;left:15px;right:15px;top:11px;display:flex;justify-content:space-between;align-items:center}
-  .language-content{min-width:760px;display:flex;flex-direction:column;gap:12px}
-  .language-band{border:1px solid var(--line);border-radius:11px;background:color-mix(in srgb,var(--panel) 94%,transparent);padding:11px;box-shadow:var(--shadow-soft)}
-  .band-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:9px}
-  .band-head h3{font-size:11px;margin:2px 0 2px}.band-head p{margin:0;color:var(--muted);font-size:8px;line-height:1.35}
-  .band-tag{white-space:nowrap;border:1px solid var(--line);background:var(--panel-strong);border-radius:999px;padding:4px 7px;font-size:7px;color:var(--faint);font-weight:800}
-  .domain-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-  .language-card,.core-card{position:relative;border:1px solid var(--line-strong);border-radius:9px;background:var(--panel-strong);padding:9px;min-height:116px;transition:.16s ease;overflow:hidden}
-  .language-card:hover,.core-card:hover{border-color:var(--accent);box-shadow:var(--shadow-soft)}
-  .language-card.selected,.core-card.selected{outline:2px solid color-mix(in srgb,var(--accent) 24%,transparent);border-color:var(--accent)}
-  .language-card:before,.core-card:before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
-  .language-card.site:before{background:#56a985}.language-card.geometry:before{background:var(--amber)}.language-card.assembly:before{background:var(--violet)}.language-card.analysis:before{background:var(--accent)}
-  .language-card h4,.core-card h4{font-size:10px;margin:3px 0 5px}.language-card p,.core-card p{margin:0;color:var(--muted);font-size:7.6px;line-height:1.35}
-  .lang-section{margin-top:7px}.lang-label{font-size:6.7px;text-transform:uppercase;letter-spacing:.11em;color:var(--faint);font-weight:900;margin-bottom:3px}
-  .token-row{display:flex;flex-wrap:wrap;gap:3px}.token{font-size:6.8px;color:var(--muted);border:1px solid var(--line);background:var(--authority-soft);padding:2px 4px;border-radius:999px}.token.verb{color:var(--ink);background:var(--panel)}.token.constraint{color:var(--amber);background:var(--amber-soft)}.token.type{color:var(--green);background:var(--green-soft)}
-  .core-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}
-  .core-card{min-height:86px;padding:8px}.core-card:before{background:var(--authority)}
-  .core-card h4{font-size:8.5px}.core-card p{font-size:7px}
-  .language-anatomy{display:grid;grid-template-columns:1.25fr .75fr;gap:8px;margin-top:9px}
-  .anatomy-card,.levels-card{border:1px solid var(--line);border-radius:9px;background:var(--panel-strong);padding:9px}
-  .anatomy-card strong,.levels-card strong{display:block;font-size:8px;margin-bottom:6px}
-  .anatomy-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.anatomy-grid span{display:block;border:1px solid var(--line);border-radius:6px;padding:5px;font-size:6.8px;color:var(--muted);background:var(--panel)}
-  .level-line{display:grid;grid-template-columns:62px 1fr;gap:6px;padding:4px 0;border-bottom:1px solid var(--line);font-size:7px}.level-line:last-child{border-bottom:0}.level-line b{color:var(--ink)}.level-line span{color:var(--muted)}
-  .lifecycle{display:grid;grid-template-columns:repeat(7,1fr);gap:17px;align-items:stretch}
-  .life-stage{position:relative;border:1px solid var(--line-strong);border-radius:8px;background:var(--panel-strong);padding:8px;min-height:83px}
-  .life-stage:not(:last-child):after{content:"→";position:absolute;right:-14px;top:50%;transform:translateY(-50%);color:var(--faint);font-weight:900;font-size:12px}
-  .life-stage .step{font-size:6.5px;font-weight:900;color:var(--accent-strong);letter-spacing:.1em}.life-stage h4{font-size:8.5px;margin:3px 0 4px}.life-stage p{font-size:6.9px;color:var(--muted);line-height:1.3;margin:0}
-  .life-stage.world{border-color:var(--authority);box-shadow:0 0 0 1px color-mix(in srgb,var(--authority) 18%,transparent)}
-  .dependency-loop{margin-top:9px;border:1px solid color-mix(in srgb,var(--green) 42%,var(--line));border-radius:8px;background:var(--green-soft);padding:8px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;font-size:7.5px;color:var(--green)}
-  .dependency-loop strong{color:var(--ink)}.dependency-loop .arrow{font-size:12px;font-weight:900}
-  .interaction-rule{margin-top:9px;border:1px solid color-mix(in srgb,var(--red) 32%,var(--line));background:var(--red-soft);border-radius:8px;padding:7px 9px;font-size:7.5px;color:var(--muted)}.interaction-rule b{color:var(--red)}
-  .example-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-  .example-card{border:1px solid var(--line);border-radius:9px;background:var(--panel-strong);padding:9px}.example-card h4{font-size:8.5px;margin:0 0 6px}.example-flow{display:flex;flex-wrap:wrap;align-items:center;gap:4px}.example-flow span{font-size:7px;border:1px solid var(--line);background:var(--panel);padding:4px 5px;border-radius:6px}.example-flow i{font-style:normal;color:var(--faint);font-size:9px}
-  .future-domains{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.future-domains span{font-size:7px;border:1px dashed var(--line-strong);color:var(--faint);padding:4px 6px;border-radius:999px;background:var(--panel)}
-  /* Slice strip */
-  .slice-strip{display:grid;grid-template-columns:1.35fr repeat(4,.9fr);gap:8px;min-width:0}.slice{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;overflow:hidden;box-shadow:var(--shadow-soft)}.slice .kicker{font-size:7.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);font-weight:900}.slice h4{margin:4px 0 3px;font-size:10px}.slice p{margin:0;color:var(--muted);font-size:7.5px;line-height:1.35}.slice.hero{background:linear-gradient(135deg,var(--panel-strong),var(--accent-soft))}.slice.hero h4{font-size:12px}.metric-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}.metric{font-size:7px;color:var(--muted);border:1px solid var(--line);background:var(--panel-strong);border-radius:5px;padding:4px 5px}.progress{position:absolute;left:9px;right:9px;bottom:9px;height:3px;background:var(--authority-soft);border-radius:99px;overflow:hidden}.progress i{display:block;height:100%;background:var(--accent);border-radius:99px}
-
-  /* Inspector */
-  .inspector{padding:13px;overflow:auto}.inspector-head{display:flex;justify-content:space-between;gap:9px;align-items:flex-start}.inspector h2{font-size:15px;margin:4px 0}.idtag{font-size:7.5px;color:var(--muted);background:var(--authority-soft);border:1px solid var(--line);padding:4px 6px;border-radius:6px}.inspector p{font-size:9.5px;line-height:1.5;color:var(--muted)}.section{margin-top:14px;padding-top:11px;border-top:1px solid var(--line)}.section h3{margin:0 0 8px;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}.kv{display:grid;grid-template-columns:86px 1fr;gap:7px 8px;font-size:8.5px;line-height:1.35}.kv dt{color:var(--faint)}.kv dd{margin:0;color:var(--ink);font-weight:680}.contract{border:1px solid var(--line);border-radius:8px;padding:8px;margin:6px 0;background:var(--panel-strong)}.contract strong{display:block;font-size:8.5px;margin-bottom:3px}.contract span{font-size:7.7px;color:var(--muted)}.evidence{display:flex;align-items:center;gap:7px;padding:6px 0;border-bottom:1px solid var(--line);font-size:8.5px}.evidence:last-child{border-bottom:0}.evicon{width:17px;height:17px;display:grid;place-items:center;border-radius:50%;font-size:8px;font-weight:900}.evicon.ok{background:var(--green-soft);color:var(--green)}.evicon.warn{background:var(--amber-soft);color:var(--amber)}.evicon.off{background:var(--authority-soft);color:var(--faint)}.footer-action{margin-top:auto;border-top:1px solid var(--line);padding:9px;display:flex;gap:6px;background:var(--panel)}.footer-action button{flex:1;border:1px solid var(--line);background:var(--panel-strong);border-radius:8px;padding:8px;font-size:8px;font-weight:800;color:var(--muted)}
-
-  /* Contextual voice help */
-  .help-launcher{position:fixed;right:14px;top:11px;z-index:1200;width:36px;height:36px;border:1px solid var(--line-strong);border-radius:50%;background:color-mix(in srgb,var(--panel-strong) 96%,transparent);color:var(--ink);box-shadow:var(--shadow-soft);font-size:17px;font-weight:900;display:grid;place-items:center;backdrop-filter:blur(12px)}
-  .help-launcher:hover{border-color:var(--accent);color:var(--accent-strong)}
-  .help-launcher.active{background:var(--accent);color:white;border-color:var(--accent-strong);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent),var(--shadow)}
-  .help-launcher.speaking:after{content:"";position:absolute;inset:-5px;border:2px solid var(--accent);border-radius:50%;animation:helpPulse 1.25s ease-out infinite}
-  @keyframes helpPulse{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.25);opacity:0}}
-  .help-banner{display:none;position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:1190;max-width:min(560px,calc(100vw - 120px));padding:8px 12px;border:1px solid color-mix(in srgb,var(--accent) 42%,var(--line));border-radius:999px;background:color-mix(in srgb,var(--panel-strong) 96%,transparent);box-shadow:var(--shadow-soft);backdrop-filter:blur(12px);font-size:10px;font-weight:760;color:var(--muted);pointer-events:none}
-  body.help-mode .help-banner{display:block}
-  .help-panel{display:none;position:fixed;right:14px;top:58px;z-index:1210;width:min(370px,calc(100vw - 28px));max-height:min(520px,60vh);overflow:auto;border:1px solid var(--line-strong);border-radius:14px;background:color-mix(in srgb,var(--panel-strong) 98%,transparent);box-shadow:var(--shadow);backdrop-filter:blur(18px)}
-  .help-panel.open{display:block}
-  .help-panel-head{display:flex;align-items:flex-start;gap:10px;padding:13px 13px 9px;border-bottom:1px solid var(--line)}
-  .help-orb{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;flex:none;background:var(--accent-soft);color:var(--accent-strong);font-size:12px;font-weight:900}
-  .help-panel-head .copy{min-width:0;flex:1}.help-panel-head .eyebrow{margin-bottom:3px}.help-panel-head h3{margin:0;font-size:13px}
-  .help-close{width:28px;height:28px;border:1px solid var(--line);background:var(--panel);border-radius:7px;font-weight:900;color:var(--muted)}
-  .help-body{padding:12px 13px}.help-body p{margin:0;color:var(--muted);font-size:10.5px;line-height:1.55}
-  .help-status{margin-top:9px;font-size:8px;color:var(--faint);display:flex;align-items:center;gap:6px}.help-status i{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block}
-  .help-actions{display:flex;gap:6px;padding:0 13px 13px}.help-actions button{flex:1;border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px;font-size:9px;font-weight:800;color:var(--muted)}.help-actions button:first-child{border-color:color-mix(in srgb,var(--accent) 38%,var(--line));color:var(--accent-strong)}
-  body.help-mode .node,body.help-mode [data-language-card],body.help-mode [data-core-card],body.help-mode .slice,body.help-mode .life-stage,body.help-mode .anatomy-card,body.help-mode .levels-card,body.help-mode .dependency-loop,body.help-mode .interaction-rule,body.help-mode .example-card,body.help-mode .language-band,body.help-mode .panel-head,body.help-mode .atlas-toolbar{cursor:help}
-  body.help-mode .node:hover,body.help-mode [data-language-card]:hover,body.help-mode [data-core-card]:hover,body.help-mode .slice:hover,body.help-mode .life-stage:hover,body.help-mode .anatomy-card:hover,body.help-mode .levels-card:hover,body.help-mode .dependency-loop:hover,body.help-mode .interaction-rule:hover,body.help-mode .example-card:hover,body.help-mode .language-band:hover,body.help-mode .panel-head:hover,body.help-mode .atlas-toolbar:hover{outline:2px solid var(--accent);outline-offset:2px}
-  @media(max-width:700px){
-    .help-launcher{right:10px;top:10px}
-    .help-banner{top:55px;max-width:calc(100vw - 20px);white-space:normal;text-align:center;border-radius:10px}
-    .help-panel{right:10px;top:auto;bottom:calc(82px + env(safe-area-inset-bottom));width:calc(100vw - 20px);max-height:46vh}
-  }
-
-  .viewport-controls{position:fixed;right:14px;bottom:16px;z-index:1000;display:flex;align-items:center;gap:4px;padding:5px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--panel-strong) 94%,transparent);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
-  .viewport-controls button{min-width:34px;height:34px;border:1px solid var(--line);border-radius:8px;background:var(--panel);font-size:12px;font-weight:850}
-  .viewport-controls .zoom-value{min-width:52px;color:var(--muted);font-size:10px}
-  .viewport-controls .fit{padding:0 10px;color:var(--accent-strong)}
-
-  /* Mobile / narrow-screen exploration: preserve the full Atlas sheet and let the
-     browser viewport pan across it like a large drawing rather than clipping it. */
-  @media(max-width:1100px){
-    html,body{
-      height:auto;
-      min-height:100%;
-      overflow:auto;
-      -webkit-overflow-scrolling:touch;
-      overscroll-behavior:auto;
-    }
-    body{touch-action:pan-x pan-y pinch-zoom}
-    .app{
-      width:1280px;
-      min-width:1280px;
-      height:auto;
-      min-height:920px;
-      grid-template-rows:58px auto;
-    }
-    .topbar{
-      position:sticky;
-      top:0;
-      grid-template-columns:300px 1fr 390px;
-      min-width:1280px;
-    }
-    .view-tabs button{display:block}
-    .workspace{
-      grid-template-columns:232px minmax(700px,1fr) 306px;
-      min-width:1280px;
-      min-height:850px;
-    }
-    .right{display:flex}
-    .center{
-      grid-template-rows:43px 640px 126px;
-      min-height:826px;
-    }
-    .center.language-mode{grid-template-rows:43px 920px}
-    .canvas{
-      min-height:640px;
-      touch-action:pan-x pan-y pinch-zoom;
-    }
-    .viewport-controls{right:12px;bottom:calc(104px + env(safe-area-inset-bottom))}
-  }
-</style>
 </head>
 <body>
 <div class="app">
   <header class="topbar">
-    <div class="brand">
+    <a class="brand" href="#overview" aria-label="Plasma System Atlas home">
       <div class="mark">P</div>
       <div class="brand-copy"><strong>PLASMA</strong><span>System Atlas</span></div>
+    </a>
+
+    <div class="center-nav">
+      <nav class="view-tabs" id="viewTabs" aria-label="Atlas views"></nav>
+      <div class="search-shell">
+        <input class="search-input" id="atlasSearch" type="search" autocomplete="off" placeholder="Search systems, contracts, languages…" aria-label="Search Atlas" />
+        <span class="search-hint">/</span>
+        <div class="search-results" id="searchResults" role="listbox"></div>
+      </div>
     </div>
-    <nav class="view-tabs" aria-label="Atlas views">
-      <button class="active" data-view="overview">Overview</button><button data-view="languages">Languages</button><button>Components</button><button>Contracts</button><button>Vertical slices</button><button>Evidence</button>
-    </nav>
+
     <div class="top-actions">
-      <span class="status">Foundation · evolving</span>
-      <button class="icon-btn theme-btn" id="themeToggle" aria-label="Toggle dark mode"><span class="theme-icon" id="themeIcon">◐</span><span id="themeLabel">Dark</span></button>
-      <button class="icon-btn">History</button><button class="primary-btn">New sheet</button>
+      <span class="status-pill" id="foundationStatus">foundation evolving</span>
+      <button class="icon-btn theme-btn" id="themeToggle" type="button" aria-label="Toggle dark mode">◐ <span id="themeLabel">Dark</span></button>
+      <button class="icon-btn mobile-only" id="navToggle" type="button" aria-label="Open Atlas index">Index</button>
+      <button class="icon-btn mobile-only" id="inspectorToggle" type="button" aria-label="Open inspector">Inspect</button>
     </div>
   </header>
 
   <main class="workspace">
-    <aside class="panel left">
-      <div class="panel-head"><div class="eyebrow">Atlas index</div><h2>Plasma architecture</h2><p>Systems, contracts, evidence and implementation slices.</p></div>
-      <div class="tree">
-        <div class="tree-group"><div class="tree-label">Plasma sections</div>
-          <button class="tree-item active"><span class="dot"></span>System Atlas</button>
-          <a class="tree-item section-link" href="https://benresonance-star.github.io/AI_DEV_OPS/#build" target="_blank" rel="noopener"><span class="dot"></span>Build · AI Dev Ops<span class="external-mark">↗</span></a>
-        </div>
-        <div class="tree-group"><div class="tree-label">Planes</div>
-          <button class="tree-item" data-select="authority"><span class="dot"></span>Authority plane<span class="count">7</span></button>
-          <button class="tree-item" data-select="interaction"><span class="dot"></span>Interaction plane<span class="count">4</span></button>
-          <button class="tree-item" data-select="intelligence"><span class="dot"></span>Intelligence plane<span class="count">5</span></button>
-        </div>
-        <div class="tree-group"><div class="tree-label">Execution</div>
-          <button class="tree-item" data-select="geometry"><span class="dot"></span>Geometry resolver<span class="count">8</span></button>
-          <button class="tree-item" data-select="constraints"><span class="dot"></span>Constraint runtime<span class="count">10</span></button>
-          <button class="tree-item" data-select="representation"><span class="dot"></span>Representations<span class="count">6</span></button>
-          <button class="tree-item" data-select="external"><span class="dot"></span>External systems<span class="count">14</span></button>
-        </div>
-        <div class="tree-group"><div class="tree-label">Domain languages</div>
-          <button class="tree-item" data-language="site"><span class="dot"></span>Site language</button>
-          <button class="tree-item" data-language="geometry"><span class="dot"></span>Geometry language</button>
-          <button class="tree-item" data-language="assembly"><span class="dot"></span>Assembly language</button>
-          <button class="tree-item" data-language="analysis"><span class="dot"></span>Analysis language</button>
-        </div>
-        <div class="tree-group"><div class="tree-label">Cross-cutting languages</div>
-          <button class="tree-item" data-core-language="query"><span class="dot"></span>Query / Selection</button>
-          <button class="tree-item" data-core-language="change"><span class="dot"></span>Change / Operation</button>
-          <button class="tree-item" data-core-language="constraint"><span class="dot"></span>Constraint</button>
-          <button class="tree-item" data-core-language="measurement"><span class="dot"></span>Measurement</button>
-          <button class="tree-item" data-core-language="evidence"><span class="dot"></span>Evidence / Claim</button>
-          <button class="tree-item" data-core-language="representation"><span class="dot"></span>Representation</button>
-          <button class="tree-item" data-core-language="history"><span class="dot"></span>History / Revision</button>
-        </div>
+    <aside class="panel left-panel">
+      <div class="panel-head">
+        <div class="eyebrow">Atlas index</div>
+        <h2>Plasma architecture</h2>
+        <p>Systems, contracts, languages and evidence from one model.</p>
       </div>
-      <div class="legend"><div><span class="sw authority"></span>authoritative</div><div><span class="sw runtime"></span>runtime</div><div><span class="sw agent"></span>agentic</div><div><span class="sw external"></span>external</div></div>
+      <div class="atlas-index" id="atlasIndex"></div>
     </aside>
 
-    <section class="center">
+    <section class="center-panel">
       <div class="atlas-toolbar">
-        <div class="titleline"><strong id="viewTitle">System overview</strong><span id="viewSubtitle">Atlas sheet 01 · authority + execution boundaries</span></div>
-        <div class="tools"><button class="tool active" id="relationshipsToggle">Relationships</button><button class="tool">Evidence</button><button class="tool">Health</button><button class="tool">Diff</button></div>
+        <div class="titleline"><strong id="viewTitle">Overview</strong><span id="viewSubtitle">Loading Atlas…</span></div>
+        <div class="view-controls" id="viewControls"></div>
       </div>
-
-      <div class="canvas" id="canvas">
-        <div class="canvas-head"><div class="canvas-title">SYSTEM ATLAS · LIVE PROJECTION</div><div class="canvas-note">Tap a node to isolate its relationships</div></div>
-        <svg id="wireLayer" aria-hidden="true"></svg>
-
-        <div class="architecture">
-          <article class="node interaction" data-node="interaction">
-            <span class="role">non-authoritative</span><div class="type">Runtime</div><h3>Interaction Plane</h3>
-            <p>Immediate human interaction and speculative feedback. It can propose operations, but cannot directly own world state.</p>
-            <div class="chips"><span class="chip blue">Interaction Reflex Runtime (IRR)</span><span class="chip blue">Interactive Presentation Surface (IPS)</span></div>
-          </article>
-
-          <article class="node intelligence" data-node="intelligence">
-            <span class="role">non-authoritative</span><div class="type">Agentic</div><h3>Intelligence Plane</h3>
-            <p>Planners, critics and evaluators observe bounded world slices and submit reviewable transaction proposals.</p>
-            <div class="chips"><span class="chip violet">planner</span><span class="chip violet">critic</span><span class="chip violet">evaluator</span><span class="chip">governor</span></div>
-          </article>
-
-          <article class="node authority selected" data-node="authority">
-            <span class="role">source of truth</span><div class="type">Authoritative core</div><h3>World + Authority Plane</h3>
-            <p>Owns canonical identity, state, relations, invariants, events, evidence and the transaction boundary.</p>
-            <div class="authority-band">
-              <div class="mini"><strong>Entity</strong>stable identity + type</div><div class="mini"><strong>State</strong>versioned values</div><div class="mini"><strong>Relation</strong>typed graph edges</div>
-              <div class="mini"><strong>Invariant</strong>must remain true</div><div class="mini"><strong>Event</strong>why state changed</div><div class="mini"><strong>Evidence</strong>why it is trusted</div>
-            </div>
-            <div class="chips"><span class="chip good">transaction safe</span><span class="chip good">event sourced</span><span class="chip warn">kernel spec evolving</span></div>
-          </article>
-
-          <article class="node geometry" data-node="geometry"><div class="type">Spatial execution</div><h3>Geometry Resolver</h3><p>Converts semantic operations into exact / approximate geometry, heals and returns a validated transaction result.</p><div class="chips"><span class="chip">OpenCascade</span><span class="chip">mesh</span><span class="chip">topology map</span></div></article>
-          <article class="node constraints" data-node="constraints"><div class="type">Validation</div><h3>Constraint Runtime</h3><p>Evaluates local and global rules, invariants and admissible ranges before a change can commit.</p><div class="chips"><span class="chip warn">local checks</span><span class="chip">global checks</span><span class="chip">Z3-style logic</span></div></article>
-          <article class="node representation" data-node="representation"><div class="type">Derived</div><h3>Representations</h3><p>Viewports, drawings, schedules and annotations derived from the authoritative world; never a second source of truth.</p><div class="chips"><span class="chip">3D</span><span class="chip">2D</span><span class="chip">documentation</span></div></article>
-          <article class="node external" data-node="external"><div class="type">Boundary</div><h3>External Systems</h3><p>Solvers, regulations, fabrication systems and data sources connected through explicit, typed contracts.</p><div class="chips"><span class="chip good">solver API</span><span class="chip good">evidence import</span><span class="chip">Functional Mock-up Interface (FMI)</span><span class="chip">Universal Scene Description (USD)</span></div></article>
-        </div>
-        <div class="hint">Relationships route through dedicated lanes · tap a node to focus</div>
-      </div>
-
-      <div class="language-map" id="languageMap">
-        <div class="language-head">
-          <div class="canvas-title">PLASMA LANGUAGE ARCHITECTURE · REFERENCE MODEL</div>
-          <div class="canvas-note">Domain intent → shared semantic languages → typed operation → validation → authoritative world</div>
-        </div>
-
-        <div class="language-content">
-          <section class="language-band">
-            <div class="band-head">
-              <div><div class="eyebrow">Band 1</div><h3>Domain languages</h3><p>Human- and agent-facing vocabularies for a bounded domain. They describe intent; they do not own state or engine implementation.</p></div>
-              <div class="band-tag">domain-specific · replaceable vocabularies</div>
-            </div>
-            <div class="domain-grid">
-              <article class="language-card site" data-language-card="site">
-                <div class="eyebrow">Site</div><h4>Site Language</h4>
-                <p>Site, terrain, landscape and planning intent.</p>
-                <div class="lang-section"><div class="lang-label">Types</div><div class="token-row"><span class="token type">parcel</span><span class="token type">terrain</span><span class="token type">easement</span><span class="token type">tree</span></div></div>
-                <div class="lang-section"><div class="lang-label">Verbs</div><div class="token-row"><span class="token verb">grade</span><span class="token verb">split</span><span class="token verb">drain</span><span class="token verb">plant</span></div></div>
-                <div class="lang-section"><div class="lang-label">Constraints</div><div class="token-row"><span class="token constraint">setback</span><span class="token constraint">slope</span><span class="token constraint">tree zone</span></div></div>
-              </article>
-
-              <article class="language-card geometry" data-language-card="geometry">
-                <div class="eyebrow">Spatial</div><h4>Geometry Language</h4>
-                <p>Engine-neutral spatial intent resolved by the Geometry Resolver.</p>
-                <div class="lang-section"><div class="lang-label">Types</div><div class="token-row"><span class="token type">curve</span><span class="token type">surface</span><span class="token type">solid</span><span class="token type">face</span></div></div>
-                <div class="lang-section"><div class="lang-label">Verbs</div><div class="token-row"><span class="token verb">offset</span><span class="token verb">split</span><span class="token verb">trim</span><span class="token verb">transform</span></div></div>
-                <div class="lang-section"><div class="lang-label">Constraints</div><div class="token-row"><span class="token constraint">tolerance</span><span class="token constraint">topology</span></div></div>
-              </article>
-
-              <article class="language-card assembly" data-language-card="assembly">
-                <div class="eyebrow">Composition</div><h4>Assembly Language</h4>
-                <p>Composition, interfaces and connections across nested systems.</p>
-                <div class="lang-section"><div class="lang-label">Types</div><div class="token-row"><span class="token type">system</span><span class="token type">component</span><span class="token type">interface</span><span class="token type">connector</span></div></div>
-                <div class="lang-section"><div class="lang-label">Verbs</div><div class="token-row"><span class="token verb">compose</span><span class="token verb">connect</span><span class="token verb">repeat</span><span class="token verb">replace</span></div></div>
-                <div class="lang-section"><div class="lang-label">Constraints</div><div class="token-row"><span class="token constraint">compatibility</span><span class="token constraint">spacing</span></div></div>
-              </article>
-
-              <article class="language-card analysis" data-language-card="analysis">
-                <div class="eyebrow">Evaluation</div><h4>Analysis Language</h4>
-                <p>Questions and evaluations over world state and representations.</p>
-                <div class="lang-section"><div class="lang-label">Types</div><div class="token-row"><span class="token type">metric</span><span class="token type">field</span><span class="token type">result</span><span class="token type">claim</span></div></div>
-                <div class="lang-section"><div class="lang-label">Verbs</div><div class="token-row"><span class="token verb">sample</span><span class="token verb">solve</span><span class="token verb">map</span><span class="token verb">compare</span></div></div>
-                <div class="lang-section"><div class="lang-label">Constraints</div><div class="token-row"><span class="token constraint">assumption</span><span class="token constraint">tolerance</span></div></div>
-              </article>
-            </div>
-            <div class="future-domains"><span>Structure</span><span>Envelope</span><span>Services</span><span>Materials</span><span>Fabrication</span><span>Construction</span><span>Operation</span><span>Botanical / ecology</span></div>
-          </section>
-
-          <section class="language-band">
-            <div class="band-head">
-              <div><div class="eyebrow">Band 2</div><h3>Cross-cutting Plasma languages</h3><p>Small reusable languages shared by every domain. Domain languages compose these rather than inventing their own state, evidence or history semantics.</p></div>
-              <div class="band-tag">shared semantics · stable contracts</div>
-            </div>
-            <div class="core-grid">
-              <article class="core-card" data-core-card="query"><div class="eyebrow">Find</div><h4>Query / Selection</h4><p>Bind stable entities by identity, role, topology, relation, region or predicate.</p></article>
-              <article class="core-card" data-core-card="change"><div class="eyebrow">Propose</div><h4>Change / Operation</h4><p>Describe a typed candidate change without mutating canonical state.</p></article>
-              <article class="core-card" data-core-card="constraint"><div class="eyebrow">Permit</div><h4>Constraint</h4><p>Express conditions, admissible ranges and invariants that must remain true.</p></article>
-              <article class="core-card" data-core-card="measurement"><div class="eyebrow">Observe</div><h4>Measurement</h4><p>Measure or derive values with units, method, resolution and uncertainty.</p></article>
-              <article class="core-card" data-core-card="evidence"><div class="eyebrow">Believe</div><h4>Evidence / Claim</h4><p>State what is asserted, why, by which source or method, and with what confidence.</p></article>
-              <article class="core-card" data-core-card="representation"><div class="eyebrow">Show</div><h4>Representation</h4><p>Request or derive a view without creating a second source of truth.</p></article>
-              <article class="core-card" data-core-card="history"><div class="eyebrow">Trace</div><h4>History / Revision</h4><p>Inspect lineage, diffs, operations, branches and provenance through time.</p></article>
-            </div>
-
-            <div class="language-anatomy">
-              <div class="anatomy-card">
-                <strong>Machine-readable language contract</strong>
-                <div class="anatomy-grid"><span>id + version</span><span>types + references</span><span>verbs + parameters</span><span>units</span><span>preconditions</span><span>invariants</span><span>result types</span><span>evidence + conformance tests</span></div>
-              </div>
-              <div class="levels-card">
-                <strong>Operation levels</strong>
-                <div class="level-line"><b>Primitive</b><span>split · sample · transform</span></div>
-                <div class="level-line"><b>Compound</b><span>make opening · grade pad</span></div>
-                <div class="level-line"><b>Workflow</b><span>resolve drainage · optimise façade</span></div>
-              </div>
-            </div>
-          </section>
-
-          <section class="language-band">
-            <div class="band-head">
-              <div><div class="eyebrow">Band 3</div><h3>Authoritative operation lifecycle</h3><p>This is how a language becomes action. Executors may propose results; only validation and the transaction boundary can change canonical world state.</p></div>
-              <div class="band-tag">proposal ≠ truth</div>
-            </div>
-            <div class="lifecycle">
-              <div class="life-stage"><div class="step">01</div><h4>Semantic operation</h4><p>Target refs · intent · parameters · preconditions · requested evidence.</p></div>
-              <div class="life-stage"><div class="step">02</div><h4>World slice</h4><p>Read the smallest authoritative state and dependencies required for the task.</p></div>
-              <div class="life-stage"><div class="step">03</div><h4>Execute</h4><p>Resolver · deterministic algorithm · solver · bounded agent · external tool.</p></div>
-              <div class="life-stage"><div class="step">04</div><h4>Candidate result</h4><p>Patch · claims · representations · measurements · evidence. Not yet truth.</p></div>
-              <div class="life-stage"><div class="step">05</div><h4>Validate</h4><p>Check invariants, contracts, topology, units, constraints and acceptance evidence.</p></div>
-              <div class="life-stage"><div class="step">06</div><h4>Transaction gate</h4><p>Accept atomically or reject without corrupting the world.</p></div>
-              <div class="life-stage world"><div class="step">07</div><h4>Authoritative world</h4><p>Commit revision, provenance and stable identity; then invalidate actual dependents.</p></div>
-            </div>
-            <div class="dependency-loop"><strong>Authoritative World</strong><span class="arrow">→</span><span><b>Dependency graph</b> marks only affected derivations stale → relevant domain capabilities can run next → new proposals return through the same lifecycle.</span></div>
-            <div class="interaction-rule"><b>Interaction rule:</b> domain languages do not call one another or mutate the world directly. They communicate through shared world state, typed operations, dependencies, claims and evidence.</div>
-          </section>
-
-          <section class="language-band">
-            <div class="band-head">
-              <div><div class="eyebrow">Worked interactions</div><h3>How languages affect one another without coupling</h3><p>The world and dependency graph mediate cross-domain consequences.</p></div>
-              <div class="band-tag">causal examples</div>
-            </div>
-            <div class="example-grid">
-              <div class="example-card"><h4>Site → hydrology analysis</h4><div class="example-flow"><span>Site: grade terrain</span><i>→</i><span>semantic operation</span><i>→</i><span>world revision</span><i>→</i><span>hydrology stale</span><i>→</i><span>Analysis: solve drainage</span><i>→</i><span>claim + field + evidence</span><i>→</i><span>validate + commit</span></div></div>
-              <div class="example-card"><h4>Assembly → geometry → multiple consequences</h4><div class="example-flow"><span>Assembly: open wall</span><i>→</i><span>semantic operation</span><i>→</i><span>Geometry Resolver</span><i>→</i><span>world revision</span><i>→</i><span>structure / thermal / docs stale</span><i>→</i><span>evaluators recompute as needed</span></div></div>
-            </div>
-          </section>
-        </div>
-      </div>
-
-      <div class="slice-strip" id="sliceStrip">
-        <div class="slice hero"><div class="kicker">Vertical slice</div><h4>Terrain → site foundation</h4><p>Interaction → transaction → geometry → evidence → representation.</p><div class="metric-row"><span class="metric">implemented 68%</span><span class="metric">evidence 54%</span><span class="metric">risk medium</span></div><div class="progress"><i style="width:68%"></i></div></div>
-        <div class="slice"><div class="kicker">Slice</div><h4>Wall assembly</h4><p>system → subsystem → component</p><div class="progress"><i style="width:44%"></i></div></div>
-        <div class="slice"><div class="kicker">Slice</div><h4>Annotations</h4><p>stable references through regeneration</p><div class="progress"><i style="width:37%"></i></div></div>
-        <div class="slice"><div class="kicker">Slice</div><h4>Solar mapping</h4><p>analysis → field → surface representation</p><div class="progress"><i style="width:28%"></i></div></div>
-        <div class="slice"><div class="kicker">Slice</div><h4>Multi-agent</h4><p>bounded work → transaction → evidence</p><div class="progress"><i style="width:22%"></i></div></div>
+      <div class="view-host" id="viewHost">
+        <div class="fatal-error"><h2>Loading Atlas…</h2></div>
       </div>
     </section>
 
-    <aside class="panel right">
-      <div class="panel-head"><div class="eyebrow">Inspector</div><h2>Selected component</h2><p>Purpose, contracts, dependencies and evidence.</p></div>
-      <div class="inspector">
-        <div class="inspector-head"><div><div class="eyebrow" id="detail-type">Authoritative core</div><h2 id="detail-title">World + Authority Plane</h2></div><span class="idtag" id="detail-id">SYS.AUTH.001</span></div>
-        <p id="detail-description">Owns canonical world state and defines the rules by which any operation may become authoritative.</p>
-        <div class="section"><h3>Current state</h3><dl class="kv"><dt>Maturity</dt><dd id="detail-maturity">Specified / partial implementation</dd><dt>Owner</dt><dd id="detail-owner">Kernel + world state</dd><dt>Criticality</dt><dd>Foundational</dd><dt>Revision</dt><dd>Atlas v0.2 preview</dd></dl></div>
-        <div class="section"><h3>Contracts</h3><div class="contract"><strong>submitTransaction()</strong><span>candidate changes → validated commit or rejection</span></div><div class="contract"><strong>readWorldSlice()</strong><span>bounded authoritative state + provenance</span></div><div class="contract"><strong>resolveReference()</strong><span>stable semantic identity across revisions</span></div></div>
-        <div class="section"><h3>Dependencies</h3><div class="chips"><span class="chip">identity</span><span class="chip">events</span><span class="chip">invariants</span><span class="chip">permissions</span><span class="chip">provenance</span></div></div>
-        <div class="section"><h3>Evidence</h3><div class="evidence"><span class="evicon ok">✓</span><span>Transaction rollback contract</span></div><div class="evidence"><span class="evicon ok">✓</span><span>Stable identity test</span></div><div class="evidence"><span class="evicon warn">△</span><span>Cross-agent conflict suite</span></div><div class="evidence"><span class="evicon off">—</span><span>Long-run recovery benchmark</span></div></div>
-        <div class="section"><h3>Reading rule</h3><p>Follow arrowheads to see which subsystem is allowed to propose, validate, return or derive information across the authoritative boundary.</p></div>
+    <aside class="panel right-panel">
+      <div class="panel-head">
+        <div class="eyebrow">Inspector</div>
+        <h2>Selected Atlas item</h2>
+        <p>Purpose, contracts, dependencies and evidence.</p>
       </div>
-      <div class="footer-action"><button>Open specification</button><button id="focusButton">Focus relationships</button></div>
+      <div class="inspector" id="inspector"></div>
     </aside>
   </main>
 </div>
-<button class="help-launcher help-ui" id="helpLauncher" type="button" aria-label="Voice help" aria-pressed="false" title="Voice help">?</button>
-<div class="help-banner help-ui" id="helpBanner">Voice help is on · tap an Atlas component to hear what it does</div>
+
+<button class="help-launcher help-ui" id="helpLauncher" type="button" aria-label="Contextual help" aria-pressed="false" title="Contextual help">?</button>
 <aside class="help-panel help-ui" id="helpPanel" aria-live="polite">
   <div class="help-panel-head">
-    <div class="help-orb">AI</div>
-    <div class="copy"><div class="eyebrow">Contextual voice help</div><h3 id="helpTitle">Select a component</h3></div>
+    <div class="help-orb">Guide</div>
+    <div class="copy"><div class="eyebrow">Contextual help</div><h3 id="helpTitle">Select an Atlas item</h3></div>
     <button class="help-close" id="helpClose" type="button" aria-label="Close help">×</button>
   </div>
   <div class="help-body">
-    <p id="helpText">Activate help, then select a system, language, lifecycle stage or vertical slice.</p>
+    <p id="helpText">Activate help, then select a component, language, contract, transaction stage, slice or evidence item.</p>
     <div class="help-status"><i></i><span id="helpStatus">Voice off · tap Play voice</span></div>
   </div>
   <div class="help-actions">
-    <button id="helpReplay" type="button">Play voice</button>
+    <button id="helpPlay" type="button">Play voice</button>
     <button id="helpStop" type="button">Stop</button>
   </div>
 </aside>
-<div class="viewport-controls" aria-label="Atlas zoom controls">
-  <button id="zoomOut" aria-label="Zoom out">−</button>
-  <button id="zoomReset" class="zoom-value" aria-label="Reset zoom"><span id="zoomLabel">100%</span></button>
-  <button id="zoomIn" aria-label="Zoom in">+</button>
-  <button id="zoomFit" class="fit" aria-label="Fit Atlas for small screen">Fit</button>
+
+<div class="zoom-controls" aria-label="Atlas sheet zoom controls">
+  <button id="zoomOut" type="button" aria-label="Zoom out">−</button>
+  <button id="zoomReset" class="zoom-value" type="button" aria-label="Reset zoom"><span id="zoomLabel">100%</span></button>
+  <button id="zoomIn" type="button" aria-label="Zoom in">+</button>
+  <button id="zoomFit" class="fit" type="button" aria-label="Fit current Atlas view">Fit</button>
 </div>
 
-<script>
-const details={
-  authority:{type:'Authoritative core',title:'World + Authority Plane',id:'SYS.AUTH.001',description:'Owns canonical world state and defines the rules by which any operation may become authoritative.',maturity:'Specified / partial implementation',owner:'Kernel + world state'},
-  interaction:{type:'Runtime',title:'Interaction Plane',id:'SYS.INT.003',description:'Provides immediate speculative feedback for human interaction while keeping authoritative state isolated.',maturity:'Prototype / evolving',owner:'Interaction Reflex Runtime + Interactive Presentation Surface'},
-  intelligence:{type:'Agentic',title:'Intelligence Plane',id:'SYS.AGT.002',description:'Coordinates planners, critics and evaluators that observe bounded world slices and submit transaction proposals.',maturity:'Architecture defined',owner:'Agent fabric'},
-  geometry:{type:'Spatial execution',title:'Geometry Resolver',id:'SYS.GEO.006',description:'Resolves semantic operations into exact and approximate spatial representations and returns validated geometry results.',maturity:'Active implementation',owner:'Geometry resolver'},
-  constraints:{type:'Validation',title:'Constraint Runtime',id:'SYS.CON.007',description:'Checks invariants, rules and admissible ranges before state can commit.',maturity:'Architecture defined',owner:'Constraint runtime'},
-  representation:{type:'Derived',title:'Representations',id:'SYS.REP.004',description:'Produces viewports, drawings, schedules and annotations without becoming the source of truth.',maturity:'Architecture defined',owner:'Representation services'},
-  external:{type:'Boundary',title:'External Systems',id:'SYS.EXT.008',description:'Connects solvers, regulations, fabrication tools and external data through typed, reviewable contracts.',maturity:'Interface planning',owner:'Integration boundary'},
-  language_geometry:{type:'Domain language',title:'Geometry Language',id:'LANG.GEO.001',description:'Engine-neutral spatial verbs compile into typed semantic operations handled by the Geometry Resolver.',maturity:'Vocabulary evolving',owner:'Geometry language'},
-  language_site:{type:'Domain language',title:'Site Language',id:'LANG.SITE.001',description:'Site intent such as terrain, grading, setbacks, drainage and planting compiles into shared semantic operations.',maturity:'Vocabulary evolving',owner:'Site language'},
-  language_assembly:{type:'Domain language',title:'Assembly Language',id:'LANG.ASM.001',description:'Composition and interface verbs operate on systems, subsystems, components and connectors without exploding the core verb set.',maturity:'Vocabulary evolving',owner:'Assembly language'},
-  language_analysis:{type:'Domain language',title:'Analysis Language',id:'LANG.ANA.001',description:'Analysis verbs request sampling, solving, mapping, comparison and validation and return typed claims and evidence.',maturity:'Vocabulary evolving',owner:'Analysis language'},
-  core_query:{type:'Cross-cutting language',title:'Query / Selection Language',id:'LANG.CORE.QUERY',description:'Selects and binds stable semantic references by identity, role, topology, relation, region or predicate.',maturity:'Reference model',owner:'Shared language layer'},
-  core_change:{type:'Cross-cutting language',title:'Change / Operation Language',id:'LANG.CORE.CHANGE',description:'Expresses proposed state changes as typed operations; proposals never mutate canonical world state directly.',maturity:'Reference model',owner:'Shared language layer'},
-  core_constraint:{type:'Cross-cutting language',title:'Constraint Language',id:'LANG.CORE.CONSTRAINT',description:'Expresses admissible ranges, rules and invariants independently of the engine used to evaluate them.',maturity:'Reference model',owner:'Shared language layer'},
-  core_measurement:{type:'Cross-cutting language',title:'Measurement Language',id:'LANG.CORE.MEASURE',description:'Defines observations and derived values with units, method, spatial or temporal resolution and uncertainty.',maturity:'Reference model',owner:'Shared language layer'},
-  core_evidence:{type:'Cross-cutting language',title:'Evidence / Claim Language',id:'LANG.CORE.EVIDENCE',description:'Represents claims, sources, methods, confidence, timestamps and derived-from relationships.',maturity:'Reference model',owner:'Shared language layer'},
-  core_representation:{type:'Cross-cutting language',title:'Representation Language',id:'LANG.CORE.REP',description:'Requests and describes derived views without allowing a representation to become a second source of truth.',maturity:'Reference model',owner:'Shared language layer'},
-  core_history:{type:'Cross-cutting language',title:'History / Revision Language',id:'LANG.CORE.HISTORY',description:'Queries revisions, diffs, committed operations, branches and provenance through time.',maturity:'Reference model',owner:'Shared language layer'}
-};
-
-const relations=[
-  {id:'op',from:'interaction',to:'authority',label:'semantic operation proposal',kind:'operation',fromSide:'bottom',fromFrac:.72,toSide:'top',toFrac:.28,lane:-8},
-  {id:'agent',from:'intelligence',to:'authority',label:'transaction proposal',kind:'agent',fromSide:'bottom',fromFrac:.28,toSide:'top',toFrac:.72,lane:8},
-  {id:'geometry',from:'authority',to:'geometry',label:'resolve / validated result',kind:'spatial',fromSide:'bottom',fromFrac:.14,toSide:'top',toFrac:.5,lane:-13,bidirectional:true},
-  {id:'constraints',from:'authority',to:'constraints',label:'validate / pass-fail',kind:'spatial',fromSide:'bottom',fromFrac:.38,toSide:'top',toFrac:.5,lane:-3,bidirectional:true},
-  {id:'repr',from:'authority',to:'representation',label:'derive projection',kind:'derived',fromSide:'bottom',fromFrac:.63,toSide:'top',toFrac:.5,lane:8},
-  {id:'external',from:'external',to:'authority',label:'results + evidence',kind:'external',fromSide:'top',fromFrac:.5,toSide:'bottom',toFrac:.87,lane:18}
-]
-
-const canvas=document.getElementById('canvas');
-const svg=document.getElementById('wireLayer');
-let selected=null;
-let focused=false;
-let showRelationships=true;
-let uiZoom=Number(localStorage.getItem('plasma-atlas-zoom'))||1;
-
-function rectInCanvas(el){
-  const r=el.getBoundingClientRect(), c=canvas.getBoundingClientRect(), z=uiZoom||1;
-  return {left:(r.left-c.left)/z,top:(r.top-c.top)/z,width:r.width/z,height:r.height/z,right:(r.right-c.left)/z,bottom:(r.bottom-c.top)/z,cx:(r.left-c.left+r.width/2)/z,cy:(r.top-c.top+r.height/2)/z};
-}
-function portPoint(rect,side='bottom',frac=.5){
-  if(side==='top') return {x:rect.left+rect.width*frac,y:rect.top};
-  if(side==='left') return {x:rect.left,y:rect.top+rect.height*frac};
-  if(side==='right') return {x:rect.right,y:rect.top+rect.height*frac};
-  return {x:rect.left+rect.width*frac,y:rect.bottom};
-}
-function svgEl(tag,attrs={}){const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,v);return el}
-
-function drawWires(){
-  svg.innerHTML='';
-  const defs=svgEl('defs');
-  ['operation','agent','derived','external','spatial'].forEach(kind=>{
-    const marker=svgEl('marker',{id:`arrow-${kind}`,viewBox:'0 0 10 10',refX:'8',refY:'5',markerWidth:'6',markerHeight:'6',orient:'auto-start-reverse'});
-    marker.appendChild(svgEl('path',{d:'M 0 0 L 10 5 L 0 10 z',class:`wire-${kind}`})); defs.appendChild(marker);
-  }); svg.appendChild(defs);
-  if(!showRelationships) return;
-
-  relations.forEach(rel=>{
-    const fromEl=document.querySelector(`[data-node="${rel.from}"]`),toEl=document.querySelector(`[data-node="${rel.to}"]`); if(!fromEl||!toEl)return;
-    const a=rectInCanvas(fromEl),b=rectInCanvas(toEl);
-    const p1=portPoint(a,rel.fromSide,rel.fromFrac), p2=portPoint(b,rel.toSide,rel.toFrac);
-    const gap=p2.y-p1.y;
-    const laneY=p1.y+(gap*.5)+(rel.lane||0);
-    const d=`M ${p1.x.toFixed(1)} ${p1.y.toFixed(1)} L ${p1.x.toFixed(1)} ${laneY.toFixed(1)} L ${p2.x.toFixed(1)} ${laneY.toFixed(1)} L ${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
-    const isHot=!focused || rel.from===selected || rel.to===selected;
-    const attrs={d,class:`wire-path wire-${rel.kind} ${focused?(isHot?'hot':'faded'):''}`,'marker-end':`url(#arrow-${rel.kind})`,'data-rel':rel.id};
-    if(rel.bidirectional) attrs['marker-start']=`url(#arrow-${rel.kind})`;
-    const path=svgEl('path',attrs); svg.appendChild(path);
-
-    const label=svgEl('g',{class:`wire-label ${focused?(isHot?'hot':'faded'):''}`,'data-rel':rel.id});
-    const tx=(p1.x+p2.x)/2,ty=laneY-5; const text=svgEl('text',{x:tx,y:ty+2,'text-anchor':'middle'}); text.textContent=rel.label; label.appendChild(text); svg.appendChild(label);
-    const bb=text.getBBox(); const rect=svgEl('rect',{x:bb.x-5,y:bb.y-3,width:bb.width+10,height:bb.height+6}); label.insertBefore(rect,text);
-  });
-}
-
-function applyFocus(){
-  document.querySelectorAll('.node').forEach(n=>{
-    const key=n.dataset.node; const related=selected&&relations.some(r=>(r.from===selected&&r.to===key)||(r.to===selected&&r.from===key));
-    n.classList.toggle('selected',Boolean(selected)&&key===selected);
-    n.classList.toggle('related',focused&&related);
-    n.classList.toggle('faded',focused&&key!==selected&&!related);
-  });
-  drawWires();
-}
-
-function selectNode(key,forceFocus=true){
-  if(selected===key && focused && !forceFocus){focused=false;} else {selected=key;focused=forceFocus;}
-  document.querySelectorAll('.tree-item[data-select]').forEach(n=>n.classList.toggle('active',n.dataset.select===selected));
-  const d=details[selected]; if(d){
-    document.getElementById('detail-type').textContent=d.type;document.getElementById('detail-title').textContent=d.title;document.getElementById('detail-id').textContent=d.id;document.getElementById('detail-description').textContent=d.description;document.getElementById('detail-maturity').textContent=d.maturity;document.getElementById('detail-owner').textContent=d.owner;
-  }
-  applyFocus();
-}
-
-document.querySelectorAll('.node').forEach(n=>n.addEventListener('click',()=>selectNode(n.dataset.node,false)));
-document.querySelectorAll('.tree-item[data-select]').forEach(n=>n.addEventListener('click',()=>selectNode(n.dataset.select,true)));
-document.getElementById('focusButton').addEventListener('click',()=>{focused=!focused;applyFocus()});
-document.getElementById('relationshipsToggle').addEventListener('click',e=>{showRelationships=!showRelationships;e.currentTarget.classList.toggle('active',showRelationships);drawWires()});
-document.querySelectorAll('.view-tabs button:not([data-view])').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.view-tabs button').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}));
-document.querySelectorAll('.tool:not(#relationshipsToggle)').forEach(btn=>btn.addEventListener('click',()=>btn.classList.toggle('active')));
-
-const languageMap=document.getElementById('languageMap');
-const overviewCanvas=document.getElementById('canvas');
-const sliceStrip=document.getElementById('sliceStrip');
-const centerPanel=document.querySelector('.center');
-const viewTitle=document.getElementById('viewTitle');
-const viewSubtitle=document.getElementById('viewSubtitle');
-let currentView='overview';
-
-function updateInspector(d){
-  if(!d)return;
-  document.getElementById('detail-type').textContent=d.type;
-  document.getElementById('detail-title').textContent=d.title;
-  document.getElementById('detail-id').textContent=d.id;
-  document.getElementById('detail-description').textContent=d.description;
-  document.getElementById('detail-maturity').textContent=d.maturity;
-  document.getElementById('detail-owner').textContent=d.owner;
-}
-function clearLanguageSelection(){
-  document.querySelectorAll('.tree-item[data-language],.tree-item[data-core-language]').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('[data-language-card],[data-core-card]').forEach(x=>x.classList.remove('selected'));
-}
-function setView(view){
-  currentView=view;
-  const languages=view==='languages';
-  overviewCanvas.style.display=languages?'none':'block';
-  languageMap.classList.toggle('active',languages);
-  sliceStrip.style.display=languages?'none':'grid';
-  centerPanel.classList.toggle('language-mode',languages);
-  viewTitle.textContent=languages?'Language architecture':'System overview';
-  viewSubtitle.textContent=languages?'domain + cross-cutting languages · operation lifecycle · causal interaction':'Atlas sheet 01 · authority + execution boundaries';
-  document.querySelectorAll('.view-tabs button[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===view));
-  if(!languages)requestAnimationFrame(drawWires);
-}
-document.querySelectorAll('.view-tabs button[data-view]').forEach(btn=>btn.addEventListener('click',()=>setView(btn.dataset.view)));
-
-document.querySelectorAll('.tree-item[data-language]').forEach(btn=>btn.addEventListener('click',()=>{
-  setView('languages'); clearLanguageSelection();
-  btn.classList.add('active');
-  const key=btn.dataset.language;
-  const card=document.querySelector(`[data-language-card="${key}"]`); if(card)card.classList.add('selected');
-  updateInspector(details['language_'+key]);
-}));
-document.querySelectorAll('.tree-item[data-core-language]').forEach(btn=>btn.addEventListener('click',()=>{
-  setView('languages'); clearLanguageSelection();
-  btn.classList.add('active');
-  const key=btn.dataset.coreLanguage;
-  const card=document.querySelector(`[data-core-card="${key}"]`); if(card)card.classList.add('selected');
-  updateInspector(details['core_'+key]);
-}));
-document.querySelectorAll('[data-language-card]').forEach(card=>card.addEventListener('click',()=>{
-  const nav=document.querySelector(`.tree-item[data-language="${card.dataset.languageCard}"]`);if(nav)nav.click();
-}));
-document.querySelectorAll('[data-core-card]').forEach(card=>card.addEventListener('click',()=>{
-  const nav=document.querySelector(`.tree-item[data-core-language="${card.dataset.coreCard}"]`);if(nav)nav.click();
-}));
-
-const helpNarratives={
-  authority:{title:'World and Authority Plane',text:'This is Plasma’s source of truth. It owns stable identity, canonical state, relations, invariants, revisions and provenance. Every human, agent, solver and geometry engine may propose changes, but none can directly mutate this world. A change becomes real only after it passes the transaction and validation boundary.'},
-  interaction:{title:'Interaction Plane',text:'This is the low-latency layer between the human and Plasma. It provides immediate selection, handles, snapping and speculative previews so interaction feels fluid. Its feedback is intentionally non-authoritative: it proposes semantic operations, then waits for the authoritative world to accept or reject them.'},
-  intelligence:{title:'Intelligence Plane',text:'This is where planners, critics, evaluators and other agents reason about bounded slices of the world. Agents may suggest operations, compare alternatives and request analysis, but they do not own canonical state. Their output crosses the same transaction boundary as a human action.'},
-  geometry:{title:'Geometry Resolver',text:'The Geometry Resolver converts semantic spatial intent into actual geometry. It chooses an execution strategy, binds semantic references, applies tolerances, creates exact or approximate geometry, validates and heals it, then returns a candidate result. Geometry only becomes authoritative after the world transaction accepts it.'},
-  constraints:{title:'Constraint Runtime',text:'The Constraint Runtime asks whether a proposed world state is allowed. It checks local rules, global invariants, admissible ranges and cross-domain constraints. A failed constraint produces evidence for rejection or repair; it should never leave the world partially changed.'},
-  representation:{title:'Representations',text:'Representations are views of the world rather than competing sources of truth. Three-dimensional viewports, drawings, schedules and annotations are derived from authoritative entities. When their inputs change they can be marked stale and regenerated without rewriting the meaning of the world.'},
-  external:{title:'External Systems',text:'This boundary connects Plasma to solvers, regulations, fabrication systems and outside data. External tools return measurements, claims, candidate patches or evidence. They never receive direct authority to change the world, which keeps integrations replaceable and auditable.'},
-
-  language_site:{title:'Site Language',text:'The Site Language expresses intent about parcels, terrain, easements, trees, grading, drainage and planning constraints. It separates domain meaning from the particular terrain or planning engine. Site operations ultimately compile to shared semantic operations against stable world references.'},
-  language_geometry:{title:'Geometry Language',text:'The Geometry Language is Plasma’s engine-neutral vocabulary for spatial change. Verbs such as offset, split, trim and transform describe intent without embedding OpenCascade or another kernel into the language. The Geometry Resolver decides how to execute them.'},
-  language_assembly:{title:'Assembly Language',text:'The Assembly Language describes how systems, subsystems, components, interfaces and connectors are composed. It lets a wall, façade or product behave as a nested system without adding a unique spatial verb for every construction detail.'},
-  language_analysis:{title:'Analysis Language',text:'The Analysis Language asks questions of the world. It can sample, solve, map and compare results. Analysis normally returns measurements, fields, claims and evidence rather than silently changing geometry. A separate operation can use that evidence to propose a design change.'},
-
-  core_query:{title:'Query and Selection Language',text:'This cross-cutting language identifies exactly what an operation is talking about. It can bind entities by stable identity, semantic role, topology, relation, region or predicate. Reliable selection is what lets higher-level languages survive regeneration and changing geometry.'},
-  core_change:{title:'Change and Operation Language',text:'This language represents a proposed change as a typed operation. It records target references, intent, parameters and preconditions. The important rule is that an operation is a proposal, not a mutation; the authoritative transaction system decides whether it becomes real.'},
-  core_constraint:{title:'Constraint Language',text:'This language describes permitted and forbidden states independently of a particular solver. It covers invariants, ranges, logical conditions and domain rules so that geometry, assemblies, analyses and agents can all be judged against consistent requirements.'},
-  core_measurement:{title:'Measurement Language',text:'The Measurement Language describes observations and derived values together with units, method, resolution and uncertainty. A number without its measurement context is not enough for Plasma to treat it as dependable technical evidence.'},
-  core_evidence:{title:'Evidence and Claim Language',text:'This language records what is being claimed, why it should be believed, where it came from, how confident it is and which earlier evidence it depends on. It is the bridge between computation and trust.'},
-  core_representation:{title:'Representation Language',text:'This language asks Plasma to express authoritative state as a viewport, drawing, schedule, field, report or another projection. The representation can be replaced or regenerated without becoming a second canonical model.'},
-  core_history:{title:'History and Revision Language',text:'This language makes change inspectable through time. It can query revisions, diffs, branches, committed operations and provenance, allowing Plasma to explain not only what the world is now, but how and why it became that way.'},
-
-  atlas_index:{title:'Atlas Index',text:'The Atlas Index is the navigation map for Plasma’s architecture. It groups authoritative planes, execution systems and languages so you can move from a high-level system boundary to the smaller contracts beneath it.'},
-  inspector:{title:'Inspector',text:'The Inspector explains the currently selected component. It surfaces purpose, maturity, ownership, contracts, dependencies and supporting evidence. Over time this should be generated from the same machine-readable Atlas data rather than maintained as separate documentation.'},
-  toolbar:{title:'Atlas View Controls',text:'These controls change how the same architecture is projected. Relationships expose causal connections; evidence can show why claims are trusted; health can expose implementation status; and diff can compare revisions of the architecture without changing the underlying Atlas model.'},
-  lifecycle:{title:'Authoritative Operation Lifecycle',text:'This lifecycle is Plasma’s commit loop. A semantic operation reads a bounded world slice, executes outside the source of truth, returns a candidate result, passes validation and then crosses an atomic transaction gate. Only after commit does Plasma create a new revision and invalidate affected dependencies.'},
-  language_contract:{title:'Machine-readable Language Contract',text:'A language contract makes vocabulary executable and testable. It defines identity and version, types, references, verbs, parameters, units, preconditions, invariants, result types, evidence requirements and conformance tests.'},
-  operation_levels:{title:'Operation Levels',text:'Plasma distinguishes primitive, compound and workflow operations. Primitive verbs are small and stable. Compound verbs compose primitives into domain actions. Workflows orchestrate many operations and evaluations. Keeping these levels separate prevents the core language from exploding as capabilities grow.'},
-  dependency_loop:{title:'Dependency Invalidation Loop',text:'After an authoritative commit, Plasma follows actual dependency edges to determine which derived results may no longer be trusted. Those results become stale first; recomputation is scheduled only when useful. Invalidation and recomputation are deliberately separate.'},
-  interaction_rule:{title:'Cross-language Interaction Rule',text:'Domain languages do not invoke one another directly. They affect shared authoritative world state through typed operations. The dependency graph then reveals which other capabilities have become relevant or stale, keeping the languages loosely coupled.'}
-};
-
-const sliceNarratives={
-  'Terrain → site foundation':'This vertical slice tests whether Plasma can carry a site action all the way from interaction through a transaction, geometry, evidence and representation. It is useful because it exercises multiple architectural boundaries with one real capability.',
-  'Wall assembly':'This slice tests nested systems, subsystems and components, including interfaces, openings and connections. It is a proving ground for composition without creating a large special-purpose verb vocabulary.',
-  'Annotations':'This slice tests whether dimensions, notes, callouts and markups can remain attached to semantic meaning while geometry regenerates and identifiers evolve.',
-  'Solar mapping':'This slice tests the analysis pathway: geometry and world state are sampled, a solar field is calculated, evidence is retained and the result is projected back onto surfaces without becoming canonical geometry.',
-  'Multi-agent':'This slice tests bounded parallel work. Agents read limited world slices, propose transactions and return evidence while the authority layer prevents conflicting or unsafe edits from corrupting canonical state.'
-};
-
-const helpLauncher=document.getElementById('helpLauncher');
-const helpPanel=document.getElementById('helpPanel');
-const helpTitle=document.getElementById('helpTitle');
-const helpText=document.getElementById('helpText');
-const helpStatus=document.getElementById('helpStatus');
-const helpReplay=document.getElementById('helpReplay');
-const helpStop=document.getElementById('helpStop');
-const helpClose=document.getElementById('helpClose');
-let helpMode=false;
-let activeHelp=null;
-let helpVoices=[];
-
-function loadHelpVoices(){if('speechSynthesis' in window)helpVoices=window.speechSynthesis.getVoices()||[]}
-loadHelpVoices();
-if('speechSynthesis' in window)window.speechSynthesis.addEventListener?.('voiceschanged',loadHelpVoices);
-
-function preferredHelpVoice(){
-  return helpVoices.find(v=>/^en-AU$/i.test(v.lang)&&/siri|enhanced|premium|natural|karen|matilda|catherine|gordon/i.test(v.name))
-    || helpVoices.find(v=>/^en-AU$/i.test(v.lang))
-    || helpVoices.find(v=>/^en-(GB|US)$/i.test(v.lang)&&/enhanced|premium|natural/i.test(v.name))
-    || helpVoices.find(v=>/^en/i.test(v.lang))
-    || null;
-}
-function configureHelpAudioSession(){
-  try{
-    if(navigator.audioSession && 'type' in navigator.audioSession){
-      navigator.audioSession.type='playback';
-      return true;
-    }
-  }catch(e){}
-  return false;
-}
-function stopHelpVoice(){
-  if('speechSynthesis' in window)window.speechSynthesis.cancel();
-  helpLauncher.classList.remove('speaking');
-  helpStatus.textContent=activeHelp?'Voice off · tap Play voice':'Ready';
-}
-function presentHelp(info){
-  if(!info)return;
-  activeHelp=info;
-  helpTitle.textContent=info.title;
-  helpText.textContent=info.text;
-  helpPanel.classList.add('open');
-  helpLauncher.classList.remove('speaking');
-  helpStatus.textContent='Voice off · tap Play voice';
-}
-function speakHelp(info){
-  if(!info)return;
-  activeHelp=info;
-  helpTitle.textContent=info.title;
-  helpText.textContent=info.text;
-  helpPanel.classList.add('open');
-  configureHelpAudioSession();
-  if(!('speechSynthesis' in window)){
-    helpStatus.textContent='Voice is not available in this browser';
-    return;
-  }
-  window.speechSynthesis.cancel();
-  const utterance=new SpeechSynthesisUtterance(info.title+'. '+info.text);
-  const voice=preferredHelpVoice();
-  if(voice){utterance.voice=voice;utterance.lang=voice.lang}else{utterance.lang='en-AU'}
-  utterance.rate=.96;utterance.pitch=1;
-  utterance.onstart=()=>{helpLauncher.classList.add('speaking');helpStatus.textContent='Speaking through the active media audio route'};
-  utterance.onend=()=>{helpLauncher.classList.remove('speaking');helpStatus.textContent='Voice off · tap Play voice'};
-  utterance.onerror=()=>{helpLauncher.classList.remove('speaking');helpStatus.textContent='Voice playback was interrupted'};
-  window.speechSynthesis.speak(utterance);
-}
-function setHelpMode(on){
-  helpMode=Boolean(on);
-  document.body.classList.toggle('help-mode',helpMode);
-  helpLauncher.classList.toggle('active',helpMode);
-  helpLauncher.setAttribute('aria-pressed',String(helpMode));
-  helpLauncher.textContent=helpMode?'×':'?';
-  if(!helpMode){stopHelpVoice();helpPanel.classList.remove('open')}
-}
-function helpInfoFor(target){
-  if(!target)return null;
-  if(target.matches('.node[data-node]'))return helpNarratives[target.dataset.node]||null;
-  if(target.matches('[data-language-card]'))return helpNarratives['language_'+target.dataset.languageCard]||null;
-  if(target.matches('[data-core-card]'))return helpNarratives['core_'+target.dataset.coreCard]||null;
-  if(target.matches('.slice')){
-    const title=target.querySelector('h4')?.textContent?.trim();
-    return title?{title,text:sliceNarratives[title]||target.querySelector('p')?.textContent?.trim()||'This is a vertical slice used to test an end-to-end Plasma capability.'}:null;
-  }
-  if(target.matches('.life-stage')){
-    const title=target.querySelector('h4')?.textContent?.trim()||'Operation lifecycle stage';
-    const text=target.querySelector('p')?.textContent?.trim()||'This is one stage in the authoritative operation lifecycle.';
-    return {title,text:'This is stage '+(target.querySelector('.step')?.textContent||'')+' of the commit loop. '+text};
-  }
-  if(target.matches('.anatomy-card'))return helpNarratives.language_contract;
-  if(target.matches('.levels-card'))return helpNarratives.operation_levels;
-  if(target.matches('.dependency-loop'))return helpNarratives.dependency_loop;
-  if(target.matches('.interaction-rule'))return helpNarratives.interaction_rule;
-  if(target.matches('.example-card')){
-    const title=target.querySelector('h4')?.textContent?.trim()||'Worked language interaction';
-    return {title,text:'This example shows cross-domain causality without direct language-to-language calls. The first operation changes authoritative world state, dependency invalidation identifies what became stale, and only the relevant downstream evaluator or language runs next.'};
-  }
-  if(target.matches('.language-band')){
-    const title=target.querySelector('.band-head h3')?.textContent?.trim()||'Language architecture band';
-    const text=target.querySelector('.band-head p')?.textContent?.trim()||'This band groups related parts of the Plasma language architecture.';
-    if(/Authoritative operation lifecycle/i.test(title))return helpNarratives.lifecycle;
-    return {title,text};
-  }
-  if(target.matches('.left .panel-head'))return helpNarratives.atlas_index;
-  if(target.matches('.right .panel-head'))return helpNarratives.inspector;
-  if(target.matches('.atlas-toolbar'))return helpNarratives.toolbar;
-  return null;
-}
-const helpTargetSelector='.node[data-node],[data-language-card],[data-core-card],.slice,.life-stage,.anatomy-card,.levels-card,.dependency-loop,.interaction-rule,.example-card,.language-band,.left .panel-head,.right .panel-head,.atlas-toolbar';
-
-helpLauncher.addEventListener('click',()=>setHelpMode(!helpMode));
-helpClose.addEventListener('click',()=>{stopHelpVoice();helpPanel.classList.remove('open')});
-helpReplay.addEventListener('click',()=>{
-  configureHelpAudioSession();
-  speakHelp(activeHelp);
-});
-helpStop.addEventListener('click',stopHelpVoice);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'&&helpMode)setHelpMode(false)});
-document.addEventListener('click',e=>{
-  if(!helpMode||e.target.closest('.help-ui,.viewport-controls'))return;
-  const target=e.target.closest(helpTargetSelector);
-  if(!target)return;
-  const info=helpInfoFor(target);
-  if(!info)return;
-  e.preventDefault();
-  e.stopPropagation();
-  presentHelp(info);
-},true);
-
-const root=document.documentElement,themeToggle=document.getElementById('themeToggle'),themeLabel=document.getElementById('themeLabel');
-function setTheme(theme){root.dataset.theme=theme;themeLabel.textContent=theme==='dark'?'Light':'Dark';localStorage.setItem('plasma-atlas-theme',theme);requestAnimationFrame(drawWires)}
-const saved=localStorage.getItem('plasma-atlas-theme');
-setTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'));
-themeToggle.addEventListener('click',()=>setTheme(root.dataset.theme==='dark'?'light':'dark'));
-
-const zoomLabel=document.getElementById('zoomLabel');
-function setZoom(value){
-  uiZoom=Math.max(.55,Math.min(1.6,Math.round(value*20)/20));
-  root.style.setProperty('--ui-zoom',uiZoom);
-  zoomLabel.textContent=Math.round(uiZoom*100)+'%';
-  localStorage.setItem('plasma-atlas-zoom',uiZoom);
-  requestAnimationFrame(drawWires);
-}
-function fitZoom(){
-  const target=Math.max(.55,Math.min(1,(window.innerWidth-24)/820));
-  setZoom(target);
-}
-document.getElementById('zoomOut').addEventListener('click',()=>setZoom(uiZoom-.1));
-document.getElementById('zoomIn').addEventListener('click',()=>setZoom(uiZoom+.1));
-document.getElementById('zoomReset').addEventListener('click',()=>setZoom(1));
-document.getElementById('zoomFit').addEventListener('click',fitZoom);
-setZoom(uiZoom);
-
-const ro=new ResizeObserver(()=>requestAnimationFrame(drawWires));ro.observe(canvas);
-window.addEventListener('resize',()=>{requestAnimationFrame(drawWires)});
-requestAnimationFrame(()=>{applyFocus();drawWires()});
-</script>
+<script type="module" src="./atlas-app.js"></script>
 </body>
 </html>
