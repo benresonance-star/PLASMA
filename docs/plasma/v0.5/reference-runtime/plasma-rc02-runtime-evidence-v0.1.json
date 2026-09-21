@@ -1,0 +1,51 @@
+{
+  "schema": "plasma-supporting-evidence/0.1.0",
+  "artifact": "plasma-rc02-edit-runtime/0.1.0",
+  "status": "supporting-unverified",
+  "recorded_at": "2026-09-12T01:30:00Z",
+  "scope": "RC-02 reducer/store and deterministic edit-runtime prototype only",
+  "compile": {
+    "typescript": "5.8.3",
+    "strict": true,
+    "result": "pass",
+    "files": [
+      "plasma-rc02-edit-runtime-contracts-v0.1.ts",
+      "plasma-rc02-edit-runtime-v0.1.ts"
+    ]
+  },
+  "tests": {
+    "runtime": "node v22.16.0",
+    "result": "pass",
+    "passed": 12,
+    "failed": 0,
+    "test_file": "plasma-rc02-edit-runtime-v0.1.test.cjs",
+    "assertions": [
+      "+500 mm intent remains intact and produces 815 mm corridor / -185 mm margin",
+      "single-boundary limit is 315 mm",
+      "conflict release generates bounded/coupled/exploratory/abandon/governance alternatives",
+      "315 mm alternative validates and commits",
+      "stale async result is discarded",
+      "duplicate command delivery is idempotent",
+      "soft failure remains visible without becoming hard blocker",
+      "compare-and-swap rejects stale world-head commit",
+      "event log deterministically replays through pure reducer",
+      "same command id in different sessions does not leak cache results",
+      "coupled recovery remains pending and non-committable until broader validation converges",
+      "hard constraint revision requires explicit governor authority"
+    ]
+  },
+  "digests": {
+    "plasma-rc02-edit-runtime-contracts-v0.1.ts": "sha256:d0c679d1bd3dc5116491fb00bcdd2928a22e0cae0ab7c50d286ce3995daa1ec9",
+    "plasma-rc02-edit-runtime-v0.1.ts": "sha256:28e96cf1874a65a2a6fb2b3bf54c37efd586692e1e4ffcd4e92087fb61c7b1ff",
+    "plasma-rc02-edit-runtime-v0.1.test.cjs": "sha256:83769f24e25dc7bf12b98fac92f3b01942c975d521dbc9c4c1604e50c9d95776"
+  },
+  "limitations": [
+    "No browser or iPhone interaction latency measurement",
+    "No persisted database/event log",
+    "No WebWorker/worker-pool execution",
+    "No OCCT/exact geometry integration",
+    "No collaborative multi-user transport",
+    "No independent evidence collector or signed provenance",
+    "RC-02 synthetic rules are test fixtures, not real regulatory requirements"
+  ]
+}

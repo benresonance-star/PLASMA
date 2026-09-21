@@ -1,0 +1,119 @@
+{
+  "schema": "plasma-rc02-browser-evidence/1",
+  "generatedAt": "2026-09-12T01:43:08.263Z",
+  "html": "/mnt/data/Plasma-Design-and-Site-Editing-RC02-v0.1.html",
+  "viewports": [
+    {
+      "name": "desktop-1440",
+      "viewport": {
+        "innerWidth": 1440,
+        "innerHeight": 1000,
+        "dpr": 1,
+        "handle": "Resize Bedroom"
+      },
+      "runs": 20,
+      "previewMs": {
+        "p50": 2,
+        "p95": 4.600000000093132,
+        "max": 13.299999999813735
+      },
+      "releaseMs": {
+        "p50": 5.2999999998137355,
+        "p95": 10.799999999813735,
+        "max": 11.099999999627471
+      },
+      "hardLimitAction": {
+        "phase": "preview",
+        "requestedDelta": 150,
+        "maxTakeDelta": 150,
+        "corridorClear": 1000,
+        "target": 1000,
+        "deficit": 0,
+        "previewMs": 2.099999999627471,
+        "releaseMs": 21.300000000279397,
+        "acceptanceBlocked": false,
+        "mode": "take",
+        "candidateWidth": 3650,
+        "baseWidth": 3500,
+        "updatedAt": 1463.1000000000931
+      },
+      "preserveAction": {
+        "phase": "preview",
+        "requestedDelta": 500,
+        "maxTakeDelta": 150,
+        "corridorClear": 1150,
+        "target": 1000,
+        "deficit": 0,
+        "previewMs": 2.2999999998137355,
+        "releaseMs": 19.699999999720603,
+        "acceptanceBlocked": false,
+        "mode": "preserve",
+        "candidateWidth": 4000,
+        "baseWidth": 3500,
+        "updatedAt": 1646.9000000003725
+      },
+      "runtimeExceptions": [],
+      "limitations": [
+        "Synthetic trustedness-free PointerEvent harness",
+        "Page.setDocumentContent has no normal storage origin, so proposal persistence/commit is not measured",
+        "Headless Chromium CPU timing is not physical desktop or iPhone performance"
+      ]
+    },
+    {
+      "name": "mobile-430",
+      "viewport": {
+        "innerWidth": 430,
+        "innerHeight": 932,
+        "dpr": 3,
+        "handle": "Resize Bedroom"
+      },
+      "runs": 20,
+      "previewMs": {
+        "p50": 1.8999999999068677,
+        "p95": 2.1999999997206032,
+        "max": 4
+      },
+      "releaseMs": {
+        "p50": 4.7000000001862645,
+        "p95": 6.5,
+        "max": 10.300000000279397
+      },
+      "hardLimitAction": {
+        "phase": "preview",
+        "requestedDelta": 150,
+        "maxTakeDelta": 150,
+        "corridorClear": 1000,
+        "target": 1000,
+        "deficit": 0,
+        "previewMs": 1.6999999997206032,
+        "releaseMs": 20.100000000093132,
+        "acceptanceBlocked": false,
+        "mode": "take",
+        "candidateWidth": 3650,
+        "baseWidth": 3500,
+        "updatedAt": 1525.1999999997206
+      },
+      "preserveAction": {
+        "phase": "preview",
+        "requestedDelta": 500,
+        "maxTakeDelta": 150,
+        "corridorClear": 1150,
+        "target": 1000,
+        "deficit": 0,
+        "previewMs": 2,
+        "releaseMs": 18.799999999813735,
+        "acceptanceBlocked": false,
+        "mode": "preserve",
+        "candidateWidth": 4000,
+        "baseWidth": 3500,
+        "updatedAt": 1701.0999999996275
+      },
+      "runtimeExceptions": [],
+      "limitations": [
+        "Synthetic trustedness-free PointerEvent harness",
+        "Page.setDocumentContent has no normal storage origin, so proposal persistence/commit is not measured",
+        "Headless Chromium CPU timing is not physical desktop or iPhone performance"
+      ]
+    }
+  ]
+}

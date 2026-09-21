@@ -1,3 +1,5 @@
+> **Plasma consolidation candidate:** Start with [Plasma Baseline v0.5](docs/plasma/v0.5/README.md) for the proposed current architecture, decision reconciliation and evidence limits. The SPDS description below documents the existing implementation ancestor; the new contracts are not yet implemented by this application.
+
 # SPDS — Semantic Parametric Design System
 
 **Spec:** [SPEC/SPDS_v1.2_build_candidate_spec.md](SPEC/SPDS_v1.2_build_candidate_spec.md)  

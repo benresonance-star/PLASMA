@@ -1,0 +1,111 @@
+{
+  "schema": "plasma/consolidated-baseline/0.1.0",
+  "version": "0.5.0-candidate.4",
+  "date": "2026-09-14",
+  "status": "reviewable_specification_candidate",
+  "software_release": false,
+  "source_repository": {
+    "url": "https://github.com/benresonance-star/PLASMA",
+    "ancestor_commit": "b7c9b17733cebde3a4d19ac8f66125123d86a7ac"
+  },
+  "exact_identity": "The enclosing Git commit and tree identify this baseline. Resolve a branch to its commit; no self-referential commit placeholder is an artifact pin.",
+  "entrypoint": "README.md",
+  "authoring_sources": [
+    "core.md",
+    "stack.md",
+    "domains.md",
+    "contracts.md",
+    "contracts.schema.json",
+    "decisions.md",
+    "implementation-matrix.json",
+    "implementation.md",
+    "roadmap.md",
+    "sources/foundry-v0.4.26.json",
+    "sources/terrain-v0.2.html",
+    "inference.md",
+    "inference-contracts.ts",
+    "interaction.md",
+    "interaction-contracts.ts",
+    "presentation.md",
+    "presentation-contracts.ts"
+  ],
+  "derived_reading_copy": "index.html",
+  "renderer": "render.mjs",
+  "source_inventory": "source-inventory.json",
+  "precedence": [
+    "Explicit CON decisions and candidate contract semantics",
+    "Unchanged full Foundry declaration",
+    "Terrain companion domain detail",
+    "Historical implementation claims within their evidence limits"
+  ],
+  "unresolved_contract_conflicts": "Hold dependent qualification; resolve through an explicit decision. Do not pick by filename timestamp.",
+  "claim_policy": {
+    "imported_evidence": "supporting_unverified",
+    "new_runtime_tests_run": false,
+    "production_deployed": false,
+    "qualified_release": false
+  },
+  "status_overrides": [
+    {
+      "target": "PLS-10.next: building placement",
+      "effective": "reported_prototype_implementation; live source verification pending",
+      "decision": "CON-007"
+    },
+    {
+      "target": "PLS-KERNEL-01 persistence claims",
+      "effective": "fresh-realm serialized-byte recovery only; browser-origin and crash coherence open",
+      "decision": "CON-009"
+    },
+    {
+      "target": "Terrain T1R",
+      "effective": "required central gate before broader T2/T3",
+      "decision": "CON-006"
+    },
+    {
+      "target": "PLS-10 synchronous local invariants and preview/commit wording",
+      "effective": "only budget-bounded visual checks synchronously; every applicable commit-critical validation precedes acceptance",
+      "decision": "CON-020"
+    }
+  ],
+  "next_gates": [
+    "M1",
+    "M2",
+    "M3"
+  ],
+  "research_tracks": [
+    "R1"
+  ],
+  "deferred_actions": [
+    "Byte-level duplicate comparison",
+    "Actual application import/build qualification",
+    "Live deployment identity check",
+    "Original detailed thread reconciliation"
+  ],
+  "protocols": {
+    "PLS-INF-01": {
+      "version": "0.1.0",
+      "status": "specified_candidate",
+      "document": "inference.md",
+      "types": "inference-contracts.ts",
+      "decision": "CON-019",
+      "acceptance": "INF-A01–INF-A12 (M1 extension)"
+    },
+    "PLS-INT-01": {
+      "version": "0.1.0",
+      "status": "specified_candidate",
+      "document": "interaction.md",
+      "types": "interaction-contracts.ts",
+      "decision": "CON-020",
+      "acceptance": "INT-A01–INT-A13 (M1/M2 extension)"
+    },
+    "PLS-IPS-01": {
+      "version": "0.1.0",
+      "status": "specified_candidate",
+      "document": "presentation.md",
+      "types": "presentation-contracts.ts",
+      "decision": "CON-021",
+      "acceptance": "IPS-A01–IPS-A14 (M1/M2 presentation extension)",
+      "placement": "PLS-14 consumer of PLS-INT-01 overlays and existing representation responses"
+    }
+  }
+}
