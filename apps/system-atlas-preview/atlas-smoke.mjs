@@ -167,6 +167,24 @@ try{
   assert((await locationHash(page))===hashBefore,'Help mode should intercept selection rather than navigate');
   await page.click('#helpLauncher');
 
+  await page.goto(base+'#slices/wall-assembly',{waitUntil:'networkidle'});
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('PLS-WALL-01'));
+  await page.click('#inspector [data-atlas-type="contract"][data-atlas-id="parametric-wall"]');
+  await page.waitForFunction(()=>location.hash==='#contracts/parametric-wall');
+  await page.waitForSelector('#inspector .wall-requirements>div');
+  assert(await page.locator('#inspector .wall-requirements>div').count()===12,'Wall contract must expose all 12 parametric requirements');
+  assert(await page.locator('#inspector .wall-gates>div').count()===8,'Wall contract must expose all eight acceptance gates');
+  assert((await page.locator('#inspector').innerText()).includes('implementation unproven'),'Wall specification must not claim implemented behaviour');
+  const contractResponse=await page.request.get(base+'wall-contract.json');
+  assert(contractResponse.ok(),'Published wall contract file is unavailable');
+  const wallContract=await contractResponse.json();
+  assert(wallContract.contract_id==='PLS-WALL-01'&&wallContract.implemented==='planned','Wall source must retain planned implementation status');
+  const specificationResponse=await page.request.get(base+'plasma-spec.html');
+  assert(specificationResponse.ok()&&(await specificationResponse.text()).includes('Specification v0.4.27'),'Linked specification baseline is unavailable or outdated');
+  await page.goto(base+'#evidence/ev-wall-at-01',{waitUntil:'networkidle'});
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('WALL-AT-01'));
+  assert((await page.locator('#inspector').innerText()).includes('No executable CI binding yet'),'New wall gate must remain explicitly unproven');
+
   await page.setViewportSize({width:390,height:844});
   await page.goto(base+'#overview',{waitUntil:'networkidle'});
   await page.waitForFunction(()=>Boolean(window.__PLASMA_ATLAS__));
@@ -174,6 +192,11 @@ try{
   await page.click('#navToggle');
   assert(await visible('.left-panel'),'Mobile Index drawer did not open');
   await page.click('#navToggle');
+
+  await page.goto(base+'#contracts/parametric-wall',{waitUntil:'networkidle'});
+  await page.click('#inspectorToggle');
+  assert(await visible('.right-panel'),'Wall contract inspector must open on mobile');
+  assert(await page.locator('#inspector .wall-requirements>div').count()===12,'Mobile inspector lost parametric wall requirements');
 
   assert(pageErrors.length===0,`Browser emitted page errors:\n${pageErrors.join('\n')}`);
   console.log('Atlas browser smoke test passed.');

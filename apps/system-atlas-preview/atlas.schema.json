@@ -468,6 +468,80 @@
         },
         "explanation": {
           "type": "string"
+        },
+        "requirements": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "must"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "must": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "acceptanceGates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "assert",
+              "status"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "assert": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "source": {
+          "type": "object",
+          "required": [
+            "specification",
+            "contract",
+            "version",
+            "status"
+          ],
+          "properties": {
+            "specification": {
+              "type": "string"
+            },
+            "contract": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false

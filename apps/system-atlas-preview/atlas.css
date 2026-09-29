@@ -213,3 +213,10 @@ body.help-mode [data-atlas-type][data-atlas-id]{cursor:help!important}body.help-
   .help-panel{top:auto;bottom:calc(58px + env(safe-area-inset-bottom));right:8px;width:calc(100vw - 16px);max-height:48vh}
   .zoom-controls{right:8px;bottom:calc(8px + env(safe-area-inset-bottom))}
 }
+
+/* Contract identifiers need a wider label column; required gates remain visually unproven. */
+.inspector-list.wall-requirements>div,.inspector-list.wall-gates>div{grid-template-columns:64px minmax(0,1fr)}
+.inspector-list.wall-gates>div{border-color:var(--line);background:var(--panel-strong)}
+.top-actions>a.icon-btn{display:inline-flex;align-items:center;text-decoration:none;white-space:nowrap}
+/* Keep the first tab reachable when the header navigation overflows. */
+.view-tabs{justify-content:flex-start}

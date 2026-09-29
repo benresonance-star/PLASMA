@@ -502,7 +502,10 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
       body=`<div class="inspector-kv"><span>From</span><b>${esc(r.from)}</b><span>To</span><b>${esc(r.to)}</b></div>
         <section><h4>Input</h4><code class="block-code">${esc(r.input)}</code></section>
         <section><h4>Output</h4><code class="block-code">${esc(r.output)}</code></section>
-        <section><h4>Failure behavior</h4><p>${esc(r.failure)}</p></section>`;
+        <section><h4>Failure behavior</h4><p>${esc(r.failure)}</p></section>
+        ${r.source?`<section><h4>Specification baseline</h4><p>${esc(r.source.status)} · v${esc(r.source.version)}</p><a class="repo-run-link" href="./plasma-spec.html#specs" target="_blank" rel="noreferrer">Open specification v0.4.27 ↗</a><br><a class="repo-run-link" href="./wall-contract.json" target="_blank" rel="noreferrer">Open PLS-WALL-01 contract ↗</a></section>`:''}
+        ${r.requirements?`<section><h4>Parametric wall requirements</h4><div class="inspector-list wall-requirements">${r.requirements.map(x=>`<div><span>${esc(x.id)}</span><p><b>${esc(x.title)}</b><br>${esc(x.must)}</p></div>`).join('')}</div></section>`:''}
+        ${r.acceptanceGates?`<section><h4>Required acceptance gates · unproven</h4><div class="inspector-list wall-gates">${r.acceptanceGates.map(x=>`<div><span>${esc(x.id)}</span><p><b>${esc(x.title)}</b><br>${esc(x.assert)}<br>${esc(x.status)}</p></div>`).join('')}</div></section>`:''}`;
     } else if(ref.type==='domainLanguage'){
       body=`<div class="inspector-kv"><span>ID</span><b>${esc(r.atlasId)}</b><span>Maturity</span><b>${esc(labelize(r.maturity))}</b><span>Uses</span><b>${esc(r.uses.join(', '))}</b></div>
         <section><h4>Types</h4><div class="chip-row">${chips(r.types,'type-token')}</div></section>
@@ -517,6 +520,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
       body=`
         <div class="inspector-kv"><span>Domain</span><b>${esc(r.domain)}</b><span>Declared</span><b>${esc(r.declaredState)}</b><span>Evidence</span><b>${esc(r.evidenceState)}</b></div>
         <section><h4>Why this slice</h4><p>${esc(r.whyThisSlice)}</p></section>
+        ${r.id==='wall-assembly'?`<section><h4>Parametric wall contract</h4><div class="ref-list">${refButton('contract','parametric-wall','PLS-WALL-01 · 12 requirements / 8 gates')}</div></section>`:''}
         <section><h4>End-to-end flow</h4>${orderedList(r.flow,'flow-list')}</section>
         <section><h4>Architectural claims it must prove</h4>${orderedList(r.proves)}</section>
         <section><h4>Stress points</h4>${orderedList(r.stressPoints,'stress-list')}</section>

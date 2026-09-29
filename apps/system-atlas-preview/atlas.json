@@ -1,7 +1,7 @@
 {
   "meta": {
     "id": "PLASMA.SYSTEM_ATLAS",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "title": "Plasma System Atlas",
     "status": "foundation-evolving",
     "description": "A machine-readable architecture model projected into multiple interactive Atlas views.",
@@ -15,8 +15,17 @@
       "Architecture coverage and implementation evidence are tracked separately.",
       "Integration evidence state is derived from referenced evidence records, never authored independently.",
       "Repository evidence is bound to source paths and stable test identifiers; CI observations for main determine live verification, failure and staleness.",
-      "Evidence proves specific implementation claims, not general architectural completeness; required evidence gates a relationship, while supporting evidence corroborates it without gating."
-    ]
+      "Evidence proves specific implementation claims, not general architectural completeness; required evidence gates a relationship, while supporting evidence corroborates it without gating.",
+      "Specification synchronisation records requirements, not implementation proof; PLS-19 / PLS-WALL-01 remains unproven until applicable acceptance evidence exists."
+    ],
+    "specification": {
+      "version": "0.4.27",
+      "path": "./plasma-spec.html",
+      "wallContract": "PLS-WALL-01@0.1.0",
+      "wallCapability": "PLS-19",
+      "syncedAt": "2026-09-30",
+      "status": "specified; implementation unproven"
+    }
   },
   "views": [
     {
@@ -439,6 +448,135 @@
       "semantics": "Convert outside computation into typed evidence or a proposal.",
       "failure": "Reject missing provenance, incompatible units, stale inputs or unsupported schemas.",
       "explanation": "External integrations contribute knowledge without obtaining direct authority."
+    },
+    {
+      "id": "parametric-wall",
+      "name": "PLS-WALL-01 · Parametric Architectural Walls",
+      "from": "interaction",
+      "to": "authority",
+      "input": "Wall path + pinned wall-system version + owned parameters + host/junction/space relations + base revision",
+      "output": "Validated world revision + revision-pinned geometry, quantities, cost and drawings | explicit rejection/unresolved candidate",
+      "semantics": "PLS-19 / PLS-WALL-01@0.1.0, specification v0.4.27. Path-driven layered walls preserve reference lines, persistent junctions, hosted placement and room intent. Existing typed operations and geometry resolver contracts govern every accepted change.",
+      "failure": "Reject conflicting parameter writers, stale base revisions and integrity failures. Preserve speculative domain conflicts and accepted facts; unsupported joins and ambiguous host/topology correspondence remain explicit. No wall performance certification is implied.",
+      "explanation": "Specified 30 September 2026; implementation unproven. Architecture domain capability above the seven-primitives kernel. V1 supports straight/polyline paths, constant-height layers and rectangular openings; curves, tapered profiles and general junction solving are deferred.",
+      "requirements": [
+        {
+          "id": "WALL-01",
+          "title": "Path-driven construction",
+          "must": "An explicit path, coordinate frame and pinned wall-system definition generate a wall. V1 supports straight segments and connected polylines. Curved paths and variable-height profiles are deferred extensions. Sketch interpretations remain proposals until adopted; raw marks and interpretation provenance remain addressable."
+        },
+        {
+          "id": "WALL-02",
+          "title": "Editable parameters and ownership",
+          "must": "Persist path and base elevation, height, system/type revision, reference-line role, lateral offset, orientation and layer definitions with units. Layers have stable IDs, ordered material references, thickness, function and explicit vertical extents. Total thickness is derived from layers. A total-thickness edit must name a layer-allocation policy or propose one; competing active writers are rejected. Reference line supports overall faces/centre and a declared core face/centre. Define left/right relative to path direction and preserve physical face intent when reversing the path."
+        },
+        {
+          "id": "WALL-03",
+          "title": "Persistent junctions",
+          "must": "Endpoint and crossing connections are semantic Relations with explicit policy: butt, miter or priority, layer participation and allowed tolerance. Resolve layers according to the pinned wall-system rules, not one universal wall algorithm. Moving or regenerating a wall reevaluates the relation. Unsupported joins remain unresolved; never silently fuse, change construction or accept a gap. Geometric coincidence alone does not create a persistent connection."
+        },
+        {
+          "id": "WALL-04",
+          "title": "Hosted openings",
+          "must": "Doors and windows retain stable identity, host relation, opening profile, width/height/sill and placement intent. Placement may be centred, fixed to a named jamb/endpoint, or a declared proportional rule. A driven placement has one active writer. Direct manipulation proposes a placement-rule change when needed. Wall movement or construction changes regenerate the opening; splitting/deleting the host requires explicit reassignment, detachment or rejection rather than nearest-object guessing."
+        },
+        {
+          "id": "WALL-05",
+          "title": "Room and boundary relationships",
+          "must": "Walls connect to room/space boundaries through explicit relations. Distinguish architectural reference dimensions from finished clear dimensions and declare which layer/face controls each measurement. Preview propagation strategies such as take space, preserve neighbour width or grow outward; name affected entities before acceptance. Wall geometry does not independently own room topology."
+        },
+        {
+          "id": "WALL-06",
+          "title": "Non-destructive operations",
+          "must": "CreateWall, SetWallParameters, MoveWall, StretchWall, SplitWall, JoinWalls, ChangeWallSystem and HostOpening are typed domain operations, not new kernel primitives. Define reads, writes, pinned base revision, references, units, scope, preconditions and impact. Use the PLS-17 operation/resolver boundary and PLS-GR-01 geometry verbs where needed; accepted feature state and relations determine evaluated geometry, not mesh indices or provider handles."
+        },
+        {
+          "id": "WALL-07",
+          "title": "Bounded regeneration and correspondence",
+          "must": "Invalidate only the affected dependency closure: connected junctions, hosted elements, room measures, exact/display geometry, analyses, quantities, cost and drawings. Preserve entity/layer/opening identity through regeneration, with explicit correspondence for topology changes. Stale-base results cannot overwrite newer state. Report ambiguity, pending, stale and failed outputs without discarding accepted facts."
+        },
+        {
+          "id": "WALL-08",
+          "title": "Preview and exact acceptance",
+          "must": "Provide immediate provisional feedback using the existing Interaction Reflex Runtime and Interactive Presentation Surface. Exact boundary representation geometry is resolved through the assigned geometry provider, initially OpenCascade, with declared tolerance, validation and evidence. Preview triangles cannot masquerade as exact geometry. Unresolved domain compliance may be explored under branch policy; hard integrity failures block commit and required issue/fabrication gates remain closed."
+        },
+        {
+          "id": "WALL-09",
+          "title": "Derived quantities, cost and drawings",
+          "must": "Generate revision-pinned plan/section/elevation views and quantities from the accepted feature state. Declare gross/net area and volume conventions, opening deductions, junction overlap allocation, layer scope and units to prevent double counting. Cost uses versioned rates with location/date, assumptions and uncertainty. Publication requires a mutually coherent set of results; each result records inputs, producer/version, parameters, fidelity, tolerance and currentness. A valid parametric wall alone proves no fire, acoustic, thermal, structural or regulatory performance."
+        },
+        {
+          "id": "WALL-10",
+          "title": "Reusable and versioned wall systems",
+          "must": "Store reusable construction, material and junction rules in the versioned Knowledge Ledger; projects pin exact system/rule versions. A library update triggers impact analysis and an optional evaluated migration branch, never silent regeneration of accepted projects. System definitions include applicability and fabrication/assembly constraints where known. Domain packs remain optional consumers of existing core contracts."
+        },
+        {
+          "id": "WALL-11",
+          "title": "History, branching and tool round trips",
+          "must": "Parameter changes, relation changes and accepted geometry retain Transform/Event/Evidence lineage. Undo appends a new revision; branches remain independently editable. Save/reopen preserves parameters, constraints, hosted identity and provenance. Imported/exported representations reconcile through explicit correspondence; an external wall mesh does not automatically become an editable parameter model."
+        },
+        {
+          "id": "WALL-12",
+          "title": "Usable editing surface",
+          "must": "Drawing a path, choosing a wall system and editing numeric parameters must remain available without AI services. Selection exposes concise wall parameters, reference line, hosts and junction policies; deeper inspection explains what drives each property and what an edit affects. Sketch, direct manipulation and language proposals converge on the same typed operations."
+        }
+      ],
+      "acceptanceGates": [
+        {
+          "id": "WALL-AT-01",
+          "title": "Create and edit",
+          "assert": "Create a two-layer straight wall, then a polyline. Change height, base elevation, a named layer thickness and offset. Verify generated dimensions and reference-line placement within the declared tolerance; total thickness remains derived and physical face intent survives path reversal.",
+          "status": "required; not run"
+        },
+        {
+          "id": "WALL-AT-02",
+          "title": "Junction policies",
+          "assert": "Exercise L, T and crossing joins under supported butt/miter/priority policies with different layer configurations. Move an endpoint and regenerate repeatedly. Verify relation identity, declared layer termination and explicit unresolved status for unsupported/micro-gap/ambiguous cases.",
+          "status": "required; not run"
+        },
+        {
+          "id": "WALL-AT-03",
+          "title": "Hosted placement",
+          "assert": "Use both centred and fixed-jamb windows, resize and move the host, then change its construction. Verify opening/host identity and placement intent. Split/delete the host and require explicit disposition. Reject conflicting active placement writers.",
+          "status": "required; not run"
+        },
+        {
+          "id": "WALL-AT-04",
+          "title": "Rooms and conflicts",
+          "assert": "Move the bedroom/corridor boundary under take-space and preserve-neighbour strategies. Show the requested conflicted preview and affected rooms without silently changing strategy. Test the live fixture separately from synthetic data; do not substitute historic +315 mm synthetic values for the documented +150 mm live hard limit.",
+          "status": "required; not run"
+        },
+        {
+          "id": "WALL-AT-05",
+          "title": "Atomicity and stale work",
+          "assert": "Reject a stale-base wall edit; fail an exact geometry/junction operation; ensure accepted head and unaffected entities remain intact. Late geometry/quantity results cannot replace current outputs or enable publication.",
+          "status": "required; not run"
+        },
+        {
+          "id": "WALL-AT-06",
+          "title": "Quantity and document coherence",
+          "assert": "Compare layer volumes and opening deductions against independently calculated fixture expectations, including junction allocation. Update plan/section and cost after a parameter edit; all issued outputs refer to an explicitly coherent revision set.",
+          "status": "required; not run"
+        },
+        {
+          "id": "WALL-AT-07",
+          "title": "Branch, undo and reopen",
+          "assert": "Edit two branches independently, adopt one, undo, close and reopen in a normal storage origin. Recover from interrupted/corrupt persistence using the existing governed recovery path. Reconstruct system pins, parameters, relations, outputs and history; a synthetic storage harness is supporting evidence only.",
+          "status": "required; not run"
+        },
+        {
+          "id": "WALL-AT-08",
+          "title": "System migration and modalities",
+          "assert": "Update a library system without modifying the pinned project. Preview and evaluate migration on a branch. Prove equivalent operations from numeric editing, pointer input and a reviewed language proposal, with usable direct editing when AI is unavailable.",
+          "status": "required; not run"
+        }
+      ],
+      "source": {
+        "specification": "./plasma-spec.html#specs",
+        "contract": "./wall-contract.json",
+        "version": "0.1.0",
+        "status": "specified; implementation unproven"
+      }
     }
   ],
   "languages": {
@@ -1526,21 +1664,21 @@
     },
     {
       "id": "wall-assembly",
-      "name": "Wall assembly",
+      "name": "Parametric wall assembly",
       "domain": "Building systems",
-      "summary": "Nested system → subsystem → component → interface → operation, with geometry and fabrication consequences.",
-      "purpose": "Prove that Plasma can represent a wall as an editable system made from rules and interacting parts rather than as a single monolithic object.",
+      "summary": "PLS-19 / PLS-WALL-01@0.1.0: editable path, height, base elevation, reference lines, layers, persistent junctions and hosted openings with bounded regeneration.",
+      "purpose": "Prove the v0.4.27 parametric wall contract across design intent, typed changes, exact geometry, space boundaries, coherent quantities/cost/drawings and reopen recovery. Specified; implementation unproven.",
       "whyThisSlice": "Walls expose the general composition problem found throughout buildings: systems contain subsystems and components, interfaces matter, repetition is rule-driven, and apparently simple edits create junction, opening, material and fabrication consequences.",
       "flow": [
-        "wall-system intent",
-        "assembly definition",
-        "stud / lining / plate rules",
-        "interfaces + connectors",
-        "spatial operation",
-        "candidate component changes",
-        "junction / opening validation",
-        "commit",
-        "derived drawings / quantities"
+        "draw straight/polyline path",
+        "pin wall system and layer parameters",
+        "declare reference line / junction / hosted placement",
+        "preview typed edit and room consequences",
+        "validate candidate and exact geometry",
+        "atomic commit",
+        "bounded dependent regeneration",
+        "coherent quantities / cost / drawings",
+        "branch, undo, save and reopen"
       ],
       "proves": [
         "nested composition does not require a special verb for every building product",
@@ -1550,18 +1688,24 @@
         "derived drawings and quantities remain projections of the same authoritative system"
       ],
       "stressPoints": [
-        "corners, junctions and openings",
-        "rule-generated component identity after regeneration",
-        "curved or non-orthogonal walls",
-        "fasteners and connectors crossing system boundaries",
-        "local manual exceptions inside a procedural assembly"
+        "One active writer per driven parameter; total thickness derived from layers",
+        "Left/right orientation and reference-line intent after path reversal",
+        "L/T/cross junction policy and layer termination",
+        "Opening placement, split/delete host disposition and topology ambiguity",
+        "Clear dimensions versus reference dimensions; corridor conflict propagation",
+        "Stale asynchronous results and coherent publication",
+        "Pinned system migration, branch isolation and normal-origin reopen",
+        "Deferred: curved/freeform walls, tapered profiles and general junction solving"
       ],
       "successCriteria": [
-        "extend, trim, curve, join and cut-opening operations work at assembly level",
-        "component regeneration preserves semantic lineage where possible",
-        "a door opening updates framing, linings, quantities and relevant checks coherently",
-        "manual exceptions are explicit rather than silently lost on regeneration",
-        "the same assembly can produce design, documentation and fabrication representations"
+        "WALL-AT-01 · Create and edit: Create a two-layer straight wall, then a polyline. Change height, base elevation, a named layer thickness and offset. Verify generated dimensions and reference-line placement within the declared tolerance; total thickness remains derived and physical face intent survives path reversal.",
+        "WALL-AT-02 · Junction policies: Exercise L, T and crossing joins under supported butt/miter/priority policies with different layer configurations. Move an endpoint and regenerate repeatedly. Verify relation identity, declared layer termination and explicit unresolved status for unsupported/micro-gap/ambiguous cases.",
+        "WALL-AT-03 · Hosted placement: Use both centred and fixed-jamb windows, resize and move the host, then change its construction. Verify opening/host identity and placement intent. Split/delete the host and require explicit disposition. Reject conflicting active placement writers.",
+        "WALL-AT-04 · Rooms and conflicts: Move the bedroom/corridor boundary under take-space and preserve-neighbour strategies. Show the requested conflicted preview and affected rooms without silently changing strategy. Test the live fixture separately from synthetic data; do not substitute historic +315 mm synthetic values for the documented +150 mm live hard limit.",
+        "WALL-AT-05 · Atomicity and stale work: Reject a stale-base wall edit; fail an exact geometry/junction operation; ensure accepted head and unaffected entities remain intact. Late geometry/quantity results cannot replace current outputs or enable publication.",
+        "WALL-AT-06 · Quantity and document coherence: Compare layer volumes and opening deductions against independently calculated fixture expectations, including junction allocation. Update plan/section and cost after a parameter edit; all issued outputs refer to an explicitly coherent revision set.",
+        "WALL-AT-07 · Branch, undo and reopen: Edit two branches independently, adopt one, undo, close and reopen in a normal storage origin. Recover from interrupted/corrupt persistence using the existing governed recovery path. Reconstruct system pins, parameters, relations, outputs and history; a synthetic storage harness is supporting evidence only.",
+        "WALL-AT-08 · System migration and modalities: Update a library system without modifying the pinned project. Preview and evaluate migration on a branch. Prove equivalent operations from numeric editing, pointer input and a reviewed language proposal, with usable direct editing when AI is unavailable."
       ],
       "keySystems": [
         "World + Authority Plane",
@@ -1570,19 +1714,27 @@
         "Assembly Language",
         "Representations"
       ],
-      "declaredState": "architecture evolving",
+      "declaredState": "specified; implementation unproven",
       "evidenceState": "not-linked",
       "checks": {
         "spec": "declared",
-        "contracts": "partial",
+        "contracts": "declared",
         "code": "not-linked",
         "unitTests": "not-linked",
         "e2e": "not-linked",
         "benchmark": "not-linked"
       },
-      "explanation": "This slice tests whether Plasma's general entity/composition/interface model is strong enough to replace object-specific CAD logic. The aim is not merely to draw a wall, but to prove that complex assemblies can remain editable, explainable and fabrication-aware.",
+      "explanation": "The v0.4.27 wall contract makes parameters and regeneration explicit without adding a kernel primitive. Construction, junction and host rules persist above evaluated geometry. The existing wall/opening scenario is retained; eight new acceptance gates have no executable proof yet. Straight/polyline V1 precedes curved/general wall systems.",
       "integrationEvidence": [
-        "ev-slice-wall-opening"
+        "ev-slice-wall-opening",
+        "ev-wall-at-01",
+        "ev-wall-at-02",
+        "ev-wall-at-03",
+        "ev-wall-at-04",
+        "ev-wall-at-05",
+        "ev-wall-at-06",
+        "ev-wall-at-07",
+        "ev-wall-at-08"
       ]
     },
     {
@@ -2526,6 +2678,206 @@
       "verification": {
         "status": "unlinked",
         "method": "integration-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-01",
+      "name": "WALL-AT-01 · Create and edit",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Create a two-layer straight wall, then a polyline. Change height, base elevation, a named layer thickness and offset. Verify generated dimensions and reference-line placement within the declared tolerance; total thickness remains derived and physical face intent survives path reversal.",
+      "claim": "Create a two-layer straight wall, then a polyline. Change height, base elevation, a named layer thickness and offset. Verify generated dimensions and reference-line placement within the declared tolerance; total thickness remains derived and physical face intent survives path reversal.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-01",
+          "text": "Create a two-layer straight wall, then a polyline. Change height, base elevation, a named layer thickness and offset. Verify generated dimensions and reference-line placement within the declared tolerance; total thickness remains derived and physical face intent survives path reversal."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-02",
+      "name": "WALL-AT-02 · Junction policies",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Exercise L, T and crossing joins under supported butt/miter/priority policies with different layer configurations. Move an endpoint and regenerate repeatedly. Verify relation identity, declared layer termination and explicit unresolved status for unsupported/micro-gap/ambiguous cases.",
+      "claim": "Exercise L, T and crossing joins under supported butt/miter/priority policies with different layer configurations. Move an endpoint and regenerate repeatedly. Verify relation identity, declared layer termination and explicit unresolved status for unsupported/micro-gap/ambiguous cases.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-02",
+          "text": "Exercise L, T and crossing joins under supported butt/miter/priority policies with different layer configurations. Move an endpoint and regenerate repeatedly. Verify relation identity, declared layer termination and explicit unresolved status for unsupported/micro-gap/ambiguous cases."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-03",
+      "name": "WALL-AT-03 · Hosted placement",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Use both centred and fixed-jamb windows, resize and move the host, then change its construction. Verify opening/host identity and placement intent. Split/delete the host and require explicit disposition. Reject conflicting active placement writers.",
+      "claim": "Use both centred and fixed-jamb windows, resize and move the host, then change its construction. Verify opening/host identity and placement intent. Split/delete the host and require explicit disposition. Reject conflicting active placement writers.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-03",
+          "text": "Use both centred and fixed-jamb windows, resize and move the host, then change its construction. Verify opening/host identity and placement intent. Split/delete the host and require explicit disposition. Reject conflicting active placement writers."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-04",
+      "name": "WALL-AT-04 · Rooms and conflicts",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Move the bedroom/corridor boundary under take-space and preserve-neighbour strategies. Show the requested conflicted preview and affected rooms without silently changing strategy. Test the live fixture separately from synthetic data; do not substitute historic +315 mm synthetic values for the documented +150 mm live hard limit.",
+      "claim": "Move the bedroom/corridor boundary under take-space and preserve-neighbour strategies. Show the requested conflicted preview and affected rooms without silently changing strategy. Test the live fixture separately from synthetic data; do not substitute historic +315 mm synthetic values for the documented +150 mm live hard limit.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-04",
+          "text": "Move the bedroom/corridor boundary under take-space and preserve-neighbour strategies. Show the requested conflicted preview and affected rooms without silently changing strategy. Test the live fixture separately from synthetic data; do not substitute historic +315 mm synthetic values for the documented +150 mm live hard limit."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-05",
+      "name": "WALL-AT-05 · Atomicity and stale work",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Reject a stale-base wall edit; fail an exact geometry/junction operation; ensure accepted head and unaffected entities remain intact. Late geometry/quantity results cannot replace current outputs or enable publication.",
+      "claim": "Reject a stale-base wall edit; fail an exact geometry/junction operation; ensure accepted head and unaffected entities remain intact. Late geometry/quantity results cannot replace current outputs or enable publication.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-05",
+          "text": "Reject a stale-base wall edit; fail an exact geometry/junction operation; ensure accepted head and unaffected entities remain intact. Late geometry/quantity results cannot replace current outputs or enable publication."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-06",
+      "name": "WALL-AT-06 · Quantity and document coherence",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Compare layer volumes and opening deductions against independently calculated fixture expectations, including junction allocation. Update plan/section and cost after a parameter edit; all issued outputs refer to an explicitly coherent revision set.",
+      "claim": "Compare layer volumes and opening deductions against independently calculated fixture expectations, including junction allocation. Update plan/section and cost after a parameter edit; all issued outputs refer to an explicitly coherent revision set.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-06",
+          "text": "Compare layer volumes and opening deductions against independently calculated fixture expectations, including junction allocation. Update plan/section and cost after a parameter edit; all issued outputs refer to an explicitly coherent revision set."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-07",
+      "name": "WALL-AT-07 · Branch, undo and reopen",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Edit two branches independently, adopt one, undo, close and reopen in a normal storage origin. Recover from interrupted/corrupt persistence using the existing governed recovery path. Reconstruct system pins, parameters, relations, outputs and history; a synthetic storage harness is supporting evidence only.",
+      "claim": "Edit two branches independently, adopt one, undo, close and reopen in a normal storage origin. Recover from interrupted/corrupt persistence using the existing governed recovery path. Reconstruct system pins, parameters, relations, outputs and history; a synthetic storage harness is supporting evidence only.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-07",
+          "text": "Edit two branches independently, adopt one, undo, close and reopen in a normal storage origin. Recover from interrupted/corrupt persistence using the existing governed recovery path. Reconstruct system pins, parameters, relations, outputs and history; a synthetic storage harness is supporting evidence only."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-08",
+      "name": "WALL-AT-08 · System migration and modalities",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Update a library system without modifying the pinned project. Preview and evaluate migration on a branch. Prove equivalent operations from numeric editing, pointer input and a reviewed language proposal, with usable direct editing when AI is unavailable.",
+      "claim": "Update a library system without modifying the pinned project. Preview and evaluate migration on a branch. Prove equivalent operations from numeric editing, pointer input and a reviewed language proposal, with usable direct editing when AI is unavailable.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-08",
+          "text": "Update a library system without modifying the pinned project. Preview and evaluate migration on a branch. Prove equivalent operations from numeric editing, pointer input and a reviewed language proposal, with usable direct editing when AI is unavailable."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
         "source": null,
         "subjectRevision": null,
         "verifiedAt": null,
@@ -5727,6 +6079,20 @@
           "id": "ev-recovery-benchmark",
           "requirement": "supporting",
           "note": "Stress-proves consistency and recovery under long-running concurrent operation."
+        },
+        {
+          "id": "ev-wall-at-05",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-05"
+          ]
+        },
+        {
+          "id": "ev-wall-at-07",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-07"
+          ]
         }
       ]
     },
@@ -5775,6 +6141,20 @@
           "id": "ev-recovery-benchmark",
           "requirement": "supporting",
           "note": "Stress-proves transaction recovery and consistency over long-running operation."
+        },
+        {
+          "id": "ev-wall-at-05",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-05"
+          ]
+        },
+        {
+          "id": "ev-wall-at-07",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-07"
+          ]
         }
       ]
     },
@@ -5813,6 +6193,27 @@
           "id": "ev-recovery-benchmark",
           "requirement": "supporting",
           "note": "Stress-proves reference continuity and recovery behavior during long-running concurrent operation."
+        },
+        {
+          "id": "ev-wall-at-02",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-02"
+          ]
+        },
+        {
+          "id": "ev-wall-at-03",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-03"
+          ]
+        },
+        {
+          "id": "ev-wall-at-07",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-07"
+          ]
         }
       ]
     },
@@ -5856,6 +6257,34 @@
           "id": "ev-representation-freshness",
           "requirement": "supporting",
           "note": "Corroborates that geometry changes correctly invalidate dependent representations."
+        },
+        {
+          "id": "ev-wall-at-01",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-01"
+          ]
+        },
+        {
+          "id": "ev-wall-at-02",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-02"
+          ]
+        },
+        {
+          "id": "ev-wall-at-03",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-03"
+          ]
+        },
+        {
+          "id": "ev-wall-at-05",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-05"
+          ]
         }
       ]
     },
@@ -5894,6 +6323,27 @@
           "id": "ev-geometry-candidate-boundary",
           "requirement": "supporting",
           "note": "Corroborates that constraints operate on candidate geometry rather than hidden direct mutations."
+        },
+        {
+          "id": "ev-wall-at-02",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-02"
+          ]
+        },
+        {
+          "id": "ev-wall-at-04",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-04"
+          ]
+        },
+        {
+          "id": "ev-wall-at-05",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-05"
+          ]
         }
       ]
     },
@@ -5938,6 +6388,34 @@
           "id": "ev-representation-freshness",
           "requirement": "supporting",
           "note": "Corroborates that assembly changes propagate to dependent schedules and representations."
+        },
+        {
+          "id": "ev-wall-at-01",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-01"
+          ]
+        },
+        {
+          "id": "ev-wall-at-02",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-02"
+          ]
+        },
+        {
+          "id": "ev-wall-at-03",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-03"
+          ]
+        },
+        {
+          "id": "ev-wall-at-08",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-08"
+          ]
         }
       ]
     },
@@ -5977,6 +6455,34 @@
           "id": "ev-representation-freshness",
           "requirement": "supporting",
           "note": "Corroborates that derived evidence exposes the revision on which it depends."
+        },
+        {
+          "id": "ev-wall-at-05",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-05"
+          ]
+        },
+        {
+          "id": "ev-wall-at-06",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-06"
+          ]
+        },
+        {
+          "id": "ev-wall-at-07",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-07"
+          ]
+        },
+        {
+          "id": "ev-wall-at-08",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-08"
+          ]
         }
       ]
     },
@@ -6015,6 +6521,20 @@
           "id": "ev-geometry-candidate-boundary",
           "requirement": "supporting",
           "note": "Corroborates that representations derive from accepted geometry rather than silently owning canonical geometry."
+        },
+        {
+          "id": "ev-wall-at-06",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-06"
+          ]
+        },
+        {
+          "id": "ev-wall-at-07",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-07"
+          ]
         }
       ]
     },
@@ -6059,6 +6579,27 @@
           "id": "ev-geometry-candidate-boundary",
           "requirement": "supporting",
           "note": "Corroborates that fabrication geometry derives from governed geometry state."
+        },
+        {
+          "id": "ev-wall-at-02",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-02"
+          ]
+        },
+        {
+          "id": "ev-wall-at-06",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-06"
+          ]
+        },
+        {
+          "id": "ev-wall-at-08",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-08"
+          ]
         }
       ]
     },
@@ -6103,6 +6644,20 @@
           "id": "ev-recovery-benchmark",
           "requirement": "supporting",
           "note": "Stress-proves consistency of recovery/history under long-running concurrent operation."
+        },
+        {
+          "id": "ev-wall-at-07",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-07"
+          ]
+        },
+        {
+          "id": "ev-wall-at-08",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-08"
+          ]
         }
       ]
     },
@@ -13308,6 +13863,283 @@
       },
       "role": "exercises-contract",
       "architectureState": "partial",
+      "criticality": "supporting",
+      "evidencePolicy": {
+        "mode": "all-required"
+      },
+      "evidenceRefs": []
+    },
+    {
+      "id": "link:slice:wall-assembly:proved-by:evidence:ev-wall-at-01",
+      "from": {
+        "type": "slice",
+        "id": "wall-assembly"
+      },
+      "to": {
+        "type": "evidence",
+        "id": "ev-wall-at-01"
+      },
+      "role": "proved-by",
+      "architectureState": "defined",
+      "criticality": "core",
+      "evidencePolicy": {
+        "mode": "all-required"
+      },
+      "evidenceRefs": [
+        {
+          "id": "ev-wall-at-01",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-01"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "link:slice:wall-assembly:proved-by:evidence:ev-wall-at-02",
+      "from": {
+        "type": "slice",
+        "id": "wall-assembly"
+      },
+      "to": {
+        "type": "evidence",
+        "id": "ev-wall-at-02"
+      },
+      "role": "proved-by",
+      "architectureState": "defined",
+      "criticality": "core",
+      "evidencePolicy": {
+        "mode": "all-required"
+      },
+      "evidenceRefs": [
+        {
+          "id": "ev-wall-at-02",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-02"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "link:slice:wall-assembly:proved-by:evidence:ev-wall-at-03",
+      "from": {
+        "type": "slice",
+        "id": "wall-assembly"
+      },
+      "to": {
+        "type": "evidence",
+        "id": "ev-wall-at-03"
+      },
+      "role": "proved-by",
+      "architectureState": "defined",
+      "criticality": "core",
+      "evidencePolicy": {
+        "mode": "all-required"
+      },
+      "evidenceRefs": [
+        {
+          "id": "ev-wall-at-03",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-03"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "link:slice:wall-assembly:proved-by:evidence:ev-wall-at-04",
+      "from": {
+        "type": "slice",
+        "id": "wall-assembly"
+      },
+      "to": {
+        "type": "evidence",
+        "id": "ev-wall-at-04"
+      },
+      "role": "proved-by",
+      "architectureState": "defined",
+      "criticality": "core",
+      "evidencePolicy": {
+        "mode": "all-required"
+      },
+      "evidenceRefs": [
+        {
+          "id": "ev-wall-at-04",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-04"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "link:slice:wall-assembly:proved-by:evidence:ev-wall-at-05",
+      "from": {
+        "type": "slice",
+        "id": "wall-assembly"
+      },
+      "to": {
+        "type": "evidence",
+        "id": "ev-wall-at-05"
+      },
+      "role": "proved-by",
+      "architectureState": "defined",
+      "criticality": "core",
+      "evidencePolicy": {
+        "mode": "all-required"
+      },
+      "evidenceRefs": [
+        {
+          "id": "ev-wall-at-05",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-05"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "link:slice:wall-assembly:proved-by:evidence:ev-wall-at-06",
+      "from": {
+        "type": "slice",
+        "id": "wall-assembly"
+      },
+      "to": {
+        "type": "evidence",
+        "id": "ev-wall-at-06"
+      },
+      "role": "proved-by",
+      "architectureState": "defined",
+      "criticality": "core",
+      "evidencePolicy": {
+        "mode": "all-required"
+      },
+      "evidenceRefs": [
+        {
+          "id": "ev-wall-at-06",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-06"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "link:slice:wall-assembly:proved-by:evidence:ev-wall-at-07",
+      "from": {
+        "type": "slice",
+        "id": "wall-assembly"
+      },
+      "to": {
+        "type": "evidence",
+        "id": "ev-wall-at-07"
+      },
+      "role": "proved-by",
+      "architectureState": "defined",
+      "criticality": "core",
+      "evidencePolicy": {
+        "mode": "all-required"
+      },
+      "evidenceRefs": [
+        {
+          "id": "ev-wall-at-07",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-07"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "link:slice:wall-assembly:proved-by:evidence:ev-wall-at-08",
+      "from": {
+        "type": "slice",
+        "id": "wall-assembly"
+      },
+      "to": {
+        "type": "evidence",
+        "id": "ev-wall-at-08"
+      },
+      "role": "proved-by",
+      "architectureState": "defined",
+      "criticality": "core",
+      "evidencePolicy": {
+        "mode": "all-required"
+      },
+      "evidenceRefs": [
+        {
+          "id": "ev-wall-at-08",
+          "requirement": "required",
+          "proves": [
+            "WALL-AT-08"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "link:slice:wall-assembly:exercises-contract:contract:parametric-wall",
+      "from": {
+        "type": "slice",
+        "id": "wall-assembly"
+      },
+      "to": {
+        "type": "contract",
+        "id": "parametric-wall"
+      },
+      "role": "exercises-contract",
+      "architectureState": "defined",
+      "criticality": "core",
+      "evidencePolicy": {
+        "mode": "all-required"
+      },
+      "evidenceRefs": [
+        {
+          "id": "ev-wall-at-01",
+          "requirement": "required"
+        },
+        {
+          "id": "ev-wall-at-02",
+          "requirement": "required"
+        },
+        {
+          "id": "ev-wall-at-03",
+          "requirement": "required"
+        },
+        {
+          "id": "ev-wall-at-04",
+          "requirement": "required"
+        },
+        {
+          "id": "ev-wall-at-05",
+          "requirement": "required"
+        },
+        {
+          "id": "ev-wall-at-06",
+          "requirement": "required"
+        },
+        {
+          "id": "ev-wall-at-07",
+          "requirement": "required"
+        },
+        {
+          "id": "ev-wall-at-08",
+          "requirement": "required"
+        }
+      ]
+    },
+    {
+      "id": "link:contract:parametric-wall:implements:domainLanguage:assembly",
+      "from": {
+        "type": "contract",
+        "id": "parametric-wall"
+      },
+      "to": {
+        "type": "domainLanguage",
+        "id": "assembly"
+      },
+      "role": "implements",
+      "architectureState": "defined",
       "criticality": "supporting",
       "evidencePolicy": {
         "mode": "all-required"

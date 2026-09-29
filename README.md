@@ -1,4 +1,10 @@
-# SPDS — Semantic Parametric Design System
+# Plasma / SPDS repository
+
+## Current Plasma specification
+
+[Plasma / Foundry v0.4.27](apps/system-atlas-preview/plasma-spec.html) is the current synchronised draft specification. [PLS-19 / PLS-WALL-01@0.1.0](apps/system-atlas-preview/wall-contract.json) defines the parametric wall capability; implementation and its eight acceptance gates remain unproven. Atlas v0.8.0 projects those requirements with explicit unlinked evidence.
+
+## Historical SPDS engineering baseline
 
 **Spec:** [SPEC/SPDS_v1.2_build_candidate_spec.md](SPEC/SPDS_v1.2_build_candidate_spec.md)  
 **Status:** v1.2 Build Candidate — greenfield monorepo (G0.1)
