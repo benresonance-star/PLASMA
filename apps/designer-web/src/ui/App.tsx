@@ -1728,6 +1728,7 @@ export function App() {
           </nav>
 
           <div className="spds-header-actions">
+            <a href="/?stage=walls" className="text-xs text-muted-foreground">Wall study</a>
             <div className="spds-center-mode" role="group" aria-label="Center workspace">
               <HelpTooltip content={HEADER_TOOLTIPS.geometry}>
                 <Button

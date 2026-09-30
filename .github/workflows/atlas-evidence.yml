@@ -32,6 +32,13 @@ jobs:
           pnpm turbo run build --filter=@spds/transaction-core...
           pnpm --filter @spds/transaction-core exec vitest run src/engine.test.ts
 
+      - name: Evidence ev-wall-stage1
+        if: always()
+        run: |
+          pnpm turbo run build --filter=@spds/wall-core... --filter=@spds/api...
+          pnpm --filter @spds/wall-core exec vitest run src/wall.test.ts
+          pnpm --filter @spds/api exec vitest run src/wall-routes.test.ts
+
       - name: Evidence ev-stable-identity
         if: always()
         run: |

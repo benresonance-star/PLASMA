@@ -1,4 +1,5 @@
 import Fastify from 'fastify';
+import { registerWallRoutes } from './wall-routes.js';
 import cors from '@fastify/cors';
 import { InMemoryVersionStore, asPromise, type VersionStore } from '@spds/version-core';
 import {
@@ -109,6 +110,7 @@ export function buildServer(
   }
   const txEngine = new TransactionEngine(store);
   const undoRegistry = new BranchUndoRegistry(store);
+  registerWallRoutes(app, store);
   txEngine.setCompileAdapter(async ({ candidate }) => {
     const params = extractD01GeometryParams(candidate.objects);
     try {
