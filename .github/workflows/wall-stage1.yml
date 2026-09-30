@@ -1,0 +1,59 @@
+name: wall-stage1
+on:
+  pull_request:
+    paths:
+      - 'packages/wall-core/**'
+      - 'apps/api/**'
+      - 'apps/designer-web/**'
+      - 'scripts/wall-browser-smoke.mjs'
+      - '.github/workflows/wall-stage1.yml'
+      - 'pnpm-lock.yaml'
+  push:
+    branches: [main]
+    paths:
+      - 'packages/wall-core/**'
+      - 'apps/api/**'
+      - 'apps/designer-web/**'
+      - 'scripts/wall-browser-smoke.mjs'
+      - '.github/workflows/wall-stage1.yml'
+      - 'pnpm-lock.yaml'
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm turbo run build --filter=@spds/api... --filter=@spds/designer-web...
+      - name: Install browser runtime
+        run: |
+          npm install --prefix /tmp/plasma-wall-browser playwright@1.55.0
+          /tmp/plasma-wall-browser/node_modules/.bin/playwright install --with-deps chromium
+      - name: Start API and designer
+        run: |
+          SPDS_API_LISTEN=1 node apps/api/dist/index.js > /tmp/wall-api.log 2>&1 &
+          pnpm --filter @spds/designer-web dev > /tmp/wall-designer.log 2>&1 &
+          for i in {1..20}; do
+            if curl -fsS http://127.0.0.1:3001/health >/dev/null && curl -fsS http://127.0.0.1:5173/ >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/wall-api.log /tmp/wall-designer.log
+          exit 1
+      - name: Wall desktop and mobile flow
+        env:
+          PLAYWRIGHT_MODULE: /tmp/plasma-wall-browser/node_modules/playwright/index.mjs
+        run: node scripts/wall-browser-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wall-stage1-browser
+          path: |
+            /tmp/plasma-wall-smoke/
+            /tmp/wall-api.log
+            /tmp/wall-designer.log

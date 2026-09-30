@@ -1,3 +1,7 @@
+# Plasma wall stage 1
+
+The first parametric wall implementation is available in the designer at `/?stage=walls`. It supports layered analytical walls, one hosted opening and preview/accept transactions. [Build, test and scope notes](docs/architecture/PLASMA-WALL-STAGE-1.md) distinguish implemented behaviour from the remaining exact geometry and acceptance gates.
+
 # Plasma / SPDS repository
 
 ## Current Plasma specification

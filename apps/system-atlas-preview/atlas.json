@@ -1,7 +1,7 @@
 {
   "meta": {
     "id": "PLASMA.SYSTEM_ATLAS",
-    "version": "0.8.0",
+    "version": "0.9.0",
     "title": "Plasma System Atlas",
     "status": "foundation-evolving",
     "description": "A machine-readable architecture model projected into multiple interactive Atlas views.",
@@ -458,7 +458,7 @@
       "output": "Validated world revision + revision-pinned geometry, quantities, cost and drawings | explicit rejection/unresolved candidate",
       "semantics": "PLS-19 / PLS-WALL-01@0.1.0, specification v0.4.27. Path-driven layered walls preserve reference lines, persistent junctions, hosted placement and room intent. Existing typed operations and geometry resolver contracts govern every accepted change.",
       "failure": "Reject conflicting parameter writers, stale base revisions and integrity failures. Preserve speculative domain conflicts and accepted facts; unsupported joins and ambiguous host/topology correspondence remain explicit. No wall performance certification is implied.",
-      "explanation": "Specified 30 September 2026; implementation unproven. Architecture domain capability above the seven-primitives kernel. V1 supports straight/polyline paths, constant-height layers and rectangular openings; curves, tapered profiles and general junction solving are deferred.",
+      "explanation": "Stage 1 implements typed wall feature operations, analytical layered prisms, one hosted opening, numeric editing and explicit preview/accept through the existing transaction/version store. This is supporting implementation evidence; exact provider acceptance, persistent junction resolution, room constraints, issued outputs and durable recovery remain unproven. The full PLS-WALL-01 acceptance gates stay open.",
       "requirements": [
         {
           "id": "WALL-01",
@@ -1714,17 +1714,17 @@
         "Assembly Language",
         "Representations"
       ],
-      "declaredState": "specified; implementation unproven",
+      "declaredState": "partial analytical feature implementation",
       "evidenceState": "not-linked",
       "checks": {
         "spec": "declared",
         "contracts": "declared",
-        "code": "not-linked",
-        "unitTests": "not-linked",
+        "code": "linked",
+        "unitTests": "linked",
         "e2e": "not-linked",
         "benchmark": "not-linked"
       },
-      "explanation": "The v0.4.27 wall contract makes parameters and regeneration explicit without adding a kernel primitive. Construction, junction and host rules persist above evaluated geometry. The existing wall/opening scenario is retained; eight new acceptance gates have no executable proof yet. Straight/polyline V1 precedes curved/general wall systems.",
+      "explanation": "Stage 1 implements typed wall feature operations, analytical layered prisms, one hosted opening, numeric editing and explicit preview/accept through the existing transaction/version store. This is supporting implementation evidence; exact provider acceptance, persistent junction resolution, room constraints, issued outputs and durable recovery remain unproven. The full PLS-WALL-01 acceptance gates stay open.",
       "integrationEvidence": [
         "ev-slice-wall-opening",
         "ev-wall-at-01",
@@ -1734,7 +1734,8 @@
         "ev-wall-at-05",
         "ev-wall-at-06",
         "ev-wall-at-07",
-        "ev-wall-at-08"
+        "ev-wall-at-08",
+        "ev-wall-stage1"
       ]
     },
     {
@@ -2878,6 +2879,35 @@
       "verification": {
         "status": "unlinked",
         "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-stage1",
+      "name": "Wall stage 1 · Analytical features and transactions",
+      "kind": "integration-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "Supporting evidence for parameter/layer editing, one rectangular hosted opening, analytical volume deductions, preview isolation, stale-head rejection and same-store reopen. Does not prove exact geometry, junctions, room integration, issued documents or durable recovery. Desktop/mobile browser smoke is separately runnable.",
+      "claim": "Analytical wall feature edits lower to one atomic version-store mutation without promoting preview geometry to issue-ready state.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-STAGE1-01",
+          "text": "Layered wall parameters, physical face reversal, hosted identity and analytical opening deductions are validated."
+        },
+        {
+          "id": "WALL-STAGE1-02",
+          "text": "Candidate isolation, discard, single-event acceptance, stale-head rejection and branch independence are tested with the real transaction engine."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "repository-test-suite",
         "source": null,
         "subjectRevision": null,
         "verifiedAt": null,
@@ -6093,6 +6123,11 @@
           "proves": [
             "WALL-AT-07"
           ]
+        },
+        {
+          "id": "ev-wall-stage1",
+          "requirement": "supporting",
+          "note": "Stage 1 validates analytic feature and transaction behavior only; it does not satisfy the full required wall acceptance gates."
         }
       ]
     },
@@ -6155,6 +6190,11 @@
           "proves": [
             "WALL-AT-07"
           ]
+        },
+        {
+          "id": "ev-wall-stage1",
+          "requirement": "supporting",
+          "note": "Stage 1 validates analytic feature and transaction behavior only; it does not satisfy the full required wall acceptance gates."
         }
       ]
     },
@@ -6416,6 +6456,11 @@
           "proves": [
             "WALL-AT-08"
           ]
+        },
+        {
+          "id": "ev-wall-stage1",
+          "requirement": "supporting",
+          "note": "Stage 1 validates analytic feature and transaction behavior only; it does not satisfy the full required wall acceptance gates."
         }
       ]
     },
@@ -6658,6 +6703,11 @@
           "proves": [
             "WALL-AT-08"
           ]
+        },
+        {
+          "id": "ev-wall-stage1",
+          "requirement": "supporting",
+          "note": "Stage 1 validates analytic feature and transaction behavior only; it does not satisfy the full required wall acceptance gates."
         }
       ]
     },
@@ -14145,6 +14195,30 @@
         "mode": "all-required"
       },
       "evidenceRefs": []
+    },
+    {
+      "id": "slice-wall-stage1-proved-by",
+      "from": {
+        "type": "slice",
+        "id": "wall-assembly"
+      },
+      "to": {
+        "type": "evidence",
+        "id": "ev-wall-stage1"
+      },
+      "role": "proved-by",
+      "criticality": "core",
+      "architectureState": "partial",
+      "evidencePolicy": {
+        "mode": "all-required"
+      },
+      "evidenceRefs": [
+        {
+          "id": "ev-wall-stage1",
+          "requirement": "supporting",
+          "note": "Narrow stage-one evidence; full wall acceptance gates remain required on their existing relationships."
+        }
+      ]
     }
   ]
 }

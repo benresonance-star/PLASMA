@@ -41,7 +41,10 @@
     "drizzle-orm": "^0.45.2",
     "fastify": "^5.11.3",
     "postgres": "^3.4.9",
-    "zod": "^4.4.3"
+    "zod": "^4.4.3",
+    "@spds/wall-core": "workspace:*",
+    "@spds/geometry-contracts": "workspace:*",
+    "@spds/topology-provenance": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",

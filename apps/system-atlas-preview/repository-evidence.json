@@ -655,7 +655,7 @@
       "evidenceId": "ev-wall-at-01",
       "sources": [
         {
-          "role": "specification",
+          "role": "contract",
           "paths": [
             "apps/system-atlas-preview/wall-contract.json",
             "apps/system-atlas-preview/plasma-spec.html"
@@ -673,7 +673,7 @@
       "evidenceId": "ev-wall-at-02",
       "sources": [
         {
-          "role": "specification",
+          "role": "contract",
           "paths": [
             "apps/system-atlas-preview/wall-contract.json",
             "apps/system-atlas-preview/plasma-spec.html"
@@ -691,7 +691,7 @@
       "evidenceId": "ev-wall-at-03",
       "sources": [
         {
-          "role": "specification",
+          "role": "contract",
           "paths": [
             "apps/system-atlas-preview/wall-contract.json",
             "apps/system-atlas-preview/plasma-spec.html"
@@ -709,7 +709,7 @@
       "evidenceId": "ev-wall-at-04",
       "sources": [
         {
-          "role": "specification",
+          "role": "contract",
           "paths": [
             "apps/system-atlas-preview/wall-contract.json",
             "apps/system-atlas-preview/plasma-spec.html"
@@ -727,7 +727,7 @@
       "evidenceId": "ev-wall-at-05",
       "sources": [
         {
-          "role": "specification",
+          "role": "contract",
           "paths": [
             "apps/system-atlas-preview/wall-contract.json",
             "apps/system-atlas-preview/plasma-spec.html"
@@ -745,7 +745,7 @@
       "evidenceId": "ev-wall-at-06",
       "sources": [
         {
-          "role": "specification",
+          "role": "contract",
           "paths": [
             "apps/system-atlas-preview/wall-contract.json",
             "apps/system-atlas-preview/plasma-spec.html"
@@ -763,7 +763,7 @@
       "evidenceId": "ev-wall-at-07",
       "sources": [
         {
-          "role": "specification",
+          "role": "contract",
           "paths": [
             "apps/system-atlas-preview/wall-contract.json",
             "apps/system-atlas-preview/plasma-spec.html"
@@ -781,7 +781,7 @@
       "evidenceId": "ev-wall-at-08",
       "sources": [
         {
-          "role": "specification",
+          "role": "contract",
           "paths": [
             "apps/system-atlas-preview/wall-contract.json",
             "apps/system-atlas-preview/plasma-spec.html"
@@ -790,6 +790,61 @@
       ],
       "tests": [],
       "ci": null,
+      "freshnessPolicy": {
+        "mode": "source-change"
+      }
+    },
+    {
+      "id": "repo-ev-wall-stage1",
+      "evidenceId": "ev-wall-stage1",
+      "sources": [
+        {
+          "role": "implementation",
+          "paths": [
+            "packages/wall-core/src/**",
+            "apps/api/src/wall-routes.ts",
+            "apps/designer-web/src/ui/WallWorkbench.tsx",
+            "apps/designer-web/src/wall-client.ts"
+          ]
+        },
+        {
+          "role": "test",
+          "paths": [
+            "packages/wall-core/src/wall.test.ts",
+            "apps/api/src/wall-routes.test.ts",
+            "scripts/wall-browser-smoke.mjs"
+          ]
+        },
+        {
+          "role": "workflow",
+          "paths": [
+            ".github/workflows/atlas-evidence.yml"
+          ]
+        }
+      ],
+      "tests": [
+        {
+          "id": "TEST.WALL.STAGE1.DOMAIN",
+          "framework": "vitest",
+          "paths": [
+            "packages/wall-core/src/wall.test.ts"
+          ],
+          "step": "Evidence ev-wall-stage1"
+        },
+        {
+          "id": "TEST.WALL.STAGE1.API",
+          "framework": "vitest",
+          "paths": [
+            "apps/api/src/wall-routes.test.ts"
+          ],
+          "step": "Evidence ev-wall-stage1"
+        }
+      ],
+      "ci": {
+        "workflow": "atlas-evidence",
+        "job": "evidence",
+        "step": "Evidence ev-wall-stage1"
+      },
       "freshnessPolicy": {
         "mode": "source-change"
       }
