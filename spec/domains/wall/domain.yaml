@@ -1,0 +1,53 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "DomainPack",
+  "id": "PLS-DOM-WALL",
+  "version": "0.1.0",
+  "title": "Architectural Wall Domain",
+  "layer": "L4",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "not_started",
+    "verification": "unlinked",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-TX-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-GR-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-EVIDENCE-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-WALL-01"
+    }
+  ],
+  "entities": [
+    "Wall",
+    "WallLayer",
+    "WallSystem"
+  ],
+  "relations": [
+    "Hosts",
+    "Joins",
+    "BoundsSpace"
+  ],
+  "operations": [
+    "CreateWall",
+    "SetWallParameters",
+    "MoveWall",
+    "StretchWall",
+    "SplitWall",
+    "JoinWalls",
+    "ChangeWallSystem",
+    "HostOpening"
+  ]
+}
