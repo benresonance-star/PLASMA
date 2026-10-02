@@ -1,0 +1,55 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "VerticalSlice",
+  "id": "PLS-SLICE-MTBL-01",
+  "version": "0.1.0",
+  "title": "Minimum Trusted Building Loop",
+  "layer": "L5",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-TX-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-EVIDENCE-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-GR-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-DOM-WALL"
+    }
+  ],
+  "purpose": "Prove one complete authoritative editable architectural workflow.",
+  "flow": [
+    "create",
+    "edit",
+    "preview",
+    "propose",
+    "validate",
+    "commit",
+    "derive",
+    "persist",
+    "close",
+    "reopen",
+    "continue"
+  ],
+  "successCriteria": [
+    "Stable identity survives reopen.",
+    "History and provenance remain intact.",
+    "Stale computation cannot overwrite current state.",
+    "Failed operations leave accepted state unchanged.",
+    "Derived geometry corresponds to the accepted revision."
+  ],
+  "projection": null
+}
