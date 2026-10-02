@@ -1,0 +1,97 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "SpecSystem",
+  "id": "PLS-SPEC-SYSTEM",
+  "version": "1.0.0-draft",
+  "title": "Plasma Spec System v1",
+  "profile": "json-compatible-yaml",
+  "profileRule": "All .yaml files in v1 use the JSON-compatible subset of YAML 1.2 so the compiler has no runtime parser dependency. Non-JSON YAML syntax is rejected.",
+  "canonicalRoot": "spec",
+  "generatedRoot": "generated/spec-system",
+  "principles": [
+    "One canonical specification graph, many generated projections.",
+    "Generated outputs never become canonical dependencies.",
+    "Architecture, specification, implementation, verification and release are independent status axes.",
+    "Research creates no build obligation.",
+    "Differential and other derived computation may guide authority but may never silently become authority."
+  ],
+  "statusAxes": {
+    "architecture": [
+      "proposed",
+      "accepted",
+      "rejected",
+      "superseded"
+    ],
+    "specification": [
+      "absent",
+      "draft",
+      "partial",
+      "complete",
+      "frozen",
+      "superseded"
+    ],
+    "implementation": [
+      "not_started",
+      "experimental",
+      "partial",
+      "implemented",
+      "deprecated"
+    ],
+    "verification": [
+      "none",
+      "unlinked",
+      "partial",
+      "verified",
+      "failed",
+      "stale"
+    ],
+    "release": [
+      "excluded",
+      "candidate",
+      "released",
+      "deprecated"
+    ]
+  },
+  "dependencyTypes": [
+    "requires",
+    "consumes",
+    "provides",
+    "implements",
+    "extends",
+    "validates",
+    "observes",
+    "supersedes",
+    "optional"
+  ],
+  "hardDependencyTypes": [
+    "requires"
+  ],
+  "layers": {
+    "L0": "constitution",
+    "L1": "core-architecture",
+    "L2": "core-contracts",
+    "L3": "capabilities",
+    "L4": "domain-packs",
+    "L5": "workflows-and-slices"
+  },
+  "outputs": {
+    "atlas": "apps/system-atlas-preview/atlas.json",
+    "repositoryEvidence": "apps/system-atlas-preview/repository-evidence.json",
+    "status": "apps/system-atlas-preview/spec-system-status.json",
+    "humanHtml": "apps/system-atlas-preview/spec-system.html",
+    "registry": "generated/spec-system/registry.json",
+    "dependencyGraph": "generated/spec-system/dependency-graph.json",
+    "readiness": "generated/spec-system/readiness.json",
+    "blockers": "generated/spec-system/blockers.json",
+    "changeImpact": "generated/spec-system/change-impact.json",
+    "humanMarkdown": "generated/spec-system/plasma-spec.md",
+    "contractRegistry": "generated/spec-system/contracts/registry.json",
+    "atlasSnapshot": "generated/spec-system/atlas/atlas.json",
+    "evidenceSnapshot": "generated/spec-system/atlas/repository-evidence.json"
+  },
+  "migration": {
+    "mode": "generated-atlas-checked-legacy-html",
+    "rule": "Atlas data is generated from /spec. The existing rich plasma-spec.html remains a checked legacy projection during v1 migration; the compiler verifies its loop manifest against canonical capability records.",
+    "target": "Retire duplicated architectural data from the legacy HTML after all normative sections have canonical records."
+  }
+}
