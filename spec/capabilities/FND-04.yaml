@@ -1,0 +1,59 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "FND-04",
+  "version": "0.1.0",
+  "title": "Reflexive Plasma Environment",
+  "phase": "Foundry",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "FND-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "FND-04",
+    "phase": "Foundry",
+    "name": "Reflexive Plasma Environment",
+    "summary": "Present architectural world state and the machinery that produces it as connected depths of one Plasma environment, with typed traceability and protected mutation boundaries.",
+    "spec": "complete",
+    "implemented": "planned",
+    "depends": [
+      "FND-01",
+      "PLS-01"
+    ],
+    "gap": "The UI concept and safety invariants are specified, but entity-to-capability provenance links, affected-world queries, branch replay, contextual development controls and the project-scoped capability-extension promotion path are not implemented. PLS-14 now defines how new interaction surfaces can be proposed from context without allowing the UI or an AI worker to bypass protected runtime boundaries.",
+    "next": "Implement a read-only object-to-capability trace, then one sandboxed project-scoped extension: select a wall, inspect the producer capability/version/evidence, request one small contextual tool, generate its capability contract + tests before implementation, run it in quarantine, replay the affected project branch, and promote only the exact tested digest after human approval.",
+    "flow": "WORLD OBJECT / DESIGN DISCREPANCY\\\n  ↓\\\ntrace producer + evidence\\\n  ↓\\\ncontext-bound development task\\\n  ↓\\\nsandboxed candidate capability\\\n  ↓\\\nindependent evaluation\\\n  ↓\\\nreplay affected world branch\\\n  ↓\\\ncompare + human approval\\\n  ↓\\\npromote capability + coherent world revision",
+    "stages": [
+      "Inspect world object",
+      "Trace machinery",
+      "Create contextual task",
+      "Define capability contract",
+      "Write/approve tests before implementation",
+      "Branch and sandbox",
+      "Build candidate",
+      "Evaluate independently",
+      "Guided human validation",
+      "Replay affected world",
+      "Compare branches",
+      "Approve or reject exact digest",
+      "Promote coherently",
+      "Retain rollback/deprecation path"
+    ]
+  }
+}
