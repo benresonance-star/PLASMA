@@ -1,0 +1,24 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Release",
+  "id": "PLASMA-0.4.29-DRAFT",
+  "version": "0.4.29",
+  "title": "Plasma / Foundry v0.4.29 specification draft",
+  "status": "draft",
+  "constitution": {
+    "id": "PLS-CONSTITUTION",
+    "version": "1.0.0"
+  },
+  "includes": [],
+  "excludes": [
+    {
+      "id": "PLS-20",
+      "reason": "deferred_research"
+    },
+    {
+      "id": "PLS-21",
+      "reason": "implementation_not_started"
+    }
+  ],
+  "note": "This is a specification snapshot, not an assertion of a runtime release."
+}
