@@ -1,0 +1,53 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-07",
+  "version": "0.1.0",
+  "title": "Reality → Evidence → Accepted Context",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "draft",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-07",
+    "phase": "Plasma",
+    "name": "Reality → Evidence → Accepted Context",
+    "summary": "Establish a trustworthy project context before feasibility or design by acquiring, reconciling and qualifying evidence about the physical, legal, regulatory and economic world. Geometry is a representation of this evidence-bearing world state, not its source of truth.",
+    "spec": "planned",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01"
+    ],
+    "gap": "Project feasibility can currently begin on incomplete or weakly grounded context. Site boundaries, contours, neighbouring massing and windows, crossovers, trees, overhead power, underground services, easements and neighbouring private-open-space constraints may come from fragmented sources with different authority, currency and accuracy.",
+    "next": "Build a site-context acquisition vertical slice that ingests survey/cadastral/planning/utility/aerial/manual evidence, registers it into one coordinate frame, records provenance and uncertainty, detects conflicts and missing critical facts, and produces a Context Readiness Gate before feasibility is treated as decision-grade.",
+    "flow": "REALITY\n  ↓\nSOURCE / CAPTURE\n  ↓\nEVIDENCE ARTIFACTS + PROVENANCE\n  ↓\nREGISTER / RECONCILE / CORRESPOND\n  ↓\nCLAIMS + UNCERTAINTY + AUTHORITY\n  ↓\nACCEPTED CONTEXT WORLD\n  ↓\nREADINESS / UNKNOWN-RISK MAP\n  ↓\nINTENT → FEASIBILITY → DESIGN → DOCUMENTATION",
+    "stages": [
+      "Discover required context",
+      "Acquire evidence",
+      "Normalize / georeference",
+      "Reconcile sources",
+      "Infer typed claims",
+      "Attach provenance / authority / currency / uncertainty",
+      "Expose conflicts and unknowns",
+      "Validate / accept context",
+      "Gate feasibility by readiness",
+      "Continuously refresh and propagate change"
+    ],
+    "optional_adapters": [
+      "PLS-06"
+    ]
+  }
+}
