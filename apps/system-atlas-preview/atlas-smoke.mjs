@@ -180,7 +180,19 @@ try{
   const wallContract=await contractResponse.json();
   assert(wallContract.contract_id==='PLS-WALL-01'&&wallContract.implemented==='planned','Wall source must retain planned implementation status');
   const specificationResponse=await page.request.get(base+'plasma-spec.html');
-  assert(specificationResponse.ok()&&(await specificationResponse.text()).includes('Specification v0.4.27'),'Linked specification baseline is unavailable or outdated');
+  assert(specificationResponse.ok()&&(await specificationResponse.text()).includes('Specification v0.4.29'),'Linked specification baseline is unavailable or outdated');
+  await page.goto(base+'#contracts/differential-contract',{waitUntil:'networkidle'});
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('PLS-DIFF-01'));
+  const differentialInspector=await page.locator('#inspector').innerText();
+  assert(differentialInspector.includes('DEFERRED'),'DifferentialContract must remain visibly deferred');
+  assert(differentialInspector.includes('NON_AUTHORITATIVE_DERIVED'),'DifferentialContract authority class missing');
+  assert(await page.locator('#inspector .differential-gates>div').count()===12,'DifferentialContract must expose all 12 activation gates');
+  assert(differentialInspector.includes('DecisionContract'),'DifferentialContract relationship to DecisionContract missing');
+  const differentialResponse=await page.request.get(base+'differential-contract.json');
+  assert(differentialResponse.ok(),'Published DifferentialContract source is unavailable');
+  const differentialContract=await differentialResponse.json();
+  assert(differentialContract.contract_id==='PLS-DIFF-01'&&differentialContract.implementation_status==='NOT_STARTED','DifferentialContract source must remain deferred and not started');
+
   await page.goto(base+'#evidence/ev-wall-at-01',{waitUntil:'networkidle'});
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('WALL-AT-01'));
   assert((await page.locator('#inspector').innerText()).includes('No executable CI binding yet'),'New wall gate must remain explicitly unproven');
