@@ -1,0 +1,93 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-10",
+  "version": "0.1.0",
+  "title": "Bounded Reactive Runtime + Parallel Compute",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-10",
+    "phase": "Plasma",
+    "name": "Bounded Reactive Runtime + Parallel Compute",
+    "summary": "Preserve fluid direct manipulation in highly dependent worlds by restoring the smallest necessary region of correctness first, then converging regional and global state asynchronously. Plasma partitions dependency propagation by semantic and spatial locality, uses revision-aware task scheduling across CPU threads and GPU compute, and treats currentness as explicit state rather than blocking interaction until the whole world is recomputed.",
+    "spec": "partial",
+    "implemented": "partial",
+    "depends": [
+      "PLS-01"
+    ],
+    "gap": "Terrain/driveway/pad slice implemented: local tile signatures/cache, coarse gesture surface, worker evaluation, explicit pending quantities and stale-result rejection. Still scans 24 tile summaries and full aggregate fingerprints; no multicore pool, GPU, general hierarchical propagation or measured browser frame latency.",
+    "next": "Use a larger surveyed fixture with registration/breaklines, instrument all five performance boundaries and compare incremental versus full recomputation. Add a building-to-pad placement relation and driveway vertical transitions before stronger claims.",
+    "flow": "USER / AGENT MUTATION → LOCAL TRANSACTION REGION → DIRTY SET + INVALIDATION ENVELOPE → INTERACTION-BUDGET LOCAL SOLVE → PREVIEW / COMMIT → BOUNDARY-CHANGE TEST → BOUNDED PROPAGATION → CPU WORKER POOL + GPU FIELD TASKS → REGIONAL VALIDATION → GLOBAL INVARIANT CHECK → COHERENT WORLD REVISION",
+    "performance_boundaries": [
+      {
+        "name": "Active World",
+        "question": "What is computationally relevant now?",
+        "contract": "Only the active semantic/spatial working set is hot by default; unrelated world state remains cold until demanded by interaction, dependency propagation, validation or explicit background work."
+      },
+      {
+        "name": "Dirty Frontier",
+        "question": "What actually changed?",
+        "contract": "Every mutation produces the smallest explicit dirty set and invalidation envelope that can be determined from changed facts, geometry, claims and boundary summaries."
+      },
+      {
+        "name": "Dependency Horizon",
+        "question": "How far must consequences propagate now?",
+        "contract": "Propagation expands only as far as required to restore immediate invariants and materially changed boundaries; regional and global consequences may continue asynchronously."
+      },
+      {
+        "name": "Representation LOD",
+        "question": "What fidelity does this operation actually require?",
+        "contract": "Each task requests only the semantic, geometric, analytic and graphic fidelity it needs; expensive exact geometry, dense fields and high-detail representations are materialised lazily and cached as derived state."
+      },
+      {
+        "name": "Consistency Horizon",
+        "question": "What must be correct immediately, and what may converge later?",
+        "contract": "Plasma distinguishes interaction-safe local coherence from regional and global coherence. Deferred results remain explicitly stale/pending/updating and may never masquerade as current."
+      }
+    ],
+    "performance_axiom": "The cost of an ordinary edit should scale primarily with the affected region and required fidelity, not with total project size. Violations must be observable through instrumentation rather than hidden behind faster hardware.",
+    "stages": [
+      "Establish Active World for the interaction/task",
+      "Tag mutation with world and input revision",
+      "Compute Dirty Frontier and invalidation envelope",
+      "Set Dependency Horizon from invariant and latency requirements",
+      "Select minimum Representation LOD required by each task",
+      "Set Consistency Horizon: immediate local versus deferred regional/global",
+      "Find minimum semantic/spatial dependency closure",
+      "Restore direct and local-hard invariants synchronously",
+      "Generate low-cost interactive preview",
+      "Cancel or discard superseded computations",
+      "Expand dirty region only across changed boundary conditions",
+      "Schedule independent CPU tasks across worker threads",
+      "Schedule dense homogeneous field/spatial work on GPU",
+      "Refine geometry and solver results progressively",
+      "Validate regional dependencies",
+      "Check global invariants through hierarchical summaries",
+      "Publish latest mutually coherent revision while retaining explicit currentness for pending results"
+    ],
+    "interaction_representation_contract": {
+      "principle": "Pointer/touch interaction must not wait on whole-world exact geometry, global solvers or unrelated dependencies.",
+      "hot_path": "Use the cheapest representation that preserves local interaction semantics: cached/proxy mesh, coarse field, low-LOD B-Rep result, analytic primitive or other revision-pinned proxy.",
+      "exact_catchup": "Exact B-Rep, hard constraints, regional/global evaluators and higher-fidelity representations may converge asynchronously, subject to commit-critical gates.",
+      "latency_posture": "Target frame-coherent feedback at display cadence and instrument actual pointer-to-preview latency. Reserve pointer/viewport and local hard-invariant work ahead of background GPU/model jobs rather than relying on faster hardware alone.",
+      "degradation": "If exact or regional work is late, show current/pending/stale/failed explicitly; preserve interaction where safe rather than freezing the entire world.",
+      "publication": "Proxy state never self-promotes. Commit uses the authoritative Transform/Transaction path and must satisfy every representation/evaluator declared required-for-commit."
+    }
+  }
+}
