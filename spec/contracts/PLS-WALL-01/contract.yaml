@@ -14,7 +14,24 @@
     "release": "excluded"
   },
   "authorityClass": "typed-boundary",
-  "dependsOn": [],
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-TX-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-GR-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-EVIDENCE-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-REP-01"
+    }
+  ],
   "projection": {
     "id": "parametric-wall",
     "name": "PLS-WALL-01 · Parametric Architectural Walls",
@@ -318,11 +335,5 @@
       "prior_spec": "0.4.26",
       "kernel_change": false
     }
-  },
-  "requires": [
-    "PLS-TX-01",
-    "PLS-GR-01",
-    "PLS-EVIDENCE-01",
-    "PLS-REP-01"
-  ]
+  }
 }
