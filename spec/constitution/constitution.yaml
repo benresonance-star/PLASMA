@@ -1,0 +1,61 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Constitution",
+  "id": "PLS-CONSTITUTION",
+  "version": "1.0.0",
+  "title": "Plasma Constitution",
+  "layer": "L0",
+  "status": {
+    "architecture": "accepted",
+    "specification": "frozen",
+    "implementation": "implemented",
+    "verification": "partial",
+    "release": "excluded"
+  },
+  "kernelPrimitives": [
+    "Entity",
+    "State",
+    "Relation",
+    "Transform",
+    "Invariant",
+    "Event",
+    "Evidence"
+  ],
+  "invariants": [
+    {
+      "id": "CONST-001",
+      "rule": "Canonical world state has one governed authority path."
+    },
+    {
+      "id": "CONST-002",
+      "rule": "A proposal is never authoritative state."
+    },
+    {
+      "id": "CONST-003",
+      "rule": "Derived representations cannot become a second source of truth."
+    },
+    {
+      "id": "CONST-004",
+      "rule": "Stale computation cannot overwrite a newer authoritative revision."
+    },
+    {
+      "id": "CONST-005",
+      "rule": "Failure of a candidate operation cannot corrupt accepted state."
+    },
+    {
+      "id": "CONST-006",
+      "rule": "Evidence retains provenance, applicability and freshness."
+    },
+    {
+      "id": "CONST-007",
+      "rule": "History is preserved through revision-producing events."
+    },
+    {
+      "id": "CONST-008",
+      "rule": "Non-authoritative computation may guide authority but cannot silently become authority."
+    }
+  ],
+  "kernelContractRef": "PLS-KERNEL-01",
+  "kernelContractVersion": "0.1.0",
+  "source": "Migrated from Plasma / Foundry v0.4.29 kernel and authority rules."
+}
