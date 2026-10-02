@@ -1,0 +1,42 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "AtlasMeta",
+  "id": "PLS-ATLAS-META",
+  "version": "1.0.0",
+  "projection": {
+    "id": "PLASMA.SYSTEM_ATLAS",
+    "version": "0.10.0",
+    "title": "Plasma System Atlas",
+    "status": "foundation-evolving",
+    "description": "A machine-readable architecture model projected into multiple interactive Atlas views.",
+    "principles": [
+      "One authoritative architecture model, many projections.",
+      "Proposal is not authority.",
+      "Derived representations never become a second source of truth.",
+      "Relationships are typed contracts, not decorative arrows.",
+      "Evidence state must be explicit; unknown is not treated as verified.",
+      "Every Atlas view is a projection of one typed integration graph.",
+      "Architecture coverage and implementation evidence are tracked separately.",
+      "Integration evidence state is derived from referenced evidence records, never authored independently.",
+      "Repository evidence is bound to source paths and stable test identifiers; CI observations for main determine live verification, failure and staleness.",
+      "Evidence proves specific implementation claims, not general architectural completeness; required evidence gates a relationship, while supporting evidence corroborates it without gating.",
+      "Specification synchronisation records requirements, not implementation proof; PLS-19 / PLS-WALL-01 remains unproven until applicable acceptance evidence exists.",
+      "Differential computation may guide authority, but may never silently become authority.",
+      "Atlas is a generated projection of the canonical Plasma Spec System v1 graph."
+    ],
+    "specification": {
+      "version": "0.4.29",
+      "path": "./plasma-spec.html",
+      "wallContract": "PLS-WALL-01@0.1.0",
+      "wallCapability": "PLS-19",
+      "syncedAt": "2026-10-02",
+      "status": "specified; differential architecture deferred and unimplemented",
+      "differentialRenderingContract": "PLS-DR-01@0.1.0",
+      "differentialRenderingCapability": "PLS-20",
+      "differentialContract": "PLS-DIFF-01@0.1.0",
+      "differentialCapability": "PLS-21",
+      "specSystem": "1.0.0-draft",
+      "sourceMode": "generated-from-spec"
+    }
+  }
+}
