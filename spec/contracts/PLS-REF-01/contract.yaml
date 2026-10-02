@@ -1,0 +1,29 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-REF-01",
+  "legacyProjectionId": "resolve-reference",
+  "version": "1.0.0",
+  "title": "resolveReference()",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "typed-boundary",
+  "dependsOn": [],
+  "projection": {
+    "id": "resolve-reference",
+    "name": "resolveReference()",
+    "from": "consumer",
+    "to": "authority",
+    "input": "SemanticReference + revision",
+    "output": "ResolvedIdentity | ReferenceFailure",
+    "semantics": "Resolve stable semantic identity across revisions and topology changes.",
+    "failure": "Ambiguous, deleted or superseded references return lineage information instead of silently rebinding.",
+    "explanation": "Stable semantic references allow annotations, constraints and operations to survive regeneration."
+  }
+}
