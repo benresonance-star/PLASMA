@@ -1,0 +1,1090 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-13",
+  "version": "0.1.0",
+  "title": "Typed Reasoning Operators + Contextual Lenses",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-05"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-08"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-12"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-13",
+    "phase": "Plasma",
+    "name": "Typed Reasoning Operators + Contextual Lenses",
+    "summary": "Define a small composable set of public, typed reasoning operations that transform evidence, claims, intent, questions, alternatives and evaluations into inspectable epistemic artefacts; allow declared contextual lenses to change which questions and criteria are applied to the same authoritative world object without duplicating that object or creating a second source of truth.",
+    "spec": "partial",
+    "implemented": "partial",
+    "depends": [
+      "PLS-01",
+      "PLS-05",
+      "PLS-08",
+      "PLS-12"
+    ],
+    "gap": "Plasma defines epistemic states, proposals, evidence and deterministic validation more clearly than it defines the reusable reasoning moves connecting them. Without a typed operator layer, reasoning can collapse observation into interpretation, AI workflows can become bespoke prompt chains, perspective-specific questions can be confused with competing world truth, and explanations can degrade into post-hoc prose rather than inspectable provenance.",
+    "next": "Validate the integrated RC-02 bedroom path under a normal browser origin with persisted proposal/commit, then measure physical desktop and iPhone interaction latency and currentness behaviour. After those integration gates, replay RC-01 terrain/driveway and RC-03 planning interpretation against the same retained reasoning-artefact schemas before adding operators.",
+    "flow": "HUMAN / AI ACTOR → DECLARED QUESTION + OPTIONAL REASONING LENS → SELECT / COMPOSE TYPED REASONING OPERATORS → READ EPISTEMIC WORLD + INTENT + RULES + FIELDS / SOLVERS → PRODUCE PUBLIC REASONING ARTEFACTS → PROPOSAL / CLAIM / QUESTION / EVALUATION → PREVIEW → VALIDATE → HUMAN-AUTHORISED COMMIT → WORLD REVISION",
+    "operators": [
+      {
+        "id": "observe",
+        "input": "evidence",
+        "output": "observation",
+        "purpose": "Record what is present or measured without silently adding interpretation."
+      },
+      {
+        "id": "interpret",
+        "input": "observations + context",
+        "output": "interpretation claim",
+        "purpose": "Assign contextual meaning while preserving the observations it depends on."
+      },
+      {
+        "id": "infer",
+        "input": "claims + rules / models",
+        "output": "derived claim",
+        "purpose": "Derive a claim with explicit premises, method and confidence or validity."
+      },
+      {
+        "id": "question",
+        "input": "unknown / ambiguity / contradiction / decision need",
+        "output": "question or information requirement",
+        "purpose": "Make unresolved consequential uncertainty first-class rather than forcing premature closure."
+      },
+      {
+        "id": "propose",
+        "input": "intent + world + question",
+        "output": "candidate ChangeSet / alternative",
+        "purpose": "Create a bounded candidate without mutating authoritative state."
+      },
+      {
+        "id": "challenge",
+        "input": "claim / proposal",
+        "output": "counter-case, failure condition or contested claim",
+        "purpose": "Actively seek disconfirming evidence, violated assumptions and boundary cases."
+      },
+      {
+        "id": "compare",
+        "input": "two or more alternatives / revisions / claims",
+        "output": "material differences",
+        "purpose": "Expose decision-relevant differences under declared criteria rather than flattening them into one score."
+      },
+      {
+        "id": "evaluate",
+        "input": "claim / proposal + criteria",
+        "output": "assessment",
+        "purpose": "Apply deterministic checks, solver outputs, heuristics and/or judgement with provenance."
+      },
+      {
+        "id": "perspective",
+        "input": "world object + reasoning lens",
+        "output": "lens-scoped questions / interpretations / criteria",
+        "purpose": "Interrogate one authoritative object from a declared role, discipline, stakeholder or purpose without cloning truth."
+      },
+      {
+        "id": "test",
+        "input": "claim / hypothesis + method",
+        "output": "evidence / result",
+        "purpose": "Run a deterministic check, solver, experiment, retrieval or measurement whose result can support or challenge a claim."
+      },
+      {
+        "id": "decide",
+        "input": "alternatives + evidence + authority",
+        "output": "decision / commitment",
+        "purpose": "Record an explicit governed choice, its basis and authority without pretending uncertainty disappeared."
+      },
+      {
+        "id": "revise",
+        "input": "existing claim / belief + new evidence",
+        "output": "superseding claim / belief",
+        "purpose": "Change the accepted model while preserving the superseded state and causal lineage."
+      }
+    ],
+    "reasoning_lens_contract": {
+      "required": [
+        "id",
+        "purpose",
+        "scope",
+        "criteria_or_questions",
+        "authority"
+      ],
+      "optional": [
+        "role",
+        "discipline",
+        "stakeholder",
+        "jurisdiction",
+        "governing_version",
+        "decision_stage",
+        "fidelity",
+        "risk_posture"
+      ],
+      "rule": "A lens changes the questions, criteria, weighting or interpretation context applied to an authoritative world object; it does not own alternate geometry or silently override accepted facts."
+    },
+    "reasoning_trace_contract": {
+      "store": [
+        "operator id/version",
+        "declared question",
+        "lens if any",
+        "input claim/evidence/revision refs",
+        "tool/rule/solver refs",
+        "public output artefact",
+        "uncertainty/status",
+        "actor",
+        "timestamp",
+        "supersedes/causes refs where applicable"
+      ],
+      "do_not_require": [
+        "private model chain-of-thought",
+        "free-form hidden scratchpad",
+        "post-hoc causal prose presented as provenance"
+      ],
+      "principle": "Plasma stores inspectable reasoning products and typed transitions sufficient for audit, explanation and replay; it does not depend on exposing or preserving a model's private internal reasoning process."
+    },
+    "reasoning_validation_harness": {
+      "purpose": "Test whether the proposed reasoning operators are genuinely reusable architecture rather than renamed domain workflow steps or AI-prompt conventions.",
+      "fixture_rule": "Fixtures are synthetic and versioned. Their numerical values are test data, not regulatory or professional advice. Each replay pins world revision, claim/evidence ids, rule/tool versions, lens version and expected trace assertions.",
+      "public_artifact_minimum": [
+        "artifact id + type",
+        "operator id/version",
+        "declared question or intent ref",
+        "input evidence/claim/world-revision refs",
+        "reasoning lens ref when used",
+        "rule/tool/solver/method refs when used",
+        "output claim/question/proposal/evaluation/decision ref",
+        "status + uncertainty/validity where applicable",
+        "actor + authority",
+        "causes/supersedes refs",
+        "timestamp + replay correlation id"
+      ],
+      "anti_cheating_invariants": [
+        "Narrative prose alone never satisfies an operator assertion.",
+        "No inferred or interpreted value may overwrite its source observation or masquerade as measured fact.",
+        "A lens may alter questions, criteria or weighting but may not silently alter authoritative geometry, facts, rules or authority.",
+        "A deterministic check must cite the exact inputs and rule/tool/solver version that produced the result.",
+        "A decision must identify the actor/authority that committed it; AI recommendation alone is not commitment unless explicitly authorized by policy.",
+        "A revised belief supersedes rather than deletes the prior belief and preserves the evidence that caused the change.",
+        "The harness must be able to replay a trace without access to private model chain-of-thought."
+      ],
+      "operator_retention_gate": {
+        "default_rule": "Retain an operator as a Plasma primitive only when the same input/output semantics recur in at least two materially different validation cases without domain-specific meaning leaking into the operator contract.",
+        "exception_rule": "A one-case operator may remain only when it protects a demonstrated epistemic or governance boundary that cannot be safely represented by composition of retained operators; the exception requires an ADR and red-team case.",
+        "merge_rule": "If two operators repeatedly produce the same typed transition and differ only by prompt wording, merge them.",
+        "split_rule": "If one operator requires incompatible input/output semantics across cases, split the domain-specific behaviour into a capability/lens before splitting the primitive.",
+        "failure_rule": "If the three cases require bespoke orchestration with little reusable operator semantics, remove PLS-13 as a primitive layer and retain only reasoning traces over ordinary typed events."
+      },
+      "cross_case_assertions": [
+        "Observation remains distinct from interpretation in terrain and planning cases.",
+        "Proposal remains distinct from committed world state in terrain and bedroom cases.",
+        "Test/evaluate cite deterministic machinery in terrain and bedroom cases and source/applicability machinery in planning.",
+        "Question can remain unresolved and drive value-of-information rather than being forced into a conclusion.",
+        "Decide records authority and basis in all three cases.",
+        "Revise preserves supersession lineage when new survey evidence, a changed design decision or a clarified planning interpretation arrives.",
+        "Perspective/lens changes interrogation context without cloning the underlying object or rule set."
+      ],
+      "minimum_metrics": [
+        "trace completeness: required public-artifact fields populated",
+        "provenance resolution: every material claim resolves to evidence/world/tool/rule refs",
+        "semantic stability: same operator schema validates across cases",
+        "unresolved-state honesty: consequential unknowns remain explicit",
+        "decision authority correctness",
+        "replay determinism for deterministic substeps",
+        "supersession integrity",
+        "operator count after consolidation"
+      ]
+    },
+    "validation_cases": [
+      {
+        "id": "RC-01-terrain-driveway",
+        "name": "Uncertain crossover RL → robust or fragile driveway decision",
+        "objective": "Prove that Plasma can keep measured evidence, correspondence interpretation, bounded inference, deterministic grade testing, robustness classification, value-of-information and design commitment separate while still producing a concise actionable result.",
+        "fixture": {
+          "type": "synthetic-terrain-driveway-v1",
+          "world": "24 m × 36 m site with source terrain, proposed pad and driveway alignment",
+          "evidence": [
+            {
+              "id": "ev-survey-rl-a",
+              "kind": "survey annotation",
+              "value": "31.42 m",
+              "uncertainty": "±0.05 m",
+              "status": "observed",
+              "note": "test fixture only"
+            },
+            {
+              "id": "ev-crossover-symbol-a",
+              "kind": "survey graphic",
+              "status": "observed",
+              "note": "symbol correspondence is intentionally ambiguous"
+            }
+          ],
+          "intent": "Reach proposed pad while minimizing earthworks and satisfying the pinned synthetic driveway-grade rule.",
+          "synthetic_rule": "DRV-GRADE-FIXTURE@1: maximum test grade 16%; fixture only, not a jurisdictional claim."
+        },
+        "lenses": [
+          "civil/site design",
+          "access/vehicle movement",
+          "constructability/value-of-information"
+        ],
+        "required_operator_trace": [
+          {
+            "op": "observe",
+            "assert": "31.42 m and ±0.05 m are stored as evidence-bearing observation, not accepted crossover design level."
+          },
+          {
+            "op": "interpret",
+            "assert": "Create a separate correspondence claim that the annotation refers to the crossover control point; preserve ambiguity and source refs."
+          },
+          {
+            "op": "question",
+            "assert": "Emit a material question if correspondence or RL uncertainty can change grade classification."
+          },
+          {
+            "op": "infer",
+            "assert": "Create a bounded crossover design-level claim from the observation + correspondence interpretation; do not mutate the observation."
+          },
+          {
+            "op": "propose",
+            "assert": "Generate at least one bounded pad/driveway candidate ChangeSet without committing it."
+          },
+          {
+            "op": "test",
+            "assert": "Run pinned grade calculation across the relevant uncertainty interval and cite geometry/world revision + DRV-GRADE-FIXTURE@1."
+          },
+          {
+            "op": "evaluate",
+            "assert": "Classify robust-pass / fragile-pass / indeterminate / fail from the interval result, not a single nominal number."
+          },
+          {
+            "op": "challenge",
+            "assert": "Evaluate the boundary case most likely to reverse the classification and expose any hidden assumption."
+          },
+          {
+            "op": "question",
+            "assert": "Rank the next survey fact when it materially reduces consequential uncertainty."
+          },
+          {
+            "op": "compare",
+            "assert": "Compare freeze-now versus obtain-survey-first and any feasible geometric alternative on material criteria."
+          },
+          {
+            "op": "decide",
+            "assert": "Record whether geometry may be frozen, with human/policy authority and unresolved assumptions."
+          },
+          {
+            "op": "revise",
+            "assert": "When a replacement surveyed RL is injected, supersede the inferred claim and re-evaluate only the affected dependency region."
+          }
+        ],
+        "perturbations": [
+          "Shift the observed RL within its uncertainty band without changing the source artifact id.",
+          "Resolve the correspondence ambiguity to a different nearby survey symbol.",
+          "Inject a new authoritative surveyed crossover RL that contradicts the inferred value.",
+          "Change pad level enough to cross the synthetic grade limit.",
+          "Mark the grade result stale by changing the driveway geometry after calculation."
+        ],
+        "acceptance_tests": [
+          "The trace can identify exactly which evidence, interpretation and uncertainty make the result robust, fragile, indeterminate or failed.",
+          "A nominal compliant grade with an uncertainty interval crossing the limit cannot be reported as robust-pass.",
+          "Obtaining a new authoritative RL revises downstream claims without rewriting historical observations.",
+          "The value-of-information question points to a targeted missing fact rather than requesting a generic full resurvey.",
+          "Stale deterministic results cannot support a final decision."
+        ],
+        "forbidden": [
+          "Treat 31.42 m as unquestioned accepted truth.",
+          "Return only a prose explanation of grade compliance.",
+          "Freeze geometry because the nominal value passes while the uncertainty interval crosses the limit.",
+          "Recompute unrelated world regions merely because one RL changed."
+        ],
+        "pass_evidence": "Replay bundle containing fixture, trace artifacts, pinned rule/tool versions, expected robustness classifications, dependency invalidation scope and supersession check."
+      },
+      {
+        "id": "RC-02-bedroom-move",
+        "name": "500 mm bedroom move → constrained alternatives without generic parametric failure",
+        "objective": "Prove that one direct manipulation can remain fluid while Plasma explains coupled consequences, distinguishes hard/soft/negotiable constraints, offers feasible alternatives and preserves human authority to break or revise intent.",
+        "fixture": {
+          "type": "synthetic-townhouse-bedroom-move-v1",
+          "request": "Move bedroom boundary 500 mm toward corridor.",
+          "initial_state": "Synthetic geometry is arranged so a pinned 1000 mm corridor hard-minimum fixture allows 315 mm before conflict; values are test data only.",
+          "relationships": [
+            "bedroom bounded-by wall W-BR-04",
+            "corridor C04 adjacent to W-BR-04",
+            "window W12 associated with bedroom",
+            "daylight target soft",
+            "structural alignment preference soft"
+          ],
+          "constraint_classes": [
+            "hard",
+            "soft",
+            "negotiable/override-with-authority"
+          ],
+          "synthetic_rule": "CORRIDOR-MIN-FIXTURE@1 = 1000 mm hard minimum for this test only."
+        },
+        "lenses": [
+          "spatial planning",
+          "access/circulation",
+          "daylight",
+          "structure",
+          "resident usability"
+        ],
+        "runtime_contract": {
+          "principle": "The gesture is free to explore beyond a constraint inside a speculative branch; hard-invalid state may be displayed and reasoned about but cannot be promoted to a coherent authoritative revision until the conflict is resolved or the governing constraint is changed through an authorized separate decision.",
+          "synthetic_geometry": {
+            "base_world_revision": "world:R0",
+            "bedroom": "BR01",
+            "moved_boundary": "W-BR-04",
+            "corridor": "C04",
+            "opposite_corridor_boundary": "W-C04-OPP",
+            "associated_window": "W12",
+            "initial_corridor_clear_width_mm": 1315,
+            "requested_move_mm": 500,
+            "hard_minimum_mm": 1000,
+            "single_boundary_feasible_move_mm": 315,
+            "requested_preview_corridor_width_mm": 815,
+            "requested_preview_deficit_mm": 185,
+            "note": "All dimensions in this block are synthetic fixture data only."
+          },
+          "data_objects": [
+            {
+              "type": "EditSession",
+              "purpose": "Own one continuous human or AI edit attempt without mutating the authoritative head during gesture updates.",
+              "required": [
+                "session_id",
+                "actor_ref",
+                "authority_profile_ref",
+                "base_world_revision",
+                "selection_refs",
+                "coordinate_frame",
+                "units",
+                "gesture_or_request_id",
+                "started_at",
+                "sequence",
+                "interaction_budget_profile"
+              ],
+              "invariants": [
+                "base_world_revision is immutable for the session",
+                "sequence increases monotonically",
+                "a newer sequence supersedes older async work",
+                "human and AI sessions use the same mutation/validation contract"
+              ]
+            },
+            {
+              "type": "EditIntent",
+              "purpose": "Represent what the actor is trying to do independently of whether the current world permits it.",
+              "required": [
+                "intent_id",
+                "session_id",
+                "operation",
+                "target_refs",
+                "requested_delta",
+                "reference_axis_or_frame",
+                "source",
+                "status"
+              ],
+              "example": "move W-BR-04 +500 mm toward C04",
+              "rule": "Intent is never silently rewritten to +315 mm merely because that is the current feasible boundary."
+            },
+            {
+              "type": "SpeculativeRevision",
+              "purpose": "Materialize lightweight candidate geometry/semantic state for preview while preserving the committed head.",
+              "required": [
+                "candidate_revision",
+                "base_world_revision",
+                "session_id",
+                "sequence",
+                "mutations",
+                "representation_lod",
+                "currentness",
+                "validation_summary"
+              ],
+              "statuses": [
+                "preview-current",
+                "preview-pending",
+                "preview-conflicted",
+                "superseded"
+              ],
+              "rule": "A conflicted speculative revision remains inspectable; it is not equivalent to an accepted world revision."
+            },
+            {
+              "type": "DirtyFrontier",
+              "purpose": "Bound immediate recomputation to the semantic/spatial region that can materially change because of the candidate.",
+              "required": [
+                "changed_refs",
+                "direct_dependents",
+                "spatial_envelope",
+                "dependency_horizon",
+                "boundary_summaries",
+                "deferred_dependents"
+              ],
+              "rc02_seed": [
+                "W-BR-04",
+                "BR01",
+                "C04",
+                "W12",
+                "local daylight relation",
+                "local structural-alignment relation"
+              ],
+              "rule": "Unrelated corridor or project regions stay cold unless a changed boundary summary propagates into them."
+            },
+            {
+              "type": "ConstraintBinding",
+              "purpose": "Bind an authoritative or declared constraint to the exact objects, source and authority that make it applicable.",
+              "required": [
+                "binding_id",
+                "constraint_ref",
+                "class",
+                "subject_refs",
+                "source_ref",
+                "authority",
+                "validity",
+                "latency_class",
+                "override_policy"
+              ],
+              "classes": [
+                "hard",
+                "soft",
+                "negotiable"
+              ],
+              "rule": "Class is explicit; soft preferences cannot become hidden hard stops."
+            },
+            {
+              "type": "ConstraintEvaluation",
+              "purpose": "Record the deterministic result of testing one candidate against one bound constraint.",
+              "required": [
+                "evaluation_id",
+                "candidate_revision",
+                "binding_ref",
+                "tool_or_rule_version",
+                "input_refs",
+                "measured_value",
+                "required_or_target_value",
+                "result",
+                "margin",
+                "currentness",
+                "computed_at"
+              ],
+              "results": [
+                "pass",
+                "fail",
+                "fragile",
+                "indeterminate",
+                "pending"
+              ],
+              "rc02_example": "C04 clear width = 815 mm versus synthetic hard minimum 1000 mm; fail; margin = -185 mm."
+            },
+            {
+              "type": "LensInvocation",
+              "purpose": "Record which contextual lens was materially relevant and why it was invoked.",
+              "required": [
+                "invocation_id",
+                "lens_ref",
+                "question_ref",
+                "subject_refs",
+                "trigger_refs",
+                "criteria_refs",
+                "authority",
+                "status"
+              ],
+              "rule": "Do not invoke every discipline on every pointer event; materiality/dependency evidence controls lens activation."
+            },
+            {
+              "type": "AlternativeSet",
+              "purpose": "Expose feasible or decision-worthy responses to a conflict without collapsing unlike criteria into one score.",
+              "required": [
+                "set_id",
+                "candidate_revision",
+                "limiting_evaluation_refs",
+                "alternatives",
+                "generated_by",
+                "currentness"
+              ],
+              "rc02_alternatives": [
+                "A: move W-BR-04 +315 mm only; corridor reaches exactly 1000 mm in the synthetic fixture.",
+                "B: retain requested +500 mm and move W-C04-OPP at least 185 mm away, then expand the dirty frontier and revalidate its consequences.",
+                "C: retain the +500 mm conflicted preview as an exploratory branch without publishing it.",
+                "D: abandon/reduce the move. A change to CORRIDOR-MIN-FIXTURE is a separate authority-governed rule decision, not an edit-side escape hatch."
+              ]
+            },
+            {
+              "type": "DecisionRecord",
+              "purpose": "Capture the governed human/policy choice among valid alternatives and the evidence/authority used.",
+              "required": [
+                "decision_id",
+                "actor_ref",
+                "authority_profile_ref",
+                "selected_alternative_ref",
+                "basis_refs",
+                "rejected_alternative_refs",
+                "timestamp",
+                "status"
+              ],
+              "rule": "AI may propose or explain an alternative but cannot manufacture the authority needed to promote it."
+            },
+            {
+              "type": "CurrentnessSnapshot",
+              "purpose": "Expose which immediate and deferred results are valid against the current candidate/world revision.",
+              "required": [
+                "revision_ref",
+                "local_hard",
+                "local_soft",
+                "regional",
+                "global",
+                "pending_task_refs",
+                "stale_task_refs"
+              ],
+              "statuses": [
+                "current",
+                "updating",
+                "pending",
+                "stale",
+                "conflicted",
+                "not-applicable"
+              ]
+            },
+            {
+              "type": "CommittedRevision",
+              "purpose": "Promote only an authority-approved, commit-valid ChangeSet into immutable world history.",
+              "required": [
+                "world_revision",
+                "parent_revision",
+                "changeset_ref",
+                "decision_ref",
+                "validated_invariants",
+                "producer_versions",
+                "event_range",
+                "created_at"
+              ],
+              "rule": "Undo/reopen creates a new lineage event or branch operation; it never erases R0/R1 history."
+            }
+          ],
+          "interaction_trace": [
+            {
+              "step": 1,
+              "event": "select",
+              "user_experience": "Select bedroom boundary W-BR-04. Plasma shows the bedroom/corridor relationship and concise drivers/dependents; deeper reasoning stays collapsed.",
+              "runtime": "Resolve stable object identity, editable operation affordances and the smallest likely active world."
+            },
+            {
+              "step": 2,
+              "event": "pointer-down / begin edit",
+              "user_experience": "The move handle engages immediately; no reasoning modal interrupts the gesture.",
+              "runtime": "Open EditSession against world:R0; pin coordinate frame/units and capture the accepted base revision."
+            },
+            {
+              "step": 3,
+              "event": "drag within feasible range",
+              "user_experience": "At +250 mm the wall/room/corridor preview follows the pointer and the local hard check remains valid.",
+              "runtime": "Create/update SpeculativeRevision; recompute only DirtyFrontier; deterministic local-hard evaluation gets priority over soft/regional work."
+            },
+            {
+              "step": 4,
+              "event": "cross hard boundary",
+              "user_experience": "At +315 mm a visible constraint boundary appears. The pointer is not forcibly clamped. Continuing to +500 mm shows a conflicted ghost preview, the corridor at 815 mm, the 1000 mm fixture minimum and the 185 mm deficit.",
+              "runtime": "Candidate becomes preview-conflicted; authoritative R0 remains unchanged. The exact ConstraintEvaluation and limiting binding are attached to the preview."
+            },
+            {
+              "step": 5,
+              "event": "continue gesture",
+              "user_experience": "The user can explore beyond the limit; soft/advisory consequences appear progressively rather than freezing interaction.",
+              "runtime": "Cancel/discard superseded sequence work; local-hard stays synchronous-by-policy, material local-soft work may update opportunistically, regional/global checks remain revision-tagged background tasks."
+            },
+            {
+              "step": 6,
+              "event": "pointer-up at +500 mm",
+              "user_experience": "The 500 mm preview remains visible. Plasma states why it cannot publish and offers typed alternatives rather than 'constraint failed'.",
+              "runtime": "Freeze the final gesture candidate long enough to generate AlternativeSet from the limiting evaluation, authoritative geometry and available move capabilities. AI may add ranked suggestions only through the same AlternativeSet/ReasoningTrace contract."
+            },
+            {
+              "step": 7,
+              "event": "choose alternative A",
+              "user_experience": "Choosing 'Move 315 mm' updates the preview to the exact feasible boundary; hard conflict clears.",
+              "runtime": "Create a new candidate ChangeSet at +315 mm; rerun commit-required local invariants; preserve the original +500 mm EditIntent and rejected candidate in trace lineage."
+            },
+            {
+              "step": 8,
+              "event": "choose alternative B instead",
+              "user_experience": "Choosing 'keep 500 mm and move opposite corridor boundary' previews both boundaries and makes any new adjacent-space consequences visible.",
+              "runtime": "Compose a two-mutation ChangeSet, expand DirtyFrontier through W-C04-OPP and re-evaluate before commit. No assumption is made that the coupled alternative is valid."
+            },
+            {
+              "step": 9,
+              "event": "commit",
+              "user_experience": "Commit is available only when configured hard commit invariants are current and passing; pending non-blocking analyses remain visibly pending/updating after commit where policy permits.",
+              "runtime": "DecisionRecord + authority check promote the selected valid ChangeSet to world:R1. Background derived results retain revision/currentness metadata and stale results cannot overwrite R1."
+            },
+            {
+              "step": 10,
+              "event": "explain / inspect",
+              "user_experience": "On demand Plasma can answer: requested 500 mm; limiting corridor rule; exact 315 mm single-wall boundary; selected alternative; affected objects; which checks are current/pending; who committed it and why.",
+              "runtime": "Reconstruct explanation from public typed artefacts, not model chain-of-thought."
+            }
+          ],
+          "ui_contract": {
+            "during_drag": [
+              "preserve direct pointer/viewport feedback ahead of reasoning UI",
+              "show requested delta continuously",
+              "show a visible hard-boundary marker when crossed",
+              "allow conflicted ghost preview beyond the boundary rather than automatically clamping",
+              "show the smallest useful inline conflict card: object, measured value, requirement, deficit and source/why affordance",
+              "keep soft/advisory statuses visually distinct from hard commit blockers",
+              "show current/updating/pending/stale state where a result is not yet current"
+            ],
+            "after_release": [
+              "retain the requested candidate so intent is not lost",
+              "present feasible/coupled/abandon alternatives with explicit mutations and consequences",
+              "do not rank hard compliance against design quality as one opaque scalar",
+              "allow a user to inspect drivers/dependents and the exact reasoning trace on demand",
+              "permit 'keep as conflicted branch/preview' for exploration while preventing authoritative publication"
+            ],
+            "progressive_disclosure": "The default surface stays architectural: geometry, dimension, conflict boundary and alternatives. Rule provenance, lens invocations, traces and task telemetry expand only when requested or materially ambiguous."
+          },
+          "scheduler_contract": {
+            "pointer_loop": "No LLM/model call is required or permitted as a dependency of per-pointer-update responsiveness. Pointer/viewport feedback and speculative geometry are first priority.",
+            "local_hard": "Evaluate commit-critical local hard constraints against the newest candidate sequence synchronously-by-policy or with a bounded deterministic worker path; if not current, mark pending and disable authoritative commit rather than guessing.",
+            "local_soft": "Run only material soft/negotiable checks; they may trail the pointer and converge after release with explicit currentness.",
+            "regional_global": "Schedule only after boundary summaries indicate material propagation or after release/commit policy requires them.",
+            "ai_reasoning": "AI may be invoked at conflict, pointer-up, idle, explicit ask or alternative-generation stage. It consumes typed world/evaluation state and emits proposals/questions/explanations; it does not own geometry truth or commit authority.",
+            "stale_work": "Every task is tagged with session_id, sequence, candidate/world revision and producer version. Older results are cancelled where possible or discarded when they return.",
+            "measurement": "Benchmarks must separately report pointer feedback, local-hard currentness latency, alternative-ready latency, commit-ready latency and regional/global convergence; do not hide them inside one average."
+          },
+          "authority_contract": {
+            "standard_edit_authority": [
+              "create speculative geometry",
+              "cross constraints in preview",
+              "select a valid alternative",
+              "commit when configured hard commit invariants pass"
+            ],
+            "not_implied": [
+              "downgrade/reclassify a hard rule",
+              "edit the source of CORRIDOR-MIN-FIXTURE",
+              "accept a hard-invalid candidate into a coherent published revision",
+              "allow an AI suggestion to self-promote"
+            ],
+            "rule_change": "Changing a governing hard constraint is a separate proposal/decision with its own authority, provenance and affected-world revalidation."
+          },
+          "typescript_event_api": {
+            "contract_id": "PLS-EDIT-API-01",
+            "contract_version": "0.1.0",
+            "status": "implemented-prototype-with-local-supporting-evidence",
+            "artifact": "plasma-rc02-edit-runtime-contracts-v0.1.ts",
+            "implementation_artifact": "plasma-rc02-edit-runtime-v0.1.ts",
+            "test_artifact": "plasma-rc02-edit-runtime-v0.1.test.cjs",
+            "evidence_artifact": "plasma-rc02-runtime-evidence-v0.1.json",
+            "artifact_role": "Portable contract plus executable RC-02 reducer/store prototype. Local compile/tests support the implementation claim but do not constitute independently verified deployment proof.",
+            "schema_family": {
+              "runtime_object_schema": "plasma-edit-runtime/0.1.0",
+              "event_envelope": "plasma-event/1.0.0",
+              "reasoning_trace": "plasma-reasoning-trace/0.1.0",
+              "fixture": "plasma-fixture/rc02-bedroom-move/1.0.0",
+              "objects": [
+                "EditSession",
+                "EditIntent",
+                "SpeculativeRevision",
+                "DirtyFrontier",
+                "ConstraintBinding",
+                "ConstraintEvaluation",
+                "LensInvocation",
+                "AlternativeSet",
+                "DecisionRecord",
+                "CurrentnessSnapshot",
+                "CommittedRevision"
+              ],
+              "validation_rule": "Structural schema validation and semantic invariant validation are separate. A structurally valid event cannot bypass commit, authority, currentness or dependency invariants."
+            },
+            "event_envelope_contract": {
+              "required": [
+                "schema",
+                "contract",
+                "eventId",
+                "type",
+                "eventVersion",
+                "occurredAt",
+                "actorRef",
+                "correlationId",
+                "producer",
+                "payload"
+              ],
+              "conditional": [
+                "causationId",
+                "commandId",
+                "sessionId",
+                "sequence",
+                "baseWorldRevision",
+                "candidateRevision"
+              ],
+              "invariants": [
+                "Every durable event has immutable identity and producer/version.",
+                "Events caused by one edit share correlationId; causal descendants carry causationId where known.",
+                "Candidate-scoped async results carry sessionId + candidateRevision + sequence so stale work can be rejected deterministically.",
+                "The event envelope records public state transitions and evidence; it never contains private model chain-of-thought."
+              ]
+            },
+            "commands": [
+              {
+                "type": "edit.start-session",
+                "purpose": "Open an immutable-base edit session with actor, authority, selection, frame and latency budget."
+              },
+              {
+                "type": "edit.update-intent",
+                "purpose": "Apply a new pointer/exact-input intent sample with monotonic sequence and expected base revision."
+              },
+              {
+                "type": "edit.release-gesture",
+                "purpose": "End continuous gesture input without implying commit."
+              },
+              {
+                "type": "edit.request-alternatives",
+                "purpose": "Request deterministic-first, deterministic-only or AI-allowed alternatives against an exact candidate revision."
+              },
+              {
+                "type": "edit.select-alternative",
+                "purpose": "Materialize a selected alternative as another candidate that must validate independently."
+              },
+              {
+                "type": "edit.request-commit",
+                "purpose": "Attempt compare-and-swap promotion of the exact latest candidate through authority/currentness/hard-invariant gates."
+              },
+              {
+                "type": "edit.abandon",
+                "purpose": "Close the edit without changing authoritative world state."
+              },
+              {
+                "type": "constraint.request-revision",
+                "purpose": "Open a distinct authority-gated request to change a governing constraint; never smuggle rule editing through geometry commit."
+              }
+            ],
+            "events": [
+              "edit.session.started",
+              "edit.intent.updated",
+              "edit.candidate.updated",
+              "edit.candidate.superseded",
+              "edit.dirty-frontier.computed",
+              "constraint.evaluated",
+              "constraint.result.discarded",
+              "lens.invoked",
+              "alternatives.generated",
+              "edit.gesture.released",
+              "decision.recorded",
+              "edit.commit.rejected",
+              "world.revision.committed",
+              "edit.session.abandoned",
+              "edit.session.closed"
+            ],
+            "runtime_api": {
+              "hot_path": "startSession + applyPointerIntent. applyPointerIntent returns immediate SpeculativeRevision + DirtyFrontier + hard-gate state and emitted events; it must not depend on an LLM/model call.",
+              "control_path": "releaseGesture, requestAlternatives, selectAlternative, requestCommit, abandon and requestConstraintRevision operate against exact candidate/world revisions and may schedule workers/tools/AI according to policy.",
+              "async_ingest": "ingestAsyncEvent accepts a result only if session, candidate, sequence, world inputs and producer validity still match; otherwise emit/record a discard reason rather than mutating current state.",
+              "query": "getSessionSnapshot exposes the public session/intent/candidate/frontier/evaluations/alternatives/currentness needed by UI and EXPLAIN without reconstructing state from prose."
+            },
+            "commit_gate": [
+              "actor authority permits standard edit commit",
+              "expected base world revision equals the current authoritative head",
+              "candidate base revision matches the edit-session base",
+              "candidate sequence equals the latest session sequence",
+              "candidate is not superseded",
+              "every commit-critical hard evaluation belongs to the exact candidate/sequence, is current and passes",
+              "no commit-critical hard evaluation remains pending",
+              "soft issues remain warnings unless a separately declared policy elevates them",
+              "negotiable issues require explicit decision/authority treatment rather than hidden promotion to hard",
+              "successful commit records exact decision, mutation and coherent-cut lineage"
+            ],
+            "idempotency_concurrency": [
+              "commandId is an idempotency key; duplicate delivery cannot apply additive geometry twice",
+              "session sequence is monotonic; sequence N results cannot become current for sequence N+1",
+              "request-commit uses expectedWorldHeadRevision + expectedCandidateRevision compare-and-swap semantics",
+              "new pointer samples supersede prior speculative work; cancellable tasks are cancelled, non-cancellable late results are discarded",
+              "rule/tool/producer version changes invalidate dependent evaluations rather than silently reusing them"
+            ],
+            "runtime_prototype_evidence": {
+              "implementation": "plasma-rc02-edit-runtime/0.1.0",
+              "state_model": "Pure reduceEditRuntimeState(state,event) + append-only InMemoryEditEventStore; UI/query state is reconstructed from public events rather than component-local authority.",
+              "hot_path": "applyPointerIntent preserves exact requested delta, emits speculative candidate + DirtyFrontier + current hard evaluation synchronously, and contains no LLM/model dependency.",
+              "control_path": "releaseGesture generates deterministic alternatives; selectAlternative creates a new candidate; requestCommit enforces authority/currentness/hard evaluation + world-head/candidate CAS; constraint revision remains separate governance.",
+              "async_rule": "ingestAsyncEvent accepts only the current session/candidate/sequence/world lineage; wrong-candidate/stale work emits constraint.result.discarded and cannot overwrite current state.",
+              "idempotency": "Command-cache keys are scoped by session for session commands; duplicate delivery within a session returns the prior result without appending/reapplying events.",
+              "replay": "The executable test suite rebuilds committed state from the event log using only the pure reducer and checks world head, event count, session status and candidate identity.",
+              "local_evidence": {
+                "typescript": "5.8.3 strict compile pass",
+                "node": "22.16.0",
+                "tests": "12/12 pass",
+                "evidence_status": "supporting-unverified"
+              },
+              "open_gates": [
+                "browser + iPhone pointer/local-hard/alternative/commit latency measurement",
+                "persistent transactional event store and restart replay",
+                "WebWorker/worker-pool scheduling and cancellation",
+                "real geometry/OCCT adapter rather than synthetic scalar corridor evaluation",
+                "multi-user transport, permissions and concurrent edit reconciliation",
+                "independently authenticated evidence collector and release-bundle proof",
+                "reuse pressure-test through RC-01 terrain and RC-03 planning before freezing the generic contract"
+              ]
+            },
+            "rc02_acceptance_assertions": [
+              "+500 mm requested intent remains +500 mm after crossing the hard boundary and is never silently rewritten to +315 mm",
+              "+500 mm preview deterministically yields C04 = 815 mm and margin = -185 mm under the pinned fixture",
+              "exact single-boundary feasible move is +315 mm",
+              "+500 mm with +185 mm opposite-boundary recovery is only a candidate alternative and must validate independently",
+              "stale sequence N evaluations cannot enable sequence N+1 commit",
+              "duplicate command delivery is idempotent",
+              "pointer hot path remains usable when AI/model services are unavailable",
+              "soft/negotiable issues remain explicit without becoming hidden hard stops",
+              "commit fails cleanly when world head changes underneath the session",
+              "hard-rule revision follows its own authority-gated command/event path"
+            ]
+          },
+          "implementation_slice": [
+            "Adopt plasma-rc02-edit-runtime-contracts-v0.1.ts as the first implementation contract; generate or hand-maintain equivalent runtime validators and fixtures without changing its public semantics.",
+            "Wire direct wall translation to EditSession + SpeculativeRevision rather than special-case component state.",
+            "Implement the synthetic corridor-width evaluator as a deterministic fixture rule with exact boundary calculation.",
+            "Implement non-clamping conflict crossing and a visible 315 mm boundary marker.",
+            "Generate Alternative A deterministically; Alternative B through a general coupled-move capability that must itself validate.",
+            "Record ReasoningTrace links from intent → candidate → limiting evaluation → alternatives → decision → committed revision.",
+            "Instrument currentness and stale-result rejection before adding model-generated suggestions.",
+            "Only after this passes should AI be added to explain or compose additional alternatives."
+          ]
+        },
+        "required_operator_trace": [
+          {
+            "op": "propose",
+            "assert": "Create a 500 mm candidate move as a preview/ChangeSet, preserving the current committed revision."
+          },
+          {
+            "op": "compare",
+            "assert": "Calculate the affected semantic/spatial delta between current and candidate revisions before broad propagation."
+          },
+          {
+            "op": "perspective",
+            "assert": "Invoke only material lenses from dependency/context evidence; do not clone the bedroom/wall per discipline."
+          },
+          {
+            "op": "test",
+            "assert": "Evaluate pinned corridor hard-minimum plus affected soft/negotiable checks against the candidate revision."
+          },
+          {
+            "op": "challenge",
+            "assert": "Find the first limiting condition and verify it at the exact boundary rather than merely rejecting the requested move."
+          },
+          {
+            "op": "infer",
+            "assert": "Derive the maximum currently feasible move from authoritative geometry + pinned constraint, with method refs."
+          },
+          {
+            "op": "evaluate",
+            "assert": "Classify the 500 mm request, 315 mm constrained alternative and any opposite-boundary or constraint-revision alternatives separately."
+          },
+          {
+            "op": "question",
+            "assert": "If a soft/negotiable constraint blocks a preferred solution, surface the actual human decision required rather than assuming it is immutable."
+          },
+          {
+            "op": "compare",
+            "assert": "Present material alternatives without flattening hard compliance, soft design quality and cost into one opaque score."
+          },
+          {
+            "op": "decide",
+            "assert": "Human/authorized policy may commit 315 mm, modify another boundary, revise a negotiable constraint or abandon the move."
+          },
+          {
+            "op": "revise",
+            "assert": "A changed intent/constraint supersedes the previous intent/constraint and causes bounded re-evaluation."
+          }
+        ],
+        "perturbations": [
+          "Change requested move from 500 mm to 250 mm.",
+          "Reclassify one soft preference as hard and replay.",
+          "Allow the opposite corridor boundary to move and generate a new alternative.",
+          "Break the bedroom-window association intentionally and require an explicit relationship change.",
+          "Change corridor geometry elsewhere without touching C04 and confirm locality."
+        ],
+        "acceptance_tests": [
+          "Plasma can state why the full move is blocked, identify the exact limiting constraint and produce the maximum feasible move from pinned geometry/rules.",
+          "Hard, soft and negotiable constraints remain visibly distinct in both evaluation and alternatives.",
+          "A user can explicitly revise/break a negotiable relationship; Plasma does not silently preserve it forever or silently discard it.",
+          "Only materially affected lenses/checks run synchronously inside the interaction budget; broader checks may converge asynchronously with currentness labels.",
+          "The explanation resolves to public artifacts and deterministic checks, not a post-hoc LLM story.",
+          "Dragging past 315 mm does not silently clamp the requested 500 mm intent; it preserves a conflicted speculative preview while preventing invalid publication.",
+          "The pointer-update path remains functional with AI/model services unavailable; AI assistance is additive after conflict/release rather than a real-time dependency.",
+          "Alternative A reproduces the exact 315 mm boundary; Alternative B expands the dirty frontier and is independently validated rather than assumed feasible."
+        ],
+        "forbidden": [
+          "Generic 'constraint failed' with no feasible boundary or alternatives.",
+          "Treat every dependency as immediately global and block direct manipulation on full-world recomputation.",
+          "Turn soft design preferences into hidden hard constraints.",
+          "Let an AI recommendation commit geometry without the configured authority transition.",
+          "Hard-clamp every constrained drag so the user cannot explore the requested state or understand what blocks it.",
+          "Put an LLM/model call inside the pointer-update dependency path.",
+          "Discard the requested 500 mm intent when presenting the 315 mm feasible alternative."
+        ],
+        "pass_evidence": "Replay bundle with before/candidate revisions, dirty region, constraint evaluations, alternative ChangeSets, decision record, lens invocations, latency/currentness telemetry and supersession test."
+      },
+      {
+        "id": "RC-03-planning-interpretation",
+        "name": "Ambiguous planning text → provisional interpretation with bounded precedent",
+        "objective": "Prove that statutory/source observation, contextual interpretation, inference, precedent, ambiguity, authority and later revision remain distinct, so AI can assist planning reasoning without turning precedent or fluent interpretation into governing truth.",
+        "fixture": {
+          "type": "synthetic-planning-interpretation-v1",
+          "governing_source": "RULE-P-07@1 synthetic clause with an intentionally ambiguous applicability phrase.",
+          "site_facts": [
+            "zone Z-test",
+            "corner condition false",
+            "lot width 14.8 m",
+            "proposed upper-storey element intersects a defined test envelope"
+          ],
+          "historical_cases": [
+            "CASE-A: close contextual match supporting interpretation A",
+            "CASE-B: superficially similar but different governing-version/context supporting interpretation B",
+            "CASE-C: authority outcome with missing reasoning and lower evidentiary weight"
+          ],
+          "authority_model": "AI may recommend; configured human/planning authority decides project working interpretation; external authority outcome may later supersede the working interpretation without rewriting history."
+        },
+        "lenses": [
+          "planning/statutory applicability",
+          "architectural consequence",
+          "evidence quality/authority"
+        ],
+        "required_operator_trace": [
+          {
+            "op": "observe",
+            "assert": "Store exact governing source/version and project/site facts separately from interpretation."
+          },
+          {
+            "op": "interpret",
+            "assert": "Produce one or more explicit applicability interpretations tied to text spans/context rather than converting prose directly into a hard rule."
+          },
+          {
+            "op": "infer",
+            "assert": "Derive provisional project consequences from each interpretation using explicit premises."
+          },
+          {
+            "op": "perspective",
+            "assert": "Apply planning/evidence-quality lenses without changing the source text or project facts."
+          },
+          {
+            "op": "challenge",
+            "assert": "Search exceptions, context mismatch, source-version mismatch and counterexamples; do not treat historical cases as universal precedent."
+          },
+          {
+            "op": "question",
+            "assert": "Represent material ambiguity as an unresolved question when evidence cannot safely resolve it."
+          },
+          {
+            "op": "compare",
+            "assert": "Compare interpretations on source fit, context fit, authority, consequence and uncertainty rather than confidence prose alone."
+          },
+          {
+            "op": "evaluate",
+            "assert": "Rank source/precedent applicability and identify any fragile conclusion dependent on weak historical evidence."
+          },
+          {
+            "op": "decide",
+            "assert": "Record a governed working interpretation or escalation requirement with explicit authority and risk posture."
+          },
+          {
+            "op": "revise",
+            "assert": "When a clarified governing source or authority response is injected, supersede the working interpretation and propagate only affected consequences while preserving the earlier decision basis."
+          }
+        ],
+        "perturbations": [
+          "Remove CASE-A and verify the system does not fabricate support.",
+          "Change CASE-B to the same governing version but retain a materially different site condition.",
+          "Inject a higher-authority clarification that conflicts with the working interpretation.",
+          "Change a site fact so applicability flips while the source text is unchanged.",
+          "Give the AI a persuasive but uncited narrative and verify it cannot enter accepted context without typed evidence/authority."
+        ],
+        "acceptance_tests": [
+          "Source observation, interpretation, inference, evaluation and decision are separately inspectable and independently supersedable.",
+          "Historical cases are context-bounded evidence packets with authority/version/applicability metadata, not silent governing rules.",
+          "When ambiguity is consequential and unresolved, the result can remain indeterminate and escalate rather than forcing a binary answer.",
+          "A later authoritative clarification supersedes the working interpretation while preserving what was previously believed and why.",
+          "Project geometry/feasibility depending on the interpretation is marked with currentness/fragility appropriate to that claim status."
+        ],
+        "forbidden": [
+          "Convert an AI interpretation directly into a governing deterministic rule without an authority/status transition.",
+          "Use precedent from a different governing version/site context without exposing the mismatch.",
+          "Erase the prior interpretation after clarification.",
+          "Report certainty because multiple low-quality historical cases agree."
+        ],
+        "pass_evidence": "Replay bundle with source/version refs, competing interpretation claims, applicability scores, historical-case context fingerprints, unresolved questions, governed decision, injected clarification and supersession propagation."
+      }
+    ],
+    "cross_case_operator_matrix": {
+      "observe": [
+        "RC-01",
+        "RC-03"
+      ],
+      "interpret": [
+        "RC-01",
+        "RC-03"
+      ],
+      "infer": [
+        "RC-01",
+        "RC-02",
+        "RC-03"
+      ],
+      "question": [
+        "RC-01",
+        "RC-02",
+        "RC-03"
+      ],
+      "propose": [
+        "RC-01",
+        "RC-02"
+      ],
+      "challenge": [
+        "RC-01",
+        "RC-02",
+        "RC-03"
+      ],
+      "compare": [
+        "RC-01",
+        "RC-02",
+        "RC-03"
+      ],
+      "evaluate": [
+        "RC-01",
+        "RC-02",
+        "RC-03"
+      ],
+      "perspective": [
+        "RC-02",
+        "RC-03"
+      ],
+      "test": [
+        "RC-01",
+        "RC-02"
+      ],
+      "decide": [
+        "RC-01",
+        "RC-02",
+        "RC-03"
+      ],
+      "revise": [
+        "RC-01",
+        "RC-02",
+        "RC-03"
+      ]
+    },
+    "implementation_note": "This remains an architectural contract, not an implementation claim. Implement the validation harness before broad runtime integration: one shared typed event/artefact schema, three replayable fixtures, cross-case schema assertions and anti-cheating invariants. Reuse existing ChangeSet, evidence, solver, rule, currentness and lineage infrastructure. Do not create autonomous agents per viewpoint by default; a reasoning lens may be a lightweight context object invoked by one capable model or deterministic evaluator."
+  }
+}
