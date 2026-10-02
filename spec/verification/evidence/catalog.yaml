@@ -1,0 +1,767 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "EvidenceCatalog",
+  "id": "PLS-EVIDENCE-CATALOG",
+  "version": "1.0.0",
+  "items": [
+    {
+      "id": "ev-transaction-rollback",
+      "name": "Transaction rollback contract",
+      "kind": "required-test",
+      "supports": [
+        "authority",
+        "submit-transaction"
+      ],
+      "description": "Proves that rejected or failed transactions leave canonical world state unchanged.",
+      "claim": "Proves that rejected or failed transactions leave canonical world state unchanged.",
+      "verification": {
+        "status": "unlinked",
+        "method": "automated-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-stable-identity",
+      "name": "Stable identity continuity",
+      "kind": "required-test",
+      "supports": [
+        "authority",
+        "resolve-reference"
+      ],
+      "description": "Proves semantic references retain traceable continuity across revisions and topology changes.",
+      "claim": "Proves semantic references retain traceable continuity across revisions and topology changes.",
+      "verification": {
+        "status": "unlinked",
+        "method": "automated-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-agent-boundary",
+      "name": "Agent authority boundary",
+      "kind": "required-test",
+      "supports": [
+        "intelligence",
+        "transaction-proposal"
+      ],
+      "description": "Proves agents have no direct mutation path around the transaction gate.",
+      "claim": "Proves agents have no direct mutation path around the transaction gate.",
+      "verification": {
+        "status": "unlinked",
+        "method": "automated-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-interaction-boundary",
+      "name": "Interaction speculation boundary",
+      "kind": "required-test",
+      "supports": [
+        "interaction",
+        "semantic-operation-proposal"
+      ],
+      "description": "Proves speculative interaction cannot become canonical without commit.",
+      "claim": "Proves speculative interaction cannot become canonical without commit.",
+      "verification": {
+        "status": "unlinked",
+        "method": "automated-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-geometry-candidate-boundary",
+      "name": "Geometry candidate isolation",
+      "kind": "required-test",
+      "supports": [
+        "geometry",
+        "resolve-geometry"
+      ],
+      "description": "Proves geometry execution returns candidate results without mutating canonical geometry.",
+      "claim": "Proves geometry execution returns candidate results without mutating canonical geometry.",
+      "verification": {
+        "status": "unlinked",
+        "method": "automated-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-validation-pipeline",
+      "name": "Validation pipeline coverage",
+      "kind": "required-test",
+      "supports": [
+        "constraints",
+        "validate-candidate"
+      ],
+      "description": "Proves validation stages produce typed findings and cannot partially mutate state.",
+      "claim": "Proves validation stages produce typed findings and cannot partially mutate state.",
+      "verification": {
+        "status": "unlinked",
+        "method": "automated-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-representation-freshness",
+      "name": "Representation freshness tracking",
+      "kind": "required-test",
+      "supports": [
+        "representation",
+        "derive-representation"
+      ],
+      "description": "Proves derived outputs expose the revision they depend on and become stale when dependencies change.",
+      "claim": "Proves derived outputs expose the revision they depend on and become stale when dependencies change.",
+      "verification": {
+        "status": "unlinked",
+        "method": "automated-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-external-authority-boundary",
+      "name": "External adapter authority boundary",
+      "kind": "required-test",
+      "supports": [
+        "external",
+        "external-evidence-import"
+      ],
+      "description": "Proves external tools return evidence or proposals rather than direct writes.",
+      "claim": "Proves external tools return evidence or proposals rather than direct writes.",
+      "verification": {
+        "status": "unlinked",
+        "method": "automated-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-cross-agent-conflict",
+      "name": "Cross-agent conflict suite",
+      "kind": "required-test",
+      "supports": [
+        "authority",
+        "intelligence"
+      ],
+      "description": "Exercises conflicting read and write sets, stale candidates, rebasing and retry behavior.",
+      "claim": "Exercises conflicting read and write sets, stale candidates, rebasing and retry behavior.",
+      "verification": {
+        "status": "unlinked",
+        "method": "automated-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-recovery-benchmark",
+      "name": "Long-run recovery benchmark",
+      "kind": "required-benchmark",
+      "supports": [
+        "authority"
+      ],
+      "description": "Measures recovery and consistency under long-running concurrent operation.",
+      "claim": "Measures recovery and consistency under long-running concurrent operation.",
+      "verification": {
+        "status": "unlinked",
+        "method": "benchmark",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-slice-terrain-site",
+      "name": "Terrain integration: grade pad and propagate",
+      "kind": "integration-scenario",
+      "supports": [
+        "terrain-site"
+      ],
+      "description": "Change a site pad and prove terrain identity, drainage/planning invalidation and derived views update through the normal transaction path.",
+      "scenario": "Grade a committed building pad while retaining semantic site references.",
+      "acceptanceCriteria": [
+        {
+          "id": "criterion-01-candidate-terrain-is-validated-before-commit",
+          "text": "candidate terrain is validated before commit"
+        },
+        {
+          "id": "criterion-02-affected-drainage-and-planning-results-become-stale",
+          "text": "affected drainage and planning results become stale"
+        },
+        {
+          "id": "criterion-03-unaffected-site-results-remain-fresh",
+          "text": "unaffected site results remain fresh"
+        },
+        {
+          "id": "criterion-04-derived-site-views-identify-the-committed-revision",
+          "text": "derived site views identify the committed revision"
+        }
+      ],
+      "claim": "Change a site pad and prove terrain identity, drainage/planning invalidation and derived views update through the normal transaction path.",
+      "verification": {
+        "status": "unlinked",
+        "method": "integration-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-slice-townhouse-yield",
+      "name": "Townhouse integration: change dwelling yield",
+      "kind": "integration-scenario",
+      "supports": [
+        "townhouse-system"
+      ],
+      "description": "Increase or reduce townhouse yield and prove access, private open space, landscape, drainage, quantities and feasibility remain causally coordinated.",
+      "scenario": "Change a committed townhouse scheme from one dwelling count to another.",
+      "acceptanceCriteria": [
+        {
+          "id": "criterion-01-dwelling-identities-and-repeated-typologies-remain-trace",
+          "text": "dwelling identities and repeated typologies remain traceable"
+        },
+        {
+          "id": "criterion-02-access-and-planning-constraints-re-evaluate",
+          "text": "access and planning constraints re-evaluate"
+        },
+        {
+          "id": "criterion-03-dependent-quantities-and-feasibility-become-stale-or-reg",
+          "text": "dependent quantities and feasibility become stale or regenerate"
+        },
+        {
+          "id": "criterion-04-alternative-scheme-remains-comparable-as-a-branch",
+          "text": "alternative scheme remains comparable as a branch"
+        }
+      ],
+      "claim": "Increase or reduce townhouse yield and prove access, private open space, landscape, drainage, quantities and feasibility remain causally coordinated.",
+      "verification": {
+        "status": "unlinked",
+        "method": "integration-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-slice-apartment-core",
+      "name": "Apartment integration: move core",
+      "kind": "integration-scenario",
+      "supports": [
+        "apartment-system"
+      ],
+      "description": "Move an apartment core and prove bounded propagation across circulation, units, structure, risers, egress, façade metrics and feasibility.",
+      "scenario": "Translate a committed core while preserving floor and unit identity where semantically valid.",
+      "acceptanceCriteria": [
+        {
+          "id": "criterion-01-only-causally-affected-floors-and-systems-invalidate",
+          "text": "only causally affected floors and systems invalidate"
+        },
+        {
+          "id": "criterion-02-egress-and-accessibility-checks-run-on-the-provisional-w",
+          "text": "egress and accessibility checks run on the provisional world"
+        },
+        {
+          "id": "criterion-03-unit-and-area-metrics-remain-traceable",
+          "text": "unit and area metrics remain traceable"
+        },
+        {
+          "id": "criterion-04-documentation-derives-from-the-accepted-revision",
+          "text": "documentation derives from the accepted revision"
+        }
+      ],
+      "claim": "Move an apartment core and prove bounded propagation across circulation, units, structure, risers, egress, façade metrics and feasibility.",
+      "verification": {
+        "status": "unlinked",
+        "method": "integration-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-slice-wall-opening",
+      "name": "Wall integration: cut hosted opening",
+      "kind": "integration-scenario",
+      "supports": [
+        "wall-assembly"
+      ],
+      "description": "Create or resize an opening and prove framing, linings, junction rules, quantities and documentation update without losing manual exceptions.",
+      "scenario": "Cut a door-sized opening in a rule-generated wall assembly.",
+      "acceptanceCriteria": [
+        {
+          "id": "criterion-01-assembly-level-intent-produces-component-changes",
+          "text": "assembly-level intent produces component changes"
+        },
+        {
+          "id": "criterion-02-identity-lineage-survives-regeneration",
+          "text": "identity lineage survives regeneration"
+        },
+        {
+          "id": "criterion-03-junction-and-component-rules-validate",
+          "text": "junction and component rules validate"
+        },
+        {
+          "id": "criterion-04-quantities-and-drawings-invalidate-causally",
+          "text": "quantities and drawings invalidate causally"
+        }
+      ],
+      "claim": "Create or resize an opening and prove framing, linings, junction rules, quantities and documentation update without losing manual exceptions.",
+      "verification": {
+        "status": "unlinked",
+        "method": "integration-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-slice-window-resize",
+      "name": "Window integration: resize hosted window",
+      "kind": "integration-scenario",
+      "supports": [
+        "window-door-system"
+      ],
+      "description": "Resize a hosted window and prove host opening, exact geometry, identity lineage, dimensions, analysis, schedule and fabrication outputs remain coordinated.",
+      "scenario": "Resize a committed hosted window from one standard size to another.",
+      "acceptanceCriteria": [
+        {
+          "id": "criterion-01-host-opening-follows-the-semantic-window-instance",
+          "text": "host opening follows the semantic window instance"
+        },
+        {
+          "id": "criterion-02-jamb-head-sill-lineage-is-recorded-or-ambiguity-is-surfa",
+          "text": "jamb/head/sill lineage is recorded or ambiguity is surfaced"
+        },
+        {
+          "id": "criterion-03-thermal-daylight-results-become-stale",
+          "text": "thermal/daylight results become stale"
+        },
+        {
+          "id": "criterion-04-schedule-and-fabrication-representations-re-derive-from-",
+          "text": "schedule and fabrication representations re-derive from the committed revision"
+        }
+      ],
+      "claim": "Resize a hosted window and prove host opening, exact geometry, identity lineage, dimensions, analysis, schedule and fabrication outputs remain coordinated.",
+      "verification": {
+        "status": "unlinked",
+        "method": "integration-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-slice-annotations-regeneration",
+      "name": "Annotation integration: survive regeneration",
+      "kind": "integration-scenario",
+      "supports": [
+        "annotations"
+      ],
+      "description": "Regenerate geometry that splits or replaces referenced topology and prove dimensions/notes re-anchor semantically or report ambiguity.",
+      "scenario": "Regenerate a referenced host face and edge after a geometry-changing operation.",
+      "acceptanceCriteria": [
+        {
+          "id": "criterion-01-valid-references-survive-through-lineage",
+          "text": "valid references survive through lineage"
+        },
+        {
+          "id": "criterion-02-ambiguous-references-do-not-silently-rebind",
+          "text": "ambiguous references do not silently rebind"
+        },
+        {
+          "id": "criterion-03-annotation-placement-can-regenerate-separately",
+          "text": "annotation placement can regenerate separately"
+        },
+        {
+          "id": "criterion-04-history-explains-re-anchor-or-stale-state",
+          "text": "history explains re-anchor or stale state"
+        }
+      ],
+      "claim": "Regenerate geometry that splits or replaces referenced topology and prove dimensions/notes re-anchor semantically or report ambiguity.",
+      "verification": {
+        "status": "unlinked",
+        "method": "integration-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-slice-solar-freshness",
+      "name": "Solar integration: analysis freshness",
+      "kind": "integration-scenario",
+      "supports": [
+        "solar-mapping"
+      ],
+      "description": "Change analysed geometry and prove irradiance claims become stale while preserving assumptions, source revision and solver provenance.",
+      "scenario": "Modify a façade surface after an irradiance result has been committed as evidence.",
+      "acceptanceCriteria": [
+        {
+          "id": "criterion-01-analysis-result-immediately-reports-stale",
+          "text": "analysis result immediately reports stale"
+        },
+        {
+          "id": "criterion-02-visual-mapping-cannot-masquerade-as-current-evidence",
+          "text": "visual mapping cannot masquerade as current evidence"
+        },
+        {
+          "id": "criterion-03-replacement-solver-can-satisfy-the-same-semantic-contrac",
+          "text": "replacement solver can satisfy the same semantic contract"
+        },
+        {
+          "id": "criterion-04-downstream-optimisation-cites-the-analysis-rather-than-d",
+          "text": "downstream optimisation cites the analysis rather than directly mutating geometry"
+        }
+      ],
+      "claim": "Change analysed geometry and prove irradiance claims become stale while preserving assumptions, source revision and solver provenance.",
+      "verification": {
+        "status": "unlinked",
+        "method": "integration-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-slice-multi-agent-conflict",
+      "name": "Multi-agent integration: conflicting patches",
+      "kind": "integration-scenario",
+      "supports": [
+        "multi-agent"
+      ],
+      "description": "Run overlapping agent proposals and prove independent work can commit while conflicting or stale work is rebased, repaired or rejected without partial mutation.",
+      "scenario": "Two agents modify overlapping semantic state from the same base revision.",
+      "acceptanceCriteria": [
+        {
+          "id": "criterion-01-conflicting-patches-cannot-partially-commit",
+          "text": "conflicting patches cannot partially commit"
+        },
+        {
+          "id": "criterion-02-independent-patches-avoid-unnecessary-global-locking",
+          "text": "independent patches avoid unnecessary global locking"
+        },
+        {
+          "id": "criterion-03-rejection-includes-conflict-staleness-evidence",
+          "text": "rejection includes conflict/staleness evidence"
+        },
+        {
+          "id": "criterion-04-history-attributes-every-accepted-change",
+          "text": "history attributes every accepted change"
+        }
+      ],
+      "claim": "Run overlapping agent proposals and prove independent work can commit while conflicting or stale work is rebased, repaired or rejected without partial mutation.",
+      "verification": {
+        "status": "unlinked",
+        "method": "integration-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-slice-clothing-resize",
+      "name": "Clothing integration: resize garment",
+      "kind": "integration-scenario",
+      "supports": [
+        "clothing-fabrication"
+      ],
+      "description": "Change body or size parameters and prove garment regions, drape evidence, pattern/knit topology and fabrication output remain traceable.",
+      "scenario": "Regenerate one garment across a materially different body size.",
+      "acceptanceCriteria": [
+        {
+          "id": "criterion-01-semantic-garment-regions-survive-size-change",
+          "text": "semantic garment regions survive size change"
+        },
+        {
+          "id": "criterion-02-material-and-drape-evidence-identifies-its-source-revisi",
+          "text": "material and drape evidence identifies its source revision"
+        },
+        {
+          "id": "criterion-03-2d-stitch-representation-traces-back-to-3d-regions",
+          "text": "2D/stitch representation traces back to 3D regions"
+        },
+        {
+          "id": "criterion-04-machine-output-remains-an-adapter-derived-representation",
+          "text": "machine output remains an adapter-derived representation"
+        }
+      ],
+      "claim": "Change body or size parameters and prove garment regions, drape evidence, pattern/knit topology and fabrication output remain traceable.",
+      "verification": {
+        "status": "unlinked",
+        "method": "integration-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-slice-botanical-age",
+      "name": "Botanical integration: advance growth state",
+      "kind": "integration-scenario",
+      "supports": [
+        "botanical-growth"
+      ],
+      "description": "Advance age/environment of a plant and prove deterministic growth, identity continuity, ecological fields and level-of-detail representations remain coordinated.",
+      "scenario": "Advance a committed tree from an early to mature growth state.",
+      "acceptanceCriteria": [
+        {
+          "id": "criterion-01-same-seed-and-environment-reproduce-the-same-state",
+          "text": "same seed and environment reproduce the same state"
+        },
+        {
+          "id": "criterion-02-entity-lineage-survives-topology-change",
+          "text": "entity lineage survives topology change"
+        },
+        {
+          "id": "criterion-03-canopy-root-fields-update-constraints-and-analysis",
+          "text": "canopy/root fields update constraints and analysis"
+        },
+        {
+          "id": "criterion-04-render-detail-remains-derived-and-replaceable",
+          "text": "render detail remains derived and replaceable"
+        }
+      ],
+      "claim": "Advance age/environment of a plant and prove deterministic growth, identity continuity, ecological fields and level-of-detail representations remain coordinated.",
+      "verification": {
+        "status": "unlinked",
+        "method": "integration-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-01",
+      "name": "WALL-AT-01 · Create and edit",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Create a two-layer straight wall, then a polyline. Change height, base elevation, a named layer thickness and offset. Verify generated dimensions and reference-line placement within the declared tolerance; total thickness remains derived and physical face intent survives path reversal.",
+      "claim": "Create a two-layer straight wall, then a polyline. Change height, base elevation, a named layer thickness and offset. Verify generated dimensions and reference-line placement within the declared tolerance; total thickness remains derived and physical face intent survives path reversal.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-01",
+          "text": "Create a two-layer straight wall, then a polyline. Change height, base elevation, a named layer thickness and offset. Verify generated dimensions and reference-line placement within the declared tolerance; total thickness remains derived and physical face intent survives path reversal."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-02",
+      "name": "WALL-AT-02 · Junction policies",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Exercise L, T and crossing joins under supported butt/miter/priority policies with different layer configurations. Move an endpoint and regenerate repeatedly. Verify relation identity, declared layer termination and explicit unresolved status for unsupported/micro-gap/ambiguous cases.",
+      "claim": "Exercise L, T and crossing joins under supported butt/miter/priority policies with different layer configurations. Move an endpoint and regenerate repeatedly. Verify relation identity, declared layer termination and explicit unresolved status for unsupported/micro-gap/ambiguous cases.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-02",
+          "text": "Exercise L, T and crossing joins under supported butt/miter/priority policies with different layer configurations. Move an endpoint and regenerate repeatedly. Verify relation identity, declared layer termination and explicit unresolved status for unsupported/micro-gap/ambiguous cases."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-03",
+      "name": "WALL-AT-03 · Hosted placement",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Use both centred and fixed-jamb windows, resize and move the host, then change its construction. Verify opening/host identity and placement intent. Split/delete the host and require explicit disposition. Reject conflicting active placement writers.",
+      "claim": "Use both centred and fixed-jamb windows, resize and move the host, then change its construction. Verify opening/host identity and placement intent. Split/delete the host and require explicit disposition. Reject conflicting active placement writers.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-03",
+          "text": "Use both centred and fixed-jamb windows, resize and move the host, then change its construction. Verify opening/host identity and placement intent. Split/delete the host and require explicit disposition. Reject conflicting active placement writers."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-04",
+      "name": "WALL-AT-04 · Rooms and conflicts",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Move the bedroom/corridor boundary under take-space and preserve-neighbour strategies. Show the requested conflicted preview and affected rooms without silently changing strategy. Test the live fixture separately from synthetic data; do not substitute historic +315 mm synthetic values for the documented +150 mm live hard limit.",
+      "claim": "Move the bedroom/corridor boundary under take-space and preserve-neighbour strategies. Show the requested conflicted preview and affected rooms without silently changing strategy. Test the live fixture separately from synthetic data; do not substitute historic +315 mm synthetic values for the documented +150 mm live hard limit.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-04",
+          "text": "Move the bedroom/corridor boundary under take-space and preserve-neighbour strategies. Show the requested conflicted preview and affected rooms without silently changing strategy. Test the live fixture separately from synthetic data; do not substitute historic +315 mm synthetic values for the documented +150 mm live hard limit."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-05",
+      "name": "WALL-AT-05 · Atomicity and stale work",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Reject a stale-base wall edit; fail an exact geometry/junction operation; ensure accepted head and unaffected entities remain intact. Late geometry/quantity results cannot replace current outputs or enable publication.",
+      "claim": "Reject a stale-base wall edit; fail an exact geometry/junction operation; ensure accepted head and unaffected entities remain intact. Late geometry/quantity results cannot replace current outputs or enable publication.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-05",
+          "text": "Reject a stale-base wall edit; fail an exact geometry/junction operation; ensure accepted head and unaffected entities remain intact. Late geometry/quantity results cannot replace current outputs or enable publication."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-06",
+      "name": "WALL-AT-06 · Quantity and document coherence",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Compare layer volumes and opening deductions against independently calculated fixture expectations, including junction allocation. Update plan/section and cost after a parameter edit; all issued outputs refer to an explicitly coherent revision set.",
+      "claim": "Compare layer volumes and opening deductions against independently calculated fixture expectations, including junction allocation. Update plan/section and cost after a parameter edit; all issued outputs refer to an explicitly coherent revision set.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-06",
+          "text": "Compare layer volumes and opening deductions against independently calculated fixture expectations, including junction allocation. Update plan/section and cost after a parameter edit; all issued outputs refer to an explicitly coherent revision set."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-07",
+      "name": "WALL-AT-07 · Branch, undo and reopen",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Edit two branches independently, adopt one, undo, close and reopen in a normal storage origin. Recover from interrupted/corrupt persistence using the existing governed recovery path. Reconstruct system pins, parameters, relations, outputs and history; a synthetic storage harness is supporting evidence only.",
+      "claim": "Edit two branches independently, adopt one, undo, close and reopen in a normal storage origin. Recover from interrupted/corrupt persistence using the existing governed recovery path. Reconstruct system pins, parameters, relations, outputs and history; a synthetic storage harness is supporting evidence only.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-07",
+          "text": "Edit two branches independently, adopt one, undo, close and reopen in a normal storage origin. Recover from interrupted/corrupt persistence using the existing governed recovery path. Reconstruct system pins, parameters, relations, outputs and history; a synthetic storage harness is supporting evidence only."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    },
+    {
+      "id": "ev-wall-at-08",
+      "name": "WALL-AT-08 · System migration and modalities",
+      "kind": "required-test",
+      "supports": [
+        "wall-assembly",
+        "parametric-wall"
+      ],
+      "description": "PLS-WALL-01@0.1.0 acceptance gate. Update a library system without modifying the pinned project. Preview and evaluate migration on a branch. Prove equivalent operations from numeric editing, pointer input and a reviewed language proposal, with usable direct editing when AI is unavailable.",
+      "claim": "Update a library system without modifying the pinned project. Preview and evaluate migration on a branch. Prove equivalent operations from numeric editing, pointer input and a reviewed language proposal, with usable direct editing when AI is unavailable.",
+      "acceptanceCriteria": [
+        {
+          "id": "WALL-AT-08",
+          "text": "Update a library system without modifying the pinned project. Preview and evaluate migration on a branch. Prove equivalent operations from numeric editing, pointer input and a reviewed language proposal, with usable direct editing when AI is unavailable."
+        }
+      ],
+      "verification": {
+        "status": "unlinked",
+        "method": "required-acceptance-test",
+        "source": null,
+        "subjectRevision": null,
+        "verifiedAt": null,
+        "result": null
+      }
+    }
+  ]
+}
