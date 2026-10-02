@@ -1,0 +1,406 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "ComponentCatalog",
+  "id": "PLS-ARCH-COMPONENTS",
+  "version": "1.0.0",
+  "layer": "L1",
+  "items": [
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Component",
+      "id": "interaction",
+      "version": "0.1.0",
+      "title": "Interaction Plane",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "experimental",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        }
+      ],
+      "projection": {
+        "id": "interaction",
+        "atlasId": "SYS.INT.003",
+        "name": "Interaction Plane",
+        "kind": "runtime",
+        "authority": "non-authoritative",
+        "band": "intent",
+        "summary": "Immediate human interaction and speculative feedback without owning canonical state.",
+        "explanation": "The Interaction Plane gives humans fast selection, handles, snapping and speculative previews. It may formulate semantic operations, but a preview is never world truth. Every durable change must pass through the same transaction boundary used by agents and external systems.",
+        "status": "prototype-evolving",
+        "owner": "Interaction Reflex Runtime (IRR) + Interactive Presentation Surface (IPS)",
+        "contracts": [
+          "semantic-operation-proposal"
+        ],
+        "dependencies": [
+          "authority"
+        ],
+        "evidence": [
+          "ev-interaction-boundary"
+        ],
+        "tags": [
+          "interaction",
+          "preview",
+          "speculation",
+          "human"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Component",
+      "id": "intelligence",
+      "version": "0.1.0",
+      "title": "Intelligence Plane",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        }
+      ],
+      "projection": {
+        "id": "intelligence",
+        "atlasId": "SYS.AGT.002",
+        "name": "Intelligence Plane",
+        "kind": "agentic",
+        "authority": "non-authoritative",
+        "band": "intent",
+        "summary": "Planners, critics and evaluators reason over bounded world slices and submit proposals.",
+        "explanation": "The Intelligence Plane coordinates machine reasoning without granting agents direct mutation rights. Agents read bounded state, form hypotheses, compare alternatives and submit typed transaction proposals. The authority layer decides whether any proposal becomes canonical.",
+        "status": "architecture-defined",
+        "owner": "Agent fabric",
+        "contracts": [
+          "read-world-slice",
+          "transaction-proposal"
+        ],
+        "dependencies": [
+          "authority"
+        ],
+        "evidence": [
+          "ev-agent-boundary"
+        ],
+        "tags": [
+          "agents",
+          "planner",
+          "critic",
+          "evaluator"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Component",
+      "id": "authority",
+      "version": "0.1.0",
+      "title": "World + Authority Plane",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "constraints"
+        }
+      ],
+      "projection": {
+        "id": "authority",
+        "atlasId": "SYS.AUTH.001",
+        "name": "World + Authority Plane",
+        "kind": "authoritative-core",
+        "authority": "authoritative",
+        "band": "authority",
+        "summary": "Canonical identity, state, relations, invariants, events, evidence and transaction authority.",
+        "explanation": "This is Plasma's source of truth. It owns stable identity, canonical state, typed relations, revisions, provenance and the transaction boundary. Humans, agents, geometry engines and solvers may all propose changes, but only this plane may commit a new authoritative revision.",
+        "status": "specified-partial",
+        "owner": "Kernel + world state",
+        "contracts": [
+          "submit-transaction",
+          "read-world-slice",
+          "resolve-reference"
+        ],
+        "dependencies": [
+          "constraints"
+        ],
+        "evidence": [
+          "ev-transaction-rollback",
+          "ev-stable-identity"
+        ],
+        "tags": [
+          "kernel",
+          "world",
+          "identity",
+          "transactions",
+          "provenance"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Component",
+      "id": "geometry",
+      "version": "0.1.0",
+      "title": "Geometry Resolver",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        },
+        {
+          "type": "consumes",
+          "id": "constraints"
+        }
+      ],
+      "projection": {
+        "id": "geometry",
+        "atlasId": "SYS.GEO.006",
+        "name": "Geometry Resolver",
+        "kind": "execution",
+        "authority": "non-authoritative",
+        "band": "execution",
+        "summary": "Resolves semantic spatial operations into candidate exact or approximate geometry.",
+        "explanation": "The Geometry Resolver translates engine-neutral spatial intent into geometry using the smallest competent strategy. It binds semantic references, applies tolerance policy, evaluates, validates and heals results, then returns a candidate geometry result. Geometry only becomes canonical when accepted by an authoritative transaction.",
+        "status": "active-implementation",
+        "owner": "Geometry resolver",
+        "contracts": [
+          "resolve-geometry"
+        ],
+        "dependencies": [
+          "authority",
+          "constraints"
+        ],
+        "evidence": [
+          "ev-geometry-candidate-boundary"
+        ],
+        "tags": [
+          "geometry",
+          "OpenCascade",
+          "mesh",
+          "topology"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Component",
+      "id": "constraints",
+      "version": "0.1.0",
+      "title": "Constraint Runtime",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        }
+      ],
+      "projection": {
+        "id": "constraints",
+        "atlasId": "SYS.CON.007",
+        "name": "Constraint Runtime",
+        "kind": "validation",
+        "authority": "non-authoritative",
+        "band": "execution",
+        "summary": "Evaluates invariants, admissible ranges and local or global rules before commit.",
+        "explanation": "The Constraint Runtime evaluates whether a proposed provisional world is admissible. It may use deterministic rules, symbolic logic or specialist evaluators, but its result is evidence for the transaction gate rather than a direct mutation. Failed checks produce structured rejection or repair information.",
+        "status": "architecture-defined",
+        "owner": "Constraint runtime",
+        "contracts": [
+          "validate-candidate"
+        ],
+        "dependencies": [
+          "authority"
+        ],
+        "evidence": [
+          "ev-validation-pipeline"
+        ],
+        "tags": [
+          "constraints",
+          "invariants",
+          "validation",
+          "logic"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Component",
+      "id": "representation",
+      "version": "0.1.0",
+      "title": "Representations",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        }
+      ],
+      "projection": {
+        "id": "representation",
+        "atlasId": "SYS.REP.004",
+        "name": "Representations",
+        "kind": "derived",
+        "authority": "derived",
+        "band": "projection",
+        "summary": "Viewports, drawings, schedules and annotations derived from authoritative world state.",
+        "explanation": "Representations make world state visible and useful without becoming a second source of truth. A viewport, drawing, schedule or annotation projection records the world revision it derives from. When dependencies change it becomes stale and can be regenerated independently.",
+        "status": "architecture-defined",
+        "owner": "Representation services",
+        "contracts": [
+          "derive-representation"
+        ],
+        "dependencies": [
+          "authority"
+        ],
+        "evidence": [
+          "ev-representation-freshness"
+        ],
+        "tags": [
+          "viewport",
+          "drawing",
+          "schedule",
+          "annotation",
+          "derived"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Component",
+      "id": "external",
+      "version": "0.1.0",
+      "title": "External Systems",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        }
+      ],
+      "projection": {
+        "id": "external",
+        "atlasId": "SYS.EXT.008",
+        "name": "External Systems",
+        "kind": "boundary",
+        "authority": "external",
+        "band": "projection",
+        "summary": "Solvers, regulations, fabrication systems and data sources connected by typed adapters.",
+        "explanation": "External systems are treated as bounded sources of claims, measurements, candidate patches or evidence. They never receive direct authority to mutate the world. Typed adapters make the external tool replaceable while preserving provenance, units and failure semantics.",
+        "status": "interface-planning",
+        "owner": "Integration boundary",
+        "contracts": [
+          "external-evidence-import"
+        ],
+        "dependencies": [
+          "authority"
+        ],
+        "evidence": [
+          "ev-external-authority-boundary"
+        ],
+        "tags": [
+          "solver",
+          "regulation",
+          "fabrication",
+          "FMI",
+          "USD",
+          "adapter"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Component",
+      "id": "differential",
+      "version": "0.1.0",
+      "title": "Differential Compute Layer",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        }
+      ],
+      "projection": {
+        "id": "differential",
+        "atlasId": "SYS.DIFF.001",
+        "name": "Differential Compute Layer",
+        "kind": "derived-compute",
+        "authority": "non-authoritative-derived",
+        "band": "projection",
+        "summary": "Deferred optional solver layer for local sensitivity, prediction, inverse guidance, uncertainty and selective compute allocation around authoritative state.",
+        "explanation": "Differential state is disposable derived state. JVP/VJP results may guide previews, optimisation proposals, recovery directions and exact-solver prioritisation, but cannot mutate canonical state or satisfy authoritative validation.",
+        "status": "deferred-not-started",
+        "owner": "Solver / Derived Compute Layer",
+        "contracts": [
+          "differential-contract"
+        ],
+        "dependencies": [
+          "authority"
+        ],
+        "evidence": [],
+        "tags": [
+          "deferred",
+          "sensitivity",
+          "jvp",
+          "vjp",
+          "uncertainty",
+          "exact-fallback"
+        ]
+      }
+    }
+  ]
+}
