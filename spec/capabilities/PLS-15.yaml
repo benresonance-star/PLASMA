@@ -1,0 +1,294 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-15",
+  "version": "0.1.0",
+  "title": "Work Orchestration + Execution Graph Runtime",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-10"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-12"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-13"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-15",
+    "phase": "Plasma",
+    "name": "Work Orchestration + Execution Graph Runtime",
+    "summary": "Compile goals, world changes, invalidations and required evaluations into durable, inspectable, revision-pinned work plans without making an execution graph or agent graph authoritative world state. Plasma retains one semantic world; graph structures are typed projections used for dependency analysis, context assembly, scheduling, concurrency, recovery and observability. Humans, AI models, deterministic functions, solvers, CPU/GPU workers and external machines are replaceable executors of work items under the same authority/evidence/transaction contracts.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-10",
+      "PLS-12",
+      "PLS-13"
+    ],
+    "gap": "PLS-10 already defines bounded reactive scheduling for local edits and the legacy engineering inheritance retains execution DAGs, but Plasma does not yet have one general durable contract for a unit of work, long-running execution plans, dynamic dependency discovery, feedback cycles, context assembly, retry/recovery, resource assignment or side-effect governance. Without it, overnight exploration and multi-solver workflows risk becoming bespoke agent loops, opaque prompt chains, fragile in-memory DAGs or globally coupled dependency traversals.",
+    "next": "Implement a small durable PLS-15 reference runtime around three fixtures: RC-02 bedroom move, terrain/pad/driveway propagation and an overnight multi-alternative townhouse exploration. Prove revision-pinned WorkItems, dynamic dependency updates, SCC/cycle handling, stale-work rejection, restart/resume and exact-once canonical publication while reusing PLS-10 for the interactive hot path.",
+    "flow": "GOAL / EVENT / DIRTY FRONTIER / INFORMATION NEED → RESOLVE AFFECTED WORLD + REQUIRED OUTCOMES → BUILD REVISION-PINNED EXECUTION PLAN → DISCOVER/REFRESH DEPENDENCIES → DETECT CYCLES + FORM BOUNDED SOLVE UNITS → MATERIALISE MINIMUM CONTEXT CAPSULES → SCHEDULE BY DEPENDENCY / LATENCY / RESOURCE / AUTHORITY → EXECUTE HUMAN / DETERMINISTIC / SOLVER / AI / EXTERNAL WORK → VALIDATE OUTPUT + EVIDENCE + CURRENTNESS → PROPOSE / DERIVE / COMMIT THROUGH PLS-KERNEL-01 → PERSIST PLAN STATE + RESUME / CANCEL / SUPERSEDE AS REQUIRED",
+    "graph_projection_doctrine": {
+      "principle": "Plasma has one authoritative semantic world. Graphs are query/compile projections over exact revisions, not additional truth stores.",
+      "projections": {
+        "semantic_relation": "Entity/Relation-oriented view for structure, ownership, composition, spatial and domain relationships.",
+        "dependency_invalidation": "Derived view answering what may become stale or require recomputation when an input changes. Dependency is not automatically a claim of physical causation.",
+        "evidence_provenance": "Derived view linking claims, observations, rules, tools, decisions, Events and Evidence for explanation, audit and applicability checking.",
+        "execution_work": "Ephemeral-or-durable plan view describing required work, precedence, blocking, parallelism, loops, resources and completion state. Work graph state cannot directly mutate canonical project state."
+      },
+      "authority_rule": "A graph projection may be cached and indexed for performance, but it must name the world/input revision and producer version from which it was derived. Rebuild or invalidation must never require preserving graph identity as architectural truth.",
+      "anti_pattern": "Do not create four independent databases called WorldGraph, CausalGraph, EvidenceGraph and WorkGraph with competing mutation paths."
+    },
+    "dependency_semantics": {
+      "classes": [
+        "semantic relation",
+        "derivation dependency",
+        "invalidation dependency",
+        "execution precedence",
+        "evidence/provenance link",
+        "explicit causal claim"
+      ],
+      "rule": "Do not collapse these into one generic edge type. In particular, upstream/downstream dependency does not establish causation unless a typed causal claim with method/evidence exists.",
+      "dynamic_discovery": "Spatial contacts, clashes, shadows, rule applicability, solver couplings, topology and other derived dependencies may appear or disappear as world state changes. Such edges are revisioned derived state and must be refreshed at declared discovery boundaries before Plasma can claim a dependency closure is complete.",
+      "unknown_rule": "If dependency discovery is incomplete, consequence scope is unknown/conservative; the runtime and UI may not claim 'unaffected' merely because no edge is currently present."
+    },
+    "work_item_contract": {
+      "minimum_fields": [
+        "work_id",
+        "plan_id",
+        "kind + contract/version",
+        "purpose / requested outcome",
+        "trigger refs",
+        "base world revision + candidate revision where applicable",
+        "input refs + required currentness",
+        "dependency/predecessor refs",
+        "scope / Active World declaration",
+        "executor class + capability/producer version",
+        "resource request",
+        "latency/priority class",
+        "authority envelope",
+        "idempotency key",
+        "side-effect class",
+        "retry + cancellation policy",
+        "output contract",
+        "evidence contract",
+        "status + attempt identity",
+        "timestamps / diagnostics"
+      ],
+      "statuses": [
+        "planned",
+        "runnable",
+        "running",
+        "waiting",
+        "blocked",
+        "succeeded",
+        "failed",
+        "cancelled",
+        "superseded",
+        "unknown"
+      ],
+      "executor_classes": [
+        "deterministic function",
+        "geometry kernel",
+        "solver",
+        "CPU worker",
+        "GPU kernel",
+        "AI model/agent",
+        "human",
+        "external service",
+        "robot/fabrication system"
+      ],
+      "success_rule": "WorkItem success means its output contract completed for the pinned inputs. It does not mean the output is accepted world truth, compliant, optimal or authorized to publish.",
+      "publication_rule": "Canonical mutation still requires the normal Transform/Transaction/Evaluate/Commit path. Derived outputs remain revision-keyed derived state unless promoted through that path."
+    },
+    "execution_plan_contract": {
+      "minimum_fields": [
+        "plan_id + plan version",
+        "goal/question",
+        "base world revision",
+        "planner identity/version",
+        "acceptance/stop criteria",
+        "budget + deadline where applicable",
+        "work items",
+        "typed execution edges",
+        "cycle/solve units",
+        "authority limits",
+        "plan status",
+        "evidence/decision refs"
+      ],
+      "plan_states": [
+        "draft",
+        "validated",
+        "running",
+        "paused",
+        "blocked",
+        "completed",
+        "failed",
+        "cancelled",
+        "superseded"
+      ],
+      "planner_rule": "A deterministic planner, AI model, human or hybrid process may propose an ExecutionPlan. Planning authority does not imply execution or publication authority.",
+      "mutation_rule": "Plan changes are versioned. Running work remains attached to the plan/input revision that created it; replanning cannot silently reinterpret an in-flight result.",
+      "minimality_rule": "Prefer the smallest plan that can restore required correctness or answer the current question. Do not generate universal all-discipline work merely because capabilities exist."
+    },
+    "cycle_and_loop_contract": {
+      "problem": "Architectural dependencies are not necessarily acyclic: structure ↔ floor depth ↔ height/envelope, mass ↔ wind ↔ structure and layout ↔ daylight ↔ opening placement are feedback systems.",
+      "detection": "Before DAG scheduling, compute strongly connected components or equivalent cycle groups in the relevant dependency/execution projection.",
+      "solve_unit_types": [
+        "fixed-point iteration",
+        "constraint solve",
+        "optimization",
+        "time-stepped simulation",
+        "bounded AI/tool repair loop",
+        "human decision loop"
+      ],
+      "minimum_solve_fields": [
+        "members",
+        "method/version",
+        "state vector/inputs",
+        "convergence or stop test",
+        "iteration/budget limit",
+        "stability/tolerance",
+        "failure/divergence policy",
+        "evidence outputs"
+      ],
+      "rule": "Collapse a bounded cycle into an explicit solve unit for scheduling rather than pretending the full world is a DAG. Each iteration may expose an internal DAG, but the feedback semantics remain inspectable.",
+      "failure_rule": "Non-convergence, oscillation or budget exhaustion is an explicit result, not permission to publish the last iterate as valid."
+    },
+    "context_capsule_contract": {
+      "purpose": "Generate the smallest inspectable context required by a WorkItem so AI/tool execution is grounded in world structure rather than whole-project prompt dumping.",
+      "minimum": [
+        "task/question + output contract",
+        "world/candidate revision",
+        "Active World / semantic slice",
+        "material dependency slice",
+        "active invariants + rule versions",
+        "evidence packet + uncertainty/currentness",
+        "required geometry/field/representation LOD",
+        "available tools/capabilities + versions",
+        "authority/side-effect limits",
+        "token/data/resource budget"
+      ],
+      "ai_rule": "Model context is a disposable execution input. The model may return proposals, questions, explanations or derived artefacts; it never becomes the canonical store of project state.",
+      "context_cache_rule": "Context capsules may be cached only against exact input/world/producer versions; stale capsules cannot be reused by implication."
+    },
+    "scheduler_contract": {
+      "relationship_to_pls10": "PLS-10 remains the bounded reactive substrate. PLS-15 supplies durable plan/work semantics above it; PLS-10 may execute or schedule individual runnable items under interaction/currentness budgets.",
+      "priority_classes": [
+        "pointer/viewport",
+        "commit-critical local hard",
+        "interactive refinement",
+        "regional validation",
+        "background exploration",
+        "maintenance/reindex"
+      ],
+      "resource_dimensions": [
+        "CPU threads",
+        "GPU/VRAM",
+        "memory",
+        "model/tool quota",
+        "network/external service",
+        "human attention",
+        "robot/machine availability"
+      ],
+      "rules": [
+        "schedule only when predecessors, authority and required-currentness conditions are satisfied",
+        "prefer reuse of current revision-matched outputs over recomputation",
+        "cancel superseded cancellable work; discard late non-cancellable outputs",
+        "protect interactive latency from background saturation",
+        "prevent indefinite starvation of valid lower-priority work through explicit fairness/aging policy",
+        "record queue, run, wait, retry and convergence timings separately"
+      ]
+    },
+    "durability_and_recovery_contract": {
+      "principle": "Long-running work must survive process/browser/service restart independently of prior in-memory scheduler objects.",
+      "persist": [
+        "plan/version",
+        "work item definitions",
+        "dependency/solve-unit refs",
+        "attempt state",
+        "input revisions",
+        "producer versions",
+        "idempotency keys",
+        "outputs/evidence refs",
+        "diagnostics"
+      ],
+      "resume_sequence": [
+        "load and validate plan schema/version",
+        "revalidate base/input revisions and capability versions",
+        "mark completed revision-matched outputs reusable",
+        "mark incompatible/stale outputs superseded",
+        "restore runnable/blocked/waiting states",
+        "resume only work whose authority and side-effect preconditions still hold"
+      ],
+      "delivery_semantics": "Execution may be at-least-once; canonical publication must be effectively exactly-once through idempotency + kernel compare-and-swap/transaction semantics. External side effects require stronger dedupe or compensation contracts.",
+      "crash_rule": "An ambiguous crash during an external side effect resolves to unknown/pending reconciliation, never assumed success or safe retry."
+    },
+    "side_effect_contract": {
+      "classes": {
+        "pure": "Read/compute only; safe to retry if inputs/version match.",
+        "reversible_local": "Changes isolated Plasma candidate/derived state and can be discarded or compensated without external consequence.",
+        "external_compensatable": "Writes to an external system with explicit idempotency and/or compensating action.",
+        "irreversible_high_consequence": "Physical fabrication/robot motion, submission, purchase or other action where retry/rollback may be impossible or costly."
+      },
+      "rule": "Scheduling authority is distinct from side-effect authority. Irreversible/high-consequence items require explicit preflight state, bounded execution window, human/policy authorization and post-action evidence/reconciliation.",
+      "robotics_rule": "A robot work item references an accepted world/plan revision and cannot infer permission from an AI planner completing successfully."
+    },
+    "observability_contract": {
+      "minimum_metrics": [
+        "plan critical path",
+        "runnable/running/blocked counts",
+        "queue and execution latency by class",
+        "dependency discovery time",
+        "dirty/active set sizes",
+        "cache/reuse rate",
+        "cancelled/superseded work",
+        "retry/failure/non-convergence counts",
+        "CPU/GPU/model/human utilization",
+        "time to local coherence",
+        "time to full plan convergence"
+      ],
+      "explain_rule": "For any active or completed WorkItem Plasma can explain why it exists, what it reads, what it is waiting on, who/what may execute it, what it produced, whether the result is current and what publication step remains."
+    },
+    "acceptance_tests": [
+      "RC-02 wall move compiles only the material local hard work during interaction; no general planner/model is required in the pointer loop and accepted state follows the existing kernel transaction path.",
+      "Terrain/pad/driveway edit creates a bounded work plan whose derived spatial dependencies change when topology/boundary conditions change; stale dependency closures cannot claim unaffected regions.",
+      "A synthetic cyclic structure-height-envelope fixture is detected as a strongly connected component and scheduled as an explicit bounded solve unit with visible convergence/failure status rather than forced into an invalid DAG.",
+      "An overnight townhouse exploration can persist hundreds of WorkItems, restart from serialized plan state, reuse revision-matched completed outputs and reject stale work after the base world or producer version changes.",
+      "Duplicate execution of a retryable task cannot duplicate canonical mutation; compare-and-swap/idempotency leaves at most one accepted publication.",
+      "An AI WorkItem receives a revision-pinned context capsule containing only required semantic/evidence/rule/tool context and its result cannot self-promote to accepted truth.",
+      "Background GPU/model workloads cannot starve pointer/commit-critical work and scheduling metrics expose queue/resource contention.",
+      "An irreversible/high-consequence external WorkItem cannot run without explicit side-effect authority and produces reconciliation evidence; ambiguous completion remains unknown rather than auto-retried.",
+      "Graph projections can be discarded and rebuilt from the same authoritative revision without changing project meaning or identity.",
+      "A dependency edge and an explicit causal claim are distinguishable in schemas, explanations and evidence requirements."
+    ],
+    "implementation_note": "Do not begin by building a general distributed agent platform. Implement the minimum durable WorkItem/ExecutionPlan store and scheduler needed by the three acceptance fixtures, reusing the existing PLS-10 dirty-frontier/currentness machinery, PLS-KERNEL-01 transaction path and event/idempotency conventions. Escalate to distributed queues, GPU routing or multi-agent planning only when measured workload requires them.",
+    "output_adjudication_contract": {
+      "principle": "Executors propose; Plasma adjudicates. Human, deterministic, solver, AI and external-machine outputs traverse the same evidence/currentness/invariant/pathology evaluation gates before any canonical publication.",
+      "anti_pattern_integration": "A WorkItem or ExecutionPlan may request PLS-16 evaluators from affected scope and risk class. Work completion never waives a pathology finding, and the executor that produced an output cannot grant itself an exception to a high-consequence finding.",
+      "scheduling_rule": "Low-cost deterministic corruption checks may be mandatory preflight. Expensive fabrication, construction, project-entropy or reasoning scans may be scheduled on release/background according to PLS-10/PLS-15 latency and resource policy.",
+      "stale_rule": "A finding is valid only for its pinned world/input revision and detector version; stale findings must be recomputed or explicitly marked unknown before publication decisions rely on them."
+    }
+  }
+}
