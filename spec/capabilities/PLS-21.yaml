@@ -1,0 +1,298 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-21",
+  "version": "0.1.0",
+  "title": "DifferentialContract v0.1",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-02"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-14"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-17"
+    }
+  ],
+  "provides": [
+    "PLS-DIFF-01"
+  ],
+  "activationGates": [
+    {
+      "id": "DC-01",
+      "title": "Stable solver contracts",
+      "required": "PASS",
+      "status": "not_satisfied"
+    },
+    {
+      "id": "DC-02",
+      "title": "Stable property identity",
+      "required": "PASS",
+      "status": "not_satisfied"
+    },
+    {
+      "id": "DC-03",
+      "title": "Authoritative source-state identity",
+      "required": "PASS",
+      "status": "not_satisfied"
+    },
+    {
+      "id": "DC-04",
+      "title": "Dependency fingerprinting",
+      "required": "PASS",
+      "status": "not_satisfied"
+    },
+    {
+      "id": "DC-05",
+      "title": "Exact fallback",
+      "required": "PASS",
+      "status": "not_satisfied"
+    },
+    {
+      "id": "DC-06",
+      "title": "Authority isolation",
+      "required": "PASS",
+      "status": "not_satisfied"
+    },
+    {
+      "id": "DC-07",
+      "title": "Discontinuity policy",
+      "required": "PASS",
+      "status": "not_satisfied"
+    },
+    {
+      "id": "DC-08",
+      "title": "Benchmark definition",
+      "required": "PASS",
+      "status": "not_satisfied"
+    },
+    {
+      "id": "DC-09",
+      "title": "Bounded high-value use case",
+      "required": "APPROVED",
+      "status": "not_satisfied"
+    },
+    {
+      "id": "DC-10",
+      "title": "Licensing/runtime review",
+      "required": "PASS",
+      "status": "not_satisfied"
+    },
+    {
+      "id": "DC-11",
+      "title": "Claim integration",
+      "required": "PASS",
+      "status": "not_satisfied"
+    },
+    {
+      "id": "DC-12",
+      "title": "Explicit activation decision",
+      "required": "NOT_STARTED → ACTIVE_EXPERIMENT",
+      "status": "not_satisfied"
+    }
+  ],
+  "projection": {
+    "id": "PLS-21",
+    "phase": "Plasma",
+    "name": "DifferentialContract v0.1",
+    "summary": "Optional non-authoritative solver contract for local sensitivity, prediction, inverse guidance, uncertainty, validity/trust, discontinuity handling and exact fallback around an identified authoritative state.",
+    "spec": "partial",
+    "implemented": "deferred",
+    "depends": [
+      "PLS-01",
+      "PLS-02",
+      "PLS-14",
+      "PLS-17"
+    ],
+    "gap": "Architecture accepted only. No JVP/VJP runtime, automatic-differentiation infrastructure, optimiser or solver integration has started.",
+    "next": "NONE — do not implement until DC-01 through DC-12 are reviewed and implementation status changes to ACTIVE_EXPERIMENT.",
+    "flow": "AUTHORITATIVE STATE → EXACT/FORWARD SOLVER → DIFFERENTIAL CONTRACT → JVP/VJP + VALIDITY/TRUST + UNCERTAINTY/DISCONTINUITIES → DERIVED CONSUMERS → EXACT VALIDATION → DECISION → AUTHORITATIVE COMMIT",
+    "contract_id": "PLS-DIFF-01",
+    "contract_version": "0.1.0",
+    "contract_status": "DEFERRED",
+    "architecture_status": "ACCEPTED",
+    "implementation_status": "NOT_STARTED",
+    "runtime_status": "DISABLED",
+    "authority": "NON_AUTHORITATIVE_DERIVED",
+    "authority_rules": [
+      "Differential outputs never directly mutate authoritative state.",
+      "Differential prediction is not an exact solver result.",
+      "Sensitivity is not causality.",
+      "Optimisation output is not decision authority.",
+      "Every activated DifferentialContract identifies an exact/validated/reference fallback."
+    ],
+    "jvp": {
+      "definition": "JVP(Δx)=JΔx",
+      "purpose": [
+        "change propagation",
+        "incremental prediction",
+        "interaction preview",
+        "selective recomputation",
+        "local effect estimation"
+      ]
+    },
+    "vjp": {
+      "definition": "VJP(v)=v^T J",
+      "purpose": [
+        "inverse design",
+        "local optimisation guidance",
+        "constraint-recovery guidance",
+        "design leverage analysis",
+        "sensitivity ranking"
+      ],
+      "rule": "Influence information only; not an instruction or approval to edit."
+    },
+    "validity": {
+      "requires_linearization_state": true,
+      "rule": "Outside the validity region the result SHALL NOT be used as a valid quantitative prediction."
+    },
+    "trust": {
+      "levels": [
+        "HIGH",
+        "MEDIUM",
+        "LOW",
+        "OUTSIDE"
+      ],
+      "rule": "Known discontinuities override trust-radius classification."
+    },
+    "discontinuities": {
+      "classes": [
+        "topology",
+        "visibility",
+        "contact",
+        "collision",
+        "constraint activation",
+        "constraint deactivation",
+        "classification",
+        "regulatory threshold",
+        "solver regime",
+        "piecewise boundary",
+        "discrete choice",
+        "unknown"
+      ],
+      "behaviours": [
+        "INVALIDATE",
+        "REDUCE_TRUST",
+        "SWITCH_BRANCH",
+        "REQUIRE_EXACT"
+      ]
+    },
+    "uncertainty": {
+      "rule": "Uncertainty remains separate from sensitivity.",
+      "sources": [
+        "input",
+        "measurement",
+        "model",
+        "numerical",
+        "parameter",
+        "approximation",
+        "surrogate"
+      ]
+    },
+    "claim_relationship": {
+      "jvp_prediction": "normally inferred",
+      "local_sensitivity": "may be calculated if model/state/version/validity scoped",
+      "supersession": "exact results may supersede or contradict without deleting provenance"
+    },
+    "evidence_relationship": {
+      "rule": "Retain relevant input, solver-definition, calibration, validation, benchmark, regulatory, measurement and derivation references; numerical precision is not evidence quality."
+    },
+    "decision_contract_relationship": {
+      "rule": "May consume leverage/marginal effects/recovery directions/exact-solver prioritisation; DecisionContract retains decision authority and commit policy."
+    },
+    "exact_fallback": {
+      "mandatory": true,
+      "triggers": [
+        "outside validity region",
+        "outside trust radius",
+        "discontinuity crossed",
+        "topology change",
+        "high uncertainty",
+        "constraint near threshold",
+        "final commit",
+        "regulatory decision",
+        "manual exact request"
+      ]
+    },
+    "activation_gates": [
+      {
+        "id": "DC-01",
+        "name": "Stable solver contracts",
+        "required": "PASS"
+      },
+      {
+        "id": "DC-02",
+        "name": "Stable property identity",
+        "required": "PASS"
+      },
+      {
+        "id": "DC-03",
+        "name": "Authoritative source-state identity",
+        "required": "PASS"
+      },
+      {
+        "id": "DC-04",
+        "name": "Dependency fingerprinting",
+        "required": "PASS"
+      },
+      {
+        "id": "DC-05",
+        "name": "Exact fallback",
+        "required": "PASS"
+      },
+      {
+        "id": "DC-06",
+        "name": "Authority isolation",
+        "required": "PASS"
+      },
+      {
+        "id": "DC-07",
+        "name": "Discontinuity policy",
+        "required": "PASS"
+      },
+      {
+        "id": "DC-08",
+        "name": "Benchmark definition",
+        "required": "PASS"
+      },
+      {
+        "id": "DC-09",
+        "name": "Bounded high-value use case",
+        "required": "APPROVED"
+      },
+      {
+        "id": "DC-10",
+        "name": "Licensing/runtime review",
+        "required": "PASS"
+      },
+      {
+        "id": "DC-11",
+        "name": "Claim integration",
+        "required": "PASS"
+      },
+      {
+        "id": "DC-12",
+        "name": "Explicit activation decision",
+        "required": "NOT_STARTED → ACTIVE_EXPERIMENT"
+      }
+    ],
+    "architectural_invariant": "Differential computation may guide authority, but may never silently become authority."
+  }
+}
