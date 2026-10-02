@@ -1,0 +1,36 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Research",
+  "id": "RSCH-DIFFERENTIAL-COMPUTE",
+  "version": "0.1.0",
+  "title": "Differential Compute Across Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "proposed",
+    "specification": "draft",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "createsBuildObligation": false,
+  "relatedCapabilities": [
+    "PLS-21"
+  ],
+  "themes": [
+    "sensitivity graph",
+    "inverse design",
+    "selective recomputation",
+    "robustness",
+    "tolerance analysis"
+  ],
+  "graduation": {
+    "requires": [
+      "architecture_review",
+      "bounded_use_case",
+      "benchmark",
+      "formal_contract",
+      "dependency_analysis",
+      "activation_gates"
+    ]
+  }
+}
