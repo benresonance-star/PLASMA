@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plasma.local/spec/v1/spec-system.schema.json",
+  "type": "object",
+  "additionalProperties": true,
+  "title": "Plasma Spec System",
+  "required": [
+    "apiVersion",
+    "kind",
+    "id",
+    "version",
+    "statusAxes",
+    "dependencyTypes",
+    "outputs"
+  ],
+  "properties": {
+    "kind": {
+      "const": "SpecSystem"
+    },
+    "statusAxes": {
+      "type": "object"
+    },
+    "dependencyTypes": {
+      "type": "array"
+    },
+    "outputs": {
+      "type": "object"
+    }
+  }
+}
