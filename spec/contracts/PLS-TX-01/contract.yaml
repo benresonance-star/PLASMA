@@ -1,0 +1,29 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-TX-01",
+  "legacyProjectionId": "submit-transaction",
+  "version": "1.0.0",
+  "title": "submitTransaction()",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "authoritative-boundary",
+  "dependsOn": [],
+  "projection": {
+    "id": "submit-transaction",
+    "name": "submitTransaction()",
+    "from": "any-proposer",
+    "to": "authority",
+    "input": "CandidatePatch",
+    "output": "CommitReceipt | RejectionRecord",
+    "semantics": "Validate and atomically commit an admissible candidate patch.",
+    "failure": "Any failed gate aborts the transaction with zero authoritative partial state.",
+    "explanation": "This is the hard mutation boundary of Plasma. Every authoritative change must pass through it."
+  }
+}
