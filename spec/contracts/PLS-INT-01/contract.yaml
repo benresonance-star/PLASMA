@@ -1,0 +1,29 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-INT-01",
+  "legacyProjectionId": "semantic-operation-proposal",
+  "version": "1.0.0",
+  "title": "submitSemanticOperation()",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "typed-boundary",
+  "dependsOn": [],
+  "projection": {
+    "id": "semantic-operation-proposal",
+    "name": "submitSemanticOperation()",
+    "from": "interaction",
+    "to": "authority",
+    "input": "SemanticOperation",
+    "output": "ProposalReceipt | RejectionRecord",
+    "semantics": "Express user intent against stable semantic references without direct mutation.",
+    "failure": "Malformed, unauthorized or stale operations are rejected before execution.",
+    "explanation": "The interaction runtime packages intent, targets, parameters and preconditions into a semantic operation proposal."
+  }
+}
