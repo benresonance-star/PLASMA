@@ -1,0 +1,71 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-01",
+  "version": "0.1.0",
+  "title": "Minimal Plasma Kernel + World State",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [],
+  "provides": [
+    "PLS-WORLD-01",
+    "PLS-TX-01",
+    "PLS-CLAIM-01",
+    "PLS-EVIDENCE-01"
+  ],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-01",
+    "phase": "Plasma",
+    "name": "Minimal Plasma Kernel + World State",
+    "summary": "Implement PLS-KERNEL-01 as the canonical semantic mutation substrate: Entity, State, Relation, Transform, Invariant, Event and Evidence over immutable world revisions, with transform-only candidate transactions, localized impact/evaluation, atomic commit, provenance, branching and coherent cuts; no separate Spectrum kernel is assumed.",
+    "spec": "complete",
+    "implemented": "partial",
+    "depends": [],
+    "gap": "The W17/B03/C04 path now uses a persistent PLS-KERNEL-01 runtime envelope rather than a purely in-memory bridge. R1 survives reconstruction in a fresh browser JavaScript realm from persisted bytes; Undo after reopen appends R2; checksum validation and backup recovery are proven; and the pointer hot path remains local. Production database durability, native-origin browser/OS persistence, shared-store stale-base concurrency, per-artifact lineage/coherent cuts, worker scheduling and OCCT exact-geometry publication remain unproven.",
+    "next": "Make exact geometry the next authority boundary: route MoveBoundary through an OCCT candidate BRep, topology/healing validation and representation derivation, then atomically publish semantic State plus the accepted exact-geometry revision through the unchanged PLS-KERNEL-01 transaction. In parallel, move the persistent store contract behind a shared transactional backend and prove two-client stale-base conflict/rebase/branch semantics. Do not generalise to terrain or NVIDIA/OpenUSD until these two gates pass.",
+    "flow": "IMMUTABLE WORLD W[t]  ↓DECLARE typed Transform + rationale  ↓EXPAND to primitive operations  ↓IMPACT affected semantic/spatial closure  ↓APPLY in isolated candidate world  ↓DERIVE + EVALUATE intersecting Invariants  ↓RESOLVE pass / soft / hard / unknown  ↓ATOMIC COMMIT or reject/branch  ↓EMIT Event + Evidence + invalidation  ↓W[t+1] + coherent cuts",
+    "stages": [
+      "Begin / pin base",
+      "Declare Transform",
+      "Expand primitives",
+      "Analyse impact",
+      "Apply candidate",
+      "Derive currentness",
+      "Evaluate invariants",
+      "Resolve conflicts",
+      "Atomic commit",
+      "Emit event/evidence",
+      "Publish coherent cut",
+      "Undo / branch / concurrency"
+    ],
+    "spec_links": [
+      "PLS-KERNEL-01_WALL_REFERENCE_CONTRACT.md",
+      "PLS-KERNEL-01_WALL_FIXTURE.json",
+      "plasma-kernel-v0.1.mjs",
+      "plasma-kernel-wall.test.mjs",
+      "PLS-KERNEL-01_WALL_REFERENCE_EVIDENCE.json",
+      "PLS-KERNEL-01_LIVE_INTEGRATION_CONTRACT.md",
+      "Plasma-Design-and-Site-Editing-Kernel-v0.2.html",
+      "plasma-kernel-live-bridge-v0.1.js",
+      "PLS-KERNEL-01_LIVE_BROWSER_EVIDENCE.json",
+      "PLS-KERNEL-01_LIVE_POINTER_EVIDENCE.json",
+      "PLS-KERNEL-01_PERSISTENCE_CONTRACT.md",
+      "Plasma-Design-and-Site-Editing-Kernel-v0.3.html",
+      "plasma-kernel-persistent-runtime-v0.2.js",
+      "PLS-KERNEL-01_PERSISTENCE_REOPEN_EVIDENCE.json",
+      "PLS-KERNEL-01_BACKUP_RECOVERY_EVIDENCE.json",
+      "PLS-KERNEL-01_PERSISTENT_POINTER_EVIDENCE.json",
+      "PLS-01_WORLD_STATE_V1_CONTRACT.md (legacy runtime contract; map to seven primitives)",
+      "PLS-01_WORLD_STATE_V1_SCHEMA.json (legacy runtime schema; not kernel ontology)",
+      "inline:seedManifest.plasma_kernel@PLS-KERNEL-01/0.1.0"
+    ]
+  }
+}
