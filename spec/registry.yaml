@@ -1,0 +1,97 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "SpecRegistry",
+  "id": "PLS-SPEC-REGISTRY",
+  "version": "1.0.0",
+  "specSystem": "spec/spec-system.yaml",
+  "constitution": "spec/constitution/constitution.yaml",
+  "atlas": {
+    "meta": "spec/projections/atlas/meta.yaml",
+    "views": "spec/projections/atlas/views.yaml",
+    "components": "spec/architecture/components.yaml",
+    "relationships": "spec/architecture/relationships.yaml",
+    "contracts": [
+      "spec/contracts/PLS-INT-01/contract.yaml",
+      "spec/contracts/PLS-AGENT-01/contract.yaml",
+      "spec/contracts/PLS-TX-01/contract.yaml",
+      "spec/contracts/PLS-WORLD-01/contract.yaml",
+      "spec/contracts/PLS-REF-01/contract.yaml",
+      "spec/contracts/PLS-GR-01/contract.yaml",
+      "spec/contracts/PLS-VALIDATE-01/contract.yaml",
+      "spec/contracts/PLS-REP-01/contract.yaml",
+      "spec/contracts/PLS-EXT-01/contract.yaml",
+      "spec/contracts/PLS-WALL-01/contract.yaml",
+      "spec/contracts/PLS-DIFF-01/contract.yaml",
+      "spec/contracts/PLS-CLAIM-01/contract.yaml",
+      "spec/contracts/PLS-EVIDENCE-01/contract.yaml",
+      "spec/contracts/PLS-DECISION-01/contract.yaml",
+      "spec/contracts/PLS-SOLVER-01/contract.yaml"
+    ],
+    "languages": "spec/languages/languages.yaml",
+    "transactions": "spec/transactions/transactions.yaml",
+    "slices": "spec/slices/catalog.yaml",
+    "evidence": "spec/verification/evidence/catalog.yaml",
+    "integration": "spec/verification/integration/integration.yaml",
+    "links": "spec/verification/integration/links.yaml",
+    "repositoryEvidence": "spec/verification/bindings/repository-evidence.yaml"
+  },
+  "capabilities": [
+    "spec/capabilities/FND-01.yaml",
+    "spec/capabilities/FND-02.yaml",
+    "spec/capabilities/FND-03.yaml",
+    "spec/capabilities/FND-04.yaml",
+    "spec/capabilities/FND-05.yaml",
+    "spec/capabilities/ADK-01.yaml",
+    "spec/capabilities/ADK-02.yaml",
+    "spec/capabilities/ADK-03.yaml",
+    "spec/capabilities/PLS-01.yaml",
+    "spec/capabilities/PLS-02.yaml",
+    "spec/capabilities/PLS-03.yaml",
+    "spec/capabilities/PLS-04.yaml",
+    "spec/capabilities/PLS-05.yaml",
+    "spec/capabilities/PLS-06.yaml",
+    "spec/capabilities/PLS-07.yaml",
+    "spec/capabilities/PLS-08.yaml",
+    "spec/capabilities/PLS-09.yaml",
+    "spec/capabilities/PLS-10.yaml",
+    "spec/capabilities/PLS-11.yaml",
+    "spec/capabilities/PLS-12.yaml",
+    "spec/capabilities/PLS-13.yaml",
+    "spec/capabilities/PLS-14.yaml",
+    "spec/capabilities/PLS-15.yaml",
+    "spec/capabilities/PLS-16.yaml",
+    "spec/capabilities/PLS-17.yaml",
+    "spec/capabilities/PLS-18.yaml",
+    "spec/capabilities/PLS-19.yaml",
+    "spec/capabilities/PLS-20.yaml",
+    "spec/capabilities/PLS-21.yaml"
+  ],
+  "domains": [
+    "spec/domains/wall/domain.yaml"
+  ],
+  "verticalSlices": [
+    "spec/slices/minimum-trusted-building-loop/slice.yaml"
+  ],
+  "research": [
+    "spec/research/RND-01.yaml",
+    "spec/research/differential-rendering.yaml",
+    "spec/research/differential-compute.yaml"
+  ],
+  "releases": [
+    "spec/releases/0.4.29-draft.yaml"
+  ],
+  "schemas": [
+    "spec/schemas/common.schema.json",
+    "spec/schemas/constitution.schema.json",
+    "spec/schemas/component.schema.json",
+    "spec/schemas/relationship.schema.json",
+    "spec/schemas/contract.schema.json",
+    "spec/schemas/capability.schema.json",
+    "spec/schemas/domain.schema.json",
+    "spec/schemas/slice.schema.json",
+    "spec/schemas/evidence.schema.json",
+    "spec/schemas/research.schema.json",
+    "spec/schemas/release.schema.json",
+    "spec/schemas/spec-system.schema.json"
+  ]
+}
