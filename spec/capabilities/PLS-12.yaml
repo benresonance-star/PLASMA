@@ -1,0 +1,67 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-12",
+  "version": "0.1.0",
+  "title": "Epistemic World + Value of Information",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "draft",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-06"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-07"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-10"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-12",
+    "phase": "Plasma",
+    "name": "Epistemic World + Value of Information",
+    "summary": "Make uncertainty, provenance, authority and belief status first-class properties of Plasma world claims so the runtime can distinguish what is known, observed, inferred, assumed, proposed, contested and unknown; propagate uncertainty through dependent claims; distinguish robust from fragile compliance; identify the most valuable information to resolve next; and provide the typed epistemic states consumed and produced by PLS-13 reasoning operators.",
+    "spec": "planned",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-06",
+      "PLS-07",
+      "PLS-10"
+    ],
+    "gap": "The current world-state model carries provenance and some observation confidence, but does not yet provide a general epistemic contract for all facts, constraints, geometry, solver results and design decisions. Without it, assumptions can harden into apparent truth, compliance can appear binary despite uncertain inputs, dependency invalidation can be broader than necessary, and agents cannot reason explicitly about what should be learned next.",
+    "next": "Use terrain / driveway / pad as the first epistemic vertical slice. Represent survey points, inferred contours, title boundaries, crossover RLs, soil assumptions and planning interpretations as typed claims with source, status, authority, uncertainty and validity. Propagate uncertainty into grading, driveway compliance and pad levels; prove robust-pass / fragile-pass behavior; and compute a ranked value-of-information queue.",
+    "flow": "EVIDENCE + SOURCE + INTENT → TYPED CLAIM / BELIEF → UNCERTAINTY + AUTHORITY + VALIDITY → DEPENDENCY PROPAGATION → PROPOSAL → EVALUATION → ROBUSTNESS / RISK → COMMITMENT OR CONTEST → VALUE OF INFORMATION → TARGETED OBSERVATION / DECISION → UPDATED WORLD",
+    "stages": [
+      "Classify claim as known, observed, inferred, assumed, proposed, contested or unknown",
+      "Attach source, authority, confidence/uncertainty, validity interval and provenance",
+      "Keep observation, intent, proposal and accepted commitment distinct",
+      "Propagate uncertainty through dependent claims and representations",
+      "Use tolerance envelopes to define localized invalidation frontiers",
+      "Evaluate robust pass, fragile pass, indeterminate and fail rather than binary pass/fail alone",
+      "Expose spatial uncertainty and assumption-dependent regions in the UI",
+      "Prevent agents and solvers from silently promoting assumptions or derived results to truth",
+      "Estimate consequence sensitivity and value of information",
+      "Rank the next survey, question, test, expert input or client decision that most reduces consequential uncertainty",
+      "Commit validated evidence while preserving superseded beliefs and reversible lineage"
+    ],
+    "implementation_note": "The new synthetic site separates source samples from proposed deltas and labels unassessed checks. General claim status, uncertainty propagation, robust/fragile pass and value-of-information ranking remain planned; the current site slice does not claim them."
+  }
+}
