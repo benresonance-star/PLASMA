@@ -2,7 +2,7 @@
 
 ## Current Plasma specification
 
-**Plasma Spec System v1** is now the canonical specification source under [`/spec`](spec/). Atlas v0.10.0, readiness/dependency reports and the generated Spec System view are derived from that graph. The existing [Plasma / Foundry v0.4.29](apps/system-atlas-preview/plasma-spec.html) rich HTML specification remains a checked legacy projection during migration. [PLS-19 / PLS-WALL-01@0.1.0](apps/system-atlas-preview/wall-contract.json) remains unproven; PLS-20 remains deferred research; and [PLS-21 / PLS-DIFF-01@0.1.0](apps/system-atlas-preview/differential-contract.json) remains deferred, non-authoritative and not started.
+**Plasma Spec System v1** is now the canonical specification source under [`/spec`](spec/). Atlas v0.10.1, readiness/dependency reports and the generated Spec System view are derived from that graph. The existing [Plasma / Foundry v0.4.29](apps/system-atlas-preview/plasma-spec.html) rich HTML specification remains a checked legacy projection during migration. [PLS-19 / PLS-WALL-01@0.1.0](apps/system-atlas-preview/wall-contract.json) remains unproven; PLS-20 remains deferred research; and [PLS-21 / PLS-DIFF-01@0.1.0](apps/system-atlas-preview/differential-contract.json) remains deferred, non-authoritative and not started.
 
 ## Historical SPDS engineering baseline
 
