@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plasma.local/spec/v1/slice.schema.json",
+  "type": "object",
+  "additionalProperties": true,
+  "title": "Plasma Vertical Slice",
+  "required": [
+    "apiVersion",
+    "kind",
+    "id",
+    "version",
+    "title",
+    "layer",
+    "status"
+  ],
+  "properties": {
+    "kind": {
+      "const": "VerticalSlice"
+    },
+    "layer": {
+      "const": "L5"
+    },
+    "status": {
+      "type": "object",
+      "required": [
+        "architecture",
+        "specification",
+        "implementation",
+        "verification",
+        "release"
+      ],
+      "properties": {
+        "architecture": {
+          "enum": [
+            "proposed",
+            "accepted",
+            "rejected",
+            "superseded"
+          ]
+        },
+        "specification": {
+          "enum": [
+            "absent",
+            "draft",
+            "partial",
+            "complete",
+            "frozen",
+            "superseded"
+          ]
+        },
+        "implementation": {
+          "enum": [
+            "not_started",
+            "experimental",
+            "partial",
+            "implemented",
+            "deprecated"
+          ]
+        },
+        "verification": {
+          "enum": [
+            "none",
+            "unlinked",
+            "partial",
+            "verified",
+            "failed",
+            "stale"
+          ]
+        },
+        "release": {
+          "enum": [
+            "excluded",
+            "candidate",
+            "released",
+            "deprecated"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
