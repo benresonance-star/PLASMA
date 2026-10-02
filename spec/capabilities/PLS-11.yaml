@@ -1,0 +1,61 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-11",
+  "version": "0.1.0",
+  "title": "Semantic Morphogenesis + Sculptural Realization",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "draft",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-09"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-10"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-11",
+    "phase": "Plasma",
+    "name": "Semantic Morphogenesis + Sculptural Realization",
+    "summary": "Give Plasma controllable access to highly expressive, Gaudí-scale sculptural form without forcing sculptural detail into the exact-solid or dependency kernel. Plasma owns identity, intent, morphology, relationships, control structures, fabrication constraints and accepted realizations; high-resolution sculptural surfaces may be authored procedurally, by AI, directly in Plasma, or in specialist tools such as Blender/ZBrush and round-tripped without losing semantic ownership.",
+    "spec": "planned",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-09",
+      "PLS-10"
+    ],
+    "gap": "A pure B-rep/parametric object model cannot efficiently express deeply sculpted ornament, organic junctions, birds, vines, figurative work, erosion-like stone forms or other freeform architectural richness. Conversely, importing a dead high-poly mesh severs intent-to-form linkage, editability, attachment logic, fabrication constraints and dependency traceability.",
+    "next": "Build a Gaudí balustrade vertical slice containing a semantic vine network, one perched bird asset and a sculptural junction. Support skeleton/cage-level edits, multiresolution surface refinement, GPU-local sculpt operations, representation LOD, fabrication checks, and Blender/ZBrush round-trip while preserving stable Plasma identity and attachment constraints.",
+    "flow": "DESIGN INTENT + REFERENCES + MORPHOLOGY + FIELDS + CONSTRAINTS → SEMANTIC CONTROL STRUCTURE → GENERATIVE / AI / MANUAL SCULPTURAL REALIZATION → MULTIRESOLUTION SURFACE → FABRICATION REALIZATION → REPRESENTATION RESOLVER → DOCUMENT / RENDER / MANUFACTURE",
+    "stages": [
+      "Declare semantic object, role and design intent",
+      "Create morphology graph, skeleton, cage, attachment and control regions",
+      "Generate or import coarse sculptural realization",
+      "Refine major masses independently of surface microdetail",
+      "Support local GPU sculpt operations and semantic AI edits",
+      "Round-trip specialist sculpting tools without surrendering Plasma identity",
+      "Bind high-resolution surface back to stable semantic controls",
+      "Derive watertight/manufacturable realization where required",
+      "Resolve representation level separately for design, documentation, fabrication and rendering",
+      "Propagate upstream semantic changes through deformation/reprojection before regenerating detail",
+      "Preserve accepted sculptural revisions, provenance and reversible lineage"
+    ]
+  }
+}
