@@ -1,0 +1,226 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "TransactionModel",
+  "id": "PLS-TRANSACTIONS",
+  "version": "1.0.0",
+  "projection": {
+    "principle": "All authoritative mutation occurs through a validated atomic transaction.",
+    "stages": [
+      {
+        "id": "operation",
+        "step": 1,
+        "name": "Semantic operation",
+        "summary": "Intent, targets, parameters and preconditions.",
+        "explanation": "A human, agent or service expresses intent without modifying canonical state."
+      },
+      {
+        "id": "world-slice",
+        "step": 2,
+        "name": "World slice",
+        "summary": "Read bounded authoritative state at a known revision.",
+        "explanation": "The operation records the entities and facts it actually read, enabling provenance and conflict detection."
+      },
+      {
+        "id": "candidate",
+        "step": 3,
+        "name": "Candidate patch",
+        "summary": "Proposed writes, identity mappings, claims and evidence.",
+        "explanation": "The candidate patch describes what should change. It is not authoritative state and can be discarded safely."
+      },
+      {
+        "id": "provisional",
+        "step": 4,
+        "name": "Provisional world",
+        "summary": "Apply the patch to a copy-on-write overlay.",
+        "explanation": "Validation asks what would be true if the patch committed without touching the live world."
+      },
+      {
+        "id": "validate",
+        "step": 5,
+        "name": "Validation pipeline",
+        "summary": "Schema, identity, permission, freshness, types, geometry, invariants and evidence.",
+        "explanation": "Validation produces structured findings and never relies on partially mutating the canonical world."
+      },
+      {
+        "id": "gate",
+        "step": 6,
+        "name": "Transaction gate",
+        "summary": "Re-check concurrency and commit eligibility against the latest revision.",
+        "explanation": "The gate compares the candidate's base revision and read assumptions with current world state. Safe candidates may rebase; conflicting candidates are rejected or repaired."
+      },
+      {
+        "id": "commit",
+        "step": 7,
+        "name": "Atomic commit",
+        "summary": "Apply all accepted mutations or none.",
+        "explanation": "Identity updates, relations, evidence, provenance and events commit as one atomic revision. Partial authority is forbidden."
+      },
+      {
+        "id": "revision",
+        "step": 8,
+        "name": "New revision",
+        "summary": "Durable record of what changed, why and from which evidence.",
+        "explanation": "A commit creates a new revision with parent, patch, proposer, read and write sets, validation results and provenance."
+      },
+      {
+        "id": "invalidate",
+        "step": 9,
+        "name": "Dependency invalidation",
+        "summary": "Mark causally affected derived results stale.",
+        "explanation": "Invalidation is causal rather than spatially broad. Affected derivations become stale before any recomputation is scheduled."
+      },
+      {
+        "id": "schedule",
+        "step": 10,
+        "name": "Progressive recompute",
+        "summary": "Recompute only what is useful, blocking or user-visible.",
+        "explanation": "The scheduler separates invalidation from recomputation so expensive analysis can run later or on demand."
+      }
+    ],
+    "candidatePatch": {
+      "fields": [
+        "patch_id",
+        "operation_id",
+        "proposer",
+        "base_revision",
+        "intent",
+        "scope",
+        "reads[]",
+        "writes[]",
+        "preconditions[]",
+        "mutations[]",
+        "derived_results[]",
+        "claims[]",
+        "evidence[]",
+        "identity_mapping[]",
+        "expected_invalidations[]",
+        "tolerances",
+        "confidence",
+        "provenance"
+      ],
+      "explanation": "A CandidatePatch is the core mutation proposal. It declares what influenced the result, what it intends to write, the assumptions under which it was computed and the evidence supporting it."
+    },
+    "validation": [
+      {
+        "id": "schema",
+        "name": "Schema",
+        "question": "Is the patch structurally valid?"
+      },
+      {
+        "id": "identity",
+        "name": "Identity",
+        "question": "Do references resolve to the intended semantic entities?"
+      },
+      {
+        "id": "permission",
+        "name": "Permission",
+        "question": "May this proposer modify this scope?"
+      },
+      {
+        "id": "freshness",
+        "name": "Freshness",
+        "question": "Are the base revision and inputs sufficiently current?"
+      },
+      {
+        "id": "preconditions",
+        "name": "Preconditions",
+        "question": "Are the assumptions used to compute the patch still true?"
+      },
+      {
+        "id": "types-units",
+        "name": "Types + units",
+        "question": "Are values, units and relationships semantically valid?"
+      },
+      {
+        "id": "geometry",
+        "name": "Geometry",
+        "question": "Is the resulting spatial state valid and healable?"
+      },
+      {
+        "id": "local-invariants",
+        "name": "Local invariants",
+        "question": "Does the affected subsystem remain internally valid?"
+      },
+      {
+        "id": "cross-domain",
+        "name": "Cross-domain constraints",
+        "question": "Does the patch violate connected domain rules?"
+      },
+      {
+        "id": "evidence",
+        "name": "Evidence",
+        "question": "Has required supporting evidence been supplied?"
+      },
+      {
+        "id": "governance",
+        "name": "Governance",
+        "question": "Does this change require escalation or human approval?"
+      }
+    ],
+    "rejectionPaths": [
+      {
+        "id": "malformed",
+        "name": "Malformed",
+        "action": "Reject permanently",
+        "description": "Schema or type errors prevent the candidate entering the transaction."
+      },
+      {
+        "id": "unauthorized",
+        "name": "Unauthorized",
+        "action": "Reject or escalate",
+        "description": "The proposer lacks permission for the requested scope."
+      },
+      {
+        "id": "stale",
+        "name": "Stale",
+        "action": "Rebase or recompute",
+        "description": "Relevant world state changed after the candidate's base revision."
+      },
+      {
+        "id": "conflict",
+        "name": "Concurrent conflict",
+        "action": "Merge, retry or reject",
+        "description": "Another commit intersects the candidate's read assumptions or write set."
+      },
+      {
+        "id": "invariant",
+        "name": "Invariant violation",
+        "action": "Repair candidate",
+        "description": "The provisional world violates a required invariant or domain rule."
+      },
+      {
+        "id": "evidence",
+        "name": "Insufficient evidence",
+        "action": "Request evaluation",
+        "description": "Required evidence is missing, stale or below the acceptance threshold."
+      },
+      {
+        "id": "approval",
+        "name": "Approval required",
+        "action": "Await approval",
+        "description": "The candidate is technically valid but governance requires human authorization."
+      }
+    ],
+    "invariants": [
+      "No authoritative mutation outside a transaction.",
+      "No partial commit.",
+      "A commit always produces a revision.",
+      "A revision always identifies its cause.",
+      "A candidate identifies its base revision, read set and intended writes.",
+      "Stable identities may transform but may not silently disappear.",
+      "Failed candidates never modify authoritative state.",
+      "Derived values expose freshness.",
+      "Dependency invalidation follows committed changes.",
+      "External tools return proposals, claims or evidence, never direct authority.",
+      "History remains append-only even when current state deletes an entity."
+    ],
+    "freshnessStates": [
+      "fresh",
+      "stale",
+      "computing",
+      "failed",
+      "unknown",
+      "superseded"
+    ]
+  }
+}
