@@ -1,0 +1,225 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-19",
+  "version": "0.1.0",
+  "title": "Parametric Architectural Wall System",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-02"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-09"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-10"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-14"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-17"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-18"
+    }
+  ],
+  "provides": [
+    "PLS-WALL-01"
+  ],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-19",
+    "phase": "Plasma",
+    "name": "Parametric Architectural Wall System",
+    "summary": "Generate editable architectural walls from paths and versioned wall-system definitions. Preserve layer parameters, reference lines, persistent junctions, hosted openings, room relations and construction intent through bounded regeneration. Quantities, cost and drawings remain revision-pinned derivations; walls are an architecture domain capability above the existing kernel.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-02",
+      "PLS-09",
+      "PLS-10",
+      "PLS-14",
+      "PLS-17",
+      "PLS-18"
+    ],
+    "gap": "This contract records required parametric behaviour; it adds no implementation or verification claim. The existing wall interaction fixture is supporting context, not proof of layered wall generation, junctions, hosted regeneration or quantity correctness.",
+    "next": "Prove the straight/polyline two-layer wall slice with numeric/direct editing, one hosted opening, declared junction rules, room-boundary conflict preview, coherent quantities/drawings and normal-origin save/reopen. Expand only after WALL-AT-01 through WALL-AT-08 have applicable evidence.",
+    "flow": "PATH + PINNED WALL SYSTEM + PARAMETERS → TYPED DOMAIN OPERATION → CANDIDATE RELATIONS/GEOMETRY → EVALUATE → ATOMIC WORLD COMMIT → BOUNDED REGENERATION → REVISION-PINNED VIEWS/QUANTITIES/COST",
+    "contract_id": "PLS-WALL-01",
+    "contract_version": "0.1.0",
+    "contract_status": "specified; implementation unproven",
+    "scope": {
+      "v1": [
+        "Straight and polyline walls",
+        "Constant height with explicit layer extents",
+        "Ordered construction layers and reference-line control",
+        "Supported L/T/cross junction policies",
+        "Rectangular hosted openings with explicit placement",
+        "Room boundary integration and basic derived outputs"
+      ],
+      "deferred": [
+        "Curved and freeform walls",
+        "Variable-height profiles and tapered layers",
+        "General multi-system junction solver",
+        "Fabrication automation and certified performance evaluation"
+      ]
+    },
+    "wall_record_minimum": [
+      "entity_id",
+      "created_revision",
+      "wall_system_ref + exact version",
+      "path + segment identities",
+      "coordinate_frame + units",
+      "base_elevation",
+      "height",
+      "reference_line_role",
+      "lateral_offset",
+      "orientation",
+      "ordered layer records: stable ID/material reference/thickness/function/extents",
+      "parameter ownership + active relation refs",
+      "junction_relation_refs",
+      "hosted_element_refs",
+      "space_boundary_refs",
+      "source intent/evidence refs"
+    ],
+    "requirements": [
+      {
+        "id": "WALL-01",
+        "title": "Path-driven construction",
+        "must": "An explicit path, coordinate frame and pinned wall-system definition generate a wall. V1 supports straight segments and connected polylines. Curved paths and variable-height profiles are deferred extensions. Sketch interpretations remain proposals until adopted; raw marks and interpretation provenance remain addressable."
+      },
+      {
+        "id": "WALL-02",
+        "title": "Editable parameters and ownership",
+        "must": "Persist path and base elevation, height, system/type revision, reference-line role, lateral offset, orientation and layer definitions with units. Layers have stable IDs, ordered material references, thickness, function and explicit vertical extents. Total thickness is derived from layers. A total-thickness edit must name a layer-allocation policy or propose one; competing active writers are rejected. Reference line supports overall faces/centre and a declared core face/centre. Define left/right relative to path direction and preserve physical face intent when reversing the path."
+      },
+      {
+        "id": "WALL-03",
+        "title": "Persistent junctions",
+        "must": "Endpoint and crossing connections are semantic Relations with explicit policy: butt, miter or priority, layer participation and allowed tolerance. Resolve layers according to the pinned wall-system rules, not one universal wall algorithm. Moving or regenerating a wall reevaluates the relation. Unsupported joins remain unresolved; never silently fuse, change construction or accept a gap. Geometric coincidence alone does not create a persistent connection."
+      },
+      {
+        "id": "WALL-04",
+        "title": "Hosted openings",
+        "must": "Doors and windows retain stable identity, host relation, opening profile, width/height/sill and placement intent. Placement may be centred, fixed to a named jamb/endpoint, or a declared proportional rule. A driven placement has one active writer. Direct manipulation proposes a placement-rule change when needed. Wall movement or construction changes regenerate the opening; splitting/deleting the host requires explicit reassignment, detachment or rejection rather than nearest-object guessing."
+      },
+      {
+        "id": "WALL-05",
+        "title": "Room and boundary relationships",
+        "must": "Walls connect to room/space boundaries through explicit relations. Distinguish architectural reference dimensions from finished clear dimensions and declare which layer/face controls each measurement. Preview propagation strategies such as take space, preserve neighbour width or grow outward; name affected entities before acceptance. Wall geometry does not independently own room topology."
+      },
+      {
+        "id": "WALL-06",
+        "title": "Non-destructive operations",
+        "must": "CreateWall, SetWallParameters, MoveWall, StretchWall, SplitWall, JoinWalls, ChangeWallSystem and HostOpening are typed domain operations, not new kernel primitives. Define reads, writes, pinned base revision, references, units, scope, preconditions and impact. Use the PLS-17 operation/resolver boundary and PLS-GR-01 geometry verbs where needed; accepted feature state and relations determine evaluated geometry, not mesh indices or provider handles."
+      },
+      {
+        "id": "WALL-07",
+        "title": "Bounded regeneration and correspondence",
+        "must": "Invalidate only the affected dependency closure: connected junctions, hosted elements, room measures, exact/display geometry, analyses, quantities, cost and drawings. Preserve entity/layer/opening identity through regeneration, with explicit correspondence for topology changes. Stale-base results cannot overwrite newer state. Report ambiguity, pending, stale and failed outputs without discarding accepted facts."
+      },
+      {
+        "id": "WALL-08",
+        "title": "Preview and exact acceptance",
+        "must": "Provide immediate provisional feedback using the existing Interaction Reflex Runtime and Interactive Presentation Surface. Exact boundary representation geometry is resolved through the assigned geometry provider, initially OpenCascade, with declared tolerance, validation and evidence. Preview triangles cannot masquerade as exact geometry. Unresolved domain compliance may be explored under branch policy; hard integrity failures block commit and required issue/fabrication gates remain closed."
+      },
+      {
+        "id": "WALL-09",
+        "title": "Derived quantities, cost and drawings",
+        "must": "Generate revision-pinned plan/section/elevation views and quantities from the accepted feature state. Declare gross/net area and volume conventions, opening deductions, junction overlap allocation, layer scope and units to prevent double counting. Cost uses versioned rates with location/date, assumptions and uncertainty. Publication requires a mutually coherent set of results; each result records inputs, producer/version, parameters, fidelity, tolerance and currentness. A valid parametric wall alone proves no fire, acoustic, thermal, structural or regulatory performance."
+      },
+      {
+        "id": "WALL-10",
+        "title": "Reusable and versioned wall systems",
+        "must": "Store reusable construction, material and junction rules in the versioned Knowledge Ledger; projects pin exact system/rule versions. A library update triggers impact analysis and an optional evaluated migration branch, never silent regeneration of accepted projects. System definitions include applicability and fabrication/assembly constraints where known. Domain packs remain optional consumers of existing core contracts."
+      },
+      {
+        "id": "WALL-11",
+        "title": "History, branching and tool round trips",
+        "must": "Parameter changes, relation changes and accepted geometry retain Transform/Event/Evidence lineage. Undo appends a new revision; branches remain independently editable. Save/reopen preserves parameters, constraints, hosted identity and provenance. Imported/exported representations reconcile through explicit correspondence; an external wall mesh does not automatically become an editable parameter model."
+      },
+      {
+        "id": "WALL-12",
+        "title": "Usable editing surface",
+        "must": "Drawing a path, choosing a wall system and editing numeric parameters must remain available without AI services. Selection exposes concise wall parameters, reference line, hosts and junction policies; deeper inspection explains what drives each property and what an edit affects. Sketch, direct manipulation and language proposals converge on the same typed operations."
+      }
+    ],
+    "acceptance_tests": [
+      {
+        "id": "WALL-AT-01",
+        "title": "Create and edit",
+        "assert": "Create a two-layer straight wall, then a polyline. Change height, base elevation, a named layer thickness and offset. Verify generated dimensions and reference-line placement within the declared tolerance; total thickness remains derived and physical face intent survives path reversal.",
+        "status": "required; not run"
+      },
+      {
+        "id": "WALL-AT-02",
+        "title": "Junction policies",
+        "assert": "Exercise L, T and crossing joins under supported butt/miter/priority policies with different layer configurations. Move an endpoint and regenerate repeatedly. Verify relation identity, declared layer termination and explicit unresolved status for unsupported/micro-gap/ambiguous cases.",
+        "status": "required; not run"
+      },
+      {
+        "id": "WALL-AT-03",
+        "title": "Hosted placement",
+        "assert": "Use both centred and fixed-jamb windows, resize and move the host, then change its construction. Verify opening/host identity and placement intent. Split/delete the host and require explicit disposition. Reject conflicting active placement writers.",
+        "status": "required; not run"
+      },
+      {
+        "id": "WALL-AT-04",
+        "title": "Rooms and conflicts",
+        "assert": "Move the bedroom/corridor boundary under take-space and preserve-neighbour strategies. Show the requested conflicted preview and affected rooms without silently changing strategy. Test the live fixture separately from synthetic data; do not substitute historic +315 mm synthetic values for the documented +150 mm live hard limit.",
+        "status": "required; not run"
+      },
+      {
+        "id": "WALL-AT-05",
+        "title": "Atomicity and stale work",
+        "assert": "Reject a stale-base wall edit; fail an exact geometry/junction operation; ensure accepted head and unaffected entities remain intact. Late geometry/quantity results cannot replace current outputs or enable publication.",
+        "status": "required; not run"
+      },
+      {
+        "id": "WALL-AT-06",
+        "title": "Quantity and document coherence",
+        "assert": "Compare layer volumes and opening deductions against independently calculated fixture expectations, including junction allocation. Update plan/section and cost after a parameter edit; all issued outputs refer to an explicitly coherent revision set.",
+        "status": "required; not run"
+      },
+      {
+        "id": "WALL-AT-07",
+        "title": "Branch, undo and reopen",
+        "assert": "Edit two branches independently, adopt one, undo, close and reopen in a normal storage origin. Recover from interrupted/corrupt persistence using the existing governed recovery path. Reconstruct system pins, parameters, relations, outputs and history; a synthetic storage harness is supporting evidence only.",
+        "status": "required; not run"
+      },
+      {
+        "id": "WALL-AT-08",
+        "title": "System migration and modalities",
+        "assert": "Update a library system without modifying the pinned project. Preview and evaluate migration on a branch. Prove equivalent operations from numeric editing, pointer input and a reviewed language proposal, with usable direct editing when AI is unavailable.",
+        "status": "required; not run"
+      }
+    ],
+    "provenance": {
+      "recorded_at": "2026-09-30",
+      "basis": "User request to explicitly include the parametric wall behaviour discussed with the SketchUp/MUZWalls example. This is a Plasma adaptation, not a verified description of plugin internals.",
+      "prior_spec": "0.4.26",
+      "kernel_change": false
+    }
+  }
+}
