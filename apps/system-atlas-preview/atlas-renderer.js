@@ -82,7 +82,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         </div>
         <div class="index-group">
           <div class="index-label">Execution + projection</div>
-          ${['geometry','constraints','representation','external'].map(id => {
+          ${['geometry','constraints','representation','differential','external'].map(id => {
             const x=c.get(id); return `<button class="index-item ${active('component',id)}" data-atlas-type="component" data-atlas-id="${id}"><span class="dot ${x.authority==='external'?'external':x.authority==='derived'?'derived':'runtime'}"></span>${esc(x.name)}</button>`;
           }).join('')}
         </div>
