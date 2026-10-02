@@ -1,0 +1,831 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "VerticalSliceCatalog",
+  "id": "PLS-SLICES",
+  "version": "1.0.0",
+  "layer": "L5",
+  "items": [
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "VerticalSlice",
+      "id": "terrain-site",
+      "version": "0.1.0",
+      "title": "Terrain → site foundation",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "dependsOn": [],
+      "projection": {
+        "id": "terrain-site",
+        "name": "Terrain → site foundation",
+        "domain": "Site / context",
+        "summary": "From survey and site intent to authoritative terrain, constraints, evidence and derived context representations.",
+        "purpose": "Prove that Plasma can ingest imperfect real-world site information, create an authoritative semantic site model, support fast human editing, and propagate site changes through geometry, constraints, hydrology, evidence and representations.",
+        "whyThisSlice": "Site work touches almost every foundational concern at once: external evidence, spatial identity, editable geometry, planning constraints, fields, derived analyses and change propagation. If this slice is weak, downstream feasibility is built on unreliable context.",
+        "flow": [
+          "survey / GIS / user evidence",
+          "site entities + semantic references",
+          "terrain and grading operation",
+          "candidate geometry",
+          "constraint + hydrology validation",
+          "atomic commit",
+          "dependency invalidation",
+          "updated views / reports"
+        ],
+        "proves": [
+          "external evidence can become traceable world state without becoming unquestioned truth",
+          "terrain edits remain semantic operations rather than raw mesh manipulation",
+          "exact, approximate and field representations can coexist",
+          "planning, drainage and geometry checks can evaluate the same candidate world",
+          "site changes invalidate only causally dependent results"
+        ],
+        "stressPoints": [
+          "noisy or contradictory source data",
+          "large terrain meshes and contours",
+          "stable references after grading or topology change",
+          "interactive preview versus exact committed geometry",
+          "local edits with global drainage consequences"
+        ],
+        "successCriteria": [
+          "a site can be imported, corrected and graded without bypassing the transaction boundary",
+          "changing a pad, driveway or contour updates affected drainage and planning checks",
+          "all derived site representations expose freshness and provenance",
+          "annotations and references survive routine terrain regeneration",
+          "the workflow remains responsive on representative medium-density sites"
+        ],
+        "keySystems": [
+          "Interaction Plane",
+          "World + Authority Plane",
+          "Geometry Resolver",
+          "Constraint Runtime",
+          "Representations",
+          "External Systems"
+        ],
+        "declaredState": "active implementation",
+        "evidenceState": "not-linked",
+        "checks": {
+          "spec": "declared",
+          "contracts": "declared",
+          "code": "declared",
+          "unitTests": "not-linked",
+          "e2e": "not-linked",
+          "benchmark": "not-linked"
+        },
+        "explanation": "This is the primary site/context proving slice. It is deliberately broader than a terrain editor: the important test is whether real-world evidence can be turned into dependable, editable, authoritative site state and then safely drive downstream design decisions.",
+        "integrationEvidence": [
+          "ev-slice-terrain-site"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "VerticalSlice",
+      "id": "townhouse-system",
+      "version": "0.1.0",
+      "title": "Townhouse system → compliant site ensemble",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "dependsOn": [],
+      "projection": {
+        "id": "townhouse-system",
+        "name": "Townhouse system → compliant site ensemble",
+        "domain": "Medium-density housing",
+        "summary": "Parcel + planning + dwelling system → site layout → access / parking / landscape → coordinated townhouse ensemble → feasibility evidence.",
+        "purpose": "Prove that Plasma can generate and continuously coordinate a real medium-density townhouse project from site evidence and planning constraints through dwelling layout, shared access, private open space, parking, landscape, servicing, documentation and feasibility.",
+        "whyThisSlice": "Townhouses are a strong building-scale proving ground because they combine repeated dwelling systems with highly site-specific planning geometry. A viable result depends on interactions between setbacks, overlooking, solar access, vehicle movement, private open space, deep planting, levels, drainage, dwelling amenity, construction systems and economics. Optimising any one of these in isolation is not enough.",
+        "flow": [
+          "site + planning evidence",
+          "development intent + dwelling yield target",
+          "site capacity / constraint field",
+          "townhouse typology + dwelling systems",
+          "massing + orientation + private open space",
+          "vehicle / pedestrian access + parking",
+          "landscape + drainage + services",
+          "amenity / planning / geometry validation",
+          "cost + yield + feasibility evaluation",
+          "candidate scheme commit + derived documentation"
+        ],
+        "proves": [
+          "site-specific constraints and reusable dwelling systems can interact without collapsing into one monolithic generator",
+          "a repeated townhouse type can vary by orientation, frontage, level and boundary condition while retaining semantic lineage",
+          "planning, amenity, access, landscape, drainage and economics can evaluate the same candidate world rather than separate models",
+          "high-level operations such as change yield, widen driveway or increase private open space can propagate through dependent geometry and analysis",
+          "multiple viable alternatives can be retained as comparable branches with explicit evidence rather than a single opaque optimum"
+        ],
+        "stressPoints": [
+          "irregular parcels, slope and constrained frontage",
+          "conflicts between dwelling yield, private open space, deep planting and vehicle access",
+          "overlooking, daylight, shadow and boundary relationships between closely spaced dwellings",
+          "shared versus private infrastructure and ownership boundaries",
+          "late planning or consultant changes invalidating many dependent assumptions at once",
+          "keeping feasibility fast while exact geometry and compliance checks progressively refine"
+        ],
+        "successCriteria": [
+          "a site can move from imported context to several coherent townhouse options without manually rebuilding each discipline model",
+          "changing dwelling count or site circulation produces traceable updates to affected setbacks, access, landscape, drainage, quantities and feasibility",
+          "each dwelling retains identity and can vary locally without breaking the repeated system",
+          "failed planning or geometry conditions identify the causal entities and constraints rather than only returning a generic scheme failure",
+          "a selected scheme can derive coordinated plans, sections, schedules, quantities and consultant-ready world slices from the same authoritative state",
+          "alternative schemes can be compared on yield, amenity, compliance risk and cost with their assumptions and evidence visible"
+        ],
+        "keySystems": [
+          "Site Language",
+          "World + Authority Plane",
+          "Geometry Resolver",
+          "Constraint Runtime",
+          "Assembly Language",
+          "Analysis Language",
+          "Representations",
+          "External Systems"
+        ],
+        "declaredState": "target vertical slice",
+        "evidenceState": "not-linked",
+        "checks": {
+          "spec": "declared",
+          "contracts": "partial",
+          "code": "not-linked",
+          "unitTests": "not-linked",
+          "e2e": "not-linked",
+          "benchmark": "not-linked"
+        },
+        "explanation": "The townhouse slice is Plasma's primary medium-density housing test. It is not merely a floor-plan generator: it tests whether site, planning, dwelling systems, access, landscape, infrastructure, amenity and economics can remain causally connected while the design changes. It should eventually support rapid feasibility through coordinated documentation without hiding the evidence behind each decision.",
+        "integrationEvidence": [
+          "ev-slice-townhouse-yield"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "VerticalSlice",
+      "id": "apartment-system",
+      "version": "0.1.0",
+      "title": "Apartment system → coordinated vertical building",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "dependsOn": [],
+      "projection": {
+        "id": "apartment-system",
+        "name": "Apartment system → coordinated vertical building",
+        "domain": "Multi-residential housing",
+        "summary": "Site + unit mix + cores + structure + services + envelope → stacked building system → whole-building validation → documentation and feasibility.",
+        "purpose": "Prove that Plasma can coordinate a multi-storey apartment building as interacting spatial and technical systems across floors, rather than as repeated plans with disconnected consultant models.",
+        "whyThisSlice": "Apartments introduce vertical coupling and shared systems at a scale townhouses do not. Unit layouts depend on structural grids, cores, egress, fire compartments, risers, façade, daylight, acoustics, services distribution, parking, plant, circulation, buildability and economics. A small change to one system can propagate through many storeys and disciplines.",
+        "flow": [
+          "site + regulatory / context evidence",
+          "brief + unit mix + yield / area targets",
+          "massing + floorplate + vertical zoning",
+          "core / egress / circulation system",
+          "unit typologies + stacking rules",
+          "structure + façade + services / risers",
+          "parking / loading / plant / waste systems",
+          "fire / accessibility / amenity / environmental analysis",
+          "whole-building dependency validation",
+          "cost / efficiency / yield comparison",
+          "authoritative scheme commit + coordinated documentation"
+        ],
+        "proves": [
+          "Plasma can represent one building as nested interacting systems rather than one giant parametric object",
+          "repeated unit types can maintain identity while adapting to corners, façade orientation, structure and service conditions",
+          "vertical dependencies such as risers, columns, cores and fire paths can propagate across many floors without global regeneration of unrelated systems",
+          "specialist structural, fire, services and environmental solvers can contribute claims and candidate changes without becoming authoritative state",
+          "building-wide metrics such as net-to-gross efficiency, unit mix, circulation area and façade performance can remain traceable to authoritative geometry",
+          "documentation can be derived from the same building state used for feasibility and analysis"
+        ],
+        "stressPoints": [
+          "vertical propagation of core, riser, column and shaft changes across many storeys",
+          "conflicting structural, fire, accessibility, acoustic, façade and services requirements",
+          "unit repetition with local exceptions and changing floorplate geometry",
+          "large dependency graphs where a small edit must not trigger whole-building recomputation",
+          "basement parking, loading and services interfaces with superstructure grids",
+          "maintaining responsiveness while high-fidelity analyses run asynchronously",
+          "design alternatives with materially different cores, grids and unit mixes"
+        ],
+        "successCriteria": [
+          "changing a core, grid or riser produces bounded, explainable invalidation across affected floors and systems",
+          "unit types can be reused and adapted without losing apartment identity, area metrics or documentation references",
+          "egress, accessibility, services, structure, envelope and amenity checks can evaluate a shared provisional world before commit",
+          "the system can compare alternative floorplates and unit mixes without flattening them into a single optimisation score",
+          "a committed building scheme can derive coordinated floor plans, sections, elevations, schedules, quantities and consultant-specific views",
+          "performance remains interactive for design operations while expensive analysis and documentation regenerate progressively",
+          "the Atlas can trace any major building decision back to the operation, evidence and revision that caused it"
+        ],
+        "keySystems": [
+          "World + Authority Plane",
+          "Geometry Resolver",
+          "Constraint Runtime",
+          "Assembly Language",
+          "Analysis Language",
+          "Query / Selection Language",
+          "Evidence / Claim Language",
+          "Representations",
+          "External Systems",
+          "Intelligence Plane"
+        ],
+        "declaredState": "target vertical slice",
+        "evidenceState": "not-linked",
+        "checks": {
+          "spec": "declared",
+          "contracts": "partial",
+          "code": "not-linked",
+          "unitTests": "not-linked",
+          "e2e": "not-linked",
+          "benchmark": "not-linked"
+        },
+        "explanation": "The apartment slice is Plasma's primary whole-building coordination test. It asks whether many coupled systems can evolve together across floors while authority, identity, evidence and performance remain controlled. It should ultimately connect early feasibility to coordinated documentation without creating separate incompatible models for architecture, structure, services, fire, façade and analysis.",
+        "integrationEvidence": [
+          "ev-slice-apartment-core"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "VerticalSlice",
+      "id": "wall-assembly",
+      "version": "0.1.0",
+      "title": "Parametric wall assembly",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "dependsOn": [],
+      "projection": {
+        "id": "wall-assembly",
+        "name": "Parametric wall assembly",
+        "domain": "Building systems",
+        "summary": "PLS-19 / PLS-WALL-01@0.1.0: editable path, height, base elevation, reference lines, layers, persistent junctions and hosted openings with bounded regeneration.",
+        "purpose": "Prove the v0.4.27 parametric wall contract across design intent, typed changes, exact geometry, space boundaries, coherent quantities/cost/drawings and reopen recovery. Specified; implementation unproven.",
+        "whyThisSlice": "Walls expose the general composition problem found throughout buildings: systems contain subsystems and components, interfaces matter, repetition is rule-driven, and apparently simple edits create junction, opening, material and fabrication consequences.",
+        "flow": [
+          "draw straight/polyline path",
+          "pin wall system and layer parameters",
+          "declare reference line / junction / hosted placement",
+          "preview typed edit and room consequences",
+          "validate candidate and exact geometry",
+          "atomic commit",
+          "bounded dependent regeneration",
+          "coherent quantities / cost / drawings",
+          "branch, undo, save and reopen"
+        ],
+        "proves": [
+          "nested composition does not require a special verb for every building product",
+          "interfaces and connectors can be first-class semantic entities",
+          "assembly rules can generate components while preserving identity and provenance",
+          "high-level edits can propagate into low-level fabrication geometry",
+          "derived drawings and quantities remain projections of the same authoritative system"
+        ],
+        "stressPoints": [
+          "One active writer per driven parameter; total thickness derived from layers",
+          "Left/right orientation and reference-line intent after path reversal",
+          "L/T/cross junction policy and layer termination",
+          "Opening placement, split/delete host disposition and topology ambiguity",
+          "Clear dimensions versus reference dimensions; corridor conflict propagation",
+          "Stale asynchronous results and coherent publication",
+          "Pinned system migration, branch isolation and normal-origin reopen",
+          "Deferred: curved/freeform walls, tapered profiles and general junction solving"
+        ],
+        "successCriteria": [
+          "WALL-AT-01 · Create and edit: Create a two-layer straight wall, then a polyline. Change height, base elevation, a named layer thickness and offset. Verify generated dimensions and reference-line placement within the declared tolerance; total thickness remains derived and physical face intent survives path reversal.",
+          "WALL-AT-02 · Junction policies: Exercise L, T and crossing joins under supported butt/miter/priority policies with different layer configurations. Move an endpoint and regenerate repeatedly. Verify relation identity, declared layer termination and explicit unresolved status for unsupported/micro-gap/ambiguous cases.",
+          "WALL-AT-03 · Hosted placement: Use both centred and fixed-jamb windows, resize and move the host, then change its construction. Verify opening/host identity and placement intent. Split/delete the host and require explicit disposition. Reject conflicting active placement writers.",
+          "WALL-AT-04 · Rooms and conflicts: Move the bedroom/corridor boundary under take-space and preserve-neighbour strategies. Show the requested conflicted preview and affected rooms without silently changing strategy. Test the live fixture separately from synthetic data; do not substitute historic +315 mm synthetic values for the documented +150 mm live hard limit.",
+          "WALL-AT-05 · Atomicity and stale work: Reject a stale-base wall edit; fail an exact geometry/junction operation; ensure accepted head and unaffected entities remain intact. Late geometry/quantity results cannot replace current outputs or enable publication.",
+          "WALL-AT-06 · Quantity and document coherence: Compare layer volumes and opening deductions against independently calculated fixture expectations, including junction allocation. Update plan/section and cost after a parameter edit; all issued outputs refer to an explicitly coherent revision set.",
+          "WALL-AT-07 · Branch, undo and reopen: Edit two branches independently, adopt one, undo, close and reopen in a normal storage origin. Recover from interrupted/corrupt persistence using the existing governed recovery path. Reconstruct system pins, parameters, relations, outputs and history; a synthetic storage harness is supporting evidence only.",
+          "WALL-AT-08 · System migration and modalities: Update a library system without modifying the pinned project. Preview and evaluate migration on a branch. Prove equivalent operations from numeric editing, pointer input and a reviewed language proposal, with usable direct editing when AI is unavailable."
+        ],
+        "keySystems": [
+          "World + Authority Plane",
+          "Geometry Resolver",
+          "Constraint Runtime",
+          "Assembly Language",
+          "Representations"
+        ],
+        "declaredState": "specified; implementation unproven",
+        "evidenceState": "not-linked",
+        "checks": {
+          "spec": "declared",
+          "contracts": "declared",
+          "code": "not-linked",
+          "unitTests": "not-linked",
+          "e2e": "not-linked",
+          "benchmark": "not-linked"
+        },
+        "explanation": "The v0.4.27 wall contract makes parameters and regeneration explicit without adding a kernel primitive. Construction, junction and host rules persist above evaluated geometry. The existing wall/opening scenario is retained; eight new acceptance gates have no executable proof yet. Straight/polyline V1 precedes curved/general wall systems.",
+        "integrationEvidence": [
+          "ev-slice-wall-opening",
+          "ev-wall-at-01",
+          "ev-wall-at-02",
+          "ev-wall-at-03",
+          "ev-wall-at-04",
+          "ev-wall-at-05",
+          "ev-wall-at-06",
+          "ev-wall-at-07",
+          "ev-wall-at-08"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "VerticalSlice",
+      "id": "window-door-system",
+      "version": "0.1.0",
+      "title": "Window + door system → hosted opening → fabrication",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "dependsOn": [],
+      "projection": {
+        "id": "window-door-system",
+        "name": "Window + door system → hosted opening → fabrication",
+        "domain": "Building envelope / product systems",
+        "summary": "Hosted wall opening → configurable frame / leaf / sash / glazing / hardware system → performance validation → fabrication and installation evidence.",
+        "purpose": "Prove that Plasma can treat windows and doors as nested configurable product systems that are hosted in building assemblies, cut and maintain openings, preserve semantic relationships through edits, carry performance and lifecycle data, and produce fabrication-ready outputs without hard-wiring one manufacturer or geometry engine into the kernel.",
+        "whyThisSlice": "Windows and doors sit at the intersection of architecture, envelope performance, user interaction, geometry, manufacturing and procurement. They are simple enough to understand visually but technically rich enough to stress hosting, openings, exact solids, persistent references, parametric dimensions, material systems, seals, drainage, hardware, thermal breaks, certification, cost and fabrication. Earlier Plasma studies repeatedly identified them as an ideal real CAD and product-system benchmark.",
+        "flow": [
+          "wall / façade host + opening intent",
+          "window or door role + performance brief",
+          "system family + configuration space",
+          "frame / sash / leaf / glazing / panel components",
+          "opening subtraction + hosted semantic relationships",
+          "hardware / seals / drainage / thermal-break interfaces",
+          "dimension + clearance + operation validation",
+          "thermal / solar / acoustic / airtightness / accessibility analysis",
+          "cost + supplier + lead-time / manufacturability evaluation",
+          "fabrication geometry + machine / shop adapter",
+          "installation interfaces + inspection evidence",
+          "committed product instance + schedules / details / lifecycle data"
+        ],
+        "proves": [
+          "hosted relationships can survive edits to both the wall and the window or door without degrading into fragile geometry references",
+          "opening creation, Boolean subtraction and exact geometry can remain downstream of semantic intent rather than defining the object model",
+          "a reusable product system can contain frame, sash or leaf, glazing or panel, seals, spacers, drainage, hardware, fixings and installation interfaces as nested entities",
+          "direct human edits and agent edits can use the same canonical operations, resolver, validation and commit path",
+          "parametric dimensions and higher-level system intent can coexist with direct manipulation such as move, resize, offset and replace",
+          "performance properties such as U-value, solar heat gain, light transmission, airtightness, acoustic rating and drainage can be attached to the same system that drives geometry and fabrication",
+          "manufacturer- or machine-specific output can be generated through adapters without embedding supplier logic in the kernel",
+          "cost, lead time, embodied impact, maintenance and replacement history can remain linked to the authoritative product instance"
+        ],
+        "stressPoints": [
+          "wall thickness or composition changing after a window or door has been placed",
+          "opening topology changing while dimensions, annotations and performance references must persist",
+          "frame depth, sill, jamb and head conditions adapting to host construction",
+          "operable leaves or sashes with clearances, swing, hinge and hardware constraints",
+          "doors intersecting accessibility, egress, threshold and fire or acoustic requirements",
+          "windows combining orientation, daylight, solar gain, framed view, privacy, ventilation and shading",
+          "custom grid or mullion patterns while retaining manufacturable component logic",
+          "switching between aluminium, timber, aluminium-clad timber or steel systems with different thermal and fabrication rules",
+          "high-detail fabrication geometry versus lightweight interactive and documentation representations",
+          "supplier substitutions or product revisions after documentation has already been produced"
+        ],
+        "successCriteria": [
+          "placing a window or door creates and maintains a hosted semantic relationship to the wall or façade and a valid opening through the host",
+          "resizing, moving or replacing the hosted system updates the opening, junctions, dimensions, schedules and affected analyses without manual reconstruction",
+          "changing wall thickness or assembly updates head, jamb, sill or threshold conditions while preserving the product instance and its lineage",
+          "the system can represent frame, sash or leaf, glazing or panel, seals, hardware, fixings and interfaces as queryable nested components",
+          "a user or agent can manipulate the same instance with shared operations and obtain deterministic undo, replay and provenance",
+          "thermal, solar, acoustic, airtightness, drainage, accessibility and relevant compliance checks can evaluate a provisional configuration before commit",
+          "the same authoritative instance can generate design geometry, detailed sections, schedules, quantities, cost data and fabrication output as separate representations",
+          "a manufacturer or machine adapter can produce production geometry or instructions without taking ownership of the authoritative system model",
+          "physical installation or commissioning evidence can be attached back to the originating instance and revision"
+        ],
+        "keySystems": [
+          "World + Authority Plane",
+          "Geometry Resolver",
+          "Constraint Runtime",
+          "Assembly Language",
+          "Geometry Language",
+          "Analysis Language",
+          "Query / Selection Language",
+          "Measurement Language",
+          "Evidence / Claim Language",
+          "Representations",
+          "External Systems"
+        ],
+        "declaredState": "target vertical slice",
+        "evidenceState": "not-linked",
+        "checks": {
+          "spec": "declared",
+          "contracts": "partial",
+          "code": "not-linked",
+          "unitTests": "not-linked",
+          "e2e": "not-linked",
+          "benchmark": "not-linked"
+        },
+        "explanation": "This slice consolidates earlier Plasma window and door studies into one demanding product-system benchmark. A wall hosts the system, the system owns a semantic opening requirement, and exact opening subtraction is resolved geometrically. The product itself is nested: frame, sash or leaf, glazing or panel, seals, spacers, drainage, hardware, fixings and installation interfaces. Orientation and time-dependent light can inform analysis and views; thermal, acoustic, airtightness and solar properties can become evidence; and cost, supplier capability, fabrication and installation remain linked without becoming kernel concepts. The decisive test is that ordinary CAD actions and higher-level product intent remain compatible while identity, history and evidence survive regeneration.",
+        "integrationEvidence": [
+          "ev-slice-window-resize"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "VerticalSlice",
+      "id": "annotations",
+      "version": "0.1.0",
+      "title": "Persistent annotations",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "dependsOn": [],
+      "projection": {
+        "id": "annotations",
+        "name": "Persistent annotations",
+        "domain": "Documentation / semantics",
+        "summary": "Dimensions, notes, callouts and markups remain attached to meaning while geometry and topology regenerate.",
+        "purpose": "Prove that user and automated annotations can persist through model evolution without being bound to brittle geometry IDs.",
+        "whyThisSlice": "A generative system is not useful for production documentation if every regeneration breaks dimensions and notes. Annotation persistence is therefore a direct test of stable semantic identity and revision-aware reference resolution.",
+        "flow": [
+          "author annotation",
+          "bind semantic reference",
+          "store intent + placement policy",
+          "world changes",
+          "reference lineage resolution",
+          "re-anchor or flag ambiguity",
+          "commit annotation update",
+          "regenerate drawing / viewport"
+        ],
+        "proves": [
+          "semantic references can outlive topology changes",
+          "annotation intent can be separated from screen coordinates",
+          "ambiguity can be surfaced instead of silently rebinding",
+          "manual documentation can coexist with generated geometry",
+          "representation regeneration does not erase authored information"
+        ],
+        "stressPoints": [
+          "face or edge splitting",
+          "deleted or merged entities",
+          "dimension witness points moving between revisions",
+          "view-specific placement conflicts",
+          "annotations that intentionally target derived rather than authoritative geometry"
+        ],
+        "successCriteria": [
+          "routine geometry regeneration does not orphan valid dimensions or notes",
+          "ambiguous references are flagged with lineage and repair options",
+          "annotations can be queried by entity, view and revision",
+          "changing a drawing lens does not change authoritative annotation meaning",
+          "undo, history and provenance explain why an annotation moved or became stale"
+        ],
+        "keySystems": [
+          "World + Authority Plane",
+          "Representations",
+          "Query / Selection Language",
+          "History / Revision Language"
+        ],
+        "declaredState": "architecture evolving",
+        "evidenceState": "not-linked",
+        "checks": {
+          "spec": "declared",
+          "contracts": "partial",
+          "code": "not-linked",
+          "unitTests": "not-linked",
+          "e2e": "not-linked",
+          "benchmark": "not-linked"
+        },
+        "explanation": "This slice is a focused test of stable semantic references. It asks whether Plasma can support real production documentation in a world where geometry is expected to regenerate frequently.",
+        "integrationEvidence": [
+          "ev-slice-annotations-regeneration"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "VerticalSlice",
+      "id": "solar-mapping",
+      "version": "0.1.0",
+      "title": "Solar irradiance mapping",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "dependsOn": [],
+      "projection": {
+        "id": "solar-mapping",
+        "name": "Solar irradiance mapping",
+        "domain": "Analysis / fields",
+        "summary": "World geometry → analysis request → sampled field → claim + evidence → surface representation.",
+        "purpose": "Prove that specialist analysis can attach continuous or sampled data to geometry without contaminating authoritative geometry with solver-specific implementation details.",
+        "whyThisSlice": "Solar mapping is a compact example of the broader analysis problem: geometry is sampled, an external or internal solver computes a field, assumptions and units matter, results become evidence, and a representation maps that evidence back onto surfaces.",
+        "flow": [
+          "select surfaces",
+          "define weather + time assumptions",
+          "sample geometry",
+          "run irradiance solver",
+          "produce field + metrics",
+          "record claims + evidence",
+          "validate freshness",
+          "derive coloured surface representation"
+        ],
+        "proves": [
+          "Analysis Language can request work without directly mutating design state",
+          "field data can reference stable geometry semantically",
+          "units, assumptions, resolution and provenance travel with results",
+          "solver implementations remain replaceable",
+          "analysis results can later inform a separate design-change proposal"
+        ],
+        "stressPoints": [
+          "geometry changing after analysis",
+          "UV / surface parameterisation across regenerated faces",
+          "large sample sets",
+          "different solver fidelity levels",
+          "distinguishing visual interpolation from measured or solved values"
+        ],
+        "successCriteria": [
+          "irradiance results identify source world revision and analysis assumptions",
+          "changing affected geometry marks the result stale immediately",
+          "a replacement solver can satisfy the same contract",
+          "surface colour mapping can be regenerated independently from the analysis result",
+          "a downstream optimisation can cite the irradiance evidence without silently editing geometry"
+        ],
+        "keySystems": [
+          "Analysis Language",
+          "Evidence / Claim Language",
+          "Measurement Language",
+          "Representations",
+          "External Systems"
+        ],
+        "declaredState": "conceptual slice",
+        "evidenceState": "not-linked",
+        "checks": {
+          "spec": "declared",
+          "contracts": "partial",
+          "code": "not-linked",
+          "unitTests": "not-linked",
+          "e2e": "not-linked",
+          "benchmark": "not-linked"
+        },
+        "explanation": "This is the canonical analysis-to-representation slice. It tests the separation between world state, analysis claims and visualisation while exercising fields, measurement semantics, provenance and freshness.",
+        "integrationEvidence": [
+          "ev-slice-solar-freshness"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "VerticalSlice",
+      "id": "multi-agent",
+      "version": "0.1.0",
+      "title": "Multi-agent concurrent work",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "dependsOn": [],
+      "projection": {
+        "id": "multi-agent",
+        "name": "Multi-agent concurrent work",
+        "domain": "Agentic runtime",
+        "summary": "Bounded world reads → parallel proposals → conflict detection → validated commits → evidence and history.",
+        "purpose": "Prove that many agents can work simultaneously on different or overlapping parts of Plasma without obtaining direct mutation authority or corrupting shared state.",
+        "whyThisSlice": "The long-term system may have hundreds of workers proposing geometry, analysis, documentation and optimisation changes. The central risk is not agent intelligence but concurrency, stale context, hidden coupling and unbounded recomputation.",
+        "flow": [
+          "partition bounded tasks",
+          "read revisioned world slices",
+          "parallel agent reasoning",
+          "candidate patches",
+          "dependency + conflict analysis",
+          "validation",
+          "commit / rebase / reject",
+          "revision + evidence",
+          "schedule affected follow-up work"
+        ],
+        "proves": [
+          "agents operate through the same authoritative commit loop as humans",
+          "read and write sets support conflict detection",
+          "stale work can be rejected or safely rebased",
+          "parallel work can remain local while global invariants still protect the world",
+          "agent actions remain attributable and reversible through history"
+        ],
+        "stressPoints": [
+          "two agents editing the same semantic entity",
+          "long-running analysis based on an old revision",
+          "cascading invalidation between domains",
+          "duplicate or contradictory proposals",
+          "runaway repair loops and agent-to-agent amplification"
+        ],
+        "successCriteria": [
+          "conflicting patches cannot partially commit",
+          "independent patches can commit without global locking",
+          "stale candidates receive structured rejection or rebase information",
+          "agent activity remains inspectable by task, revision and evidence",
+          "throughput scales without making every commit trigger global recomputation"
+        ],
+        "keySystems": [
+          "Intelligence Plane",
+          "World + Authority Plane",
+          "Constraint Runtime",
+          "History / Revision Language",
+          "Evidence / Claim Language"
+        ],
+        "declaredState": "architecture defined",
+        "evidenceState": "not-linked",
+        "checks": {
+          "spec": "declared",
+          "contracts": "partial",
+          "code": "not-linked",
+          "unitTests": "not-linked",
+          "e2e": "not-linked",
+          "benchmark": "not-linked"
+        },
+        "explanation": "This slice tests Plasma as a concurrent authoritative system rather than as a single-user CAD application. It is the proving ground for bounded reasoning, candidate patches, conflicts, rejection, provenance and scalable recomputation.",
+        "integrationEvidence": [
+          "ev-slice-multi-agent-conflict"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "VerticalSlice",
+      "id": "clothing-fabrication",
+      "version": "0.1.0",
+      "title": "Clothing → fabrication",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "dependsOn": [],
+      "projection": {
+        "id": "clothing-fabrication",
+        "name": "Clothing → fabrication",
+        "domain": "Parametric product / textile",
+        "summary": "Garment intent → body / maquette → parametric garment → material behaviour → pattern or knit structure → machine-ready fabrication.",
+        "purpose": "Prove that Plasma's kernel, languages and multi-representation model generalise beyond buildings into a materially different designed product with soft geometry, sizing, drape and fabrication constraints.",
+        "whyThisSlice": "Clothing is a strong anti-overfitting test. It forces Plasma to handle deformable form, body-relative geometry, material behaviour, repeated discrete structure and manufacturing output without adding clothing-specific concepts to the authoritative kernel.",
+        "flow": [
+          "garment intent + body parameters",
+          "semantic garment regions",
+          "parametric 3D maquette",
+          "material / yarn model",
+          "fast drape simulation",
+          "pattern or knit topology",
+          "design mapping",
+          "fabrication adapter",
+          "sample / inspection evidence"
+        ],
+        "proves": [
+          "the same kernel can support a new domain through replaceable languages and adapters",
+          "multiple representations can describe one garment: 3D maquette, flat pattern, stitch graph and fabrication instructions",
+          "continuous shape can translate into discrete knit or cut-and-sew structure",
+          "material properties and fit analysis can return evidence rather than own state",
+          "fabrication feedback can update the authoritative design through normal transactions"
+        ],
+        "stressPoints": [
+          "size changes without destroying design intent",
+          "seams, ease and stretch",
+          "mapping motifs across changing garment topology",
+          "fast approximate drape versus slower high-fidelity simulation",
+          "machine-specific constraints such as needle beds, stitch operations and yarn limits"
+        ],
+        "successCriteria": [
+          "one garment definition can regenerate across a useful size range while preserving semantic design regions",
+          "changing yarn or material parameters visibly changes predicted drape and fabrication constraints",
+          "2D pattern / stitch topology remains traceable to 3D garment regions",
+          "machine output is generated through an adapter rather than embedded into the kernel",
+          "a physical sample can return measurements and defects as evidence against the originating revision"
+        ],
+        "keySystems": [
+          "World + Authority Plane",
+          "Geometry Resolver",
+          "Analysis Language",
+          "Assembly Language",
+          "Representations",
+          "External Systems"
+        ],
+        "declaredState": "research slice",
+        "evidenceState": "not-linked",
+        "checks": {
+          "spec": "declared",
+          "contracts": "partial",
+          "code": "not-linked",
+          "unitTests": "not-linked",
+          "e2e": "not-linked",
+          "benchmark": "not-linked"
+        },
+        "explanation": "The clothing slice is deliberately outside architecture. If it works without changing the core authority model, it demonstrates that Plasma is genuinely a general intent-to-reality system rather than a building application with a generic vocabulary.",
+        "integrationEvidence": [
+          "ev-slice-clothing-resize"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "VerticalSlice",
+      "id": "botanical-growth",
+      "version": "0.1.0",
+      "title": "Botanical growth → living site system",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "dependsOn": [],
+      "projection": {
+        "id": "botanical-growth",
+        "name": "Botanical growth → living site system",
+        "domain": "Botanical / ecology",
+        "summary": "Species + site conditions + deterministic seed → growth state → procedural geometry / fields → ecological interactions → multi-level representation.",
+        "purpose": "Prove that living, time-dependent and partially stochastic entities can be first-class participants in the same world model as buildings and terrain.",
+        "whyThisSlice": "Plants are not static assets. They grow, branch, respond to light and water, vary between individuals, interact with site systems and may need representations ranging from botanical structure to millions of render instances. This makes them a demanding test of time, fields, determinism and scale.",
+        "flow": [
+          "species / cultivar definition",
+          "site + climate inputs",
+          "individual seed + age",
+          "growth rules",
+          "botanical topology",
+          "geometry + canopy / root fields",
+          "light / water / clearance interactions",
+          "revisioned growth state",
+          "LOD / drawing / rendering representations"
+        ],
+        "proves": [
+          "time can be an explicit dimension of world state rather than an animation-only concern",
+          "controlled stochastic variation can remain reproducible through deterministic seeds",
+          "procedural living systems can preserve semantic identity across growth stages",
+          "field interactions such as light, water and root zones can coexist with geometry",
+          "one authoritative botanical entity can drive schematic, analytical and highly detailed representations"
+        ],
+        "stressPoints": [
+          "large populations of plants",
+          "season and age changes",
+          "branch and leaf topology changing constantly",
+          "balancing botanical fidelity against interactive performance",
+          "interactions with buildings, utilities, drainage, shade and planning protection rules"
+        ],
+        "successCriteria": [
+          "the same seed, species, age and environment reproduce the same plant state",
+          "age or environmental changes regenerate growth while preserving entity lineage",
+          "large landscapes use level-of-detail and instancing without losing semantic queryability",
+          "tree protection zones, canopy shade and root extents can participate in constraints and analysis",
+          "render geometry remains derived and replaceable rather than becoming authoritative botanical state"
+        ],
+        "keySystems": [
+          "Site Language",
+          "Analysis Language",
+          "Geometry Resolver",
+          "Measurement Language",
+          "Representations",
+          "World + Authority Plane"
+        ],
+        "declaredState": "research slice",
+        "evidenceState": "not-linked",
+        "checks": {
+          "spec": "declared",
+          "contracts": "partial",
+          "code": "not-linked",
+          "unitTests": "not-linked",
+          "e2e": "not-linked",
+          "benchmark": "not-linked"
+        },
+        "explanation": "This slice tests whether Plasma can treat nature as a first-class dynamic system rather than decorative geometry. It combines deterministic procedural generation, lifecycle state, ecological fields, huge instance counts and cross-domain site interactions.",
+        "integrationEvidence": [
+          "ev-slice-botanical-age"
+        ]
+      }
+    }
+  ]
+}
