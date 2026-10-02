@@ -279,7 +279,7 @@
       "name": "Differential Compute Layer",
       "kind": "derived-compute",
       "authority": "non-authoritative-derived",
-      "band": "derived",
+      "band": "projection",
       "summary": "Deferred optional solver layer for local sensitivity, prediction, inverse guidance, uncertainty and selective compute allocation around authoritative state.",
       "explanation": "Differential state is disposable derived state. JVP/VJP results may guide previews, optimisation proposals, recovery directions and exact-solver prioritisation, but cannot mutate canonical state or satisfy authoritative validation.",
       "status": "deferred-not-started",
