@@ -1,0 +1,48 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "AtlasViews",
+  "id": "PLS-ATLAS-VIEWS",
+  "version": "1.0.0",
+  "projection": [
+    {
+      "id": "overview",
+      "label": "Overview",
+      "description": "Authority hierarchy and typed system relationships."
+    },
+    {
+      "id": "integration",
+      "label": "Integration",
+      "description": "Cross-view coverage: which slices exercise which systems, languages, contracts, transaction stages and evidence."
+    },
+    {
+      "id": "languages",
+      "label": "Languages",
+      "description": "Domain and cross-cutting languages and how they compose."
+    },
+    {
+      "id": "transactions",
+      "label": "Transactions",
+      "description": "Authoritative commit loop, rejection paths and dependency invalidation."
+    },
+    {
+      "id": "components",
+      "label": "Components",
+      "description": "Queryable catalogue of Plasma systems and responsibilities."
+    },
+    {
+      "id": "contracts",
+      "label": "Contracts",
+      "description": "Typed interfaces crossing component and authority boundaries."
+    },
+    {
+      "id": "slices",
+      "label": "Slices",
+      "description": "End-to-end capability slices with explicit evidence state."
+    },
+    {
+      "id": "evidence",
+      "label": "Evidence",
+      "description": "Claims, required evidence and current linkage state."
+    }
+  ]
+}
