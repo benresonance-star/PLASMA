@@ -6,6 +6,9 @@ import { createAtlasModel, parseHash } from './atlas-model.js';
 const here=path.dirname(fileURLToPath(import.meta.url));
 const atlas=JSON.parse(fs.readFileSync(path.join(here,'atlas.json'),'utf8'));
 const repositoryEvidence=JSON.parse(fs.readFileSync(path.join(here,'repository-evidence.json'),'utf8'));
+const specSystemStatus=JSON.parse(fs.readFileSync(path.join(here,'spec-system-status.json'),'utf8'));
+const generatedAtlasText=fs.readFileSync(path.resolve(here,'../../generated/spec-system/atlas/atlas.json'),'utf8');
+const generatedEvidenceText=fs.readFileSync(path.resolve(here,'../../generated/spec-system/atlas/repository-evidence.json'),'utf8');
 const evidenceWorkflow=fs.readFileSync(path.resolve(here,'../../.github/workflows/atlas-evidence.yml'),'utf8');
 const errors=[];
 const assert=(condition,message)=>{if(!condition)errors.push(message)};
@@ -16,6 +19,13 @@ const unique=(items,label)=>{
 };
 
 assert(atlas.meta?.version,'meta.version is required');
+assert(atlas.meta?.specification?.specSystem==='1.0.0-draft','Atlas must declare Plasma Spec System v1 source');
+assert(atlas.meta?.specification?.sourceMode==='generated-from-spec','Atlas must declare generated-from-spec source mode');
+assert(specSystemStatus.sourceMode==='canonical-spec','Spec System status must declare canonical-spec source mode');
+assert(specSystemStatus.atlasVersion===atlas.meta.version,'Spec System status Atlas version must match Atlas');
+assert(fs.existsSync(path.join(here,'spec-system.html')),'generated Spec System human view is missing');
+assert(generatedAtlasText===fs.readFileSync(path.join(here,'atlas.json'),'utf8'),'served Atlas must match generated canonical snapshot');
+assert(generatedEvidenceText===fs.readFileSync(path.join(here,'repository-evidence.json'),'utf8'),'served repository evidence must match generated canonical snapshot');
 assert(Array.isArray(atlas.views)&&atlas.views.length>=7,'views must contain the functional Atlas views');
 assert(Array.isArray(atlas.components)&&atlas.components.length>0,'components are required');
 assert(Array.isArray(atlas.relationships),'relationships are required');
