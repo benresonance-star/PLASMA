@@ -1,0 +1,24 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-CLAIM-01",
+  "version": "0.1.0",
+  "title": "ClaimContract",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "non-authoritative-record",
+  "purpose": "Typed epistemic claims with provenance, status, supersession and contradiction.",
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-EVIDENCE-01"
+    }
+  ],
+  "projection": null
+}
