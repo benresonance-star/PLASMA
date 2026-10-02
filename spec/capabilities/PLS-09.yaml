@@ -1,0 +1,124 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-09",
+  "version": "0.1.0",
+  "title": "Contextual Representation Resolver",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-09",
+    "phase": "Plasma",
+    "name": "Contextual Representation Resolver",
+    "summary": "Separate authoritative semantic world objects from contextual 2D/3D/document representations. No object owns one canonical drawing symbol; representation is resolved from an explicit View Contract and representation grammar without mutating the authoritative object. Representation requests are revision-pinned contracts with explicit purpose, fidelity, tolerance, freshness, provenance and failure semantics; producers are replaceable.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01"
+    ],
+    "gap": "Stairs, ramps, roofs, terrain, windows, doors and services need different representations by storey, cut plane, RCP, discipline, scale, LOD and purpose. Separate drawings or per-object visibility hacks create duplication and drift.",
+    "next": "Use stairs and ramps as the first stress test: one semantic object rendered across lower/middle/upper-storey plan, RCP, section, 3D, feasibility LOD and 1:20 detail, with explainable graphics and explicit representation-only overrides.",
+    "flow": "AUTHORITATIVE OBJECT + INTENT + GEOMETRY → VIEW CONTRACT → REPRESENTATION RESOLVER → REPRESENTATION GRAMMAR → CONTEXTUAL PROJECTION / SYMBOL / ANNOTATION → PLAN / RCP / SECTION / 3D / SCHEMATIC / FABRICATION",
+    "stages": [
+      "Read authoritative object state",
+      "Read view contract",
+      "Determine relation to storey/cut/projection/extents",
+      "Select representation grammar",
+      "Resolve semantic and geometric LOD independently",
+      "Generate projection/symbol/annotation",
+      "Retain why/driver trace",
+      "Allow explicit representation-only overrides",
+      "Propagate object changes to dependent views",
+      "Validate documentation consistency"
+    ],
+    "optional_context_inputs": [
+      "PLS-07"
+    ],
+    "representation_request_protocol": {
+      "principle": "Consumers request a representation by purpose and contract, never by reaching directly into a provider-owned scene/kernel object.",
+      "request_minimum_fields": [
+        "request_id",
+        "world_revision",
+        "subject/entity refs",
+        "purpose",
+        "representation_kind",
+        "semantic_lod",
+        "geometric_lod",
+        "tolerance/error budget",
+        "view/coordinate context",
+        "freshness/currentness requirement",
+        "latency budget/class",
+        "required_for_commit",
+        "fallback policy",
+        "requester/authority"
+      ],
+      "representation_kinds": [
+        "exact_brep/nurbs",
+        "interactive_mesh",
+        "analysis_mesh",
+        "sdf/voxel",
+        "field",
+        "drawing/vector",
+        "IFC projection",
+        "USD/scene projection",
+        "fabrication realization",
+        "render/material realization"
+      ],
+      "response_minimum_fields": [
+        "response_id",
+        "request_ref",
+        "world_revision",
+        "status",
+        "producer/provider + version",
+        "representation_ref",
+        "achieved fidelity/tolerance",
+        "currentness",
+        "topology/identity correspondence",
+        "provenance/evidence refs",
+        "diagnostics"
+      ],
+      "statuses": [
+        "current",
+        "stale",
+        "computing",
+        "failed",
+        "unavailable",
+        "unknown"
+      ],
+      "failure_classes": [
+        "provider_unavailable",
+        "unsupported_operation",
+        "invalid_input",
+        "tolerance_nonconvergence",
+        "robustness_failure",
+        "topology_identity_loss",
+        "stale_result",
+        "resource_exhaustion",
+        "permission/authority_failure"
+      ],
+      "fallback_rule": "Fallback is policy-driven and visible: equivalent provider first; then alternate representation only when its semantics satisfy the consumer; otherwise retain last-known-good as stale or hold the operation. Never silently downgrade an exact contract.",
+      "authority_rule": "A representation response is derived artefact/evidence. Canonical project change still occurs only through PLS-KERNEL-01 Transform/Transaction semantics."
+    },
+    "failure_handling_contract": {
+      "world_vs_representation": "A world may be valid while one representation is failed or unavailable.",
+      "commit_gate": "Required-for-commit representation failure produces conflicted/pending transaction state rather than an invented pass.",
+      "diagnostic_contract": "Failure records request, provider/version, input revision, error class, tolerance target, achieved state, fallback attempts and reproducible diagnostics where available.",
+      "recovery": "A later successful response for the same still-current request may clear the failure; superseded requests remain historical evidence."
+    }
+  }
+}
