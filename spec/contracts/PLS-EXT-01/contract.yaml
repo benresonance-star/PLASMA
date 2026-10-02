@@ -1,0 +1,29 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-EXT-01",
+  "legacyProjectionId": "external-evidence-import",
+  "version": "1.0.0",
+  "title": "importExternalResult()",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "typed-boundary",
+  "dependsOn": [],
+  "projection": {
+    "id": "external-evidence-import",
+    "name": "importExternalResult()",
+    "from": "external",
+    "to": "authority",
+    "input": "Typed external result + provenance + units",
+    "output": "EvidenceRecord | CandidatePatch | RejectionRecord",
+    "semantics": "Convert outside computation into typed evidence or a proposal.",
+    "failure": "Reject missing provenance, incompatible units, stale inputs or unsupported schemas.",
+    "explanation": "External integrations contribute knowledge without obtaining direct authority."
+  }
+}
