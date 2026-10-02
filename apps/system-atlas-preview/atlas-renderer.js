@@ -499,13 +499,20 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         <section><h4>Contract</h4><div class="ref-list">${contract?refButton('contract',contract.id,contract.name):''}</div></section>
         <section><h4>Failure behavior</h4><p>${esc(r.failure)}</p></section>`;
     } else if(ref.type==='contract'){
-      body=`<div class="inspector-kv"><span>From</span><b>${esc(r.from)}</b><span>To</span><b>${esc(r.to)}</b></div>
+      const sourceSpec=r.source?.specification||'./plasma-spec.html#specs';
+      const sourceContract=r.source?.contract||null;
+      body=`<div class="inspector-kv"><span>From</span><b>${esc(r.from)}</b><span>To</span><b>${esc(r.to)}</b>${r.status?`<span>Status</span><b>${esc(r.status)}</b>`:''}${r.authority?`<span>Authority</span><b>${esc(r.authority)}</b>`:''}${r.implementationStatus?`<span>Implementation</span><b>${esc(r.implementationStatus)}</b>`:''}${r.runtimeStatus?`<span>Runtime</span><b>${esc(r.runtimeStatus)}</b>`:''}</div>
+        <section><h4>Semantics</h4><p>${esc(r.semantics)}</p></section>
         <section><h4>Input</h4><code class="block-code">${esc(r.input)}</code></section>
         <section><h4>Output</h4><code class="block-code">${esc(r.output)}</code></section>
         <section><h4>Failure behavior</h4><p>${esc(r.failure)}</p></section>
-        ${r.source?`<section><h4>Specification baseline</h4><p>${esc(r.source.status)} · v${esc(r.source.version)}</p><a class="repo-run-link" href="./plasma-spec.html#specs" target="_blank" rel="noreferrer">Open specification v0.4.27 ↗</a><br><a class="repo-run-link" href="./wall-contract.json" target="_blank" rel="noreferrer">Open PLS-WALL-01 contract ↗</a></section>`:''}
-        ${r.requirements?`<section><h4>Parametric wall requirements</h4><div class="inspector-list wall-requirements">${r.requirements.map(x=>`<div><span>${esc(x.id)}</span><p><b>${esc(x.title)}</b><br>${esc(x.must)}</p></div>`).join('')}</div></section>`:''}
-        ${r.acceptanceGates?`<section><h4>Required acceptance gates · unproven</h4><div class="inspector-list wall-gates">${r.acceptanceGates.map(x=>`<div><span>${esc(x.id)}</span><p><b>${esc(x.title)}</b><br>${esc(x.assert)}<br>${esc(x.status)}</p></div>`).join('')}</div></section>`:''}`;
+        <section><h4>Why it exists</h4><p>${esc(r.explanation)}</p></section>
+        ${r.authorityRules?`<section><h4>Authority rules</h4><div class="inspector-list contract-rules">${r.authorityRules.map((x,i)=>`<div><span>${String(i+1).padStart(2,'0')}</span><p>${esc(x)}</p></div>`).join('')}</div></section>`:''}
+        ${r.relationships?`<section><h4>Claim · Evidence · Decision relationships</h4><div class="inspector-list contract-relations">${r.relationships.map(x=>`<div><span>${esc(x.target)}</span><p>${esc(x.rule)}${x.status?`<br><em>${esc(x.status)}</em>`:''}</p></div>`).join('')}</div></section>`:''}
+        ${r.source?`<section><h4>Specification baseline</h4><p>${esc(r.source.status)} · v${esc(r.source.version)}</p><a class="repo-run-link" href="${esc(sourceSpec)}" target="_blank" rel="noreferrer">Open Plasma specification ↗</a>${sourceContract?`<br><a class="repo-run-link" href="${esc(sourceContract)}" target="_blank" rel="noreferrer">Open contract source ↗</a>`:''}</section>`:''}
+        ${r.requirements?`<section><h4>Requirements</h4><div class="inspector-list wall-requirements">${r.requirements.map(x=>`<div><span>${esc(x.id)}</span><p><b>${esc(x.title)}</b><br>${esc(x.must)}</p></div>`).join('')}</div></section>`:''}
+        ${r.acceptanceGates?`<section><h4>Required acceptance gates · unproven</h4><div class="inspector-list wall-gates">${r.acceptanceGates.map(x=>`<div><span>${esc(x.id)}</span><p><b>${esc(x.title)}</b><br>${esc(x.assert)}<br>${esc(x.status)}</p></div>`).join('')}</div></section>`:''}
+        ${r.activationGates?`<section><h4>Activation gates · all unsatisfied</h4><div class="inspector-list differential-gates">${r.activationGates.map(x=>`<div><span>${esc(x.id)}</span><p><b>${esc(x.title)}</b><br>Required: ${esc(x.required)} · ${esc(x.status)}</p></div>`).join('')}</div></section>`:''}`;
     } else if(ref.type==='domainLanguage'){
       body=`<div class="inspector-kv"><span>ID</span><b>${esc(r.atlasId)}</b><span>Maturity</span><b>${esc(labelize(r.maturity))}</b><span>Uses</span><b>${esc(r.uses.join(', '))}</b></div>
         <section><h4>Types</h4><div class="chip-row">${chips(r.types,'type-token')}</div></section>
