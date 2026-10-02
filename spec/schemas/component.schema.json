@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plasma.local/spec/v1/component.schema.json",
+  "type": "object",
+  "additionalProperties": true,
+  "title": "Plasma Component Catalog",
+  "required": [
+    "apiVersion",
+    "kind",
+    "id",
+    "version",
+    "items"
+  ],
+  "properties": {
+    "kind": {
+      "const": "ComponentCatalog"
+    },
+    "items": {
+      "type": "array",
+      "minItems": 1
+    }
+  }
+}
