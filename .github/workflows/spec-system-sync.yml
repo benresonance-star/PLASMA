@@ -1,0 +1,56 @@
+name: spec-system-sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'spec/**'
+      - 'scripts/plasma-spec.mjs'
+      - '.github/workflows/spec-system-sync.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: spec-system-sync-main
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    if: ${{ !contains(github.event.head_commit.message || '', '[spec-sync]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Generate canonical spec projections
+        run: node scripts/plasma-spec.mjs
+
+      - name: Verify generated Atlas
+        run: node apps/system-atlas-preview/atlas-validate.mjs
+
+      - name: Commit generated projections
+        shell: bash
+        run: |
+          if git diff --quiet; then
+            echo "Spec projections already current."
+            exit 0
+          fi
+          git config user.name "plasma-spec-bot"
+          git config user.email "plasma-spec-bot@users.noreply.github.com"
+          git add \
+            apps/system-atlas-preview/atlas.json \
+            apps/system-atlas-preview/repository-evidence.json \
+            apps/system-atlas-preview/wall-contract.json \
+            apps/system-atlas-preview/differential-contract.json \
+            apps/system-atlas-preview/spec-system-status.json \
+            apps/system-atlas-preview/spec-system.html \
+            generated/spec-system
+          git commit -m "chore: sync Plasma Spec System generated outputs [spec-sync]"
+          git push
