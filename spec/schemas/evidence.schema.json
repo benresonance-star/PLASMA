@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plasma.local/spec/v1/evidence.schema.json",
+  "type": "object",
+  "additionalProperties": true,
+  "title": "Plasma Evidence Catalog",
+  "required": [
+    "apiVersion",
+    "kind",
+    "id",
+    "version",
+    "items"
+  ],
+  "properties": {
+    "kind": {
+      "const": "EvidenceCatalog"
+    },
+    "items": {
+      "type": "array"
+    }
+  }
+}
