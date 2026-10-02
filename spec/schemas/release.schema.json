@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plasma.local/spec/v1/release.schema.json",
+  "type": "object",
+  "additionalProperties": true,
+  "title": "Plasma Release",
+  "required": [
+    "apiVersion",
+    "kind",
+    "id",
+    "version",
+    "status",
+    "includes",
+    "excludes"
+  ],
+  "properties": {
+    "kind": {
+      "const": "Release"
+    },
+    "status": {
+      "type": "string"
+    },
+    "includes": {
+      "type": "array"
+    },
+    "excludes": {
+      "type": "array"
+    }
+  }
+}
