@@ -1,0 +1,46 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "FND-02",
+  "version": "0.1.0",
+  "title": "Build Note → Development Knowledge",
+  "phase": "Foundry",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "FND-01"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "FND-02",
+    "phase": "Foundry",
+    "name": "Build Note → Development Knowledge",
+    "summary": "Turn contextual working notes into durable development memory.",
+    "spec": "complete",
+    "implemented": "partial",
+    "depends": [
+      "FND-01"
+    ],
+    "gap": "Notes are local-only and not yet promoted into typed observations, decisions or experiments.",
+    "next": "Add typed note promotion and backlinks to specs/commits.",
+    "flow": "BUILD NOTE\\\n  ↓\\\nobservation\\\n  ↓\\\nhypothesis / decision\\\n  ↓\\\naction\\\n  ↓\\\nevidence",
+    "stages": [
+      "Capture",
+      "Attach context",
+      "Classify",
+      "Link evidence",
+      "Promote",
+      "Close"
+    ]
+  }
+}
