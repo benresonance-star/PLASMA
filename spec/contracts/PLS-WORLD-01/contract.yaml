@@ -1,0 +1,29 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-WORLD-01",
+  "legacyProjectionId": "read-world-slice",
+  "version": "1.0.0",
+  "title": "readWorldSlice()",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "typed-boundary",
+  "dependsOn": [],
+  "projection": {
+    "id": "read-world-slice",
+    "name": "readWorldSlice()",
+    "from": "authority",
+    "to": "consumer",
+    "input": "WorldQuery + revision selector",
+    "output": "WorldSlice + provenance",
+    "semantics": "Return the smallest authoritative state required for bounded reasoning or execution.",
+    "failure": "Unresolvable references, unauthorized scope or unavailable revision return a typed read failure.",
+    "explanation": "Bounded reads reduce coupling and make read sets explicit for concurrency and provenance."
+  }
+}
