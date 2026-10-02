@@ -1,0 +1,46 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "FND-03",
+  "version": "0.1.0",
+  "title": "Capability Frontier",
+  "phase": "Foundry",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "FND-01"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "FND-03",
+    "phase": "Foundry",
+    "name": "Capability Frontier",
+    "summary": "Select the smallest valuable capability immediately beyond the verified frontier.",
+    "spec": "complete",
+    "implemented": "partial",
+    "depends": [
+      "FND-01"
+    ],
+    "gap": "No dependency-leverage scoring or automated selector yet.",
+    "next": "Represent capabilities and unlock dependencies explicitly.",
+    "flow": "VERIFIED FRONTIER\\\n  ↓\\\nidentify gap\\\n  ↓\\\nselect smallest slice\\\n  ↓\\\nbuild + test\\\n  ↓\\\nfrontier advances",
+    "stages": [
+      "Observe frontier",
+      "Find gaps",
+      "Score leverage",
+      "Select slice",
+      "Verify",
+      "Advance"
+    ]
+  }
+}
