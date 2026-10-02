@@ -1,0 +1,29 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-AGENT-01",
+  "legacyProjectionId": "transaction-proposal",
+  "version": "1.0.0",
+  "title": "proposeTransaction()",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "typed-boundary",
+  "dependsOn": [],
+  "projection": {
+    "id": "transaction-proposal",
+    "name": "proposeTransaction()",
+    "from": "intelligence",
+    "to": "authority",
+    "input": "OperationIntent | CandidatePatch",
+    "output": "ProposalReceipt | RejectionRecord",
+    "semantics": "Allow agents to propose bounded changes under identical authority rules to human actions.",
+    "failure": "Conflict, stale reads, insufficient evidence or invariant failure lead to structured rejection.",
+    "explanation": "Agents do not receive a privileged write route; their proposals enter the same transaction pipeline."
+  }
+}
