@@ -2,7 +2,7 @@
 
 ## Current Plasma specification
 
-[Plasma / Foundry v0.4.27](apps/system-atlas-preview/plasma-spec.html) is the current synchronised draft specification. [PLS-19 / PLS-WALL-01@0.1.0](apps/system-atlas-preview/wall-contract.json) defines the parametric wall capability; implementation and its eight acceptance gates remain unproven. Atlas v0.8.0 projects those requirements with explicit unlinked evidence.
+[Plasma / Foundry v0.4.29](apps/system-atlas-preview/plasma-spec.html) is the current synchronised draft specification. [PLS-19 / PLS-WALL-01@0.1.0](apps/system-atlas-preview/wall-contract.json) remains the unproven parametric wall capability. [PLS-20 / PLS-DR-01@0.1.0] is deferred differential-rendering research, and [PLS-21 / PLS-DIFF-01@0.1.0](apps/system-atlas-preview/differential-contract.json) defines a deferred, non-authoritative DifferentialContract with mandatory exact fallback. Atlas v0.9.0 projects these requirements without claiming implementation.
 
 ## Historical SPDS engineering baseline
 
