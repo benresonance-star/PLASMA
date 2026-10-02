@@ -1,0 +1,19 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-EVIDENCE-01",
+  "version": "0.1.0",
+  "title": "EvidenceContract",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "evidence-record",
+  "purpose": "Traceable evidence, applicability, freshness and verification bindings.",
+  "dependsOn": [],
+  "projection": null
+}
