@@ -1,0 +1,394 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-16",
+  "version": "0.1.0",
+  "title": "Pathology Guard + Anti-Pattern Intelligence",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-08"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-10"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-12"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-13"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-14"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-15"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-16",
+    "phase": "Plasma",
+    "name": "Pathology Guard + Anti-Pattern Intelligence",
+    "summary": "Detect corrupting operations, known domain anti-patterns, pathological complexity, low-value/high-disruption changes and implausible consequences as early as possible in the governed transaction lifecycle, without converting convention into law or suppressing architectural invention. PLS-16 evaluates proposed Transforms, isolated candidate worlds, event/history windows, systems and whole projects. Findings are evidence-bearing diagnostics; only kernel corruption, active hard Invariants or explicitly authorized blocking policy can stop publication absolutely.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-08",
+      "PLS-10",
+      "PLS-12",
+      "PLS-13",
+      "PLS-14",
+      "PLS-15"
+    ],
+    "gap": "Plasma can already reject hard invariant violations and show dependency-backed conflict previews, but it lacks a generalized immune system for operations that are technically expressible yet structurally corrupting, domain-pathological, nonsensical in context, temporally degenerative or disproportionately disruptive. Existing checks are fragmented across tools, rules, solvers and human expertise; AI agents could therefore generate locally valid but globally foolish states unless one governed evaluation contract spans all actors and scales.",
+    "next": "Build a reference PLS-16 detector registry and transaction hook against four fixtures: (1) corrupt relation/topology operation blocked pre-apply, (2) RC-02 wall move with advisory versus hard findings clearly separated, (3) geodesic/fabrication fixture where near-identical panel types proliferate across multiple commits, and (4) low-value/high-disruption 40 mm kitchen/service move. Prove revision pinning, false-positive disposition, explicit exception, novelty protection, stale finding rejection and identical gating for a human action and an AI proposal.",
+    "flow": "PROPOSED TRANSFORM / WORK OUTPUT → PIN BASE REVISION + ACTOR/AUTHORITY → IMPACT CLOSURE → LOW-COST PREFLIGHT → {CORRUPT? BLOCK | OTHERWISE APPLY TO ISOLATED CANDIDATE} → CANDIDATE-WORLD EVALUATORS → INVARIANTS + ANTI-PATTERN FINDINGS + CHANGE-COHERENCE VECTOR → RESOLVE SEVERITY / CONFIDENCE / AUTHORITY → REMEDY / ALTERNATIVE / EXCEPTION / REJECT → COMMIT THROUGH PLS-KERNEL-01 OR LEAVE ACCEPTED WORLD UNCHANGED → TEMPORAL/PROJECT LEARNERS OBSERVE OUTCOME",
+    "doctrine": {
+      "foundation_principle": "Evaluate proposed state transitions for known failure patterns, incoherence, pathological complexity and implausible consequences before they contaminate authoritative world state.",
+      "counter_principle": "An anti-pattern is evidence, not prohibition. Non-standard states remain expressible when intentional, supportable and accepted under the relevant authority.",
+      "compression_rule": "AntiPattern is not a Plasma Kernel primitive. Definitions, findings, detectors, remedies and exceptions are domain/evaluation schemas represented using the existing seven primitives and governed transaction/evidence machinery.",
+      "distinction_rule": "Unusual != wrong; rare != invalid; optimized != good; conventional != authoritative.",
+      "actor_rule": "The same guard contract applies to human, agent, solver, import, script, generator and external-machine proposals."
+    },
+    "classification_model": {
+      "classes": {
+        "corrupting": "Violates kernel integrity, primitive-operation validity, canonical referential/schema integrity or creates a state the runtime cannot safely represent. Blocking; no ordinary override.",
+        "hard_governance": "Conflicts with an active hard Invariant or policy whose authority explicitly blocks promotion. Resolve by changing the candidate or by a separate authorized decision that changes the governing Invariant/policy; do not silently waive it inside the same edit.",
+        "hazardous": "Evidence-backed condition with serious likely domain consequence but not itself a kernel/hard-invariant failure. Normally hold/review or strong warning according to declared policy and authority.",
+        "known_anti_pattern": "Recognized condition associated with waste, fragility, coordination risk, fabrication difficulty, maintenance burden or poor outcomes. Warn and provide remediation/alternatives; exception normally allowed with rationale.",
+        "coherence_suspicion": "Operation appears to produce little declared intent gain relative to complexity, disruption, uncertainty or irreversibility. Advisory unless another governing condition gives it stronger authority.",
+        "novel_or_unusual": "Rare, unfamiliar or low-prior state without sufficient negative evidence. Flag only when useful for scrutiny; never present as an error merely because it is atypical.",
+        "unknown": "Detector lacks sufficient applicability, evidence, currentness or dependency closure. Preserve unknown explicitly rather than treating absence of a finding as safety."
+      },
+      "separation_rule": "Severity, confidence and blocking authority are independent fields. A high-confidence advisory does not become a block; a low-confidence kernel-integrity alarm may conservatively hold while deterministic integrity checks run."
+    },
+    "definition_contract": {
+      "name": "AntiPatternDefinition",
+      "minimum_fields": [
+        "anti_pattern_id",
+        "version",
+        "name",
+        "domain",
+        "class",
+        "description",
+        "scope/applicability",
+        "detector_ref + version",
+        "trigger semantics",
+        "default severity",
+        "blocking_authority",
+        "evidence basis",
+        "expected consequences",
+        "remediation/alternatives",
+        "exception policy",
+        "provenance",
+        "lifecycle status",
+        "validation fixtures"
+      ],
+      "lifecycle": [
+        "proposed",
+        "validated",
+        "active",
+        "deprecated",
+        "retired"
+      ],
+      "provenance_classes": [
+        "kernel integrity",
+        "code/standard",
+        "engineering model",
+        "manufacturer/process constraint",
+        "project evidence",
+        "organization evidence",
+        "expert assertion",
+        "AI hypothesis"
+      ],
+      "promotion_rule": "Definitions learned from projects or AI remain proposed until independently validated for applicability, false-positive behavior and authority. Frequency alone cannot create a blocking rule.",
+      "version_rule": "Changing trigger semantics, applicability, severity or blocking authority produces a new version and affected-world analysis; old findings retain their original definition reference."
+    },
+    "finding_contract": {
+      "name": "AntiPatternFinding",
+      "minimum_fields": [
+        "finding_id",
+        "anti_pattern_ref + version",
+        "detector_ref + version",
+        "base_revision",
+        "candidate_revision or operation digest",
+        "transaction/transform/work refs",
+        "affected entity/system refs",
+        "detection stage",
+        "class",
+        "severity",
+        "confidence",
+        "blocking authority",
+        "applicability state",
+        "currentness",
+        "evidence refs",
+        "human-readable explanation",
+        "predicted consequences",
+        "remediation/alternative transforms",
+        "status"
+      ],
+      "applicability_states": [
+        "applicable",
+        "not_applicable",
+        "uncertain",
+        "insufficient_context"
+      ],
+      "statuses": [
+        "open",
+        "resolved",
+        "accepted_exception",
+        "false_positive",
+        "superseded",
+        "stale"
+      ],
+      "immutability_rule": "The original finding is immutable evidence. Disposition creates a linked record; it does not rewrite the detector output.",
+      "stale_rule": "A finding cannot govern a different world/input revision by implication. Re-evaluate or mark stale/unknown."
+    },
+    "exception_contract": {
+      "name": "ExceptionRecord",
+      "minimum_fields": [
+        "exception_id",
+        "finding_ref",
+        "actor",
+        "authority_basis",
+        "decision",
+        "rationale",
+        "evidence_refs",
+        "scope",
+        "created_at",
+        "expiry/review trigger",
+        "compensating controls"
+      ],
+      "decisions": [
+        "accept_once",
+        "accept_scoped",
+        "defer_with_control",
+        "reject_finding",
+        "change_design",
+        "change_governing_rule_separately"
+      ],
+      "non_overridable": [
+        "kernel corruption/integrity failure",
+        "unauthorized side effect",
+        "missing authority required by governing hard policy"
+      ],
+      "separation_of_duties": "For high-consequence findings, the producing AI/solver/tool cannot approve its own exception. Required human/independent authority is policy-defined.",
+      "learning_rule": "Accepted exceptions are not proof the anti-pattern was wrong; later outcomes may support, narrow or invalidate the definition."
+    },
+    "detector_architecture": {
+      "deterministic_preflight": [
+        "schema/type/unit checks",
+        "referential integrity",
+        "primitive-operation validity",
+        "obvious topology degeneracy",
+        "impossible/undefined numeric state",
+        "authority/permission checks"
+      ],
+      "local_candidate": [
+        "geometry slivers/degeneracy",
+        "clearance/access conflicts",
+        "support/load-path warnings",
+        "tool access",
+        "bend/hole/tolerance interactions",
+        "local cost/type proliferation consequences"
+      ],
+      "system_project": [
+        "circulation topology",
+        "system discontinuities",
+        "assembly/order contradictions",
+        "component family proliferation",
+        "coordination debt",
+        "maintenance access",
+        "process fragmentation"
+      ],
+      "temporal": [
+        "repeated small edits causing cumulative rationalization debt",
+        "oscillating solver/design decisions",
+        "rework loops",
+        "exception recurrence",
+        "repeated downstream correction of upstream generator output"
+      ],
+      "reasoning": [
+        "declared intent appears weakly connected to consequence",
+        "plausibility/nonsense suspicion",
+        "missing contextual justification",
+        "likely low-value/high-disruption operation"
+      ],
+      "reasoning_authority_rule": "Model-based plausibility/nonsense detectors are advisory by default. They may request deterministic checks or human review but cannot block solely because a model judges a design unconventional or senseless."
+    },
+    "scale_model": {
+      "scopes": [
+        "operation",
+        "entity",
+        "local assembly",
+        "system",
+        "building",
+        "project",
+        "process",
+        "organization"
+      ],
+      "locality_rule": "Run the cheapest sufficient detector at the smallest relevant scope first; expand only when dependencies, severity, uncertainty or scheduled background analysis justify it.",
+      "project_examples": [
+        "172 window types where a smaller family may satisfy intent",
+        "20 near-identical panels clustering around 3 manufacturing-significant families",
+        "circulation graph accumulating unnecessary dead ends",
+        "fabrication repeatedly rationalizing generator output"
+      ],
+      "temporal_window_rule": "Temporal detectors declare event/revision windows, aggregation logic and resets; they cannot infer a trend from unbounded hidden history."
+    },
+    "change_coherence_contract": {
+      "name": "ChangeCoherenceAssessment",
+      "purpose": "Identify suspicious operations whose declared benefit appears small relative to the disturbance they create without pretending architectural value can be reduced to one universal scalar.",
+      "dimensions": [
+        "declared intent/value gain",
+        "geometric disruption",
+        "dependency blast radius",
+        "new type/process complexity",
+        "documentation change",
+        "fabrication/construction change",
+        "cost/time impact",
+        "uncertainty",
+        "irreversibility",
+        "downstream rework risk"
+      ],
+      "default_rule": "Preserve the vector and explanation. Do not collapse to a single score unless a project explicitly adopts a transparent weighting policy.",
+      "trigger_example": "A 40 mm kitchen move that yields negligible spatial benefit but changes joinery, plumbing, tiling, ceiling coordination and creates unique types may emit a low-value/high-disruption advisory with lower-impact alternatives.",
+      "intent_rule": "Absence of machine-understood intent lowers confidence; it does not prove the operation is nonsensical."
+    },
+    "causal_pathology_contract": {
+      "targets": [
+        "prohibited dependency cycles",
+        "oscillation",
+        "unbounded propagation",
+        "unstable convergence",
+        "contradictory ownership/authority",
+        "causal edge explosion",
+        "stale projection treated as complete"
+      ],
+      "relationship_to_pls15": "PLS-15 SCC/cycle machinery detects execution/dependency loops. PLS-16 classifies when a loop is expected/solvable versus pathological, and may propose typed remedies such as hard/soft/observer/derived relationship reclassification.",
+      "rule": "A cycle is not automatically an error. Feedback systems may be legitimate; pathology depends on declared solve semantics, convergence, authority and boundedness."
+    },
+    "domain_registry": {
+      "initial_domains": {
+        "architecture": [
+          "unintended dead-end circulation",
+          "habitable space without plausible access",
+          "door/operation collision",
+          "irrational residual space",
+          "maintenance-inaccessible zone"
+        ],
+        "structure": [
+          "unsupported load-path suspicion",
+          "abrupt stiffness discontinuity",
+          "extreme slenderness/eccentricity",
+          "connection hierarchy inconsistency"
+        ],
+        "fabrication": [
+          "inaccessible weld/fastener",
+          "fold sequence trap",
+          "bend too near aperture",
+          "impossible tool path",
+          "unnecessary near-identical part proliferation"
+        ],
+        "construction": [
+          "unplaceable assembly sequence",
+          "transport/lifting incompatibility",
+          "trapped temporary works",
+          "reach/access contradiction"
+        ],
+        "cost": [
+          "bespoke type proliferation",
+          "repeated mobilization/process fragmentation",
+          "high-cost hidden finish/material",
+          "negligible design gain with large downstream cost"
+        ],
+        "information_model": [
+          "duplicate authority",
+          "orphan semantic/geometry state",
+          "representation marked current against stale inputs",
+          "undeclared unit/tolerance conversion"
+        ]
+      },
+      "extensibility": "Domain packs may add definitions/detectors without kernel changes if they conform to definition/finding/evidence/authority contracts."
+    },
+    "learned_practice_contract": {
+      "relationship_to_pls08": "PLS-08 provides contextual evidence/practice learning; PLS-16 consumes validated recurrence as candidate anti-pattern knowledge.",
+      "example": "Repeated RFIs/site modification around one jamb/material/supplier condition may propose an organization anti-pattern with applicability evidence and an alternate detail.",
+      "safeguards": [
+        "minimum evidence/applicability thresholds",
+        "counterexample search",
+        "false-positive review",
+        "project/context scoping",
+        "no automatic conversion to hard rule",
+        "versioned promotion and retirement"
+      ],
+      "outcome_feedback": "Resolved findings, exceptions, downstream RFIs, cost deltas, fabrication changes, site deviations and as-built observations can update evidence for or against definitions."
+    },
+    "ui_contract": {
+      "principle": "Quiet immune system, not warning-dialog hell.",
+      "local_projection": "Prefer a small marker at the edited object/operation. On inspection show consequence, evidence/currentness, authority, affected scope and closest lower-impact alternatives.",
+      "no_dashboard_default": "Do not require a persistent global issue dashboard for ordinary interaction; project/system patterns remain queryable in Inspect/Evaluation views and surface when materially relevant.",
+      "preserve_intent": "When a hard conflict occurs, preserve the requested speculative state for comparison rather than snapping/clamping away the user intent.",
+      "example": "Moving a wall 180 mm may show: +1 window type, +2 panel types, +1 structural transfer; closest lower-impact position +145 mm; Keep 180 mm remains available if no governing block applies."
+    },
+    "agent_and_tool_governance": {
+      "rule": "Agents propose; Plasma adjudicates.",
+      "same_pipeline": "AI, scripts, solvers and human edits receive the same revision-pinned anti-pattern/invariant evaluation for equivalent effects.",
+      "self_waiver_rule": "A producer cannot silently suppress, downgrade or exception its own high-consequence finding.",
+      "context_rule": "Detectors receive the smallest sufficient context capsule plus explicit unknowns; a causal slice that omits materially required context must downgrade confidence or request expansion rather than fabricate project understanding.",
+      "bulk_generation": "Overnight/multi-agent generation must batch/incrementally evaluate candidate families so pathology is caught before hundreds of dependent variants inherit it."
+    },
+    "performance_contract": {
+      "interaction_budget": "PLS-10 remains authoritative for pointer-loop responsiveness. Run only deterministic/local checks cheap enough for the hot path; defer deeper scans to release, idle, background or PLS-15 WorkItems.",
+      "incremental_rule": "Cache revision-pinned detector inputs/results and invalidate by affected closure; never rescan the entire project on every edit unless a detector explicitly requires global scope.",
+      "gpu_cpu_rule": "Geometry/topology clustering, similarity, spatial queries and large project statistics may compile to CPU/GPU representations, but detector meaning and authority remain semantic and inspectable.",
+      "unknown_rule": "Performance limits may yield pending/unknown; they must not silently become pass."
+    },
+    "anti_patterns_of_the_guard": [
+      "Treat every rare state as suspicious and gradually normalize design toward the training corpus.",
+      "Convert advisory anti-patterns into hidden hard rules.",
+      "Allow an LLM plausibility score to block publication by itself.",
+      "Run every detector on every pointer event.",
+      "Maintain a second mutable issue database whose state can diverge from world/evidence revisions.",
+      "Let stale findings govern a newer candidate.",
+      "Permit the producing agent/tool to self-approve a high-risk exception.",
+      "Use one opaque universal quality score in place of typed consequences and evidence.",
+      "Learn organization rules from frequency without counterexamples or applicability boundaries.",
+      "Suppress the user requested state by auto-clamping before they can inspect the conflict."
+    ],
+    "acceptance_tests": [
+      "A primitive operation that would create a dangling canonical relation is rejected before canonical mutation and records a corrupting finding/evidence trail.",
+      "A novel but structurally valid sculptural geometry receives no error merely because it is rare; an AI plausibility detector may flag uncertainty but cannot block without independent governing evidence.",
+      "RC-02 +500 mm preserves a conflicted speculative world while the active hard corridor Invariant blocks publication; PLS-16 does not pretend this is merely an advisory anti-pattern.",
+      "A fabrication fixture accumulated across multiple commits detects 20 near-identical panel types clustering into approximately 3 manufacturing-significant families and offers rationalization without forcing it.",
+      "A low-value/high-disruption edit produces a multi-dimensional ChangeCoherenceAssessment and lower-impact alternatives without collapsing architectural value to an opaque scalar.",
+      "A detector result pinned to R12 is marked stale or recomputed after R13 changes its applicability inputs; R12 finding cannot silently govern R13.",
+      "An accepted exception creates an immutable ExceptionRecord with authority, rationale, evidence, scope and review/expiry trigger; the original finding remains addressable.",
+      "A high-consequence AI-generated proposal cannot self-waive its own pathology finding and follows the same publication gate as an equivalent human proposal.",
+      "Pointer interaction remains within the PLS-10 budget because expensive project/history scans are deferred and incremental.",
+      "Repeated organization evidence may create a proposed anti-pattern definition, but it cannot become active/blocking until validation/promotion criteria are met."
+    ],
+    "implementation_note": "Implement PLS-16 first as a registry + evaluator result schema + transaction hook, not as an autonomous critic agent. Start with deterministic integrity checks and a few transparent domain detectors. Add model-based plausibility/nonsense detection only after severity/authority separation, revision pinning, exception semantics, false-positive feedback and novelty-protection tests are proven."
+  }
+}
