@@ -1,0 +1,57 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-08",
+  "version": "0.1.0",
+  "title": "Contextual Evidence + Practice Learning",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "draft",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-07"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-08",
+    "phase": "Plasma",
+    "name": "Contextual Evidence + Practice Learning",
+    "summary": "Turn statutory sources, project history and live authority interactions into reusable but context-bounded evidence without creating a monster database UI or allowing precedent to masquerade as universal truth. Plasma retrieves evidence for the current object/question/decision and exposes only material exceptions, uncertainty and provenance to the human.",
+    "spec": "planned",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-07"
+    ],
+    "gap": "Practice history is valuable but dangerous when stripped of jurisdiction, regulatory version, site conditions, proposal characteristics or decision pathway. A generic knowledge base or spreadsheet interface would encourage false generalisation and impose record-management overhead on architects.",
+    "next": "Implement one planning vertical slice: ingest a current governing rule plus several historical project cases; automatically inherit project context; construct applicability envelopes; rank cases by context match; present a compact decision card with Result / Why / Evidence / Sources-History; flag only conflicts, weak matches, stale rules and materially missing context for human intervention.",
+    "flow": "PROJECT / DESIGN OBJECT / QUESTION\n  ↓\nCURRENT CONTEXT FINGERPRINT\n  ↓\nGOVERNING RULES + CONTEXT-BOUNDED EVIDENCE PACKETS\n  ↓\nAPPLICABILITY / CONTEXT-MATCH TEST\n  ↓\nREASONING + PREDICTION + UNCERTAINTY\n  ↓\nRESULT / WHY / MATERIAL RISKS\n  ↓\nLIVE PROJECT EVENTS + AUTHORITY OUTCOME\n  ↓\nPREDICTION ↔ OUTCOME RECONCILIATION\n  ↓\nPRACTICE MEMORY (NO SILENT GENERALISATION)",
+    "stages": [
+      "Identify current decision/question",
+      "Build inherited context fingerprint",
+      "Retrieve governing sources",
+      "Retrieve context-bounded evidence packets",
+      "Score applicability across orthogonal dimensions",
+      "Exclude or down-weight materially mismatched evidence",
+      "Assemble reasoning and uncertainty",
+      "Surface only material exceptions to human",
+      "Record prediction and assumptions",
+      "Capture later live-project interactions/outcome",
+      "Reconcile prediction versus outcome",
+      "Update practice memory without promoting precedent to rule"
+    ]
+  }
+}
