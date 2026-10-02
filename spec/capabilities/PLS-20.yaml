@@ -1,0 +1,47 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-20",
+  "version": "0.1.0",
+  "title": "Differential Rendering Research Architecture",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-02"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-17"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-20",
+    "phase": "Plasma",
+    "name": "Differential Rendering Research Architecture",
+    "summary": "Deferred rendering research path using SceneDelta, sensitivity/uncertainty and adaptive compute allocation.",
+    "spec": "partial",
+    "implemented": "deferred",
+    "depends": [
+      "PLS-02",
+      "PLS-17"
+    ],
+    "gap": "Research architecture only; no prototype branch, dependency changes or rendering-engine commitment.",
+    "next": "Do not start.",
+    "flow": "SCENE DELTA → SENSITIVITY / UNCERTAINTY → COMPUTE ALLOCATOR → REUSE | PREDICT | REFINE | RETRACE → EXACT/FULL RENDER FALLBACK",
+    "contract_id": "PLS-DR-01",
+    "contract_version": "0.1.0",
+    "contract_status": "DEFERRED",
+    "authority": "NON_AUTHORITATIVE_DERIVED"
+  }
+}
