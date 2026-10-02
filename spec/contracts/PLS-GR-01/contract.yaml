@@ -1,0 +1,29 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-GR-01",
+  "legacyProjectionId": "resolve-geometry",
+  "version": "1.0.0",
+  "title": "resolveGeometry()",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "typed-boundary",
+  "dependsOn": [],
+  "projection": {
+    "id": "resolve-geometry",
+    "name": "resolveGeometry()",
+    "from": "authority",
+    "to": "geometry",
+    "input": "SemanticOperation + WorldSlice",
+    "output": "CandidateGeometryResult + identity mapping + evidence",
+    "semantics": "Execute spatial intent without mutating canonical geometry.",
+    "failure": "Return resolver diagnostics, no partial authority.",
+    "explanation": "The resolver may use exact, mesh, field or other geometry strategies while preserving an engine-neutral contract."
+  }
+}
