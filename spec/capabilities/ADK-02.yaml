@@ -1,0 +1,46 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "ADK-02",
+  "version": "0.1.0",
+  "title": "Sandboxed Worker Run",
+  "phase": "Agentic Dev Kit",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "ADK-01"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "ADK-02",
+    "phase": "Agentic Dev Kit",
+    "name": "Sandboxed Worker Run",
+    "summary": "Give a worker bounded code, tools, budget and test authority.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "ADK-01"
+    ],
+    "gap": "Sandbox contract and permission model are not fixed.",
+    "next": "Specify repo/branch/tool/budget/evidence envelope.",
+    "flow": "TASK\\\n  ↓\\\nscoped sandbox\\\n  ↓\\\nwork\\\n  ↓\\\ntests\\\n  ↓\\\nartifact + evidence",
+    "stages": [
+      "Scope",
+      "Provision",
+      "Execute",
+      "Test",
+      "Collect evidence",
+      "Teardown"
+    ]
+  }
+}
