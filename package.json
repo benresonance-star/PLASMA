@@ -18,7 +18,10 @@
     "format:check": "prettier --check .",
     "licence:check": "node scripts/check-licence.mjs",
     "boundary:check": "pnpm --filter @spds/boundary-check test",
-    "verify": "pnpm licence:check && pnpm boundary:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "verify": "pnpm spec:check && pnpm atlas:check && pnpm licence:check && pnpm boundary:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "spec:build": "node scripts/plasma-spec.mjs",
+    "spec:check": "node scripts/plasma-spec.mjs --check",
+    "atlas:check": "node apps/system-atlas-preview/atlas-validate.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
