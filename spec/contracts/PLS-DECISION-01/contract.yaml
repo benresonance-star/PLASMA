@@ -1,0 +1,28 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-DECISION-01",
+  "version": "0.1.0",
+  "title": "DecisionContract",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "decision-governance",
+  "purpose": "Decision authority, confidence policy, escalation, required evidence and commit conditions.",
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-CLAIM-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-EVIDENCE-01"
+    }
+  ],
+  "projection": null
+}
