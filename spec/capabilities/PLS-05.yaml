@@ -1,0 +1,53 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-05",
+  "version": "0.1.0",
+  "title": "Compliant Design RAD",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "draft",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-02"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-05",
+    "phase": "Plasma",
+    "name": "Compliant Design RAD",
+    "summary": "Generate and refine design candidates against typed planning/BIM constraints.",
+    "spec": "planned",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-02"
+    ],
+    "gap": "Needs a narrow first compliance problem rather than a generic compliance platform.",
+    "next": "Select one apartment/site capability with deterministic pass/fail tests.",
+    "flow": "INTENT + SITE\\\n  ↓\\\nGENERATE\\\n  ↓\\\nCHEAP CHECKS\\\n  ↓\\\nREFINE\\\n  ↓\\\nEXACT CHECKS\\\n  ↓\\\nSELECT",
+    "stages": [
+      "Interpret intent",
+      "Generate",
+      "Cheap reject",
+      "Refine",
+      "Exact confirm",
+      "Score",
+      "Select",
+      "Escalate"
+    ]
+  }
+}
