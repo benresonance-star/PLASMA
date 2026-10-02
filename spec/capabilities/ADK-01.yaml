@@ -1,0 +1,64 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "ADK-01",
+  "version": "0.1.0",
+  "title": "Agentic RAD Core Loop",
+  "phase": "Agentic Dev Kit",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "FND-01"
+    },
+    {
+      "type": "requires",
+      "id": "FND-03"
+    },
+    {
+      "type": "requires",
+      "id": "FND-04"
+    },
+    {
+      "type": "requires",
+      "id": "FND-05"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "ADK-01",
+    "phase": "Agentic Dev Kit",
+    "name": "Agentic RAD Core Loop",
+    "summary": "Reusable development loop for agents building Plasma.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "FND-01",
+      "FND-03",
+      "FND-04",
+      "FND-05"
+    ],
+    "gap": "Run contract, state model and termination semantics need a first concrete specification.",
+    "next": "Specify one end-to-end loop around a small Foundry feature.",
+    "flow": "OBSERVE\\\n  ↓\\\nSELECT\\\n  ↓\\\nPROPOSE\\\n  ↓\\\nEXECUTE\\\n  ↓\\\nEVALUATE\\\n  ↓\\\nCRITIC\\\n  ↓\\\nGOVERN\\\n  ↓\\\nCOMMIT / REJECT",
+    "stages": [
+      "Observer",
+      "Selector",
+      "Proposer",
+      "Worker",
+      "Evaluator",
+      "Critic",
+      "Governor",
+      "Commit",
+      "Termination"
+    ]
+  }
+}
