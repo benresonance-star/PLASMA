@@ -1,0 +1,166 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "IntegrationModel",
+  "id": "PLS-INTEGRATION",
+  "version": "1.0.0",
+  "projection": {
+    "principle": "Vertical slices are architectural falsification tests. Coverage links show what each slice must exercise; evidence links show what has actually been proven.",
+    "matrixRows": [
+      {
+        "label": "Authority",
+        "ref": {
+          "type": "component",
+          "id": "authority"
+        }
+      },
+      {
+        "label": "Transactions",
+        "ref": {
+          "type": "contract",
+          "id": "submit-transaction"
+        }
+      },
+      {
+        "label": "Stable identity",
+        "ref": {
+          "type": "contract",
+          "id": "resolve-reference"
+        }
+      },
+      {
+        "label": "Geometry",
+        "ref": {
+          "type": "component",
+          "id": "geometry"
+        }
+      },
+      {
+        "label": "Constraints",
+        "ref": {
+          "type": "component",
+          "id": "constraints"
+        }
+      },
+      {
+        "label": "Assembly",
+        "ref": {
+          "type": "domainLanguage",
+          "id": "assembly"
+        }
+      },
+      {
+        "label": "Analysis",
+        "ref": {
+          "type": "domainLanguage",
+          "id": "analysis"
+        }
+      },
+      {
+        "label": "Evidence",
+        "ref": {
+          "type": "coreLanguage",
+          "id": "evidence"
+        }
+      },
+      {
+        "label": "Representations",
+        "ref": {
+          "type": "component",
+          "id": "representation"
+        }
+      },
+      {
+        "label": "External adapters",
+        "ref": {
+          "type": "component",
+          "id": "external"
+        }
+      },
+      {
+        "label": "Fabrication",
+        "ref": {
+          "type": "domainLanguage",
+          "id": "fabrication"
+        }
+      },
+      {
+        "label": "History",
+        "ref": {
+          "type": "coreLanguage",
+          "id": "history"
+        }
+      },
+      {
+        "label": "Concurrency",
+        "ref": {
+          "type": "stage",
+          "id": "gate"
+        }
+      },
+      {
+        "label": "Differential",
+        "ref": {
+          "type": "contract",
+          "id": "differential-contract"
+        }
+      }
+    ],
+    "architectureStates": [
+      {
+        "id": "defined",
+        "label": "Defined",
+        "description": "The typed Atlas relationship is defined."
+      },
+      {
+        "id": "partial",
+        "label": "Partial",
+        "description": "The relationship is known but semantics/contracts remain incomplete."
+      },
+      {
+        "id": "planned",
+        "label": "Planned",
+        "description": "The slice requires this capability but the integration is not yet fully specified."
+      }
+    ],
+    "evidenceStates": [
+      {
+        "id": "not-required",
+        "label": "Not required",
+        "description": "No required evidence is expected yet for this planned relationship."
+      },
+      {
+        "id": "unlinked",
+        "label": "Unlinked",
+        "description": "Required evidence exists conceptually but has no linked verification source."
+      },
+      {
+        "id": "partial",
+        "label": "Partial",
+        "description": "Some required evidence is linked or verified, but the relationship is not fully proven."
+      },
+      {
+        "id": "verified",
+        "label": "Verified",
+        "description": "All required evidence satisfies the relationship evidence policy."
+      },
+      {
+        "id": "stale",
+        "label": "Stale",
+        "description": "Previously valid required evidence no longer applies to the current implementation or revision."
+      },
+      {
+        "id": "failed",
+        "label": "Failed",
+        "description": "At least one required evidence item currently disproves the relationship claim."
+      }
+    ],
+    "evidenceSemantics": {
+      "definition": "Evidence is a traceable observation that a named implementation claim holds for a specific repository state. It is not an opinion, completion percentage, or proof of the whole system.",
+      "scope": "Each evidence record proves only its stated claim and acceptance criteria. A passing item must not be interpreted as proving unrelated behavior.",
+      "required": "Required evidence is part of the relationship's verification contract. Failed required evidence makes the relationship Failed; stale required evidence makes it Stale; all required evidence must satisfy the evidence policy before the relationship can be Verified.",
+      "supporting": "Supporting evidence independently corroborates adjacent properties, downstream behavior, or stress conditions relevant to the relationship. It is shown with its own live status, but it does not change the relationship's aggregate verification state.",
+      "repositoryBacked": "Repository-backed evidence identifies source paths, stable test identifiers, the exact tested commit and continuous-integration run. If relevant bound inputs change without re-verification, previously valid evidence becomes Stale.",
+      "unlinked": "Unlinked means the claim or evidence requirement exists in the Atlas but there is not yet an applicable executable repository observation proving it."
+    }
+  }
+}
