@@ -1,0 +1,194 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-18",
+  "version": "0.1.0",
+  "title": "Knowledge Ledger + Project Baseline Governance",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-07"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-08"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-13"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-15"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-18",
+    "phase": "Plasma",
+    "name": "Knowledge Ledger + Project Baseline Governance",
+    "summary": "Separate general, versioned knowledge from project world truth. Standards, regulations, manufacturer data, fabrication capability, internal practice and learned outcomes live in an append-only Knowledge Ledger with authority, jurisdiction, applicability and temporal validity. Projects pin explicit knowledge baselines; source updates trigger candidate ingestion and impact analysis, never silent migration of older or grandfathered work.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-07",
+      "PLS-08",
+      "PLS-13",
+      "PLS-15"
+    ],
+    "gap": "PLS-07 and PLS-08 model project epistemics and contextual practice evidence, but the consolidated spec does not yet define a durable general knowledge ledger, immutable supersession chain, source watchers, project-stage baseline pins, knowledge-use traces or migration rules. Without them, approving a newer regulation/vendor standard could accidentally rewrite legacy project reasoning or make old decisions impossible to reproduce.",
+    "next": "Build one Victorian regulation + fabrication knowledge vertical slice. Ingest two superseding rule versions and two manufacturer capability versions; pin Project A to the older applicable baseline and Project B to the newer one; run update impact analysis; prove that accepting new knowledge changes neither project automatically; migrate only Project B on an isolated branch; reproduce an old decision from its original knowledge-use trace.",
+    "flow": "AUTHORITATIVE / PRACTICE / VENDOR SOURCE → SOURCE WATCHER / INGEST → CANDIDATE KNOWLEDGE VERSION → PARSE + PROVENANCE + APPLICABILITY + CONFLICT CHECK → HUMAN/GOVERNED ACCEPTANCE INTO APPEND-ONLY LEDGER → IMPACT ANALYSIS AGAINST PROJECT BASELINES → NOTIFY / REVIEW / BRANCH MIGRATION IF CHOSEN → PROJECT DECISION REFERENCES EXACT KNOWLEDGE VERSION(S) → OUTCOME/EVIDENCE FEEDS CALIBRATION",
+    "doctrine": {
+      "separation": "World = what Plasma believes about this project at a revision. Knowledge Ledger = versioned propositions/rules/capabilities believed generally or contextually outside a single project.",
+      "immutability": "Accepted KnowledgeItem versions are immutable. Corrections and supersession create new versions/links; they do not overwrite historical content.",
+      "non_migration": "Accepting knowledge into the ledger is not permission to mutate projects. Project adoption/migration is a separate governed decision/Transform.",
+      "model_independence": "AI model weights are not the authoritative knowledge store. Agents retrieve exact ledger items and evidence, state unknowns, and leave a KnowledgeUseTrace for consequential reasoning.",
+      "temporal_truth": "Old knowledge may remain the correct governing baseline for a project because of permit date, contract, grandfathering, procurement state or explicit authority. “Latest” and “applicable” are not synonyms."
+    },
+    "knowledge_item_contract": {
+      "minimum_fields": [
+        "knowledge_id",
+        "version",
+        "subject/domain",
+        "proposition/rule/capability",
+        "source_ref + source version",
+        "source_type",
+        "authority",
+        "jurisdiction",
+        "applicability envelope",
+        "published_at",
+        "effective_from",
+        "effective_to",
+        "acquired_at",
+        "supersedes",
+        "superseded_by",
+        "interpretation_status",
+        "confidence/uncertainty",
+        "evidence refs",
+        "machine-rule/structured form ref",
+        "review status",
+        "content digest"
+      ],
+      "source_types": [
+        "legislation/regulation",
+        "standard/code",
+        "authority guidance",
+        "manufacturer/vendor",
+        "consultant/discipline source",
+        "internal practice",
+        "project outcome",
+        "fabrication/machine observation",
+        "research",
+        "agent inference"
+      ],
+      "interpretation_states": [
+        "verbatim/source",
+        "structured extraction",
+        "interpreted",
+        "contested",
+        "superseded",
+        "withdrawn"
+      ],
+      "authority_rule": "Source authority, interpretation confidence and project applicability are separate dimensions."
+    },
+    "project_baseline_contract": {
+      "minimum_fields": [
+        "baseline_id",
+        "project/world ref",
+        "project stage/date basis",
+        "domain/source-family pins",
+        "component/discipline exceptions",
+        "authority/reason",
+        "pinned_at",
+        "supersedes baseline ref"
+      ],
+      "rule": "A project decision resolves knowledge through its active baseline plus explicit exceptions, not through a global “latest” pointer.",
+      "granularity": "A project may keep an older regulatory baseline while adopting newer manufacturer/fabrication knowledge where allowed; exceptions are explicit and auditable.",
+      "branching": "Proposed baseline migration is rehearsed on a branch, with affected decisions/entities/evaluations enumerated before promotion."
+    },
+    "knowledge_use_trace_contract": {
+      "minimum_fields": [
+        "trace_id",
+        "world revision/decision/transaction",
+        "question/purpose",
+        "knowledge item + exact versions used",
+        "project baseline ref",
+        "assumptions",
+        "excluded/conflicting sources",
+        "reasoning/evaluator ref + version",
+        "uncertainty",
+        "result",
+        "actor/authority",
+        "timestamp"
+      ],
+      "reproducibility": "A consequential historical decision should be explainable using the exact source/knowledge versions and project state that existed when it was made.",
+      "ai_rule": "AI may summarize and reason over knowledge but must not cite its own latent memory as equivalent to an authoritative source where a governed source is required."
+    },
+    "source_update_contract": {
+      "watcher": "Configured source families may be checked on schedules or by external notifications. New content enters as candidate knowledge, not active truth.",
+      "candidate_flow": [
+        "detect changed source/version",
+        "capture immutable source snapshot/digest where lawful",
+        "extract structured differences",
+        "classify authority/jurisdiction/applicability",
+        "compare/supersede/conflict existing items",
+        "review according to consequence",
+        "accept/reject/hold candidate",
+        "run project impact analysis"
+      ],
+      "ambiguity": "Ambiguous or conflicting updates remain contested/unknown with linked interpretations; an approval may accept one interpretation for a defined scope without deleting alternatives.",
+      "staleness": "Knowledge items and source watchers carry currentness. Unchecked freshness may reduce confidence or trigger review but does not retroactively rewrite historical decisions."
+    },
+    "impact_and_migration_contract": {
+      "impact": "For an accepted new version, identify projects/baselines/decisions/entities/evaluations that referenced the superseded item or whose applicability envelope intersects the change.",
+      "classification": [
+        "unaffected",
+        "informational",
+        "re-evaluate",
+        "migration candidate",
+        "mandatory review",
+        "unknown"
+      ],
+      "no_auto_override": "Impact analysis produces work/notifications, never bulk mutation merely because an administrator approved a source update.",
+      "migration_flow": "candidate baseline → isolated branch → recompute affected rules/representations/cost/fabrication consequences → compare → named authority decision → governed Transform/commit or retain prior baseline",
+      "legacy_rule": "Closed, permitted, contracted, fabricated or archived projects may intentionally remain on historical baselines indefinitely, subject to explicit legal/safety override processes outside ordinary update flow."
+    },
+    "calibration_contract": {
+      "principle": "Prediction-versus-outcome is evidence about knowledge quality, not automatic proof of a new universal rule.",
+      "feedback": [
+        "record predicted result/assumptions",
+        "capture authority/fabrication/as-built outcome",
+        "compare",
+        "adjust confidence/applicability or propose new KnowledgeItem",
+        "search counterexamples",
+        "govern promotion"
+      ],
+      "relationship_to_pls08": "PLS-08 retrieves and learns context-bounded practice evidence; PLS-18 supplies durable version/supersession/baseline semantics so practice memory cannot silently generalize or rewrite projects."
+    },
+    "acceptance_tests": [
+      "Accept Regulation v2 that supersedes v1; Project A pinned to v1 remains unchanged and reproducible.",
+      "Impact analysis identifies exactly which projects/decisions depend on v1 and distinguishes grandfathered/unaffected cases.",
+      "Migrate Project B from v1→v2 only through an isolated branch and explicit approval; Project A stays on v1.",
+      "A later manufacturer capability update can be adopted for one fabrication package without forcing a regulatory baseline change.",
+      "Reproduce an old compliance decision with the exact KnowledgeUseTrace, source versions, assumptions and project revision.",
+      "Present two conflicting interpretations of an ambiguous clause without silently collapsing them into one rule.",
+      "An AI answer using stale latent knowledge cannot outrank a newer governed ledger source without explicit contrary evidence."
+    ]
+  }
+}
