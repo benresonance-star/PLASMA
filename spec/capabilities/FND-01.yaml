@@ -1,0 +1,39 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "FND-01",
+  "version": "0.1.0",
+  "title": "Spec → Reality Ledger",
+  "phase": "Foundry",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "FND-01",
+    "phase": "Foundry",
+    "name": "Spec → Reality Ledger",
+    "summary": "Track what is specified, implemented and proven without conflating the three.",
+    "spec": "complete",
+    "implemented": "partial",
+    "depends": [],
+    "gap": "Standalone ledger and declarations work, but authenticated, scope-complete proof verification is absent. Imported verified flags are supporting claims only.",
+    "next": "Connect an independent collector that validates exact source/artifact/input/evaluator/fixture scope and required acceptance-gate coverage before granting Verified.",
+    "flow": "SPEC\\\n  ↓\\\nimplementation claim\\\n  ↓\\\nevidence\\\n  ↓\\\nstatus\\\n  ↓\\\ngap / next action",
+    "stages": [
+      "Observe",
+      "Compare",
+      "Classify gap",
+      "Record evidence",
+      "Update status",
+      "Escalate"
+    ]
+  }
+}
