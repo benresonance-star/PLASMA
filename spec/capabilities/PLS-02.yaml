@@ -1,0 +1,48 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-02",
+  "version": "0.1.0",
+  "title": "Exact Geometry Refinement",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-02",
+    "phase": "Plasma",
+    "name": "Exact Geometry Refinement",
+    "summary": "Refine authoritative OpenCascade geometry and derive display/analysis representations.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01"
+    ],
+    "gap": "Geometry operation contracts, topology identity and healing evidence are incomplete.",
+    "next": "Specify one exact boolean operation with deterministic regression evidence.",
+    "flow": "WORLD SHAPE\\\n  ↓\\\nOCC operation\\\n  ↓\\\nshape validation\\\n  ↓\\\nhealing\\\n  ↓\\\nmesh projection\\\n  ↓\\\ncommit",
+    "stages": [
+      "Observe geometry",
+      "Select operator",
+      "Execute OCC",
+      "Validate topology",
+      "Heal",
+      "Mesh",
+      "Evaluate",
+      "Commit"
+    ]
+  }
+}
