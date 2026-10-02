@@ -1,0 +1,667 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "LanguageModel",
+  "id": "PLS-LANGUAGES",
+  "version": "1.0.0",
+  "projection": {
+    "domain": [
+      {
+        "id": "site",
+        "atlasId": "LANG.SITE.001",
+        "name": "Site Language",
+        "summary": "Site, terrain, landscape and planning intent.",
+        "explanation": "The Site Language expresses domain meaning about parcels, terrain, easements, trees, grading, drainage and site constraints without binding those concepts to one terrain engine.",
+        "types": [
+          "parcel",
+          "terrain",
+          "easement",
+          "tree",
+          "service",
+          "watercourse"
+        ],
+        "verbs": [
+          "import",
+          "grade",
+          "split",
+          "merge",
+          "drain",
+          "plant",
+          "excavate"
+        ],
+        "constraints": [
+          "setback",
+          "maximum slope",
+          "tree protection zone",
+          "easement exclusion"
+        ],
+        "uses": [
+          "query",
+          "change",
+          "constraint",
+          "measurement",
+          "evidence"
+        ],
+        "maturity": "active"
+      },
+      {
+        "id": "geometry",
+        "atlasId": "LANG.GEO.001",
+        "name": "Geometry Language",
+        "summary": "Engine-neutral vocabulary for spatial intent.",
+        "explanation": "The Geometry Language expresses spatial operations such as offset, split, trim and transform while the Geometry Resolver chooses the implementation strategy and tolerance policy.",
+        "types": [
+          "curve",
+          "surface",
+          "solid",
+          "face",
+          "edge",
+          "frame"
+        ],
+        "verbs": [
+          "select",
+          "offset",
+          "split",
+          "intersect",
+          "trim",
+          "transform"
+        ],
+        "constraints": [
+          "tolerance",
+          "topology",
+          "continuity"
+        ],
+        "uses": [
+          "query",
+          "change",
+          "constraint",
+          "measurement"
+        ],
+        "maturity": "active"
+      },
+      {
+        "id": "assembly",
+        "atlasId": "LANG.ASM.001",
+        "name": "Assembly Language",
+        "summary": "Composition, interfaces and connections across nested systems.",
+        "explanation": "The Assembly Language lets systems, subsystems, components and connectors be composed without adding a unique spatial verb for every construction detail.",
+        "types": [
+          "system",
+          "subsystem",
+          "component",
+          "interface",
+          "connector"
+        ],
+        "verbs": [
+          "compose",
+          "connect",
+          "repeat",
+          "replace",
+          "open",
+          "join"
+        ],
+        "constraints": [
+          "compatibility",
+          "spacing",
+          "interface rule"
+        ],
+        "uses": [
+          "query",
+          "change",
+          "constraint",
+          "evidence",
+          "history"
+        ],
+        "maturity": "active"
+      },
+      {
+        "id": "analysis",
+        "atlasId": "LANG.ANA.001",
+        "name": "Analysis Language",
+        "summary": "Questions and evaluations over world state and derived representations.",
+        "explanation": "The Analysis Language requests sampling, solving, mapping and comparison, returning typed measurements, fields, claims and evidence rather than silently mutating geometry.",
+        "types": [
+          "metric",
+          "field",
+          "result",
+          "claim",
+          "assumption"
+        ],
+        "verbs": [
+          "sample",
+          "solve",
+          "map",
+          "compare",
+          "validate",
+          "optimise"
+        ],
+        "constraints": [
+          "assumption",
+          "tolerance",
+          "confidence"
+        ],
+        "uses": [
+          "query",
+          "measurement",
+          "evidence",
+          "representation",
+          "history"
+        ],
+        "maturity": "active"
+      },
+      {
+        "id": "planning",
+        "atlasId": "LANG.PLN.001",
+        "name": "Planning / Regulation Language",
+        "maturity": "emerging",
+        "summary": "Rules, overlays, permits, spatial controls and jurisdictional evidence.",
+        "explanation": "Expresses regulatory requirements as typed, sourced and time-bounded constraints or claims rather than burying legislation inside geometry code.",
+        "types": [
+          "rule",
+          "overlay",
+          "zone",
+          "permit",
+          "requirement",
+          "jurisdiction"
+        ],
+        "verbs": [
+          "apply",
+          "interpret",
+          "test",
+          "exempt",
+          "refer",
+          "supersede"
+        ],
+        "constraints": [
+          "setback",
+          "height",
+          "overlooking",
+          "site coverage",
+          "open space"
+        ],
+        "uses": [
+          "query",
+          "constraint",
+          "measurement",
+          "evidence",
+          "history"
+        ]
+      },
+      {
+        "id": "space-program",
+        "atlasId": "LANG.SPACE.001",
+        "name": "Space / Program Language",
+        "maturity": "emerging",
+        "summary": "Rooms, dwellings, zones, occupancy, adjacency and program requirements.",
+        "explanation": "Represents spatial purpose and program independently of one geometric decomposition so layout systems can change while functional intent remains traceable.",
+        "types": [
+          "space",
+          "room",
+          "dwelling",
+          "zone",
+          "occupancy",
+          "adjacency"
+        ],
+        "verbs": [
+          "allocate",
+          "connect",
+          "separate",
+          "stack",
+          "orient",
+          "resize"
+        ],
+        "constraints": [
+          "minimum area",
+          "adjacency",
+          "access",
+          "privacy",
+          "circulation"
+        ],
+        "uses": [
+          "query",
+          "change",
+          "constraint",
+          "measurement",
+          "evidence"
+        ]
+      },
+      {
+        "id": "structure",
+        "atlasId": "LANG.STR.001",
+        "name": "Structure Language",
+        "maturity": "emerging",
+        "summary": "Structural systems, load paths, members, supports and analysis claims.",
+        "explanation": "Describes structural intent and evidence without binding the world model to a particular finite element solver or member library.",
+        "types": [
+          "system",
+          "member",
+          "support",
+          "load",
+          "connection",
+          "result"
+        ],
+        "verbs": [
+          "support",
+          "span",
+          "brace",
+          "load",
+          "analyse",
+          "size"
+        ],
+        "constraints": [
+          "capacity",
+          "deflection",
+          "stability",
+          "continuity"
+        ],
+        "uses": [
+          "query",
+          "constraint",
+          "measurement",
+          "evidence",
+          "history"
+        ]
+      },
+      {
+        "id": "envelope",
+        "atlasId": "LANG.ENV.001",
+        "name": "Envelope Language",
+        "maturity": "emerging",
+        "summary": "Façades, roofs, openings, layers, interfaces and environmental performance.",
+        "explanation": "Coordinates enclosure intent, hosted openings and performance requirements across geometry, assemblies and analysis.",
+        "types": [
+          "façade",
+          "roof",
+          "opening",
+          "layer",
+          "junction",
+          "barrier"
+        ],
+        "verbs": [
+          "enclose",
+          "open",
+          "seal",
+          "shade",
+          "drain",
+          "insulate"
+        ],
+        "constraints": [
+          "airtightness",
+          "water shedding",
+          "thermal continuity",
+          "solar control"
+        ],
+        "uses": [
+          "query",
+          "change",
+          "constraint",
+          "measurement",
+          "evidence",
+          "representation"
+        ]
+      },
+      {
+        "id": "services",
+        "atlasId": "LANG.MEP.001",
+        "name": "Services Language",
+        "maturity": "planned",
+        "summary": "Distribution networks, plant, terminals, zones and service clearances.",
+        "explanation": "Provides typed intent for building services so routes and equipment can coordinate with space, structure and envelope without becoming raw geometry.",
+        "types": [
+          "network",
+          "plant",
+          "riser",
+          "terminal",
+          "zone",
+          "clearance"
+        ],
+        "verbs": [
+          "route",
+          "connect",
+          "branch",
+          "serve",
+          "size",
+          "isolate"
+        ],
+        "constraints": [
+          "capacity",
+          "clearance",
+          "gradient",
+          "access",
+          "redundancy"
+        ],
+        "uses": [
+          "query",
+          "change",
+          "constraint",
+          "measurement",
+          "evidence"
+        ]
+      },
+      {
+        "id": "materials",
+        "atlasId": "LANG.MAT.001",
+        "name": "Materials Language",
+        "maturity": "emerging",
+        "summary": "Material identity, properties, finishes, provenance and substitutions.",
+        "explanation": "Separates material meaning and evidence from product geometry so performance, cost, fabrication and lifecycle systems can share one material definition.",
+        "types": [
+          "material",
+          "grade",
+          "finish",
+          "property-set",
+          "source",
+          "substitution"
+        ],
+        "verbs": [
+          "assign",
+          "compare",
+          "substitute",
+          "qualify",
+          "trace"
+        ],
+        "constraints": [
+          "strength",
+          "thermal",
+          "durability",
+          "availability"
+        ],
+        "uses": [
+          "query",
+          "change",
+          "constraint",
+          "measurement",
+          "evidence",
+          "history"
+        ]
+      },
+      {
+        "id": "fabrication",
+        "atlasId": "LANG.FAB.001",
+        "name": "Fabrication Language",
+        "maturity": "emerging",
+        "summary": "Parts, manufacturing features, process constraints and machine-ready outputs.",
+        "explanation": "Expresses fabrication intent in product terms while machine-specific code remains behind replaceable adapters.",
+        "types": [
+          "part",
+          "feature",
+          "process",
+          "setup",
+          "tool",
+          "inspection"
+        ],
+        "verbs": [
+          "cut",
+          "fold",
+          "drill",
+          "knit",
+          "machine",
+          "inspect"
+        ],
+        "constraints": [
+          "stock",
+          "tool access",
+          "tolerance",
+          "minimum feature",
+          "machine capability"
+        ],
+        "uses": [
+          "query",
+          "constraint",
+          "measurement",
+          "evidence",
+          "representation",
+          "history"
+        ]
+      },
+      {
+        "id": "economics",
+        "atlasId": "LANG.ECO.001",
+        "name": "Economics / Feasibility Language",
+        "maturity": "planned",
+        "summary": "Cost, yield, revenue, programme, uncertainty and feasibility claims.",
+        "explanation": "Allows economic evaluation to reference authoritative quantities and assumptions without turning a financial model into design authority.",
+        "types": [
+          "cost",
+          "quantity",
+          "rate",
+          "yield",
+          "revenue",
+          "scenario"
+        ],
+        "verbs": [
+          "price",
+          "estimate",
+          "compare",
+          "forecast",
+          "optimise"
+        ],
+        "constraints": [
+          "budget",
+          "return",
+          "contingency",
+          "programme"
+        ],
+        "uses": [
+          "query",
+          "measurement",
+          "evidence",
+          "history"
+        ]
+      },
+      {
+        "id": "construction",
+        "atlasId": "LANG.CONST.001",
+        "name": "Construction Language",
+        "maturity": "planned",
+        "summary": "Sequences, temporary states, logistics, access and installation dependencies.",
+        "explanation": "Represents how authoritative product systems are assembled through time, including temporary conditions and installation evidence.",
+        "types": [
+          "task",
+          "sequence",
+          "temporary-state",
+          "delivery",
+          "installation",
+          "inspection"
+        ],
+        "verbs": [
+          "stage",
+          "deliver",
+          "erect",
+          "install",
+          "inspect",
+          "handover"
+        ],
+        "constraints": [
+          "access",
+          "sequence",
+          "temporary stability",
+          "lead time"
+        ],
+        "uses": [
+          "query",
+          "constraint",
+          "measurement",
+          "evidence",
+          "history"
+        ]
+      },
+      {
+        "id": "operation",
+        "atlasId": "LANG.OPS.001",
+        "name": "Operation / Lifecycle Language",
+        "maturity": "planned",
+        "summary": "Commissioning, maintenance, replacement, performance and lifecycle state.",
+        "explanation": "Carries design identity into operation so observed performance and replacement history can return as evidence rather than becoming disconnected records.",
+        "types": [
+          "asset",
+          "commissioning",
+          "maintenance",
+          "fault",
+          "replacement",
+          "observation"
+        ],
+        "verbs": [
+          "commission",
+          "monitor",
+          "maintain",
+          "replace",
+          "inspect"
+        ],
+        "constraints": [
+          "service life",
+          "maintenance interval",
+          "performance threshold"
+        ],
+        "uses": [
+          "query",
+          "measurement",
+          "evidence",
+          "history"
+        ]
+      },
+      {
+        "id": "botanical",
+        "atlasId": "LANG.BOT.001",
+        "name": "Botanical / Ecology Language",
+        "maturity": "research",
+        "summary": "Species, individuals, growth state, ecological fields and living-system interactions.",
+        "explanation": "Represents living systems as revisioned semantic entities whose geometry and ecological fields change through time while identity remains stable.",
+        "types": [
+          "species",
+          "individual",
+          "growth-state",
+          "canopy",
+          "root-zone",
+          "habitat"
+        ],
+        "verbs": [
+          "plant",
+          "grow",
+          "prune",
+          "compete",
+          "shade",
+          "respond"
+        ],
+        "constraints": [
+          "root zone",
+          "water",
+          "light",
+          "clearance",
+          "protection"
+        ],
+        "uses": [
+          "query",
+          "change",
+          "constraint",
+          "measurement",
+          "evidence",
+          "history"
+        ]
+      }
+    ],
+    "crossCutting": [
+      {
+        "id": "query",
+        "atlasId": "LANG.CORE.QUERY",
+        "name": "Query / Selection",
+        "verb": "Find",
+        "summary": "Bind stable entities by identity, role, topology, relation, region or predicate.",
+        "explanation": "Selection resolves what an operation is talking about and is the foundation for persistence across regeneration."
+      },
+      {
+        "id": "change",
+        "atlasId": "LANG.CORE.CHANGE",
+        "name": "Change / Operation",
+        "verb": "Propose",
+        "summary": "Describe a typed candidate change without mutating canonical state.",
+        "explanation": "Change operations carry target references, intent, parameters and preconditions. They remain proposals until committed."
+      },
+      {
+        "id": "constraint",
+        "atlasId": "LANG.CORE.CONSTRAINT",
+        "name": "Constraint",
+        "verb": "Permit",
+        "summary": "Express conditions, admissible ranges and invariants.",
+        "explanation": "Constraint semantics remain independent of the particular engine used to evaluate them."
+      },
+      {
+        "id": "measurement",
+        "atlasId": "LANG.CORE.MEASURE",
+        "name": "Measurement",
+        "verb": "Observe",
+        "summary": "Measure or derive values with units, method, resolution and uncertainty.",
+        "explanation": "A technical value is not treated as dependable evidence without its measurement context."
+      },
+      {
+        "id": "evidence",
+        "atlasId": "LANG.CORE.EVIDENCE",
+        "name": "Evidence / Claim",
+        "verb": "Believe",
+        "summary": "Represent assertions, source, method, confidence and lineage.",
+        "explanation": "Evidence separates what a tool computed from what Plasma may trust and why."
+      },
+      {
+        "id": "representation",
+        "atlasId": "LANG.CORE.REP",
+        "name": "Representation",
+        "verb": "Show",
+        "summary": "Request a derived view without creating a second source of truth.",
+        "explanation": "Views can be regenerated or replaced while authoritative semantics remain stable."
+      },
+      {
+        "id": "history",
+        "atlasId": "LANG.CORE.HISTORY",
+        "name": "History / Revision",
+        "verb": "Trace",
+        "summary": "Inspect revisions, diffs, operations, branches and provenance through time.",
+        "explanation": "History makes both state and causality queryable without mutating the current world."
+      }
+    ],
+    "futureDomains": [],
+    "contractShape": [
+      "id + version",
+      "domain",
+      "types",
+      "references",
+      "verbs",
+      "parameters",
+      "units",
+      "preconditions",
+      "invariants",
+      "result types",
+      "evidence requirements",
+      "conformance tests"
+    ],
+    "operationLevels": [
+      {
+        "id": "primitive",
+        "name": "Primitive",
+        "examples": [
+          "split",
+          "sample",
+          "transform"
+        ],
+        "description": "Small stable operations with narrow semantics."
+      },
+      {
+        "id": "compound",
+        "name": "Compound",
+        "examples": [
+          "make opening",
+          "grade pad"
+        ],
+        "description": "Domain operations composed from smaller primitives."
+      },
+      {
+        "id": "workflow",
+        "name": "Workflow",
+        "examples": [
+          "resolve drainage",
+          "optimise façade"
+        ],
+        "description": "Orchestration across operations, evaluators and decision gates."
+      }
+    ],
+    "interactionRule": "Domain languages do not call one another or mutate the world directly. They communicate through shared world state, typed operations, dependencies, claims and evidence."
+  }
+}
