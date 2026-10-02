@@ -1,0 +1,63 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "FND-05",
+  "version": "0.1.0",
+  "title": "Version → Release → Recovery Contract",
+  "phase": "Foundry",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "FND-01"
+    },
+    {
+      "type": "requires",
+      "id": "FND-04"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "FND-05",
+    "phase": "Foundry",
+    "name": "Version → Release → Recovery Contract",
+    "summary": "Version compatible interfaces, identify exact artifacts by digest, promote immutable release bundles and recover by audited pointer movement rather than history rewriting.",
+    "spec": "complete",
+    "implemented": "partial",
+    "depends": [
+      "FND-01",
+      "FND-04",
+      "PLS-01"
+    ],
+    "gap": "PLS-VRC-01 is embedded and the portable schemas are aligned, but release-bundle JSON Schema, compatibility validators, immutable evidence storage, migration runner and recovery drill are not implemented.",
+    "next": "Extract PLS-VRC-01 into the canonical repository, implement plasma-release-bundle/1.0.0 schema and validator, assemble one candidate bundle from existing artifacts, then prove rollback on an isolated project branch.",
+    "flow": "VERSIONED ARTIFACTS\\\n  ↓\\\ncompatibility + migration validation\\\n  ↓\\\ncanonical release manifest\\\n  ↓\\\ncontent-addressed bundle ID\\\n  ↓\\\nreproduce + independently evaluate\\\n  ↓\\\nreplay affected project worlds\\\n  ↓\\\nhuman approval of exact digest\\\n  ↓\\\natomic activate / audited rollback",
+    "stages": [
+      "Classify artifact",
+      "Assign compatible version",
+      "Record exact digest",
+      "Resolve dependency lock",
+      "Validate compatibility",
+      "Rehearse migration",
+      "Assemble release bundle",
+      "Verify reproducibility",
+      "Evaluate independently",
+      "Replay affected worlds",
+      "Approve exact digest",
+      "Activate atomically",
+      "Exercise rollback"
+    ]
+  }
+}
