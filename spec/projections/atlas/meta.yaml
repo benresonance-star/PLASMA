@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "projection": {
     "id": "PLASMA.SYSTEM_ATLAS",
-    "version": "0.10.0",
+    "version": "0.10.1",
     "title": "Plasma System Atlas",
     "status": "foundation-evolving",
     "description": "A machine-readable architecture model projected into multiple interactive Atlas views.",
@@ -22,7 +22,8 @@
       "Evidence proves specific implementation claims, not general architectural completeness; required evidence gates a relationship, while supporting evidence corroborates it without gating.",
       "Specification synchronisation records requirements, not implementation proof; PLS-19 / PLS-WALL-01 remains unproven until applicable acceptance evidence exists.",
       "Differential computation may guide authority, but may never silently become authority.",
-      "Atlas is a generated projection of the canonical Plasma Spec System v1 graph."
+      "Atlas is a generated projection of the canonical Plasma Spec System v1 graph.",
+      "Canonical specification sources never depend on generated projections."
     ],
     "specification": {
       "version": "0.4.29",
