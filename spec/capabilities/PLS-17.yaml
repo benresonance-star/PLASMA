@@ -1,0 +1,845 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-17",
+  "version": "0.1.0",
+  "title": "Spatial Operation + Kernel-Neutral Geometry Runtime",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-09"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-10"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-14"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-15"
+    }
+  ],
+  "provides": [
+    "PLS-GR-01"
+  ],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-17",
+    "phase": "Plasma",
+    "name": "Spatial Operation + Kernel-Neutral Geometry Runtime",
+    "summary": "Compile simple human/AI interaction verbs into a stable canonical geometry language, then resolve those verbs through provider-neutral execution plans. The canonical layer defines geometric meaning—such as EXTEND, TRIM, SPLIT, CONNECT, SUBTRACT and OFFSET—while the Geometry Resolver chooses robust algorithms, tolerances, references, validation/healing and fallback. OpenCascade is the initial exact B-Rep/NURBS executor and Three.js/WebGPU the initial interactive representation provider; neither owns Plasma identity or intent.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-09",
+      "PLS-10",
+      "PLS-14",
+      "PLS-15"
+    ],
+    "gap": "The canonical verb and provider-neutral boundary are specified, and PLS-GR-01 now defines a staged resolver API, but implementation has not yet proven deterministic stage contracts, replayable decision evidence, bounded healing, semantic-reference rebinding and atomic commit across difficult geometric cases, repeated edits, provider regeneration and concurrent world revisions.",
+    "next": "Implement PLS-GR-01/0.1.0 as a reference Geometry Resolver service over OpenCascade for EXTEND, TRIM, SPLIT, CONNECT, SUBTRACT and FILLET. Each operation must execute through classify → inferIntent → chooseStrategy → bindSemanticReferences → applyTolerancePolicy → evaluate → validate → heal → commit, emitting stage evidence and deterministic error codes. Prove wall-wall junctions, beam-to-face trimming, hosted openings and split solids under exact, near-tangent, coincident, micro-gap, repeated-regeneration and stale-revision cases; exact commit must never reuse approximate preview geometry.",
+    "flow": "POINTER / TOUCH / PEN / VOICE / AI → INTERACTION VERB + SELECTION + MODIFIERS → CANONICAL GEOMETRY VERB(S) → PLS-GR-01 RESOLVER [CLASSIFY → INFER INTENT → CHOOSE STRATEGY → BIND SEMANTIC REFERENCES → APPLY TOLERANCE POLICY → EVALUATE → VALIDATE → HEAL → COMMIT] → PLS-KERNEL-01 WORLD TRANSACTION → DERIVED REPRESENTATIONS",
+    "doctrine": {
+      "surface": "The user manipulates the designed world through a small verb set rather than provider-specific commands or a visible implementation graph.",
+      "kernel_boundary": "PLS-KERNEL-01 stores semantic identity/state/relations/history. It does not store OpenCascade TopoDS handles, Three.js object UUIDs, ACIS bodies, Parasolid tags or equivalent provider identity as canonical meaning.",
+      "provider_neutrality": "Providers are replaceable executors of representation/geometry contracts. Adding or replacing a provider must not require migration of semantic world identity merely because implementation handles differ.",
+      "precision": "Exactness is latent in ordinary interaction through snapping, numeric input, reference frames, constraints and tolerances rather than a separate ceremony-heavy modeling mode.",
+      "same_path": "Human gesture, language shortcut, agent plan, generator and imported edit resolve through the same typed OperationPlan → Transform path.",
+      "two_level_verb_model": "Interaction verbs are optimized for humans and AI and may be contextual or compositional. Canonical geometry verbs are the stable semantic contract beneath them. Architectural commands such as Wall Junction, Opening, Beam End Cut or Roof Trim compile into canonical verbs plus persistent Relations/Transforms; they do not become kernel primitives.",
+      "resolver_not_kernel": "The Plasma Geometry Resolver owns operation semantics, strategy selection, tolerance policy, semantic references, validation, healing and fallback. OpenCascade executes exact geometry algorithms beneath that resolver and may be patched, wrapped, supplemented or routed around without changing canonical meaning.",
+      "non_destructive_default": "Geometry operations are non-destructive by default. Source entities, cutters, references and operation lineage remain addressable; the current B-Rep is an evaluated representation of accepted feature/transform history, not the sole durable design record."
+    },
+    "operation_plan_contract": {
+      "minimum_fields": [
+        "operation_id",
+        "world_revision",
+        "actor/authority",
+        "verb",
+        "targets/selection",
+        "parameters + units",
+        "reference frame",
+        "modifiers/overrides",
+        "preconditions",
+        "declared intent",
+        "required invariants",
+        "required representation contracts",
+        "ambiguities/assumptions",
+        "expected effects",
+        "reversibility",
+        "preview policy"
+      ],
+      "resolution_stages": [
+        "resolve selection/referents",
+        "classify verb semantics",
+        "normalize units/frame",
+        "apply explicit modifiers",
+        "infer only low-risk contextual defaults",
+        "surface material ambiguity",
+        "derive required representation/evaluator contracts",
+        "compile to one or more typed Transform proposals"
+      ],
+      "ambiguity": "A reversible preview may carry unresolved alternatives, but canonical commit must bind material referents, quantities, authority and preserve/break behavior or branch explicitly.",
+      "no_direct_provider_edit": "A provider-specific edit may calculate geometry, but the accepted effect must be expressible as Plasma Transform/State/Relation change plus derived representation lineage."
+    },
+    "geometry_capability_contract": {
+      "provider_classes": {
+        "exact_brep": "Exact solid/surface/curve operations and tolerance-governed topology. Initial provider: OpenCascade; possible future providers include ACIS/Parasolid.",
+        "interactive_render": "Low-latency display, picking, handles and proxy geometry. Initial provider: Three.js/WebGPU; not treated as an exact CAD kernel.",
+        "mesh_sdf_sculpt": "Freeform, voxel/SDF, subdivision and sculptural realization where exact B-Rep is not the right interaction representation.",
+        "external_cad_cam": "Specialist fabrication/detailing systems invoked through bounded interchange/connector contracts."
+      },
+      "provider_advertises": [
+        "supported operation families",
+        "geometry/representation kinds",
+        "input/output schemas",
+        "tolerance range",
+        "topology correspondence support",
+        "determinism/reproducibility class",
+        "thread/GPU/resource needs",
+        "latency class",
+        "failure classes",
+        "license/deployment constraints"
+      ],
+      "router_rule": "Route by semantic need, required fidelity/tolerance, latency, topology identity, reproducibility, availability and policy—not by whichever provider happens to own the current viewport object.",
+      "multi_provider_rule": "One operation may use a fast interaction provider for preview and an exact provider for validation/commit; resulting representations remain tied to the same world revision and operation lineage."
+    },
+    "topology_identity_contract": {
+      "principle": "Provider topology is unstable implementation detail; Plasma requires semantic/persistent correspondence above it.",
+      "mapping_inputs": [
+        "semantic entity/feature identity",
+        "operation lineage",
+        "geometric signatures",
+        "adjacency/incidence",
+        "reference frames",
+        "feature roles/constraints",
+        "previous correspondence",
+        "provider persistent naming when available"
+      ],
+      "result": "Return correspondence with confidence/ambiguity rather than silently rebinding a materially changed face/edge to an old semantic identity.",
+      "failure": "Topology identity loss is a first-class representation failure. Commit is held when downstream hard relations depend on unresolved correspondence."
+    },
+    "representation_failure_contract": {
+      "statuses": [
+        "current",
+        "stale",
+        "computing",
+        "failed",
+        "unavailable",
+        "unknown"
+      ],
+      "failure_classes": [
+        "provider unavailable",
+        "unsupported operation",
+        "invalid input",
+        "tolerance non-convergence",
+        "kernel robustness failure",
+        "topology identity loss",
+        "stale response",
+        "resource exhaustion",
+        "external round-trip mismatch"
+      ],
+      "fallback_order": [
+        "retry/repair within same semantic contract when bounded",
+        "equivalent alternate provider",
+        "alternate representation only if consumer contract permits",
+        "last-known-good marked stale",
+        "hold/branch/reject operation"
+      ],
+      "commit_rule": "No silent exact→approximate downgrade for commit-critical geometry. A verified alternate provider may satisfy the contract if it meets the same declared tolerance/identity/evidence requirements.",
+      "display_rule": "Display/analysis failure may degrade that view while leaving the world valid; the UI shows the failure/currentness rather than freezing or inventing geometry."
+    },
+    "fabrication_interoperability_contract": {
+      "principle": "Plasma should interoperate deeply with specialist fabrication CAD/CAM before assuming it must reproduce decades of tool-specific manufacturing depth.",
+      "plasma_default_ownership": [
+        "design intent",
+        "cross-domain object identity",
+        "assembly/system relations",
+        "architectural constraints",
+        "material/process intent",
+        "required tolerances/performance",
+        "project provenance",
+        "comparison/reconciliation"
+      ],
+      "specialist_possible_ownership": [
+        "vendor-specific sheet-metal features",
+        "detailed machining strategy",
+        "CAM toolpaths",
+        "machine/post-processor parameters",
+        "specialist fabrication setup",
+        "tool-library and machine-state details"
+      ],
+      "round_trip": "Delegated outputs return with source system/version, input revision, exact file/model identity, assumptions, manufacturability/process findings, changed geometry/parameters and reconciliation status.",
+      "authority": "An external system can be authoritative inside its explicitly bounded domain, but its result enters Plasma as Evidence and/or a proposed Transform; it does not silently overwrite the project world.",
+      "learning_loop": "Fabrication exceptions, actual process limits, RFIs, costs and as-built outcomes may update PLS-18/PLS-08 knowledge through governed evidence rather than being buried in one file."
+    },
+    "acceptance_tests": [
+      "Move a wall through direct drag and through language “move that wall 150”; both resolve to equivalent typed operation/Transform semantics.",
+      "Use Three.js/proxy interaction while OpenCascade exact regeneration is intentionally delayed; pointer feedback remains live and currentness is honest.",
+      "Swap the exact provider adapter in a fixture without changing Plasma entity IDs, relations or Transform schemas.",
+      "Inject exact-kernel fillet failure: proxy may remain visible, but commit-critical exact status becomes failed/pending and no approximate fillet is silently accepted.",
+      "Regenerate a wall/opening and prove hosted-opening identity survives provider topology changes or reports explicit topology ambiguity.",
+      "Round-trip a folded fabrication part through an external specialist path and reconcile returned geometry/process constraints without making external body IDs canonical.",
+      "EXTEND/TRIM a beam to a semantic wall face using an analytic termination strategy; moving the wall re-evaluates the beam while preserving the semantic target reference.",
+      "CONNECT two walls under butt, miter and priority policies; prove the persistent Relation survives exact topology regeneration and that plan representation can suppress unwanted junction lines independently of solid topology.",
+      "SPLIT a solid by a plane and preserve both pieces with lineage; prove later keep/delete/classify operations do not require rerunning an ambiguous destructive cut.",
+      "Run exact, 1 µm gap, coincident, near-tangent and micro-sliver fixtures through the same resolver; verify bounded tolerance/healing policy and explicit typed failure beyond limits.",
+      "Repeat a Boolean/junction edit cycle many times and assert tolerance/topology complexity does not grow unbounded or silently accumulate micro-edges.",
+      "Break a persistent face reference deliberately; dependent commit must hold with topology-identity-loss diagnostics rather than rebind by transient face index.",
+      "During drag, use a fast proxy at interactive frame rate; on release execute only the affected exact region, mark exact status computing/current explicitly, and publish only after validation/cleanliness checks pass."
+    ],
+    "canonical_geometry_verbs": {
+      "principle": "Keep the exact geometric vocabulary small, composable and semantically stable. Do not add a new canonical verb when a higher-level operation can be expressed as composition plus relations, parameters and policy.",
+      "families": {
+        "position": [
+          "MOVE",
+          "ROTATE",
+          "MIRROR",
+          "SCALE"
+        ],
+        "boundary": [
+          "EXTEND",
+          "TRIM",
+          "SPLIT",
+          "MERGE"
+        ],
+        "relationship": [
+          "CONNECT",
+          "DISCONNECT",
+          "ALIGN",
+          "PROJECT"
+        ],
+        "topology": [
+          "IMPRINT",
+          "SECTION"
+        ],
+        "boolean": [
+          "UNION",
+          "SUBTRACT",
+          "INTERSECT"
+        ],
+        "form": [
+          "OFFSET",
+          "THICKEN",
+          "SHELL",
+          "SWEEP",
+          "LOFT"
+        ],
+        "edge": [
+          "FILLET",
+          "CHAMFER"
+        ],
+        "repair": [
+          "SEW",
+          "HEAL",
+          "SIMPLIFY"
+        ]
+      },
+      "interaction_mapping": {
+        "draw/place/push-pull/repeat/attach-host": "User-facing interaction verbs may compile to one or more canonical geometry verbs plus Entity/Relation/Transform changes.",
+        "cut": "Must resolve explicitly to TRIM, SPLIT, SUBTRACT, SECTION or another declared semantic operation rather than remaining an ambiguous low-level command.",
+        "join": "Must resolve explicitly to CONNECT, UNION, MERGE, SEW or an architectural relationship policy; raw geometric coincidence is not sufficient."
+      },
+      "composition_examples": [
+        "WallJunction = CONNECT + EXTEND/TRIM + optional SUBTRACT + SIMPLIFY + persistent wall-wall Relation.",
+        "WindowInWall = CONNECT(host) + SUBTRACT(opening volume) + hosted-element Relation + representation rules.",
+        "BeamToColumn = CONNECT + EXTEND/TRIM + optional connection-component generation + fabrication Relations.",
+        "SplitAndClassify = SPLIT + preserve all pieces + semantic classification/ownership assignment."
+      ]
+    },
+    "geometry_resolver_contract": {
+      "principle": "Plasma resolves intent before invoking a geometry kernel. The resolver chooses the least-complex exact strategy that satisfies the declared semantic effect, tolerance and topology requirements.",
+      "stages": [
+        "classify input geometry, semantic roles and existing relations",
+        "infer only bounded low-risk intent from context; preserve explicit ambiguity when material",
+        "choose exact strategy and provider based on operation semantics rather than current viewport representation",
+        "bind semantic references to current provider subshapes with confidence/ambiguity",
+        "apply Plasma tolerance policy and operation-specific limits",
+        "evaluate exact or approved approximate geometry in an isolated candidate",
+        "validate B-Rep/topology, manifold/closure/orientation and expected semantic effects",
+        "heal/simplify only within declared bounded policy; unify unintended same-domain micro-topology where safe",
+        "rebuild topology correspondence and detect lost/ambiguous references",
+        "commit atomically only after geometry, invariants and lineage requirements pass"
+      ],
+      "strategy_rule": "Prefer direct analytic/reconstructive strategies over unnecessarily complex whole-solid Booleans when they produce the same semantic result more robustly. Example: trim a prismatic beam to a target plane by resolving the termination face rather than subtracting the entire wall solid when the wall is only a reference boundary.",
+      "preview_commit_split": "Pointer-rate preview may use GPU/proxy/mesh/SDF representations and bounded local checks. Pause/release/commit requests exact OpenCascade or equivalent geometry only for the affected causal/spatial region. The UI exposes currentness; approximate preview never silently becomes exact committed geometry.",
+      "provider_fallback": "If the selected exact strategy fails, retry/repair within bounded policy, choose an equivalent strategy/provider that satisfies the same semantic contract, or hold/branch/reject. Never silently change the operation meaning merely to obtain a valid solid."
+    },
+    "geometry_resolver_api_contract": {
+      "id": "PLS-GR-01",
+      "version": "0.1.0",
+      "status": "draft-normative",
+      "name": "Plasma Geometry Resolver API",
+      "purpose": "Provide one deterministic, inspectable and provider-neutral contract for turning a canonical geometry verb into a validated candidate and, only when all geometric/semantic/world preconditions pass, an atomic Plasma world commit. The API owns resolution policy; geometry providers execute bounded strategies beneath it.",
+      "public_entrypoint": {
+        "signature": "resolve(request: GeometryResolveRequest) -> GeometryResolveResult",
+        "modes": [
+          "preview",
+          "commit_candidate"
+        ],
+        "stage_order": [
+          "classify",
+          "infer_intent",
+          "choose_strategy",
+          "bind_semantic_references",
+          "apply_tolerance_policy",
+          "evaluate",
+          "validate",
+          "heal",
+          "commit"
+        ],
+        "mutation_rule": "Stages before commit operate on immutable inputs and isolated candidate artifacts. Only commit may propose a PLS-KERNEL-01 transaction against accepted world state.",
+        "short_circuit_rule": "Any stage may stop the pipeline with needs_input, held, unsupported, failed, stale or cancelled. No downstream stage may silently coerce an unresolved hard failure into success.",
+        "preview_rule": "Preview may end after evaluate/validate using an explicitly approximate representation. Preview artifacts are never accepted as exact commit artifacts unless they independently satisfy the exact contract and are revalidated for the commit request."
+      },
+      "geometry_resolve_request": {
+        "required_fields": [
+          "request_id + trace_id",
+          "operation_id",
+          "base_world_revision",
+          "actor_id + authority",
+          "canonical_verb",
+          "semantic targets/selection",
+          "parameters + units",
+          "reference frame",
+          "declared intent/postconditions",
+          "preserve/break modifiers",
+          "required representation/fidelity contract",
+          "tolerance policy reference",
+          "provider policy/capability requirements",
+          "preview or commit_candidate mode"
+        ],
+        "optional_fields": [
+          "interaction source/gesture evidence",
+          "candidate alternatives from upstream intent resolution",
+          "previous topology correspondence",
+          "preferred strategy/provider hints",
+          "latency/resource budget",
+          "healing policy override within actor authority",
+          "expected causal/spatial impact bounds"
+        ],
+        "rules": [
+          "All quantities carry units; all geometry is interpreted in an explicit reference frame.",
+          "Targets are semantic Plasma references, never raw provider handles as canonical input.",
+          "A commit_candidate request pins the base world revision, policy versions, provider version and exactness requirements.",
+          "Hints may influence ranking but cannot weaken hard semantics, tolerance limits, invariants or authority."
+        ]
+      },
+      "resolver_context": {
+        "immutable_inputs": [
+          "request",
+          "base world snapshot",
+          "policy bundle",
+          "provider capability snapshot"
+        ],
+        "accumulated_outputs": [
+          "stage results",
+          "diagnostics",
+          "alternatives",
+          "provider artifacts",
+          "topology correspondence",
+          "evidence/provenance"
+        ],
+        "identity": "Every context is keyed by request_id + base_world_revision + operation_id + policy/provider digests.",
+        "replay": "Given identical pinned inputs and a deterministic provider class, the resolver must reproduce the same selected strategy, decisions and result digest or explicitly declare nondeterminism."
+      },
+      "stage_result_envelope": {
+        "required_fields": [
+          "stage",
+          "status",
+          "input_digest",
+          "output_digest",
+          "decision",
+          "diagnostics",
+          "evidence",
+          "timing",
+          "producer/version"
+        ],
+        "statuses": [
+          "ok",
+          "needs_input",
+          "ambiguous",
+          "held",
+          "unsupported",
+          "failed",
+          "stale",
+          "cancelled"
+        ],
+        "diagnostic_fields": [
+          "code",
+          "severity",
+          "message",
+          "affected semantic refs",
+          "affected provider topology if any",
+          "measured values",
+          "policy limits",
+          "suggested resolutions"
+        ],
+        "decision_fields": [
+          "selected option",
+          "alternatives considered",
+          "rejected alternatives + reasons",
+          "confidence where inference/binding is probabilistic"
+        ],
+        "evidence_rule": "A material resolver decision must be explainable from machine-readable stage evidence; free-text rationale alone is insufficient."
+      },
+      "stages": {
+        "classify": {
+          "signature": "classify(ctx, request) -> ClassificationResult",
+          "responsibility": "Normalize and classify the operation operands before any strategy is chosen.",
+          "inputs": [
+            "semantic entities + current representations",
+            "canonical verb",
+            "existing Relations/constraints",
+            "reference frame"
+          ],
+          "outputs": [
+            "operand roles",
+            "geometry kinds",
+            "analytic/parametric characteristics",
+            "continuity/topology class",
+            "existing host/junction relationships",
+            "risk/pathology flags",
+            "required provider capabilities"
+          ],
+          "must_not": [
+            "infer a different user goal",
+            "bind long-lived provider topology identity",
+            "mutate or heal geometry"
+          ],
+          "examples": [
+            "beam = prismatic solid with terminal-face role",
+            "wall = layered extrusion with structural exterior-face role",
+            "cutter = closed solid",
+            "target = analytic plane/surface"
+          ]
+        },
+        "infer_intent": {
+          "signature": "inferIntent(ctx, classification) -> IntentResolution",
+          "responsibility": "Resolve only bounded contextual meaning that is required to make the canonical verb executable.",
+          "inputs": [
+            "declared intent",
+            "classification",
+            "selection order",
+            "existing Relations",
+            "modifiers",
+            "interaction context"
+          ],
+          "outputs": [
+            "resolved semantic postconditions",
+            "target/host/cutter roles",
+            "preserve/break policy",
+            "termination/side choice",
+            "remaining ambiguities",
+            "defaults used + provenance"
+          ],
+          "rules": [
+            "Explicit user/agent declarations outrank inferred defaults.",
+            "Only low-risk reversible defaults may be inferred silently.",
+            "Material ambiguity returns ambiguous/needs_input or explicit branch alternatives.",
+            "Intent resolution may refine how TRIM or CONNECT behaves but may not silently substitute a different canonical verb with materially different semantics."
+          ]
+        },
+        "choose_strategy": {
+          "signature": "chooseStrategy(ctx, intent) -> StrategyDecision",
+          "responsibility": "Select the least-complex robust execution strategy/provider that satisfies the semantic postconditions.",
+          "inputs": [
+            "resolved intent",
+            "operand classification",
+            "provider capabilities",
+            "exactness/tolerance needs",
+            "latency/resource budget",
+            "known pathology history"
+          ],
+          "outputs": [
+            "strategy_id + version",
+            "provider_id + version",
+            "exact/approximate class",
+            "ordered provider operations",
+            "required preconditions",
+            "fallback chain",
+            "estimated risk/cost"
+          ],
+          "ranking": "Prefer analytic/reconstructive strategies over broad destructive Booleans when semantically equivalent; prefer strategies with stable topology correspondence and lower tolerance amplification.",
+          "fallback_rule": "Fallbacks must preserve the same canonical meaning and hard postconditions. A strategy may not change operation semantics merely to obtain a valid solid."
+        },
+        "bind_semantic_references": {
+          "signature": "bindSemanticReferences(ctx, strategy) -> ReferenceBindingSet",
+          "responsibility": "Resolve Plasma semantic references to the current provider subshapes/features needed by the selected strategy.",
+          "inputs": [
+            "semantic reference descriptors",
+            "operation lineage",
+            "current exact representation",
+            "previous correspondence",
+            "provider naming/history"
+          ],
+          "binding_signals": [
+            "semantic feature/role",
+            "generating operation/feature lineage",
+            "provider persistent naming when available",
+            "geometric signature",
+            "adjacency/incidence",
+            "reference frame/location",
+            "previous correspondence + constraints"
+          ],
+          "outputs": [
+            "bound ephemeral provider refs",
+            "binding confidence",
+            "candidate alternatives",
+            "geometric signatures",
+            "binding provenance",
+            "unresolved/ambiguous refs"
+          ],
+          "rules": [
+            "Provider refs are scoped to this candidate evaluation and are not canonical world identity.",
+            "Hard dependent references require unambiguous binding before exact evaluation/commit.",
+            "If the referenced semantic role no longer exists, return UNBOUND_REFERENCE rather than choosing the nearest face by convenience."
+          ]
+        },
+        "apply_tolerance_policy": {
+          "signature": "applyTolerancePolicy(ctx, bindings, strategy) -> ToleranceEnvelope",
+          "responsibility": "Translate Plasma tolerance policy into explicit bounded numerical parameters for this operation/provider.",
+          "inputs": [
+            "project/operation tolerance policy",
+            "units/coordinate scale",
+            "strategy/provider limits",
+            "input geometry tolerances",
+            "construction/fabrication requirements where semantically relevant"
+          ],
+          "outputs": [
+            "kernel tolerance",
+            "fuzzy/interference tolerance",
+            "healing deviation budget",
+            "coincidence/merge thresholds",
+            "maximum tolerance growth",
+            "measurement/reporting precision",
+            "provider-specific mapped values"
+          ],
+          "separation_rule": "Kernel numerical tolerance, snap/acquisition tolerance, construction tolerance, fabrication tolerance, import reconciliation tolerance and display/picking tolerance remain distinct fields.",
+          "growth_rule": "Automatic tolerance widening is bounded and recorded. Exceeding the budget returns TOLERANCE_BUDGET_EXCEEDED; the resolver should try an equivalent strategy before requesting a policy change."
+        },
+        "evaluate": {
+          "signature": "evaluate(ctx, strategy, bindings, toleranceEnvelope) -> GeometryEvaluation",
+          "responsibility": "Execute the selected strategy in an isolated candidate using the chosen geometry provider.",
+          "inputs": [
+            "provider-ready operands",
+            "strategy",
+            "ephemeral bindings",
+            "tolerance envelope",
+            "cancel/deadline token"
+          ],
+          "outputs": [
+            "candidate geometry artifact refs + digests",
+            "provider operation history",
+            "generated/modified/deleted topology signals",
+            "measured deviations/tolerance growth",
+            "provider diagnostics",
+            "performance/resource metrics"
+          ],
+          "rules": [
+            "No accepted world mutation occurs.",
+            "Provider crashes/failures are contained as typed results.",
+            "Commit-candidate exact evaluation pins provider/version and input digests.",
+            "Pointer-rate preview may use an approximate provider but must label fidelity/currentness explicitly."
+          ]
+        },
+        "validate": {
+          "signature": "validate(ctx, evaluation) -> ValidationReport",
+          "responsibility": "Test both geometric integrity and the semantic effect requested by the operation.",
+          "checks": [
+            "provider/B-Rep validity",
+            "manifold/closure when solid required",
+            "orientation",
+            "self-intersection",
+            "zero-area faces/micro-edges/sliver faces",
+            "unexpected duplicate same-domain topology",
+            "piece count/connectivity",
+            "volume/area/position sanity",
+            "tolerance growth",
+            "semantic postconditions",
+            "preserve/break rules",
+            "reference survivability",
+            "PLS-16 pathology guards where applicable"
+          ],
+          "outputs": [
+            "pass/hold/fail disposition",
+            "typed findings",
+            "measured values vs limits",
+            "repairable findings",
+            "non-repairable findings",
+            "required re-evaluation scope"
+          ],
+          "rule": "A provider saying success is not sufficient. Validation is Plasma-owned and must verify the expected semantic result independently enough to detect plausible-but-wrong geometry."
+        },
+        "heal": {
+          "signature": "heal(ctx, evaluation, validation) -> HealingResult",
+          "responsibility": "Apply only declared, bounded repairs that restore geometric cleanliness without changing design intent.",
+          "allowed_examples": [
+            "sew compatible faces within policy",
+            "repair orientation/wire consistency",
+            "remove unintended same-domain seams",
+            "collapse micro-topology within declared threshold",
+            "bounded shape-fix operations"
+          ],
+          "forbidden_examples": [
+            "move a design face materially to force closure",
+            "change which side of a trim is kept",
+            "delete a semantically required opening",
+            "increase tolerance beyond policy without explicit new decision"
+          ],
+          "outputs": [
+            "healed candidate artifact + digest",
+            "repair actions + measured deviations",
+            "before/after validation metrics",
+            "topology delta",
+            "new correspondence candidates",
+            "post-heal validation report"
+          ],
+          "rules": [
+            "Healing is optional; clean candidates pass through unchanged.",
+            "Every material repair is evidence-bearing and replayable.",
+            "Post-heal validation is mandatory.",
+            "If repair exceeds budget or changes semantic postconditions, return HEALING_EXCEEDS_POLICY/held."
+          ]
+        },
+        "commit": {
+          "signature": "commit(ctx, finalCandidate) -> GeometryCommitResult",
+          "responsibility": "Convert a fully resolved/validated candidate into one atomic PLS-KERNEL-01 world transaction.",
+          "preconditions": [
+            "base_world_revision is still current or concurrency policy explicitly permits branch commit",
+            "exactness contract satisfied",
+            "all hard semantic refs rebound unambiguously",
+            "final validation passes",
+            "tolerance/healing budgets pass",
+            "hard Invariants pass",
+            "lineage/evidence complete",
+            "topology correspondence rebuilt after any healing"
+          ],
+          "outputs": [
+            "WorldTransaction/Transform proposal",
+            "new world revision on success",
+            "Event + Evidence records",
+            "semantic topology correspondence",
+            "derived-representation invalidation set",
+            "operation lineage",
+            "reversible/undo metadata"
+          ],
+          "atomicity": "Commit either advances the accepted world to one new immutable revision or changes nothing.",
+          "stale_rule": "If the base revision changed incompatibly, return REVISION_CONFLICT/STALE_RESULT; never replay the old provider result onto the newer world without re-resolution.",
+          "identity_rule": "Persist semantic operations, relations, parameters, provenance and correspondence—not raw provider handles as authoritative identity.",
+          "undo_rule": "Undo/redo is represented as new inverse/replay Transforms/Events; history is not deleted."
+        }
+      },
+      "semantic_topology_finalize": {
+        "position": "Mandatory commit preflight after the final validate/heal result; implemented internally even though the public API keeps the nine major stages above.",
+        "purpose": "Rebuild old→new semantic sub-element correspondence after topology-changing evaluation/healing and expose confidence/ambiguity to commit.",
+        "rule": "Any hard downstream reference with ambiguous correspondence holds commit. Soft/advisory references may remain unresolved only if their consumers declare that this is acceptable."
+      },
+      "provider_adapter_contract": {
+        "minimum_methods": [
+          "capabilities()",
+          "classify_support()",
+          "evaluate(strategyRequest)",
+          "validate_native(artifact)",
+          "history_map()",
+          "cancel(request_id)"
+        ],
+        "return_rule": "Provider adapters return geometry artifacts and diagnostics; they do not commit Plasma state or decide semantic intent.",
+        "isolation": "A provider-specific crash, timeout or invalid result must not corrupt the resolver process or accepted world state.",
+        "open_cascade": "Initial exact adapter. May expose BOPAlgo_Splitter, Boolean, intersection, sewing/healing and history signals internally, but these are implementation details beneath strategy IDs."
+      },
+      "error_taxonomy": {
+        "intent_and_reference": [
+          "AMBIGUOUS_INTENT",
+          "MISSING_REQUIRED_PARAMETER",
+          "UNBOUND_REFERENCE",
+          "AMBIGUOUS_REFERENCE",
+          "SEMANTIC_POSTCONDITION_CONFLICT"
+        ],
+        "strategy_and_provider": [
+          "NO_VALID_STRATEGY",
+          "PROVIDER_UNSUPPORTED",
+          "PROVIDER_UNAVAILABLE",
+          "PROVIDER_FAILURE",
+          "RESOURCE_EXHAUSTED",
+          "CANCELLED"
+        ],
+        "geometry_and_tolerance": [
+          "INVALID_INPUT_GEOMETRY",
+          "TOLERANCE_BUDGET_EXCEEDED",
+          "TOLERANCE_NON_CONVERGENCE",
+          "INVALID_RESULT_GEOMETRY",
+          "SEMANTIC_RESULT_MISMATCH",
+          "HEALING_EXCEEDS_POLICY",
+          "TOPOLOGY_CORRESPONDENCE_AMBIGUOUS"
+        ],
+        "world_and_commit": [
+          "INVARIANT_FAILED",
+          "REVISION_CONFLICT",
+          "STALE_RESULT",
+          "AUTHORITY_DENIED",
+          "EVIDENCE_INCOMPLETE"
+        ],
+        "rule": "Error codes are stable API semantics; provider-specific exceptions are nested diagnostics, not public control-flow identifiers."
+      },
+      "determinism_and_concurrency": {
+        "pin_for_commit": [
+          "base world revision",
+          "resolver API version",
+          "strategy id/version",
+          "provider id/version/build",
+          "tolerance/healing policy versions",
+          "input artifact digests",
+          "semantic binding inputs"
+        ],
+        "concurrency": "Optimistic. Evaluation may run concurrently, but commit compares against the pinned base revision and relevant causal slice before publication.",
+        "idempotency": "request_id + operation_id acts as an idempotency/correlation key for retries; duplicate successful commit requests must not create duplicate world mutations.",
+        "caching": "Stage outputs may be cached only when all semantic inputs, policies, provider versions and dependency digests match. A viewport mesh cache may not satisfy an exact geometry cache key."
+      },
+      "observability_and_evidence": {
+        "required_trace": [
+          "request/operation ids",
+          "stage timings",
+          "selected/rejected strategies",
+          "bindings and confidence",
+          "tolerance envelope",
+          "provider/version",
+          "validation/healing findings",
+          "topology correspondence",
+          "commit transaction/event ids"
+        ],
+        "privacy_and_size": "Large B-Reps/meshes remain content-addressed artifacts; traces store stable references/digests and bounded diagnostics rather than duplicating geometry blobs.",
+        "explain": "The UI/agent may ask why an operation failed or chose a strategy and receive the structured resolver trace rather than a reconstructed LLM narrative."
+      },
+      "acceptance_fixtures": [
+        "TRIM prismatic beam to analytic wall face chooses analytic termination strategy and preserves beam semantic identity.",
+        "CONNECT two walls creates/maintains a junction Relation and may compose EXTEND/TRIM/SIMPLIFY without replacing the Relation with a fuse result.",
+        "SPLIT solid preserves all pieces and returns deterministic lineage/correspondence.",
+        "SUBTRACT hosted opening preserves cutter/host intent and does not make the cutter disappear from history.",
+        "Near-tangent and micro-gap cases either resolve within tolerance budget or return typed hold/failure without tolerance explosion.",
+        "Healing cannot exceed declared geometric deviation or change trim side/semantic postconditions.",
+        "A topology-changing edit that makes a hard face reference ambiguous blocks commit with TOPOLOGY_CORRESPONDENCE_AMBIGUOUS.",
+        "A stale base revision produces REVISION_CONFLICT and leaves accepted world unchanged.",
+        "Approximate preview followed by exact commit yields separately identified artifacts; preview geometry is never silently promoted.",
+        "Replaying identical pinned commit-candidate inputs reproduces the same strategy and result digest for deterministic strategy/provider classes."
+      ]
+    },
+    "junction_connection_contract": {
+      "principle": "CONNECT/Junction establishes a persistent semantic relationship whose geometric realization may contain multiple canonical verbs; a junction is not synonymous with Boolean fuse.",
+      "minimum_policy_fields": [
+        "participants and semantic roles",
+        "connection/junction type",
+        "priority/termination ownership",
+        "material/layer continuity policy",
+        "structural/fabrication intent where relevant",
+        "representation rules by view/LOD",
+        "preserve/break behaviour",
+        "tolerance and clearance requirements"
+      ],
+      "typical_policies": [
+        "butt",
+        "miter",
+        "lap",
+        "T-junction",
+        "through",
+        "priority-A",
+        "priority-B",
+        "layer-aware",
+        "structural",
+        "fabrication",
+        "custom"
+      ],
+      "persistence_rule": "The Relation remains canonical across regeneration. Exact faces/edges used to realize it may change and must be rebound through topology correspondence rather than treated as identity."
+    },
+    "tolerance_policy": {
+      "principle": "Tolerance belongs to Plasma policy, not ad-hoc provider defaults. Values are project/representation/operation scoped and recorded with lineage; exact numeric defaults must be validated empirically for project scale and provider behaviour.",
+      "separate_concepts": [
+        "numerical/kernel tolerance",
+        "construction tolerance",
+        "fabrication tolerance",
+        "snap/acquisition tolerance",
+        "import reconciliation tolerance",
+        "display/picking tolerance"
+      ],
+      "rules": [
+        "Do not conflate user snap distance with B-Rep coincidence tolerance.",
+        "Fuzzy Boolean tolerances, healing limits and import reconciliation must be explicit and bounded.",
+        "Tolerance growth across repeated operations is measured and may block commit when it exceeds policy.",
+        "Healing may not alter design intent merely to make invalid geometry pass."
+      ]
+    },
+    "semantic_topology_reference_contract": {
+      "principle": "Do not persist raw face/edge indexes as design references. Resolve semantic identity to current provider topology using multiple signals and record confidence.",
+      "resolution_order": [
+        "semantic feature/role reference, e.g. wall.structural_exterior_face or beam.terminal_face",
+        "operation lineage and generating feature",
+        "provider persistent naming/history when available",
+        "geometric signature",
+        "adjacency/incidence and reference frame",
+        "previous correspondence and constraints"
+      ],
+      "failure_rule": "If a materially referenced face/edge cannot be rebound unambiguously, the dependent exact result becomes failed/held rather than silently attaching to a different topology item."
+    },
+    "geometry_cleanliness_invariant": {
+      "commit_requires": [
+        "geometrically valid within declared tolerance",
+        "topologically valid for the declared representation kind",
+        "manifold/closed where the contract requires a solid",
+        "correct orientation and ownership",
+        "semantically attributable to source entities/operations",
+        "history/provenance traceable and reversibly expressible as Plasma operations",
+        "free of unintended zero-area faces, micro-edges, sliver faces, duplicate same-domain topology or tolerance explosions beyond policy",
+        "deterministically reproducible from pinned inputs/provider/version/tolerance policy within declared reproducibility class"
+      ],
+      "failure_behavior": "Do not silently accept dirty geometry. Return a typed finding with the failing invariant, affected topology, measured tolerance/deviation, attempted strategies/healing and permitted user/agent resolutions."
+    },
+    "opencascade_hardening_policy": {
+      "role": "Initial exact B-Rep/NURBS execution provider under the Geometry Resolver.",
+      "use": [
+        "Boolean/splitting/intersection and analytic surface/curve operations",
+        "B-Rep validation and shape checking",
+        "bounded shape fixing/healing",
+        "same-domain simplification/unification where semantics permit",
+        "operation history/persistent-naming signals as one input to Plasma topology correspondence"
+      ],
+      "do_not": [
+        "expose raw OpenCascade command semantics directly as the Plasma public API",
+        "treat TopoDS/subshape handles or numbering as canonical identity",
+        "allow provider-default tolerance growth to become implicit project policy",
+        "fork the entire kernel before failure classes are reproduced and isolated"
+      ],
+      "extension_sequence": [
+        "wrap with Plasma strategy/tolerance/reference policy",
+        "build deterministic pathology/regression corpus",
+        "add specialist algorithm or bounded workaround for repeated failure class",
+        "contribute upstream or maintain a narrowly scoped patch where justified",
+        "route a declared operation class to another equivalent provider when needed"
+      ],
+      "known_hard_classes": [
+        "extreme/variable fillets",
+        "high-curvature shelling/offsets",
+        "near-tangent intersections",
+        "self-intersecting offsets",
+        "dirty imported CAD",
+        "degenerate/sliver topology",
+        "very large coordinate ranges"
+      ]
+    }
+  }
+}
