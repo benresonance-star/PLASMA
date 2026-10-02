@@ -1,7 +1,7 @@
 {
   "specSystem": "1.0.0-draft",
   "sourceMode": "canonical-spec",
-  "atlasVersion": "0.10.0",
+  "atlasVersion": "0.10.1",
   "canonicalRecordCount": 66,
   "capabilityCount": 29,
   "contractCount": 15,

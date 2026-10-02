@@ -1,6 +1,6 @@
 # Plasma Spec System v1
 
-Canonical source: `/spec` · Spec System 1.0.0-draft · Atlas 0.10.0
+Canonical source: `/spec` · Spec System 1.0.0-draft · Atlas 0.10.1
 
 ## Constitution
 
