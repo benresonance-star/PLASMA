@@ -1,0 +1,431 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-DIFF-01",
+  "legacyProjectionId": "differential-contract",
+  "version": "0.1.0",
+  "title": "PLS-DIFF-01 · DifferentialContract v0.1",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "NON_AUTHORITATIVE_DERIVED",
+  "dependsOn": [],
+  "projection": {
+    "id": "differential-contract",
+    "name": "PLS-DIFF-01 · DifferentialContract v0.1",
+    "from": "authority",
+    "to": "differential",
+    "input": "Authoritative source state + stable typed inputs/outputs + Δinputs for JVP or output seed for VJP",
+    "output": "Non-authoritative local prediction/sensitivity + validity/trust + uncertainty + discontinuity status + exact-fallback requirement + provenance",
+    "semantics": "Optional solver contract. JVP predicts local output deltas; VJP exposes local input leverage. Every result is anchored to a linearisation state and solver version, remains derived/disposable, and carries validity/trust boundaries.",
+    "failure": "Never cross a known discontinuity, validity boundary, trust limit, high-uncertainty condition, regulatory/final-commit gate or topology change as if the approximation were exact. Invoke the declared exact fallback where required.",
+    "explanation": "Deferred architecture only. Differential prediction is not exact output; sensitivity is not causality; optimisation is not decision authority. No automatic-differentiation infrastructure or solver integration has started.",
+    "status": "DEFERRED",
+    "architectureStatus": "ACCEPTED",
+    "implementationStatus": "NOT_STARTED",
+    "runtimeStatus": "DISABLED",
+    "authority": "NON_AUTHORITATIVE_DERIVED",
+    "authorityRules": [
+      "Differential outputs never directly mutate authoritative state.",
+      "Differential prediction is not an exact solver result.",
+      "Sensitivity is not causality.",
+      "Optimisation output is not decision authority.",
+      "Every activated DifferentialContract identifies an exact, validated or reference fallback."
+    ],
+    "relationships": [
+      {
+        "target": "Claim",
+        "rule": "JVP predictions normally map to inferred; local sensitivities may map to calculated only when explicitly scoped to the model, source state, solver version and validity region. Exact results may supersede or contradict without deleting provenance.",
+        "status": "specified"
+      },
+      {
+        "target": "Evidence",
+        "rule": "Retain relevant input, solver-definition, calibration, validation, benchmark, regulatory, measurement and derivation references. Numerical precision does not raise evidence quality.",
+        "status": "specified"
+      },
+      {
+        "target": "DecisionContract",
+        "rule": "May consume leverage, marginal effects, recovery directions and exact-solver prioritisation; DecisionContract retains decision authority, confidence policy, escalation, evidence/validation requirements and commit conditions.",
+        "status": "specified; DecisionContract is referenced but not yet a dedicated Atlas contract node"
+      }
+    ],
+    "activationGates": [
+      {
+        "id": "DC-01",
+        "title": "Stable solver contracts",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-02",
+        "title": "Stable property identity",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-03",
+        "title": "Authoritative source-state identity",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-04",
+        "title": "Dependency fingerprinting",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-05",
+        "title": "Exact fallback",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-06",
+        "title": "Authority isolation",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-07",
+        "title": "Discontinuity policy",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-08",
+        "title": "Benchmark definition",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-09",
+        "title": "Bounded high-value use case",
+        "required": "APPROVED",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-10",
+        "title": "Licensing and runtime review",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-11",
+        "title": "Claim integration",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-12",
+        "title": "Explicit activation decision",
+        "required": "NOT_STARTED → ACTIVE_EXPERIMENT",
+        "status": "not satisfied"
+      }
+    ],
+    "source": {
+      "specification": "./plasma-spec.html#specs",
+      "contract": "./differential-contract.json",
+      "version": "0.1.0",
+      "status": "DEFERRED · architecture accepted · implementation NOT_STARTED"
+    }
+  },
+  "sourceDocument": {
+    "id": "PLS-21",
+    "phase": "Plasma",
+    "name": "DifferentialContract v0.1",
+    "contract_id": "PLS-DIFF-01",
+    "contract_version": "0.1.0",
+    "status": "DEFERRED",
+    "architecture_status": "ACCEPTED",
+    "implementation_status": "NOT_STARTED",
+    "runtime_status": "DISABLED",
+    "authority": "NON_AUTHORITATIVE_DERIVED",
+    "owner_domain": "Solver / Derived Compute Layer",
+    "purpose": "Optional interface through which a Plasma solver may expose local sensitivity, predicted response, inverse sensitivity, uncertainty, validity and trust information around an authoritative solver state.",
+    "kernel_change": false,
+    "capabilities": {
+      "jvp": "optional; at least one of JVP/VJP required if activated",
+      "vjp": "optional; at least one of JVP/VJP required if activated",
+      "explicit_jacobian": "optional",
+      "second_order": "optional",
+      "uncertainty_propagation": "optional"
+    },
+    "jvp": {
+      "definition": "JVP(Δx)=JΔx",
+      "question": "Given a local input perturbation, what local output change is predicted?",
+      "uses": [
+        "change propagation",
+        "incremental prediction",
+        "interaction preview",
+        "selective recomputation",
+        "local effect estimation"
+      ]
+    },
+    "vjp": {
+      "definition": "VJP(v)=v^T J",
+      "question": "Given an output objective or constraint pressure, which inputs have the strongest local influence?",
+      "uses": [
+        "inverse design",
+        "local optimisation guidance",
+        "constraint-recovery guidance",
+        "design leverage analysis",
+        "sensitivity ranking"
+      ],
+      "rule": "Influence information only; never an instruction or approval to edit."
+    },
+    "validity": {
+      "requires_linearization_state": true,
+      "methods": [
+        "per-variable limits",
+        "normalised parameter-space distance",
+        "solver predicates",
+        "empirical calibration",
+        "constraint state",
+        "hybrid"
+      ],
+      "rule": "Outside the validity region a result SHALL NOT be used as a valid quantitative prediction."
+    },
+    "trust": {
+      "levels": [
+        "HIGH",
+        "MEDIUM",
+        "LOW",
+        "OUTSIDE"
+      ],
+      "rule": "Known discontinuities override trust-radius classification."
+    },
+    "discontinuities": {
+      "classes": [
+        "topology",
+        "visibility",
+        "contact",
+        "collision",
+        "constraint activation",
+        "constraint deactivation",
+        "classification",
+        "regulatory threshold",
+        "solver regime",
+        "piecewise boundary",
+        "discrete choice",
+        "unknown"
+      ],
+      "behaviours": [
+        "INVALIDATE",
+        "REDUCE_TRUST",
+        "SWITCH_BRANCH",
+        "REQUIRE_EXACT"
+      ]
+    },
+    "uncertainty": {
+      "rule": "Uncertainty remains separate from sensitivity.",
+      "sources": [
+        "input",
+        "measurement",
+        "model",
+        "numerical",
+        "parameter",
+        "approximation",
+        "surrogate"
+      ]
+    },
+    "evidence_refs": {
+      "roles": [
+        "input source",
+        "solver definition",
+        "model assumptions",
+        "calibration",
+        "validation",
+        "benchmark",
+        "regulatory source",
+        "measurement source",
+        "derivation method"
+      ],
+      "rule": "Numerical precision SHALL NOT be treated as evidence quality."
+    },
+    "solver_versioning": {
+      "required": [
+        "solverId",
+        "solverVersion",
+        "contractVersion",
+        "sourceStateId",
+        "solverRunId"
+      ],
+      "recommended": [
+        "implementationVersion",
+        "schemaVersion",
+        "modelVersion",
+        "commitSha",
+        "buildId",
+        "runtime backend",
+        "numeric precision"
+      ],
+      "rule": "Cached differential information becomes stale when a solver/model change may alter derivatives."
+    },
+    "exact_fallback": {
+      "mandatory": true,
+      "triggers": [
+        "outside validity region",
+        "outside trust radius",
+        "discontinuity crossed",
+        "topology change",
+        "high uncertainty",
+        "constraint near threshold",
+        "final commit",
+        "regulatory decision",
+        "manual exact request"
+      ]
+    },
+    "authority_rules": [
+      "Differential outputs never directly mutate authoritative state.",
+      "Differential prediction is not an exact solver result.",
+      "Sensitivity is not causality.",
+      "Optimisation output is not decision authority.",
+      "Every activated DifferentialContract identifies an exact, validated or reference fallback."
+    ],
+    "relationships": {
+      "Claim": {
+        "jvp_prediction": "normally inferred",
+        "local_sensitivity": "may be calculated when explicitly scoped to model, source state, solver version and validity region",
+        "supersession": "exact results may supersede or contradict without deleting differential provenance"
+      },
+      "Evidence": {
+        "rule": "Retain relevant input, solver, calibration, validation, benchmark, regulatory, measurement and derivation references.",
+        "quality": "Numerical precision does not raise evidence quality."
+      },
+      "DecisionContract": {
+        "may_consume": [
+          "high-leverage variables",
+          "local consequences",
+          "candidate recovery directions",
+          "marginal effects",
+          "exact-solver prioritisation",
+          "optimisation proposals"
+        ],
+        "retains": [
+          "decision authority",
+          "confidence policy",
+          "escalation",
+          "required evidence",
+          "required validation",
+          "commit conditions"
+        ]
+      }
+    },
+    "activation_gates": [
+      {
+        "id": "DC-01",
+        "title": "Stable solver contracts",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-02",
+        "title": "Stable property identity",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-03",
+        "title": "Authoritative source-state identity",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-04",
+        "title": "Dependency fingerprinting",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-05",
+        "title": "Exact fallback",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-06",
+        "title": "Authority isolation",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-07",
+        "title": "Discontinuity policy",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-08",
+        "title": "Benchmark definition",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-09",
+        "title": "Bounded high-value use case",
+        "required": "APPROVED",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-10",
+        "title": "Licensing and runtime review",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-11",
+        "title": "Claim integration",
+        "required": "PASS",
+        "status": "not satisfied"
+      },
+      {
+        "id": "DC-12",
+        "title": "Explicit activation decision",
+        "required": "NOT_STARTED → ACTIVE_EXPERIMENT",
+        "status": "not satisfied"
+      }
+    ],
+    "permitted_consumers": [
+      "Interaction Reflex Runtime",
+      "design optimisation",
+      "constraint recovery",
+      "compute scheduler",
+      "selective recomputation",
+      "robustness analysis",
+      "structural/daylight/thermal/cost/carbon sensitivity",
+      "fabrication-tolerance analysis",
+      "differential rendering"
+    ],
+    "current_state": {
+      "consumers": "IDENTIFIED_ONLY",
+      "benchmark": "NOT_DEFINED",
+      "activation_gates": "NOT_SATISFIED",
+      "next_action": "NONE"
+    },
+    "invariant": "Differential computation may guide authority, but may never silently become authority.",
+    "implementation_instruction": "Do not implement DifferentialContract, automatic-differentiation infrastructure, JVP/VJP runtime support, gradient optimisation or solver integration until activation gates have been explicitly reviewed and DC-12 changes implementation status to ACTIVE_EXPERIMENT.",
+    "provenance": {
+      "recorded_at": "2026-10-02",
+      "basis": "Deferred Plasma architecture defined from the differential-compute design discussion.",
+      "prior_spec": "0.4.27",
+      "kernel_change": false
+    }
+  },
+  "requires": [
+    "PLS-SOLVER-01",
+    "PLS-CLAIM-01",
+    "PLS-EVIDENCE-01",
+    "PLS-DECISION-01"
+  ],
+  "exactFallback": {
+    "required": true,
+    "contractRef": "PLS-SOLVER-01",
+    "selection": "implementation-specific"
+  }
+}
