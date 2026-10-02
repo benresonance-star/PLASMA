@@ -1,0 +1,47 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-03",
+  "version": "0.1.0",
+  "title": "Field Refinement",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "draft",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-03",
+    "phase": "Plasma",
+    "name": "Field Refinement",
+    "summary": "Adaptively refine continuous fields only where a question or dependency requires it.",
+    "spec": "planned",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01"
+    ],
+    "gap": "Field tile schema and refinement scheduler contract are not yet specified.",
+    "next": "Choose one field—solar or terrain height—and define its minimal tile contract.",
+    "flow": "QUESTION\\\n  ↓\\\nrequired field\\\n  ↓\\\ncoarse sample\\\n  ↓\\\nerror / relevance\\\n  ↓\\\nlocal refinement\\\n  ↓\\\nclaim",
+    "stages": [
+      "Question",
+      "Locate field",
+      "Sample",
+      "Estimate error",
+      "Refine",
+      "Evaluate",
+      "Publish claim"
+    ]
+  }
+}
