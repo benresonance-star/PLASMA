@@ -542,6 +542,76 @@
             }
           },
           "additionalProperties": false
+        },
+        "status": {
+          "type": "string"
+        },
+        "architectureStatus": {
+          "type": "string"
+        },
+        "implementationStatus": {
+          "type": "string"
+        },
+        "runtimeStatus": {
+          "type": "string"
+        },
+        "authority": {
+          "type": "string"
+        },
+        "authorityRules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "target",
+              "rule"
+            ],
+            "properties": {
+              "target": {
+                "type": "string"
+              },
+              "rule": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "activationGates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "id",
+              "title",
+              "required",
+              "status"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "required": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          }
         }
       },
       "additionalProperties": false
