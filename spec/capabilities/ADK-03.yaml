@@ -1,0 +1,46 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "ADK-03",
+  "version": "0.1.0",
+  "title": "Critic → Governor Gate",
+  "phase": "Agentic Dev Kit",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "ADK-01"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "ADK-03",
+    "phase": "Agentic Dev Kit",
+    "name": "Critic → Governor Gate",
+    "summary": "Separate quality critique from authority to accept state.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "ADK-01"
+    ],
+    "gap": "Typed rejection reasons and escalation thresholds are not specified.",
+    "next": "Define acceptance result schema and iteration budget.",
+    "flow": "EVIDENCE\\\n  ↓\\\nCRITIC\\\n  ↓\\\nrecommendation\\\n  ↓\\\nGOVERNOR\\\n  ├─ accept\\\n  ├─ revise\\\n  └─ terminate",
+    "stages": [
+      "Gather evidence",
+      "Critique",
+      "Classify failure",
+      "Decide",
+      "Commit/Reject",
+      "Escalate"
+    ]
+  }
+}
