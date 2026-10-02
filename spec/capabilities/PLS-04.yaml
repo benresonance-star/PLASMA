@@ -1,0 +1,52 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-04",
+  "version": "0.1.0",
+  "title": "IFC Round-trip",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-02"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-04",
+    "phase": "Plasma",
+    "name": "IFC Round-trip",
+    "summary": "Project semantic + exact geometry state into IFC without making IFC the master state.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-02"
+    ],
+    "gap": "IfcAdvancedBrep mapping, fallback policy and round-trip acceptance tests need definition.",
+    "next": "Define one wall/solid IFC export acceptance fixture.",
+    "flow": "PLASMA ENTITY\\\n  ↓\\\nsemantic mapping + BRep\\\n  ↓\\\nIFC projection\\\n  ↓\\\nre-open\\\n  ↓\\\ncompare identity + geometry",
+    "stages": [
+      "Map semantics",
+      "Map geometry",
+      "Export",
+      "Re-open",
+      "Compare",
+      "Report",
+      "Accept"
+    ]
+  }
+}
