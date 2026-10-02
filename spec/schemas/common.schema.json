@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plasma.local/spec/v1/common.schema.json",
+  "title": "Plasma canonical record",
+  "type": "object",
+  "required": [
+    "apiVersion",
+    "kind",
+    "id",
+    "version"
+  ],
+  "properties": {
+    "apiVersion": {
+      "const": "plasma.spec/v1"
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "title": {
+      "type": "string"
+    },
+    "layer": {
+      "enum": [
+        "L0",
+        "L1",
+        "L2",
+        "L3",
+        "L4",
+        "L5"
+      ]
+    },
+    "status": {
+      "type": "object",
+      "required": [
+        "architecture",
+        "specification",
+        "implementation",
+        "verification",
+        "release"
+      ],
+      "properties": {
+        "architecture": {
+          "enum": [
+            "proposed",
+            "accepted",
+            "rejected",
+            "superseded"
+          ]
+        },
+        "specification": {
+          "enum": [
+            "absent",
+            "draft",
+            "partial",
+            "complete",
+            "frozen",
+            "superseded"
+          ]
+        },
+        "implementation": {
+          "enum": [
+            "not_started",
+            "experimental",
+            "partial",
+            "implemented",
+            "deprecated"
+          ]
+        },
+        "verification": {
+          "enum": [
+            "none",
+            "unlinked",
+            "partial",
+            "verified",
+            "failed",
+            "stale"
+          ]
+        },
+        "release": {
+          "enum": [
+            "excluded",
+            "candidate",
+            "released",
+            "deprecated"
+          ]
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}
