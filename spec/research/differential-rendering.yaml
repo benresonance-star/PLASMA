@@ -1,0 +1,31 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Research",
+  "id": "RSCH-DIFFERENTIAL-RENDERING",
+  "version": "0.1.0",
+  "title": "Sensitivity-Guided Differential Rendering",
+  "layer": "L3",
+  "status": {
+    "architecture": "proposed",
+    "specification": "draft",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "createsBuildObligation": false,
+  "relatedCapabilities": [
+    "PLS-20",
+    "PLS-21"
+  ],
+  "graduation": {
+    "requires": [
+      "architecture_review",
+      "bounded_use_case",
+      "benchmark",
+      "formal_contract",
+      "dependency_analysis",
+      "activation_gates"
+    ]
+  },
+  "note": "Candidate libraries and renderer choices remain nonbinding."
+}
