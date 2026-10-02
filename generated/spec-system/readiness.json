@@ -1,0 +1,832 @@
+{
+  "specSystem": "1.0.0-draft",
+  "items": [
+    {
+      "id": "ADK-01",
+      "kind": "Capability",
+      "title": "Agentic RAD Core Loop",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "ADK-02",
+      "kind": "Capability",
+      "title": "Sandboxed Worker Run",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "ADK-03",
+      "kind": "Capability",
+      "title": "Critic → Governor Gate",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "FND-01",
+      "kind": "Capability",
+      "title": "Spec → Reality Ledger",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "FND-02",
+      "kind": "Capability",
+      "title": "Build Note → Development Knowledge",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "FND-03",
+      "kind": "Capability",
+      "title": "Capability Frontier",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "FND-04",
+      "kind": "Capability",
+      "title": "Reflexive Plasma Environment",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "READY_FOR_EXPERIMENT",
+      "blockers": []
+    },
+    {
+      "id": "FND-05",
+      "kind": "Capability",
+      "title": "Version → Release → Recovery Contract",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "PLS-01",
+      "kind": "Capability",
+      "title": "Minimal Plasma Kernel + World State",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "PLS-02",
+      "kind": "Capability",
+      "title": "Exact Geometry Refinement",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-03",
+      "kind": "Capability",
+      "title": "Field Refinement",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "draft"
+        }
+      ]
+    },
+    {
+      "id": "PLS-04",
+      "kind": "Capability",
+      "title": "IFC Round-trip",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-05",
+      "kind": "Capability",
+      "title": "Compliant Design RAD",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "draft"
+        }
+      ]
+    },
+    {
+      "id": "PLS-06",
+      "kind": "Capability",
+      "title": "Observation / Real-to-Sim",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-07",
+      "kind": "Capability",
+      "title": "Reality → Evidence → Accepted Context",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "draft"
+        }
+      ]
+    },
+    {
+      "id": "PLS-08",
+      "kind": "Capability",
+      "title": "Contextual Evidence + Practice Learning",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "draft"
+        }
+      ]
+    },
+    {
+      "id": "PLS-09",
+      "kind": "Capability",
+      "title": "Contextual Representation Resolver",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-10",
+      "kind": "Capability",
+      "title": "Bounded Reactive Runtime + Parallel Compute",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-11",
+      "kind": "Capability",
+      "title": "Semantic Morphogenesis + Sculptural Realization",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "draft"
+        }
+      ]
+    },
+    {
+      "id": "PLS-12",
+      "kind": "Capability",
+      "title": "Epistemic World + Value of Information",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "draft"
+        }
+      ]
+    },
+    {
+      "id": "PLS-13",
+      "kind": "Capability",
+      "title": "Typed Reasoning Operators + Contextual Lenses",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-14",
+      "kind": "Capability",
+      "title": "Adaptive Interaction Lens Runtime",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-15",
+      "kind": "Capability",
+      "title": "Work Orchestration + Execution Graph Runtime",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-16",
+      "kind": "Capability",
+      "title": "Pathology Guard + Anti-Pattern Intelligence",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-17",
+      "kind": "Capability",
+      "title": "Spatial Operation + Kernel-Neutral Geometry Runtime",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-18",
+      "kind": "Capability",
+      "title": "Knowledge Ledger + Project Baseline Governance",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-19",
+      "kind": "Capability",
+      "title": "Parametric Architectural Wall System",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-20",
+      "kind": "Capability",
+      "title": "Differential Rendering Research Architecture",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "title": "DifferentialContract v0.1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-01"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-02"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-03"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-04"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-05"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-06"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-07"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-08"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-09"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-10"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-11"
+        },
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DC-12"
+        }
+      ]
+    },
+    {
+      "id": "PLS-AGENT-01",
+      "kind": "Contract",
+      "title": "proposeTransaction()",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "PLS-CLAIM-01",
+      "kind": "Contract",
+      "title": "ClaimContract",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-DECISION-01",
+      "kind": "Contract",
+      "title": "DecisionContract",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-DIFF-01",
+      "kind": "Contract",
+      "title": "PLS-DIFF-01 · DifferentialContract v0.1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "READY_FOR_EXPERIMENT",
+      "blockers": []
+    },
+    {
+      "id": "PLS-DOM-WALL",
+      "kind": "DomainPack",
+      "title": "Architectural Wall Domain",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "state": "READY_FOR_EXPERIMENT",
+      "blockers": []
+    },
+    {
+      "id": "PLS-EVIDENCE-01",
+      "kind": "Contract",
+      "title": "EvidenceContract",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-EXT-01",
+      "kind": "Contract",
+      "title": "importExternalResult()",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "PLS-GR-01",
+      "kind": "Contract",
+      "title": "resolveGeometry()",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "PLS-INT-01",
+      "kind": "Contract",
+      "title": "submitSemanticOperation()",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "PLS-REF-01",
+      "kind": "Contract",
+      "title": "resolveReference()",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "PLS-REP-01",
+      "kind": "Contract",
+      "title": "deriveRepresentation()",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "PLS-SLICE-MTBL-01",
+      "kind": "VerticalSlice",
+      "title": "Minimum Trusted Building Loop",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "READY_FOR_EXPERIMENT",
+      "blockers": []
+    },
+    {
+      "id": "PLS-SOLVER-01",
+      "kind": "Contract",
+      "title": "SolverContract",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": [
+        {
+          "code": "SPECIFICATION_INCOMPLETE",
+          "detail": "partial"
+        }
+      ]
+    },
+    {
+      "id": "PLS-TX-01",
+      "kind": "Contract",
+      "title": "submitTransaction()",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "PLS-VALIDATE-01",
+      "kind": "Contract",
+      "title": "validateCandidate()",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "PLS-WALL-01",
+      "kind": "Contract",
+      "title": "PLS-WALL-01 · Parametric Architectural Walls",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "state": "READY_FOR_EXPERIMENT",
+      "blockers": []
+    },
+    {
+      "id": "PLS-WORLD-01",
+      "kind": "Contract",
+      "title": "readWorldSlice()",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    }
+  ]
+}

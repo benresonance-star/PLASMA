@@ -1,0 +1,923 @@
+{
+  "specSystem": "1.0.0-draft",
+  "records": [
+    {
+      "id": "ADK-01",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/ADK-01.yaml"
+    },
+    {
+      "id": "ADK-02",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/ADK-02.yaml"
+    },
+    {
+      "id": "ADK-03",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/ADK-03.yaml"
+    },
+    {
+      "id": "authority",
+      "kind": "Component",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/components.yaml"
+    },
+    {
+      "id": "constraints",
+      "kind": "Component",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/components.yaml"
+    },
+    {
+      "id": "differential",
+      "kind": "Component",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/components.yaml"
+    },
+    {
+      "id": "external",
+      "kind": "Component",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/components.yaml"
+    },
+    {
+      "id": "FND-01",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/FND-01.yaml"
+    },
+    {
+      "id": "FND-02",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/FND-02.yaml"
+    },
+    {
+      "id": "FND-03",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/FND-03.yaml"
+    },
+    {
+      "id": "FND-04",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/FND-04.yaml"
+    },
+    {
+      "id": "FND-05",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/FND-05.yaml"
+    },
+    {
+      "id": "geometry",
+      "kind": "Component",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/components.yaml"
+    },
+    {
+      "id": "intelligence",
+      "kind": "Component",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/components.yaml"
+    },
+    {
+      "id": "interaction",
+      "kind": "Component",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "experimental",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/components.yaml"
+    },
+    {
+      "id": "PLASMA-0.4.29-DRAFT",
+      "kind": "Release",
+      "version": "0.4.29",
+      "layer": null,
+      "status": "draft",
+      "source": "spec/releases/0.4.29-draft.yaml"
+    },
+    {
+      "id": "PLS-01",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-01.yaml"
+    },
+    {
+      "id": "PLS-02",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-02.yaml"
+    },
+    {
+      "id": "PLS-03",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-03.yaml"
+    },
+    {
+      "id": "PLS-04",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-04.yaml"
+    },
+    {
+      "id": "PLS-05",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-05.yaml"
+    },
+    {
+      "id": "PLS-06",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-06.yaml"
+    },
+    {
+      "id": "PLS-07",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-07.yaml"
+    },
+    {
+      "id": "PLS-08",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-08.yaml"
+    },
+    {
+      "id": "PLS-09",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-09.yaml"
+    },
+    {
+      "id": "PLS-10",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-10.yaml"
+    },
+    {
+      "id": "PLS-11",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-11.yaml"
+    },
+    {
+      "id": "PLS-12",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-12.yaml"
+    },
+    {
+      "id": "PLS-13",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-13.yaml"
+    },
+    {
+      "id": "PLS-14",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-14.yaml"
+    },
+    {
+      "id": "PLS-15",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-15.yaml"
+    },
+    {
+      "id": "PLS-16",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-16.yaml"
+    },
+    {
+      "id": "PLS-17",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-17.yaml"
+    },
+    {
+      "id": "PLS-18",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-18.yaml"
+    },
+    {
+      "id": "PLS-19",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-19.yaml"
+    },
+    {
+      "id": "PLS-20",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-20.yaml"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-21.yaml"
+    },
+    {
+      "id": "PLS-AGENT-01",
+      "kind": "Contract",
+      "version": "1.0.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-AGENT-01/contract.yaml"
+    },
+    {
+      "id": "PLS-CLAIM-01",
+      "kind": "Contract",
+      "version": "0.1.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-CLAIM-01/contract.yaml"
+    },
+    {
+      "id": "PLS-CONSTITUTION",
+      "kind": "Constitution",
+      "version": "1.0.0",
+      "layer": "L0",
+      "status": {
+        "architecture": "accepted",
+        "specification": "frozen",
+        "implementation": "implemented",
+        "verification": "partial",
+        "release": "excluded"
+      },
+      "source": "spec/constitution/constitution.yaml"
+    },
+    {
+      "id": "PLS-DECISION-01",
+      "kind": "Contract",
+      "version": "0.1.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-DECISION-01/contract.yaml"
+    },
+    {
+      "id": "PLS-DIFF-01",
+      "kind": "Contract",
+      "version": "0.1.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-DIFF-01/contract.yaml"
+    },
+    {
+      "id": "PLS-DOM-WALL",
+      "kind": "DomainPack",
+      "version": "0.1.0",
+      "layer": "L4",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "source": "spec/domains/wall/domain.yaml"
+    },
+    {
+      "id": "PLS-EVIDENCE-01",
+      "kind": "Contract",
+      "version": "0.1.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-EVIDENCE-01/contract.yaml"
+    },
+    {
+      "id": "PLS-EXT-01",
+      "kind": "Contract",
+      "version": "1.0.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-EXT-01/contract.yaml"
+    },
+    {
+      "id": "PLS-GR-01",
+      "kind": "Contract",
+      "version": "1.0.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-GR-01/contract.yaml"
+    },
+    {
+      "id": "PLS-INT-01",
+      "kind": "Contract",
+      "version": "1.0.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-INT-01/contract.yaml"
+    },
+    {
+      "id": "PLS-REF-01",
+      "kind": "Contract",
+      "version": "1.0.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-REF-01/contract.yaml"
+    },
+    {
+      "id": "PLS-REP-01",
+      "kind": "Contract",
+      "version": "1.0.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-REP-01/contract.yaml"
+    },
+    {
+      "id": "PLS-SLICE-MTBL-01",
+      "kind": "VerticalSlice",
+      "version": "0.1.0",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/slices/minimum-trusted-building-loop/slice.yaml"
+    },
+    {
+      "id": "PLS-SOLVER-01",
+      "kind": "Contract",
+      "version": "0.1.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-SOLVER-01/contract.yaml"
+    },
+    {
+      "id": "PLS-TX-01",
+      "kind": "Contract",
+      "version": "1.0.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-TX-01/contract.yaml"
+    },
+    {
+      "id": "PLS-VALIDATE-01",
+      "kind": "Contract",
+      "version": "1.0.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-VALIDATE-01/contract.yaml"
+    },
+    {
+      "id": "PLS-WALL-01",
+      "kind": "Contract",
+      "version": "0.1.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "unlinked",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-WALL-01/contract.yaml"
+    },
+    {
+      "id": "PLS-WORLD-01",
+      "kind": "Contract",
+      "version": "1.0.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-WORLD-01/contract.yaml"
+    },
+    {
+      "id": "rel-authority-constraints",
+      "kind": "Relationship",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/relationships.yaml"
+    },
+    {
+      "id": "rel-authority-differential",
+      "kind": "Relationship",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/relationships.yaml"
+    },
+    {
+      "id": "rel-authority-geometry",
+      "kind": "Relationship",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/relationships.yaml"
+    },
+    {
+      "id": "rel-authority-representation",
+      "kind": "Relationship",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/relationships.yaml"
+    },
+    {
+      "id": "rel-external-authority",
+      "kind": "Relationship",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/relationships.yaml"
+    },
+    {
+      "id": "rel-intelligence-authority",
+      "kind": "Relationship",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/relationships.yaml"
+    },
+    {
+      "id": "rel-interaction-authority",
+      "kind": "Relationship",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/relationships.yaml"
+    },
+    {
+      "id": "representation",
+      "kind": "Component",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/components.yaml"
+    },
+    {
+      "id": "RND-01",
+      "kind": "Research",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "proposed",
+        "specification": "partial",
+        "implementation": "experimental",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/research/RND-01.yaml"
+    },
+    {
+      "id": "RSCH-DIFFERENTIAL-COMPUTE",
+      "kind": "Research",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "proposed",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/research/differential-compute.yaml"
+    },
+    {
+      "id": "RSCH-DIFFERENTIAL-RENDERING",
+      "kind": "Research",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "proposed",
+        "specification": "draft",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/research/differential-rendering.yaml"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "specSystem": "1.0.0-draft",
+  "sourceMode": "canonical-spec",
+  "atlasVersion": "0.10.0",
+  "canonicalRecordCount": 66,
+  "capabilityCount": 29,
+  "contractCount": 15,
+  "blockerCount": 39,
+  "readinessCounts": {
+    "BLOCKED": 21,
+    "IMPLEMENTATION_INCOMPLETE": 20,
+    "READY_FOR_EXPERIMENT": 5
+  },
+  "migrationMode": "generated-atlas-checked-legacy-html"
+}

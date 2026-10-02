@@ -1,0 +1,230 @@
+{
+  "specSystem": "1.0.0-draft",
+  "contracts": [
+    {
+      "id": "PLS-AGENT-01",
+      "version": "1.0.0",
+      "title": "proposeTransaction()",
+      "authorityClass": "typed-boundary",
+      "projectionId": "transaction-proposal",
+      "source": "spec/contracts/PLS-AGENT-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-CLAIM-01",
+      "version": "0.1.0",
+      "title": "ClaimContract",
+      "authorityClass": "non-authoritative-record",
+      "projectionId": null,
+      "source": "spec/contracts/PLS-CLAIM-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-DECISION-01",
+      "version": "0.1.0",
+      "title": "DecisionContract",
+      "authorityClass": "decision-governance",
+      "projectionId": null,
+      "source": "spec/contracts/PLS-DECISION-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-DIFF-01",
+      "version": "0.1.0",
+      "title": "PLS-DIFF-01 · DifferentialContract v0.1",
+      "authorityClass": "NON_AUTHORITATIVE_DERIVED",
+      "projectionId": "differential-contract",
+      "source": "spec/contracts/PLS-DIFF-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-EVIDENCE-01",
+      "version": "0.1.0",
+      "title": "EvidenceContract",
+      "authorityClass": "evidence-record",
+      "projectionId": null,
+      "source": "spec/contracts/PLS-EVIDENCE-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-EXT-01",
+      "version": "1.0.0",
+      "title": "importExternalResult()",
+      "authorityClass": "typed-boundary",
+      "projectionId": "external-evidence-import",
+      "source": "spec/contracts/PLS-EXT-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-GR-01",
+      "version": "1.0.0",
+      "title": "resolveGeometry()",
+      "authorityClass": "typed-boundary",
+      "projectionId": "resolve-geometry",
+      "source": "spec/contracts/PLS-GR-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-INT-01",
+      "version": "1.0.0",
+      "title": "submitSemanticOperation()",
+      "authorityClass": "typed-boundary",
+      "projectionId": "semantic-operation-proposal",
+      "source": "spec/contracts/PLS-INT-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-REF-01",
+      "version": "1.0.0",
+      "title": "resolveReference()",
+      "authorityClass": "typed-boundary",
+      "projectionId": "resolve-reference",
+      "source": "spec/contracts/PLS-REF-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-REP-01",
+      "version": "1.0.0",
+      "title": "deriveRepresentation()",
+      "authorityClass": "typed-boundary",
+      "projectionId": "derive-representation",
+      "source": "spec/contracts/PLS-REP-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-SOLVER-01",
+      "version": "0.1.0",
+      "title": "SolverContract",
+      "authorityClass": "derived-compute-boundary",
+      "projectionId": null,
+      "source": "spec/contracts/PLS-SOLVER-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "partial",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-TX-01",
+      "version": "1.0.0",
+      "title": "submitTransaction()",
+      "authorityClass": "authoritative-boundary",
+      "projectionId": "submit-transaction",
+      "source": "spec/contracts/PLS-TX-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-VALIDATE-01",
+      "version": "1.0.0",
+      "title": "validateCandidate()",
+      "authorityClass": "typed-boundary",
+      "projectionId": "validate-candidate",
+      "source": "spec/contracts/PLS-VALIDATE-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-WALL-01",
+      "version": "0.1.0",
+      "title": "PLS-WALL-01 · Parametric Architectural Walls",
+      "authorityClass": "typed-boundary",
+      "projectionId": "parametric-wall",
+      "source": "spec/contracts/PLS-WALL-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "unlinked",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-WORLD-01",
+      "version": "1.0.0",
+      "title": "readWorldSlice()",
+      "authorityClass": "typed-boundary",
+      "projectionId": "read-world-slice",
+      "source": "spec/contracts/PLS-WORLD-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      }
+    }
+  ]
+}

@@ -1,0 +1,977 @@
+{
+  "specSystem": "1.0.0-draft",
+  "nodes": [
+    {
+      "id": "ADK-01",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "ADK-02",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "ADK-03",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "authority",
+      "kind": "Component",
+      "layer": "L1"
+    },
+    {
+      "id": "constraints",
+      "kind": "Component",
+      "layer": "L1"
+    },
+    {
+      "id": "differential",
+      "kind": "Component",
+      "layer": "L1"
+    },
+    {
+      "id": "external",
+      "kind": "Component",
+      "layer": "L1"
+    },
+    {
+      "id": "FND-01",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "FND-02",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "FND-03",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "FND-04",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "FND-05",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "geometry",
+      "kind": "Component",
+      "layer": "L1"
+    },
+    {
+      "id": "intelligence",
+      "kind": "Component",
+      "layer": "L1"
+    },
+    {
+      "id": "interaction",
+      "kind": "Component",
+      "layer": "L1"
+    },
+    {
+      "id": "PLASMA-0.4.29-DRAFT",
+      "kind": "Release",
+      "layer": null
+    },
+    {
+      "id": "PLS-01",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-02",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-03",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-04",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-05",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-06",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-07",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-08",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-09",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-10",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-11",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-12",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-13",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-14",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-15",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-16",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-17",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-18",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-19",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-20",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-AGENT-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-CLAIM-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-CONSTITUTION",
+      "kind": "Constitution",
+      "layer": "L0"
+    },
+    {
+      "id": "PLS-DECISION-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-DIFF-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-DOM-WALL",
+      "kind": "DomainPack",
+      "layer": "L4"
+    },
+    {
+      "id": "PLS-EVIDENCE-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-EXT-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-GR-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-INT-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-REF-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-REP-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-SLICE-MTBL-01",
+      "kind": "VerticalSlice",
+      "layer": "L5"
+    },
+    {
+      "id": "PLS-SOLVER-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-TX-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-VALIDATE-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-WALL-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-WORLD-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "rel-authority-constraints",
+      "kind": "Relationship",
+      "layer": "L1"
+    },
+    {
+      "id": "rel-authority-differential",
+      "kind": "Relationship",
+      "layer": "L1"
+    },
+    {
+      "id": "rel-authority-geometry",
+      "kind": "Relationship",
+      "layer": "L1"
+    },
+    {
+      "id": "rel-authority-representation",
+      "kind": "Relationship",
+      "layer": "L1"
+    },
+    {
+      "id": "rel-external-authority",
+      "kind": "Relationship",
+      "layer": "L1"
+    },
+    {
+      "id": "rel-intelligence-authority",
+      "kind": "Relationship",
+      "layer": "L1"
+    },
+    {
+      "id": "rel-interaction-authority",
+      "kind": "Relationship",
+      "layer": "L1"
+    },
+    {
+      "id": "representation",
+      "kind": "Component",
+      "layer": "L1"
+    },
+    {
+      "id": "RND-01",
+      "kind": "Research",
+      "layer": "L3"
+    },
+    {
+      "id": "RSCH-DIFFERENTIAL-COMPUTE",
+      "kind": "Research",
+      "layer": "L3"
+    },
+    {
+      "id": "RSCH-DIFFERENTIAL-RENDERING",
+      "kind": "Research",
+      "layer": "L3"
+    }
+  ],
+  "edges": [
+    {
+      "from": "interaction",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "intelligence",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "authority",
+      "to": "constraints",
+      "type": "consumes"
+    },
+    {
+      "from": "geometry",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "geometry",
+      "to": "constraints",
+      "type": "consumes"
+    },
+    {
+      "from": "constraints",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "representation",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "external",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "differential",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-interaction-authority",
+      "to": "interaction",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-interaction-authority",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-interaction-authority",
+      "to": "PLS-INT-01",
+      "type": "implements"
+    },
+    {
+      "from": "rel-intelligence-authority",
+      "to": "intelligence",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-intelligence-authority",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-intelligence-authority",
+      "to": "PLS-AGENT-01",
+      "type": "implements"
+    },
+    {
+      "from": "rel-authority-geometry",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-authority-geometry",
+      "to": "geometry",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-authority-geometry",
+      "to": "PLS-GR-01",
+      "type": "implements"
+    },
+    {
+      "from": "rel-authority-constraints",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-authority-constraints",
+      "to": "constraints",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-authority-constraints",
+      "to": "PLS-VALIDATE-01",
+      "type": "implements"
+    },
+    {
+      "from": "rel-authority-representation",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-authority-representation",
+      "to": "representation",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-authority-representation",
+      "to": "PLS-REP-01",
+      "type": "implements"
+    },
+    {
+      "from": "rel-external-authority",
+      "to": "external",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-external-authority",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-external-authority",
+      "to": "PLS-EXT-01",
+      "type": "implements"
+    },
+    {
+      "from": "rel-authority-differential",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-authority-differential",
+      "to": "differential",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-authority-differential",
+      "to": "PLS-DIFF-01",
+      "type": "implements"
+    },
+    {
+      "from": "PLS-WALL-01",
+      "to": "PLS-TX-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-WALL-01",
+      "to": "PLS-GR-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-WALL-01",
+      "to": "PLS-EVIDENCE-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-WALL-01",
+      "to": "PLS-REP-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DIFF-01",
+      "to": "PLS-SOLVER-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DIFF-01",
+      "to": "PLS-CLAIM-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DIFF-01",
+      "to": "PLS-EVIDENCE-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DIFF-01",
+      "to": "PLS-DECISION-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-CLAIM-01",
+      "to": "PLS-EVIDENCE-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DECISION-01",
+      "to": "PLS-CLAIM-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DECISION-01",
+      "to": "PLS-EVIDENCE-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SOLVER-01",
+      "to": "PLS-WORLD-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SOLVER-01",
+      "to": "PLS-EVIDENCE-01",
+      "type": "requires"
+    },
+    {
+      "from": "FND-02",
+      "to": "FND-01",
+      "type": "requires"
+    },
+    {
+      "from": "FND-03",
+      "to": "FND-01",
+      "type": "requires"
+    },
+    {
+      "from": "FND-04",
+      "to": "FND-01",
+      "type": "requires"
+    },
+    {
+      "from": "FND-04",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "FND-05",
+      "to": "FND-01",
+      "type": "requires"
+    },
+    {
+      "from": "FND-05",
+      "to": "FND-04",
+      "type": "requires"
+    },
+    {
+      "from": "FND-05",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "ADK-01",
+      "to": "FND-01",
+      "type": "requires"
+    },
+    {
+      "from": "ADK-01",
+      "to": "FND-03",
+      "type": "requires"
+    },
+    {
+      "from": "ADK-01",
+      "to": "FND-04",
+      "type": "requires"
+    },
+    {
+      "from": "ADK-01",
+      "to": "FND-05",
+      "type": "requires"
+    },
+    {
+      "from": "ADK-02",
+      "to": "ADK-01",
+      "type": "requires"
+    },
+    {
+      "from": "ADK-03",
+      "to": "ADK-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-02",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-03",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-04",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-04",
+      "to": "PLS-02",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-05",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-05",
+      "to": "PLS-02",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-06",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-06",
+      "to": "PLS-02",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-07",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-08",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-08",
+      "to": "PLS-07",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-09",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-10",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-11",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-11",
+      "to": "PLS-09",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-11",
+      "to": "PLS-10",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-12",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-12",
+      "to": "PLS-06",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-12",
+      "to": "PLS-07",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-12",
+      "to": "PLS-10",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-13",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-13",
+      "to": "PLS-05",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-13",
+      "to": "PLS-08",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-13",
+      "to": "PLS-12",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-14",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-14",
+      "to": "PLS-09",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-14",
+      "to": "PLS-10",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-14",
+      "to": "PLS-13",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-14",
+      "to": "FND-04",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-15",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-15",
+      "to": "PLS-10",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-15",
+      "to": "PLS-12",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-15",
+      "to": "PLS-13",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-16",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-16",
+      "to": "PLS-08",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-16",
+      "to": "PLS-10",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-16",
+      "to": "PLS-12",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-16",
+      "to": "PLS-13",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-16",
+      "to": "PLS-14",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-16",
+      "to": "PLS-15",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-17",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-17",
+      "to": "PLS-09",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-17",
+      "to": "PLS-10",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-17",
+      "to": "PLS-14",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-17",
+      "to": "PLS-15",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-18",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-18",
+      "to": "PLS-07",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-18",
+      "to": "PLS-08",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-18",
+      "to": "PLS-13",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-18",
+      "to": "PLS-15",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-19",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-19",
+      "to": "PLS-02",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-19",
+      "to": "PLS-09",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-19",
+      "to": "PLS-10",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-19",
+      "to": "PLS-14",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-19",
+      "to": "PLS-17",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-19",
+      "to": "PLS-18",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-20",
+      "to": "PLS-02",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-20",
+      "to": "PLS-17",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-21",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-21",
+      "to": "PLS-02",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-21",
+      "to": "PLS-14",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-21",
+      "to": "PLS-17",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DOM-WALL",
+      "to": "PLS-TX-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DOM-WALL",
+      "to": "PLS-GR-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DOM-WALL",
+      "to": "PLS-EVIDENCE-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DOM-WALL",
+      "to": "PLS-WALL-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SLICE-MTBL-01",
+      "to": "PLS-TX-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SLICE-MTBL-01",
+      "to": "PLS-EVIDENCE-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SLICE-MTBL-01",
+      "to": "PLS-GR-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SLICE-MTBL-01",
+      "to": "PLS-DOM-WALL",
+      "type": "requires"
+    },
+    {
+      "from": "RND-01",
+      "to": "FND-03",
+      "type": "optional"
+    }
+  ]
+}

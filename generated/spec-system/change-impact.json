@@ -1,0 +1,6 @@
+{
+  "specSystem": "1.0.0-draft",
+  "mode": "initial-v1-baseline",
+  "changed": [],
+  "note": "Subsequent versions may diff this generated graph against a pinned prior release."
+}

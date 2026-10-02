@@ -1,0 +1,239 @@
+{
+  "specSystem": "1.0.0-draft",
+  "blockers": [
+    {
+      "id": "ADK-01",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "ADK-02",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "ADK-03",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-02",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-03",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "draft"
+    },
+    {
+      "id": "PLS-04",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-05",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "draft"
+    },
+    {
+      "id": "PLS-06",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-07",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "draft"
+    },
+    {
+      "id": "PLS-08",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "draft"
+    },
+    {
+      "id": "PLS-09",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-10",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-11",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "draft"
+    },
+    {
+      "id": "PLS-12",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "draft"
+    },
+    {
+      "id": "PLS-13",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-14",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-15",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-16",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-17",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-18",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-19",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-20",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-01"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-02"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-03"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-04"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-05"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-06"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-07"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-08"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-09"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-10"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-11"
+    },
+    {
+      "id": "PLS-21",
+      "kind": "Capability",
+      "code": "ACTIVATION_GATE",
+      "detail": "DC-12"
+    },
+    {
+      "id": "PLS-CLAIM-01",
+      "kind": "Contract",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-DECISION-01",
+      "kind": "Contract",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-EVIDENCE-01",
+      "kind": "Contract",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    },
+    {
+      "id": "PLS-SOLVER-01",
+      "kind": "Contract",
+      "code": "SPECIFICATION_INCOMPLETE",
+      "detail": "partial"
+    }
+  ]
+}
