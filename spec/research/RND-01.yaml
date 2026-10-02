@@ -1,0 +1,53 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Research",
+  "id": "RND-01",
+  "version": "0.1.0",
+  "title": "Existing Formalism Stress Test",
+  "layer": "L3",
+  "status": {
+    "architecture": "proposed",
+    "specification": "partial",
+    "implementation": "experimental",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "createsBuildObligation": false,
+  "dependsOn": [
+    {
+      "type": "optional",
+      "id": "FND-03"
+    }
+  ],
+  "projection": {
+    "id": "RND-01",
+    "phase": "Spectrum Research",
+    "name": "Existing Formalism Stress Test",
+    "summary": "Test hard Plasma cases against established dependency, provenance, truth-maintenance, incremental-computation and model-correspondence methods before inventing new kernel primitives.",
+    "spec": "partial",
+    "implemented": "research",
+    "depends": [
+      "FND-03"
+    ],
+    "gap": "No repeated irreducible failure has yet demonstrated the need for a separate Spectrum kernel.",
+    "next": "Use real Plasma cases to test revisable identity/correspondence, theory changes, coupled solver cycles and coherent-world inspection; extract a new primitive only after recurring independent failures.",
+    "flow": "PLASMA CASE\\\n  ↓\\\nexisting formalism\\\n  ↓\\\nimplement / test\\\n  ├─ passes → reuse\\\n  └─ recurring failure → characterize gap\\\n                         ↓\\\n                   candidate Spectrum abstraction",
+    "stages": [
+      "Choose hard case",
+      "Map to existing method",
+      "Prototype",
+      "Measure failure",
+      "Repeat independently",
+      "Extract only if recurring"
+    ]
+  },
+  "graduation": {
+    "requires": [
+      "architecture_review",
+      "bounded_use_case",
+      "formal_contract",
+      "dependency_analysis",
+      "activation_gates"
+    ]
+  }
+}
