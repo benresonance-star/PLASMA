@@ -1,0 +1,55 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-06",
+  "version": "0.1.0",
+  "title": "Observation / Real-to-Sim",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-02"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-06",
+    "phase": "Plasma",
+    "name": "Observation / Real-to-Sim",
+    "summary": "Convert sensor evidence from the physical world into provenance-bearing observed objects, geometry, pose and relationships, then reconcile them with accepted Plasma world state without silently promoting observations to truth.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-02"
+    ],
+    "gap": "Needs an implementation-grade vertical slice for capture, object decomposition, reconstruction, registration, correspondence, uncertainty and typed promotion. Lucida-style parse → generate → place is a candidate adapter pattern, not a hard runtime dependency.",
+    "next": "Build one real-to-sim fixture: capture a small room or fabrication bay, reconstruct separable objects, register them against a Plasma world revision, produce deviation claims with confidence, and require explicit validate/commit before accepted state changes.",
+    "flow": "PHYSICAL WORLD\\\n  ↓\\\nCAPTURE / SENSOR EVIDENCE\\\n  ↓\\\nPARSE → GENERATE → PLACE\\\n  ↓\\\nOBSERVED WORLD GRAPH\\\n  ↓\\\nREGISTER / CORRESPOND\\\n  ↓\\\nCOMPARE TO ACCEPTED STATE\\\n  ↓\\\nCLAIM + CONFIDENCE\\\n  ↓\\\nVALIDATE → COMMIT / REJECT",
+    "stages": [
+      "Capture",
+      "Parse scene",
+      "Reconstruct assets",
+      "Place / register",
+      "Infer semantics",
+      "Compare",
+      "Quantify uncertainty",
+      "Propose",
+      "Validate",
+      "Commit/Reject"
+    ]
+  }
+}
