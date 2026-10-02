@@ -1,0 +1,29 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-VALIDATE-01",
+  "legacyProjectionId": "validate-candidate",
+  "version": "1.0.0",
+  "title": "validateCandidate()",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "typed-boundary",
+  "dependsOn": [],
+  "projection": {
+    "id": "validate-candidate",
+    "name": "validateCandidate()",
+    "from": "authority",
+    "to": "constraints",
+    "input": "ProvisionalWorld + CandidatePatch",
+    "output": "ValidationResult + evidence",
+    "semantics": "Evaluate the world that would exist after the patch, not the live world mid-mutation.",
+    "failure": "Return violated invariants, stale assumptions or missing evidence.",
+    "explanation": "Validation occurs over a provisional copy-on-write view so failed proposals cannot corrupt canonical state."
+  }
+}
