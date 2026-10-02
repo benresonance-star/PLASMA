@@ -1,0 +1,29 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-REP-01",
+  "legacyProjectionId": "derive-representation",
+  "version": "1.0.0",
+  "title": "deriveRepresentation()",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "partial",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "typed-boundary",
+  "dependsOn": [],
+  "projection": {
+    "id": "derive-representation",
+    "name": "deriveRepresentation()",
+    "from": "authority",
+    "to": "representation",
+    "input": "WorldSlice + projection request",
+    "output": "Representation + freshness metadata",
+    "semantics": "Produce a derived view bound to an authoritative revision.",
+    "failure": "Failed generation leaves the prior representation stale or unavailable.",
+    "explanation": "Derived outputs can be regenerated independently and never become a competing source of truth."
+  }
+}
