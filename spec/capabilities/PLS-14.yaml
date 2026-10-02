@@ -1,0 +1,330 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-14",
+  "version": "0.1.0",
+  "title": "Adaptive Interaction Lens Runtime",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "partial",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-09"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-10"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-13"
+    },
+    {
+      "type": "requires",
+      "id": "FND-04"
+    }
+  ],
+  "provides": [],
+  "activationGates": [],
+  "projection": {
+    "id": "PLS-14",
+    "phase": "Plasma",
+    "name": "Adaptive Interaction Lens Runtime",
+    "summary": "Project maximum capability with minimum irrelevant interface. Plasma keeps authoritative world state, relationships, constraints, provenance and machinery explicit and inspectable, while resolving a temporary lens stack for what is shown, how it can be manipulated and what should be evaluated now. Lenses never become alternate truth. Direct manipulation produces speculative preview worlds whose dependency-backed blast radius is visible before publication. UI and capability evolution may be proposed by humans or AI, but changes are versioned, sandboxed, tested, human-accepted and reversible rather than silently personalized or rewritten.",
+    "spec": "partial",
+    "implemented": "planned",
+    "depends": [
+      "PLS-01",
+      "PLS-09",
+      "PLS-10",
+      "PLS-13",
+      "FND-04"
+    ],
+    "gap": "Plasma already has contextual representation, local speculative revisions, currentness, reasoning lenses and direct-manipulation conflict semantics, but no single interaction contract connects them. Without it, minimalist UI can merely hide complexity, relationship overlays can become visual clutter, discipline modes can fragment into separate workspaces, and adaptive/AI-generated UI can become unstable or bypass governance.",
+    "next": "Build one wall/room vertical slice across desktop and iPad-class input. Selection should resolve a small semantic-relevance set, show editable affordances plus concise drivers/dependents, enter Relationship X-Ray on demand, preview a 500 mm conflicted move with blast radius and alternatives, switch between Spatial, Compliance and Cost lens compositions without cloning world state, and prove that the same operation remains usable with AI services unavailable. Then sandbox one proposed UI refinement and require explicit acceptance before activation.",
+    "flow": "ACTOR + TASK + SELECTION + VIEW CONTEXT → SEMANTIC RELEVANCE RESOLVER → COMPOSE LENS STACK → SURFACE MINIMUM AFFORDANCES / RELATIONSHIPS → EDIT INTENT → SPECULATIVE PREVIEW WORLD → DIRTY FRONTIER + DEPENDENCY HORIZON → BLAST-RADIUS / CURRENTNESS OVERLAY → HUMAN / POLICY CHOICE → VALIDATE → COMMIT OR KEEP/BRANCH PREVIEW → OPTIONAL UI/CAPABILITY REFACTOR PROPOSAL → SANDBOX + TEST + ACCEPT → VERSIONED LENS/CAPABILITY",
+    "lens_taxonomy": {
+      "representation_lens": {
+        "question": "What should be visible and how should authoritative state be represented?",
+        "owns": [
+          "visibility/filtering",
+          "graphic grammar",
+          "projection",
+          "annotation",
+          "semantic + geometric LOD request",
+          "material/field visualization"
+        ],
+        "must_not": "Own alternate authoritative geometry or silently mutate the represented object.",
+        "relationship": "Implemented through/alongside PLS-09 View Contracts and contextual representation grammars."
+      },
+      "interaction_lens": {
+        "question": "What can this actor meaningfully do here, and how should those actions be exposed?",
+        "owns": [
+          "selection affordances",
+          "handles/hotspots",
+          "snaps",
+          "gesture mappings",
+          "context actions",
+          "natural-language affordances",
+          "input-device adaptation"
+        ],
+        "must_not": "Invent permissions, constraints or model semantics. Every action resolves to a typed operation against authoritative state."
+      },
+      "evaluation_lens": {
+        "question": "What consequences, criteria, solvers or checks matter for this task now?",
+        "owns": [
+          "material evaluator activation",
+          "criteria emphasis",
+          "risk/currentness display",
+          "solver/field requests",
+          "alternative comparison prompts"
+        ],
+        "must_not": "Change governing facts, authority or pass/fail semantics merely by changing visual mode.",
+        "relationship": "May invoke PLS-13 reasoning lenses/operators and PLS-10 bounded computation; it is not identical to a reasoning lens."
+      },
+      "composition_rule": "A user-visible lens is normally a composition of the three layers. Example: Thermal Design may request thermal representation, expose window/junction manipulation affordances and activate only materially affected thermal evaluators. Compositions are named/versioned recipes, not duplicate project models."
+    },
+    "semantic_relevance_contract": {
+      "inputs": [
+        "actor/role + authority",
+        "task/question/intent",
+        "selection/focus set",
+        "spatial scale/proximity",
+        "active view",
+        "active lens composition",
+        "dependency graph",
+        "currentness/staleness",
+        "device/input mode",
+        "risk/materiality",
+        "recent explicit user choices"
+      ],
+      "outputs": [
+        "visible object subset",
+        "relationship subset",
+        "available operations",
+        "active/pending evaluators",
+        "required representation LOD",
+        "explanation refs"
+      ],
+      "rule": "Relevance is task- and dependency-aware, not merely camera-distance semantic zoom. Scale can influence disclosure but never solely determines it.",
+      "budget": "Do not invoke every discipline/evaluator on every pointer event; the resolver must respect the PLS-10 interaction budget and dependency horizon.",
+      "escape_hatch": "Users can always open explicit Inspect/Structure mode to query objects, hierarchy, dependencies, versions and hidden relations directly."
+    },
+    "relationship_bond_contract": {
+      "principle": "Treat graph relationships as inspectable spatial bonds when useful, while preserving the underlying typed graph as the authority.",
+      "minimum_edge_fields": [
+        "edge id/type/version",
+        "source ref",
+        "target ref",
+        "direction",
+        "driver/dependent role",
+        "hard/soft/negotiable/inferred class",
+        "authority/provenance",
+        "propagation/invalidation semantics",
+        "currentness",
+        "explanation ref"
+      ],
+      "ui_rules": [
+        "Default selection shows only concise material drivers/dependents.",
+        "Relationship X-Ray reveals additional bonds on demand.",
+        "Aggregate relationships by semantic depth; never render the full graph as a ball of yarn.",
+        "Breaking/revising a relationship creates a typed proposal/change event; swiping/cutting a visual tether is only an interaction mapped to that operation."
+      ],
+      "hierarchy_rule": "A conventional hierarchy/tree remains available as an inspectable projection. Plasma removes dependence on the tree as the primary workflow, not the ability to inspect structure explicitly."
+    },
+    "preview_world_and_blast_radius_contract": {
+      "principle": "Predict consequences from the same dependency/runtime machinery that will validate the change; do not fabricate a post-hoc animation of impact.",
+      "stages": [
+        "open speculative revision from accepted base",
+        "apply requested intent without immediately discarding/clamping it",
+        "compute Dirty Frontier",
+        "resolve immediate hard/local invariants",
+        "estimate Dependency Horizon",
+        "classify direct / regional / deferred consequences",
+        "render ghosted candidate + affected objects + currentness",
+        "offer exact boundary and typed alternatives where available",
+        "validate selected ChangeSet",
+        "commit with authority or retain/discard/branch preview"
+      ],
+      "impact_classes": [
+        "directly changed",
+        "hard-blocking",
+        "soft/negotiable consequence",
+        "derived representation invalidated",
+        "solver/field stale or pending",
+        "regional downstream",
+        "global summary potentially affected"
+      ],
+      "truthfulness": [
+        "Unknown/deferred consequences display as pending/stale, never as safe.",
+        "A blast radius may be conservative but must state when it is incomplete.",
+        "If a relationship is not represented in the dependency graph, the UI may not claim that no consequence exists."
+      ],
+      "relationship_to_runtime": "PLS-10 Dirty Frontier, Dependency Horizon and Consistency Horizon are the execution substrate; PLS-14 defines their interactive projection."
+    },
+    "adaptive_ui_governance": {
+      "principle": "Adaptive, not unstable. Personalization can suggest and compose; it cannot silently replace learned workflows or governing semantics.",
+      "allowed": [
+        "remember explicit user preferences",
+        "rank/contextualize existing operations",
+        "propose collapsed workflows/macros",
+        "propose a new lens composition",
+        "generate a sandboxed project-specific UI surface for a capability",
+        "adapt input affordance to mouse/Pencil/touch while preserving operation semantics"
+      ],
+      "requires_acceptance": [
+        "remove or rename a familiar operation",
+        "change gesture meaning",
+        "change lens defaults materially",
+        "replace a workflow with a synthesized one",
+        "promote a generated UI/capability from sandbox",
+        "share a personal lens as team/project default"
+      ],
+      "forbidden": [
+        "silent overnight rearrangement of professional workflows",
+        "personalization that changes authoritative model semantics",
+        "personalization that hides a hard constraint or warning",
+        "non-reproducible UI state required to understand or replay a committed edit"
+      ],
+      "stable_modes": [
+        "Neutral/Inspect mode with predictable project-wide behavior",
+        "user lens",
+        "optional collaborator lens preview",
+        "project presentation/client lens with bounded permissions"
+      ],
+      "versioning": "Accepted lens definitions, gesture maps and synthesized workflows are versioned artifacts with provenance, compatibility and rollback."
+    },
+    "capability_extension_harness": {
+      "principle": "The application may evolve with project needs, but extensions execute through bounded capability contracts rather than arbitrary self-modification.",
+      "sequence": [
+        "declare capability request and scope",
+        "define state/schema/tool boundary",
+        "define mutation permissions + authority",
+        "write deterministic/reference/interaction tests before implementation",
+        "declare performance/security/resource budgets",
+        "implement in sandbox/quarantine",
+        "run automated tests",
+        "run guided human validation from simple → nominal → edge/failure cases",
+        "replay affected project world/branches",
+        "approve exact digest",
+        "promote project-scoped capability/lens",
+        "optionally promote to shared/global library after stronger evidence",
+        "retain dependency pins + migration + rollback/deprecation path"
+      ],
+      "test_truth": "Passing tests demonstrates conformance to the pinned test contract; it does not prove physical, regulatory or domain completeness. Provenance, authority, uncertainty and independent evaluation still apply.",
+      "technical_debt_rule": "Self-extending software can accumulate technical debt faster, not slower. API compatibility, schema discipline, duplication detection, dependency pins, deprecation, migration, provenance and reproducibility are mandatory."
+    },
+    "device_contract": {
+      "desktop": "Precise pointer/raycasting, keyboard accelerators and optional context menus may expose depth quickly.",
+      "tablet": "Touch/Pencil targets, proximity/hover when available, pinch/pan/orbit and haptics/visual snap cues must map to the same typed operations rather than a separate reduced product.",
+      "shared_semantics": "Device adaptation changes affordance geometry and invocation, not world semantics, authority, evaluation rules or operation identity."
+    },
+    "anti_patterns": [
+      "Invisible toolbar: hide commands but still require expert vocabulary.",
+      "AI executes natural language directly into authoritative geometry without preview/typed operation.",
+      "Delete the explicit hierarchy because spatial UI exists.",
+      "Render all dependencies at once.",
+      "Use camera zoom alone to determine semantic disclosure.",
+      "Treat a lens as a separate copy of the model.",
+      "Run every evaluator synchronously on every pointer update.",
+      "Allow an adaptive UI to silently change gesture meaning or hide warnings.",
+      "Assume cloud geometry is required for a lightweight client.",
+      "Claim passing generated tests makes a capability trustworthy or complete.",
+      "Claim co-evolving app/content makes technical debt impossible."
+    ],
+    "acceptance_tests": [
+      "Same accepted world revision is addressable through at least three different lens compositions without divergent geometry/facts.",
+      "A selected wall exposes concise drivers/dependents and can expand into an explicit relationship X-Ray with typed edge provenance.",
+      "A hard-boundary drag can cross into a visible speculative state; the requested intent remains represented while publication is blocked.",
+      "Blast-radius overlay is derived from runtime dependency/currentness data and distinguishes current, pending, stale and unknown consequences.",
+      "Switching evaluation lens does not mutate authoritative state or reinterpret a hard rule without a separate governed decision.",
+      "A novice can discover an operation from direct/contextual affordance or natural language while an expert can inspect the underlying typed operation and parameters.",
+      "UI remains functional with AI services unavailable for selection, direct manipulation, deterministic checks and commit gating.",
+      "A proposed UI refactor is previewed in a sandbox and does not activate until explicit acceptance; rollback restores the prior version.",
+      "A generated capability cannot promote until predeclared tests, guided human validation, affected-world replay and exact-digest approval complete.",
+      "Neutral/Inspect mode can reproduce enough explicit structure, relationships and versions to debug a project independent of one user's personalized lens."
+    ],
+    "anti_pattern_projection_contract": {
+      "relationship": "Consumes PLS-16 findings as an optional evaluation overlay; PLS-14 does not own anti-pattern truth or blocking authority.",
+      "default_behavior": "No global warning dashboard or modal cascade. Show the smallest local marker capable of explaining a material consequence at the edited object/operation, with deeper reasoning on demand.",
+      "interaction_levels": [
+        "silent: no user-visible finding",
+        "hint: subtle local mark; no interruption",
+        "warning: local consequence summary plus alternatives; user may continue if policy permits",
+        "hold: publication paused pending explicit disposition/authority",
+        "block: no publication because kernel integrity or governing hard authority forbids the candidate"
+      ],
+      "required_content": [
+        "what is unusual or dangerous",
+        "why it matters",
+        "affected scope",
+        "confidence/currentness",
+        "closest lower-impact alternatives where available",
+        "whether the user may proceed and under what authority"
+      ],
+      "novelty_rule": "The UI must not style merely unusual/rare geometry as an error. Novelty/plausibility flags are visually and semantically distinct from corruption, hard conflicts and evidence-backed domain hazards."
+    },
+    "spatial_verb_surface_contract": {
+      "principle": "Expose a small stable vocabulary of spatial actions across mouse, touch, pen, voice and AI. Domain context supplies nouns and semantics; modifiers refine behavior without proliferating bespoke commands.",
+      "read_verbs": [
+        "select",
+        "inspect",
+        "measure"
+      ],
+      "create_verbs": [
+        "draw",
+        "place"
+      ],
+      "transform_verbs": [
+        "move",
+        "rotate",
+        "scale",
+        "push/pull",
+        "offset"
+      ],
+      "topology_verbs": [
+        "cut",
+        "split",
+        "join"
+      ],
+      "relation_verbs": [
+        "align",
+        "attach/host",
+        "repeat"
+      ],
+      "modifier_families": [
+        "numeric value/unit",
+        "axis/plane/frame",
+        "snap/reference",
+        "preserve relation/intent",
+        "break relation",
+        "hard/soft constraint behavior",
+        "scope/selection",
+        "array spacing/count",
+        "tolerance/fidelity",
+        "preview/commit/branch"
+      ],
+      "language_shortcut_examples": [
+        "move that wall 300",
+        "pull this face to grid C",
+        "cut these panels with that profile",
+        "repeat x6 at 900",
+        "align these openings and preserve sill height"
+      ],
+      "compiler_rule": "Gestures and language aliases resolve to the same typed operation/Transform contract. Natural language is not a privileged mutation path and may not bypass authority, invariants or ambiguity resolution.",
+      "precision_rule": "Free manipulation is continuously convertible into exact input: a drag may become +315 mm, 45°, aligned-to-reference or equal-spacing without entering a separate precision mode.",
+      "complexity_rule": "Prefer simple verbs plus contextual modifiers/overrides over command proliferation. Internal sophistication increases inward; it should not be forced into the user permanent interface."
+    }
+  }
+}
