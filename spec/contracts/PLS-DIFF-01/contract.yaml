@@ -14,7 +14,24 @@
     "release": "excluded"
   },
   "authorityClass": "NON_AUTHORITATIVE_DERIVED",
-  "dependsOn": [],
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-SOLVER-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-CLAIM-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-EVIDENCE-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-DECISION-01"
+    }
+  ],
   "projection": {
     "id": "differential-contract",
     "name": "PLS-DIFF-01 · DifferentialContract v0.1",
@@ -417,12 +434,6 @@
       "kernel_change": false
     }
   },
-  "requires": [
-    "PLS-SOLVER-01",
-    "PLS-CLAIM-01",
-    "PLS-EVIDENCE-01",
-    "PLS-DECISION-01"
-  ],
   "exactFallback": {
     "required": true,
     "contractRef": "PLS-SOLVER-01",
