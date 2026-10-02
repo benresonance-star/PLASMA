@@ -1,0 +1,303 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "RelationshipCatalog",
+  "id": "PLS-ARCH-RELATIONSHIPS",
+  "version": "1.0.0",
+  "layer": "L1",
+  "items": [
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Relationship",
+      "id": "rel-interaction-authority",
+      "version": "0.1.0",
+      "title": "semantic operation proposal",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "interaction"
+        },
+        {
+          "type": "consumes",
+          "id": "authority"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-INT-01"
+        }
+      ],
+      "projection": {
+        "id": "rel-interaction-authority",
+        "from": "interaction",
+        "to": "authority",
+        "contract": "semantic-operation-proposal",
+        "direction": "forward",
+        "label": "semantic operation proposal",
+        "payload": "SemanticOperation",
+        "mode": "async-or-sync",
+        "authoritySemantics": "proposal-only",
+        "failure": "Rejected or returned with validation evidence; world remains unchanged.",
+        "explanation": "Human interaction proposes semantic intent to the authority layer. The proposal may be previewed immediately, but it cannot directly change canonical state."
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Relationship",
+      "id": "rel-intelligence-authority",
+      "version": "0.1.0",
+      "title": "transaction proposal",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "intelligence"
+        },
+        {
+          "type": "consumes",
+          "id": "authority"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-AGENT-01"
+        }
+      ],
+      "projection": {
+        "id": "rel-intelligence-authority",
+        "from": "intelligence",
+        "to": "authority",
+        "contract": "transaction-proposal",
+        "direction": "forward",
+        "label": "transaction proposal",
+        "payload": "CandidatePatch | OperationIntent",
+        "mode": "async",
+        "authoritySemantics": "proposal-only",
+        "failure": "Rejected, superseded or returned for repair; agent has no direct write path.",
+        "explanation": "Agents submit reviewable proposals based on bounded world slices. The same validation and commit rules apply regardless of proposer."
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Relationship",
+      "id": "rel-authority-geometry",
+      "version": "0.1.0",
+      "title": "resolve ↔ candidate geometry",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        },
+        {
+          "type": "consumes",
+          "id": "geometry"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-GR-01"
+        }
+      ],
+      "projection": {
+        "id": "rel-authority-geometry",
+        "from": "authority",
+        "to": "geometry",
+        "contract": "resolve-geometry",
+        "direction": "bidirectional",
+        "label": "resolve ↔ candidate geometry",
+        "payload": "SemanticOperation ↔ CandidateGeometryResult",
+        "mode": "sync-or-worker",
+        "authoritySemantics": "candidate-return",
+        "failure": "Resolver failure returns evidence; no authoritative geometry is changed.",
+        "explanation": "Authority delegates bounded spatial execution, then receives a candidate result that must still pass transaction validation."
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Relationship",
+      "id": "rel-authority-constraints",
+      "version": "0.1.0",
+      "title": "validate ↔ verdict + evidence",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        },
+        {
+          "type": "consumes",
+          "id": "constraints"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-VALIDATE-01"
+        }
+      ],
+      "projection": {
+        "id": "rel-authority-constraints",
+        "from": "authority",
+        "to": "constraints",
+        "contract": "validate-candidate",
+        "direction": "bidirectional",
+        "label": "validate ↔ verdict + evidence",
+        "payload": "ProvisionalWorld ↔ ValidationResult",
+        "mode": "sync-or-worker",
+        "authoritySemantics": "validation-evidence",
+        "failure": "Failed checks generate structured rejection evidence or a repair request.",
+        "explanation": "Candidate state is validated outside the canonical world. The resulting verdict informs the transaction gate."
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Relationship",
+      "id": "rel-authority-representation",
+      "version": "0.1.0",
+      "title": "derive projection",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        },
+        {
+          "type": "consumes",
+          "id": "representation"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-REP-01"
+        }
+      ],
+      "projection": {
+        "id": "rel-authority-representation",
+        "from": "authority",
+        "to": "representation",
+        "contract": "derive-representation",
+        "direction": "forward",
+        "label": "derive projection",
+        "payload": "WorldSlice → Representation",
+        "mode": "async",
+        "authoritySemantics": "derived-only",
+        "failure": "Representation may fail or remain stale without damaging world truth.",
+        "explanation": "Representations are generated from an identified authoritative revision and carry freshness metadata."
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Relationship",
+      "id": "rel-external-authority",
+      "version": "0.1.0",
+      "title": "claims + evidence",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "external"
+        },
+        {
+          "type": "consumes",
+          "id": "authority"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-EXT-01"
+        }
+      ],
+      "projection": {
+        "id": "rel-external-authority",
+        "from": "external",
+        "to": "authority",
+        "contract": "external-evidence-import",
+        "direction": "forward",
+        "label": "claims + evidence",
+        "payload": "ExternalResult | Evidence",
+        "mode": "async",
+        "authoritySemantics": "evidence-or-proposal",
+        "failure": "Invalid provenance, schema or units reject the import.",
+        "explanation": "External tools contribute evidence or proposals through typed adapters rather than direct mutation."
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Relationship",
+      "id": "rel-authority-differential",
+      "version": "0.1.0",
+      "title": "state ↔ local sensitivity",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        },
+        {
+          "type": "consumes",
+          "id": "differential"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-DIFF-01"
+        }
+      ],
+      "projection": {
+        "id": "rel-authority-differential",
+        "from": "authority",
+        "to": "differential",
+        "contract": "differential-contract",
+        "direction": "bidirectional",
+        "label": "state ↔ local sensitivity",
+        "payload": "Authoritative State + Δinputs / output seed ↔ JVP/VJP + trust + uncertainty",
+        "mode": "deferred",
+        "authoritySemantics": "derived-only",
+        "failure": "Outside validity/trust, at discontinuities or where exact validation is required, the differential result is rejected as authoritative and the declared exact fallback is invoked.",
+        "explanation": "PLS-DIFF-01 exposes local model behaviour around a named authoritative state without granting the differential layer write authority."
+      }
+    }
+  ]
+}
