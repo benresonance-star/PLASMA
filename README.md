@@ -2,7 +2,7 @@
 
 ## Current Plasma specification
 
-[Plasma / Foundry v0.4.29](apps/system-atlas-preview/plasma-spec.html) is the current synchronised draft specification. [PLS-19 / PLS-WALL-01@0.1.0](apps/system-atlas-preview/wall-contract.json) remains the unproven parametric wall capability. [PLS-20 / PLS-DR-01@0.1.0] is deferred differential-rendering research, and [PLS-21 / PLS-DIFF-01@0.1.0](apps/system-atlas-preview/differential-contract.json) defines a deferred, non-authoritative DifferentialContract with mandatory exact fallback. Atlas v0.9.0 projects these requirements without claiming implementation.
+**Plasma Spec System v1** is now the canonical specification source under [`/spec`](spec/). Atlas v0.10.0, readiness/dependency reports and the generated Spec System view are derived from that graph. The existing [Plasma / Foundry v0.4.29](apps/system-atlas-preview/plasma-spec.html) rich HTML specification remains a checked legacy projection during migration. [PLS-19 / PLS-WALL-01@0.1.0](apps/system-atlas-preview/wall-contract.json) remains unproven; PLS-20 remains deferred research; and [PLS-21 / PLS-DIFF-01@0.1.0](apps/system-atlas-preview/differential-contract.json) remains deferred, non-authoritative and not started.
 
 ## Historical SPDS engineering baseline
 
@@ -30,6 +30,8 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
+pnpm spec:build   # regenerate projections from /spec
+pnpm spec:check   # fail on schema/dependency/projection drift
 pnpm verify
 
 docker compose up -d   # postgres:5432, minio:9000 / console:9001
