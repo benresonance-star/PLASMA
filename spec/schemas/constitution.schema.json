@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://plasma.local/spec/v1/constitution.schema.json",
+  "type": "object",
+  "additionalProperties": true,
+  "title": "Plasma Constitution",
+  "required": [
+    "apiVersion",
+    "kind",
+    "id",
+    "version",
+    "kernelPrimitives",
+    "invariants"
+  ],
+  "properties": {
+    "kind": {
+      "const": "Constitution"
+    },
+    "kernelPrimitives": {
+      "type": "array",
+      "minItems": 7
+    },
+    "invariants": {
+      "type": "array",
+      "minItems": 1
+    }
+  }
+}
