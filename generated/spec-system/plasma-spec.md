@@ -1,6 +1,6 @@
 # Plasma Spec System v1
 
-Canonical source: `/spec` · Spec System 1.0.0-draft · Atlas 0.10.1
+Canonical source: `/spec` · Spec System 1.0.0-draft · Atlas 0.10.2
 
 ## Constitution
 
@@ -19,8 +19,10 @@ Canonical source: `/spec` · Spec System 1.0.0-draft · Atlas 0.10.1
 | --- | --- | --- | --- |
 | PLS-AGENT-01 · proposeTransaction() | complete | partial | none |
 | PLS-CLAIM-01 · ClaimContract | partial | partial | none |
+| PLS-CONT-01 · Project-Grounded Editing and Cross-View Continuity Contract | complete | not_started | none |
 | PLS-DECISION-01 · DecisionContract | partial | partial | none |
 | PLS-DIFF-01 · PLS-DIFF-01 · DifferentialContract v0.1 | complete | not_started | none |
+| PLS-DOC-01 · First-Class Architectural Documentation Contract | complete | not_started | none |
 | PLS-EVIDENCE-01 · EvidenceContract | partial | partial | none |
 | PLS-EXT-01 · importExternalResult() | complete | partial | none |
 | PLS-GR-01 · resolveGeometry() | complete | partial | none |
@@ -66,6 +68,8 @@ Canonical source: `/spec` · Spec System 1.0.0-draft · Atlas 0.10.1
 | PLS-19 · Parametric Architectural Wall System | accepted | partial | not_started | BLOCKED |
 | PLS-20 · Differential Rendering Research Architecture | accepted | partial | not_started | BLOCKED |
 | PLS-21 · DifferentialContract v0.1 | accepted | partial | not_started | BLOCKED |
+| PLS-22 · First-Class Multiscale Architectural Documentation | accepted | complete | not_started | READY_FOR_EXPERIMENT |
+| PLS-23 · Project-Grounded Editorial Intelligence and Continuity | accepted | complete | not_started | READY_FOR_EXPERIMENT |
 
 ## Research quarantine
 

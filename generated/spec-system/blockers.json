@@ -224,6 +224,12 @@
       "detail": "partial"
     },
     {
+      "id": "PLS-DOC-01",
+      "kind": "Contract",
+      "code": "ACTIVATION_GATE",
+      "detail": "DOC-GATE-01"
+    },
+    {
       "id": "PLS-EVIDENCE-01",
       "kind": "Contract",
       "code": "SPECIFICATION_INCOMPLETE",

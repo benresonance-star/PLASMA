@@ -32,6 +32,16 @@
       "layer": "L1"
     },
     {
+      "id": "documentation",
+      "kind": "Component",
+      "layer": "L1"
+    },
+    {
+      "id": "editorial-continuity",
+      "kind": "Component",
+      "layer": "L1"
+    },
+    {
       "id": "external",
       "kind": "Component",
       "layer": "L1"
@@ -187,6 +197,16 @@
       "layer": "L3"
     },
     {
+      "id": "PLS-22",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
+      "id": "PLS-23",
+      "kind": "Capability",
+      "layer": "L3"
+    },
+    {
       "id": "PLS-AGENT-01",
       "kind": "Contract",
       "layer": "L2"
@@ -202,6 +222,11 @@
       "layer": "L0"
     },
     {
+      "id": "PLS-CONT-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
       "id": "PLS-DECISION-01",
       "kind": "Contract",
       "layer": "L2"
@@ -210,6 +235,16 @@
       "id": "PLS-DIFF-01",
       "kind": "Contract",
       "layer": "L2"
+    },
+    {
+      "id": "PLS-DOC-01",
+      "kind": "Contract",
+      "layer": "L2"
+    },
+    {
+      "id": "PLS-DOM-DOC",
+      "kind": "DomainPack",
+      "layer": "L4"
     },
     {
       "id": "PLS-DOM-WALL",
@@ -245,6 +280,11 @@
       "id": "PLS-REP-01",
       "kind": "Contract",
       "layer": "L2"
+    },
+    {
+      "id": "PLS-SLICE-DOC-01",
+      "kind": "VerticalSlice",
+      "layer": "L5"
     },
     {
       "id": "PLS-SLICE-MTBL-01",
@@ -287,12 +327,27 @@
       "layer": "L1"
     },
     {
+      "id": "rel-authority-documentation",
+      "kind": "Relationship",
+      "layer": "L1"
+    },
+    {
       "id": "rel-authority-geometry",
       "kind": "Relationship",
       "layer": "L1"
     },
     {
       "id": "rel-authority-representation",
+      "kind": "Relationship",
+      "layer": "L1"
+    },
+    {
+      "id": "rel-documentation-representation",
+      "kind": "Relationship",
+      "layer": "L1"
+    },
+    {
+      "id": "rel-editorial-documentation",
       "kind": "Relationship",
       "layer": "L1"
     },
@@ -377,6 +432,41 @@
       "from": "differential",
       "to": "authority",
       "type": "consumes"
+    },
+    {
+      "from": "documentation",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "documentation",
+      "to": "representation",
+      "type": "consumes"
+    },
+    {
+      "from": "documentation",
+      "to": "PLS-DOC-01",
+      "type": "implements"
+    },
+    {
+      "from": "editorial-continuity",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "editorial-continuity",
+      "to": "documentation",
+      "type": "consumes"
+    },
+    {
+      "from": "editorial-continuity",
+      "to": "intelligence",
+      "type": "consumes"
+    },
+    {
+      "from": "editorial-continuity",
+      "to": "PLS-CONT-01",
+      "type": "implements"
     },
     {
       "from": "rel-interaction-authority",
@@ -484,6 +574,51 @@
       "type": "implements"
     },
     {
+      "from": "rel-authority-documentation",
+      "to": "authority",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-authority-documentation",
+      "to": "documentation",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-authority-documentation",
+      "to": "PLS-DOC-01",
+      "type": "implements"
+    },
+    {
+      "from": "rel-documentation-representation",
+      "to": "documentation",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-documentation-representation",
+      "to": "representation",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-documentation-representation",
+      "to": "PLS-REP-01",
+      "type": "implements"
+    },
+    {
+      "from": "rel-editorial-documentation",
+      "to": "editorial-continuity",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-editorial-documentation",
+      "to": "documentation",
+      "type": "consumes"
+    },
+    {
+      "from": "rel-editorial-documentation",
+      "to": "PLS-CONT-01",
+      "type": "implements"
+    },
+    {
       "from": "PLS-WALL-01",
       "to": "PLS-TX-01",
       "type": "requires"
@@ -546,6 +681,51 @@
     {
       "from": "PLS-SOLVER-01",
       "to": "PLS-EVIDENCE-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DOC-01",
+      "to": "PLS-TX-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DOC-01",
+      "to": "PLS-REF-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DOC-01",
+      "to": "PLS-REP-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DOC-01",
+      "to": "PLS-EVIDENCE-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-CONT-01",
+      "to": "PLS-TX-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-CONT-01",
+      "to": "PLS-EVIDENCE-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-CONT-01",
+      "to": "PLS-CLAIM-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-CONT-01",
+      "to": "PLS-DECISION-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-CONT-01",
+      "to": "PLS-DOC-01",
       "type": "requires"
     },
     {
@@ -929,6 +1109,41 @@
       "type": "requires"
     },
     {
+      "from": "PLS-22",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-22",
+      "to": "PLS-09",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-22",
+      "to": "PLS-19",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-22",
+      "to": "PLS-10",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-23",
+      "to": "PLS-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-23",
+      "to": "PLS-10",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-23",
+      "to": "PLS-22",
+      "type": "requires"
+    },
+    {
       "from": "PLS-DOM-WALL",
       "to": "PLS-TX-01",
       "type": "requires"
@@ -949,6 +1164,21 @@
       "type": "requires"
     },
     {
+      "from": "PLS-DOM-DOC",
+      "to": "PLS-DOC-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DOM-DOC",
+      "to": "PLS-REP-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-DOM-DOC",
+      "to": "PLS-TX-01",
+      "type": "requires"
+    },
+    {
       "from": "PLS-SLICE-MTBL-01",
       "to": "PLS-TX-01",
       "type": "requires"
@@ -966,6 +1196,41 @@
     {
       "from": "PLS-SLICE-MTBL-01",
       "to": "PLS-DOM-WALL",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SLICE-MTBL-01",
+      "to": "PLS-DOC-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SLICE-MTBL-01",
+      "to": "PLS-DOM-DOC",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SLICE-DOC-01",
+      "to": "PLS-SLICE-MTBL-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SLICE-DOC-01",
+      "to": "PLS-DOM-WALL",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SLICE-DOC-01",
+      "to": "PLS-DOM-DOC",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SLICE-DOC-01",
+      "to": "PLS-DOC-01",
+      "type": "requires"
+    },
+    {
+      "from": "PLS-SLICE-DOC-01",
+      "to": "PLS-CONT-01",
       "type": "requires"
     },
     {

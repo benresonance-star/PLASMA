@@ -32,6 +32,21 @@
       }
     },
     {
+      "id": "PLS-CONT-01",
+      "version": "0.1.0",
+      "title": "Project-Grounded Editing and Cross-View Continuity Contract",
+      "authorityClass": "proposal-evidence-boundary",
+      "projectionId": "continuity-audit",
+      "source": "spec/contracts/PLS-CONT-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
       "id": "PLS-DECISION-01",
       "version": "0.1.0",
       "title": "DecisionContract",
@@ -53,6 +68,21 @@
       "authorityClass": "NON_AUTHORITATIVE_DERIVED",
       "projectionId": "differential-contract",
       "source": "spec/contracts/PLS-DIFF-01/contract.yaml",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      }
+    },
+    {
+      "id": "PLS-DOC-01",
+      "version": "0.1.0",
+      "title": "First-Class Architectural Documentation Contract",
+      "authorityClass": "typed-boundary",
+      "projectionId": "document-set",
+      "source": "spec/contracts/PLS-DOC-01/contract.yaml",
       "status": {
         "architecture": "accepted",
         "specification": "complete",

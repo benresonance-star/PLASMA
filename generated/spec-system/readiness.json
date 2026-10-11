@@ -571,6 +571,34 @@
       ]
     },
     {
+      "id": "PLS-22",
+      "kind": "Capability",
+      "title": "First-Class Multiscale Architectural Documentation",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "READY_FOR_EXPERIMENT",
+      "blockers": []
+    },
+    {
+      "id": "PLS-23",
+      "kind": "Capability",
+      "title": "Project-Grounded Editorial Intelligence and Continuity",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "READY_FOR_EXPERIMENT",
+      "blockers": []
+    },
+    {
       "id": "PLS-AGENT-01",
       "kind": "Contract",
       "title": "proposeTransaction()",
@@ -604,6 +632,20 @@
       ]
     },
     {
+      "id": "PLS-CONT-01",
+      "kind": "Contract",
+      "title": "Project-Grounded Editing and Cross-View Continuity Contract",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "READY_FOR_EXPERIMENT",
+      "blockers": []
+    },
+    {
       "id": "PLS-DECISION-01",
       "kind": "Contract",
       "title": "DecisionContract",
@@ -626,6 +668,39 @@
       "id": "PLS-DIFF-01",
       "kind": "Contract",
       "title": "PLS-DIFF-01 · DifferentialContract v0.1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "READY_FOR_EXPERIMENT",
+      "blockers": []
+    },
+    {
+      "id": "PLS-DOC-01",
+      "kind": "Contract",
+      "title": "First-Class Architectural Documentation Contract",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "BLOCKED",
+      "blockers": [
+        {
+          "code": "ACTIVATION_GATE",
+          "detail": "DOC-GATE-01"
+        }
+      ]
+    },
+    {
+      "id": "PLS-DOM-DOC",
+      "kind": "DomainPack",
+      "title": "Architectural Documentation Domain",
       "status": {
         "architecture": "accepted",
         "specification": "complete",
@@ -737,6 +812,20 @@
         "release": "excluded"
       },
       "state": "IMPLEMENTATION_INCOMPLETE",
+      "blockers": []
+    },
+    {
+      "id": "PLS-SLICE-DOC-01",
+      "kind": "VerticalSlice",
+      "title": "Slab–Stud–Roof-Truss Multiscale Plan/Section/Detail MVP",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "state": "READY_FOR_EXPERIMENT",
       "blockers": []
     },
     {

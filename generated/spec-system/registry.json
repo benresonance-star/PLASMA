@@ -86,6 +86,34 @@
       "source": "spec/architecture/components.yaml"
     },
     {
+      "id": "documentation",
+      "kind": "Component",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/components.yaml"
+    },
+    {
+      "id": "editorial-continuity",
+      "kind": "Component",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/components.yaml"
+    },
+    {
       "id": "external",
       "kind": "Component",
       "version": "0.1.0",
@@ -514,6 +542,34 @@
       "source": "spec/capabilities/PLS-21.yaml"
     },
     {
+      "id": "PLS-22",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-22.yaml"
+    },
+    {
+      "id": "PLS-23",
+      "kind": "Capability",
+      "version": "0.1.0",
+      "layer": "L3",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/capabilities/PLS-23.yaml"
+    },
+    {
       "id": "PLS-AGENT-01",
       "kind": "Contract",
       "version": "1.0.0",
@@ -556,6 +612,20 @@
       "source": "spec/constitution/constitution.yaml"
     },
     {
+      "id": "PLS-CONT-01",
+      "kind": "Contract",
+      "version": "0.1.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-CONT-01/contract.yaml"
+    },
+    {
       "id": "PLS-DECISION-01",
       "kind": "Contract",
       "version": "0.1.0",
@@ -582,6 +652,34 @@
         "release": "excluded"
       },
       "source": "spec/contracts/PLS-DIFF-01/contract.yaml"
+    },
+    {
+      "id": "PLS-DOC-01",
+      "kind": "Contract",
+      "version": "0.1.0",
+      "layer": "L2",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/contracts/PLS-DOC-01/contract.yaml"
+    },
+    {
+      "id": "PLS-DOM-DOC",
+      "kind": "DomainPack",
+      "version": "0.1.0",
+      "layer": "L4",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/domains/documentation/domain.yaml"
     },
     {
       "id": "PLS-DOM-WALL",
@@ -680,6 +778,20 @@
         "release": "excluded"
       },
       "source": "spec/contracts/PLS-REP-01/contract.yaml"
+    },
+    {
+      "id": "PLS-SLICE-DOC-01",
+      "kind": "VerticalSlice",
+      "version": "0.1.0",
+      "layer": "L5",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/slices/multiscale-building-documentation/slice.yaml"
     },
     {
       "id": "PLS-SLICE-MTBL-01",
@@ -794,6 +906,20 @@
       "source": "spec/architecture/relationships.yaml"
     },
     {
+      "id": "rel-authority-documentation",
+      "kind": "Relationship",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/relationships.yaml"
+    },
+    {
       "id": "rel-authority-geometry",
       "kind": "Relationship",
       "version": "0.1.0",
@@ -816,6 +942,34 @@
         "architecture": "accepted",
         "specification": "complete",
         "implementation": "partial",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/relationships.yaml"
+    },
+    {
+      "id": "rel-documentation-representation",
+      "kind": "Relationship",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "source": "spec/architecture/relationships.yaml"
+    },
+    {
+      "id": "rel-editorial-documentation",
+      "kind": "Relationship",
+      "version": "0.1.0",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
         "verification": "none",
         "release": "excluded"
       },
