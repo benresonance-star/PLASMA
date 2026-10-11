@@ -171,5 +171,17 @@
       "status": "unsatisfied",
       "description": "Working slab-wall-roof drawing set across eight scales under PLS-SLICE-DOC-01 with reproducible issue tests"
     }
-  ]
+  ],
+  "legacyProjectionId": "document-set",
+  "projection": {
+    "id": "document-set",
+    "name": "DocumentSetContract v0.1",
+    "from": "authority",
+    "to": "documentation",
+    "input": "Accepted building revision + authored document-intent revision + view, scale, purpose and publication policy",
+    "output": "Coherent plan/section/detail/sheet/issue manifest or explicit stale/conflict/missing-detail state",
+    "semantics": "Authoritative documentation intent uses shared transaction authority; vector drawing linework is derived and revision-pinned. Scale generalisation is purposeful (omit/simplify/combine/emphasize/explain).",
+    "failure": "Incoherent revisions, broken anchors, unsupported interfaces, missing details and stale graphics block issue; no invented detail or automatic approval.",
+    "explanation": "First-class documentation v0.1: editable plan/section/detail intent at 1:1–1:200, stable annotation and issue history, no parallel 2D building authority."
+  }
 }
