@@ -1,0 +1,64 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "DomainPack",
+  "id": "PLS-DOM-DOC",
+  "version": "0.1.0",
+  "title": "Architectural Documentation Domain",
+  "layer": "L4",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-DOC-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-REP-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-TX-01"
+    }
+  ],
+  "entities": [
+    "ViewDefinition",
+    "DetailIntent",
+    "GraphicRule",
+    "Dimension",
+    "Annotation",
+    "DocumentOverride",
+    "Sheet",
+    "IssuePackage"
+  ],
+  "relations": [
+    "Depicts",
+    "CutsThrough",
+    "References",
+    "AnchorsTo",
+    "DocumentsInterface",
+    "FollowsRevision",
+    "IssuedAs",
+    "Supersedes"
+  ],
+  "operations": [
+    "CreateView",
+    "SetViewPurposeAndScale",
+    "GenerateDrawing",
+    "SetDetailIntent",
+    "AddAnnotation",
+    "AddGraphicOverride",
+    "RebaseOverride",
+    "ValidateContinuity",
+    "ComposeSheet",
+    "ApproveIssue",
+    "SupersedeIssue"
+  ],
+  "allowedAuthority": "Document-owned intent/approvals are canonical through the common transaction system; physical building entities and exact geometry retain independent authority; generated vector/linework is never canonical physical design.",
+  "firstSlice": "PLS-SLICE-DOC-01"
+}
