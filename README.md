@@ -2,7 +2,15 @@
 
 ## Current Plasma specification
 
-**Plasma Spec System v1** is now the canonical specification source under [`/spec`](spec/). Atlas v0.10.1, readiness/dependency reports and the generated Spec System view are derived from that graph. The existing [Plasma / Foundry v0.4.29](apps/system-atlas-preview/plasma-spec.html) rich HTML specification remains a checked legacy projection during migration. [PLS-19 / PLS-WALL-01@0.1.0](apps/system-atlas-preview/wall-contract.json) remains unproven; PLS-20 remains deferred research; and [PLS-21 / PLS-DIFF-01@0.1.0](apps/system-atlas-preview/differential-contract.json) remains deferred, non-authoritative and not started.
+**Plasma Spec System v1** is now the canonical specification source under [`/spec`](spec/). Atlas v0.10.2, readiness/dependency reports and the generated Spec System view are derived from that graph. The existing [Plasma / Foundry v0.4.29](apps/system-atlas-preview/plasma-spec.html) rich HTML specification remains a checked legacy projection during migration. [PLS-19 / PLS-WALL-01@0.1.0](apps/system-atlas-preview/wall-contract.json) remains unproven; PLS-20 remains deferred research; and [PLS-21 / PLS-DIFF-01@0.1.0](apps/system-atlas-preview/differential-contract.json) remains deferred, non-authoritative and not started.
+
+## First-class architectural documentation (specified, unimplemented)
+
+The canonical Spec System now defines [PLS-DOC-01](spec/contracts/PLS-DOC-01/contract.yaml) and [PLS-22](spec/capabilities/PLS-22.yaml): authored drawing/view/detail/annotation/issue intent is first-class transaction-governed state; generated vector linework remains derived. [PLS-SLICE-DOC-01](spec/slices/multiscale-building-documentation/slice.yaml) specifies one slab–stud-wall–roof-truss plan/section/detail workflow at 1:1, 1:2, 1:5, 1:10, 1:20, 1:50, 1:100 and 1:200, with explicit documentation continuity and acceptance tests.
+
+[PLS-CONT-01](spec/contracts/PLS-CONT-01/contract.yaml) and [PLS-23](spec/capabilities/PLS-23.yaml) specify a project-grounded, reversible editorial-continuity methodology inspired by Ben Affleck's InterPositive. Deterministic changes, cross-view checks, source-linked proposals and human approval come first; learned predictions/captions are optional, non-authoritative and never satisfy engineering or publication gates alone.
+
+**These records are architecture/specification changes only.** The wall capability, first-class documentation, multiscale slice and editorial intelligence remain unimplemented/unverified until their applicable acceptance gates pass.
 
 ## Historical SPDS engineering baseline
 
