@@ -17,6 +17,16 @@ Files use the **JSON-compatible subset of YAML 1.2**. JSON is valid YAML 1.2, wh
 
 Architecture, specification, implementation, verification and release are independent axes. Readiness is derived by the compiler.
 
+## Architectural documentation and project-grounded editorial intelligence
+
+- `PLS-DOC-01` is the first-class documentation contract. It distinguishes governed authored document intent from building truth and derived 2D linework. It requires revision coherence, stable semantic anchors, approved exceptions and immutable issued packages.
+- `PLS-22` is the documentation capability; `PLS-DOM-DOC` is its optional domain pack.
+- `PLS-SLICE-DOC-01` is the focused slab–stud-wall–roof-truss plan/section/detail MVP spanning 1:1 through 1:200; ten executable acceptance tests are specified, not yet run.
+- `PLS-CONT-01` and `PLS-23` define project-grounded, non-destructive editorial variation and cross-view continuity inspired by InterPositive; deterministic and human-governed first, optional learned assistance later.
+- The previously defined Minimum Trusted Building Loop now requires a coherent model-linked plan/section before claiming completion.
+
+All of these remain not started/unverified in the tracked readiness axes. No new kernel primitive, independent 2D building authority, runtime feature or certified performance is implied.
+
 ## Commands
 
 ```sh
