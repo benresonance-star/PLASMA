@@ -28,6 +28,14 @@
     {
       "type": "requires",
       "id": "PLS-DOM-WALL"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-DOC-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-DOM-DOC"
     }
   ],
   "purpose": "Prove one complete authoritative editable architectural workflow.",
@@ -49,7 +57,11 @@
     "History and provenance remain intact.",
     "Stale computation cannot overwrite current state.",
     "Failed operations leave accepted state unchanged.",
-    "Derived geometry corresponds to the accepted revision."
+    "Derived geometry corresponds to the accepted revision.",
+    "A plan and section are derived from one coherent accepted model and documentation-intent revision, and neither view silently defines a competing building truth.",
+    "Authored annotations, detail intent and justified graphic overrides survive save/reopen or explicitly require rebase after affected edits.",
+    "A stale, failed or contradicting required drawing blocks publication without invalidating the already-accepted model."
   ],
-  "projection": null
+  "projection": null,
+  "documentationGate": "The Minimum Trusted Building Loop is not accepted until its small building edit has a revision-coherent 2D drawing projection and a tested publication status. Multiscale depth is separately proven by PLS-SLICE-DOC-01."
 }

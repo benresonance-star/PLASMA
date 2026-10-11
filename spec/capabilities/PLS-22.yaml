@@ -1,0 +1,82 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-22",
+  "version": "0.1.0",
+  "title": "First-Class Multiscale Architectural Documentation",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-09"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-19"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-10"
+    }
+  ],
+  "provides": [
+    "PLS-DOC-01"
+  ],
+  "activationGates": [],
+  "architecturalDecision": "Treat authored documentation intent as first-class governed model state, generated strokes as derived, and approved issue sets as immutable historical publication artifacts. Drawings interpret building truth by scale and purpose rather than blindly cutting 3D solids.",
+  "scope": [
+    "Persistent typed plans/sections/elevations/details/schedules/sheets/issues",
+    "Scale-sensitive semantic generalisation, visibility, hatches, cut priorities and line-weight grammar",
+    "Precise projectable geometry joined with generated 2D symbolic construction logic",
+    "Hosted annotations, stable dimension anchors, labels and drawing-local approved overrides",
+    "Continuity, currentness, approval and publication coherence",
+    "Document dependency impact analysis and selective regeneration",
+    "Drawing intent/mode usable without AI, independent from interactive mesh and same underlying building"
+  ],
+  "obligations": [
+    "Adopt PLS-DOC-01 across models, representation compiler and issue publication",
+    "Keep authored graphic exceptions distinct from physical building edits",
+    "Use revision-pinned correspondence and explicit stale/unresolved representation status",
+    "Adopt independent view and detail acceptance tests rather than visual screenshot approval only"
+  ],
+  "interfaces": {
+    "consumes": [
+      "PLS-WALL-01",
+      "PLS-GR-01",
+      "PLS-REP-01",
+      "PLS-REF-01",
+      "PLS-TX-01"
+    ],
+    "produces": [
+      "PlanView",
+      "SectionView",
+      "DetailView",
+      "ScheduleView",
+      "SheetIssue",
+      "ContinuityEvidence"
+    ],
+    "preferredMVP": "PLS-SLICE-DOC-01"
+  },
+  "verification": {
+    "needed": [
+      "Scale suite 1:200 to 1:1",
+      "Cross-view continuity and source traceability",
+      "Edit/regenerate with preserved annotation identity",
+      "Issued-set immutable reconstruction",
+      "AI-off document generation"
+    ],
+    "claim": "Specified only; no implementation or acceptance evidence is claimed."
+  }
+}

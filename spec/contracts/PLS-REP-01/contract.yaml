@@ -25,5 +25,17 @@
     "semantics": "Produce a derived view bound to an authoritative revision.",
     "failure": "Failed generation leaves the prior representation stale or unavailable.",
     "explanation": "Derived outputs can be regenerated independently and never become a competing source of truth."
+  },
+  "documentationBoundary": {
+    "principle": "Representation generation reads two compatible authoritative inputs: building semantic/geometry state and authored documentation intent. It owns neither; resultant graphic/vector/cache state is derived.",
+    "reference": "PLS-DOC-01",
+    "outputRevisionPins": [
+      "buildingRevision",
+      "documentIntentRevision",
+      "viewDefinitionVersion",
+      "representationGrammarVersion",
+      "producerVersion"
+    ],
+    "rule": "Physical geometry and 2D symbols may be composed, but an authored override never becomes untracked parallel physical building state."
   }
 }

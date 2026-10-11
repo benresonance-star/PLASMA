@@ -1,0 +1,123 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "VerticalSlice",
+  "id": "PLS-SLICE-DOC-01",
+  "version": "0.1.0",
+  "title": "Slab–Stud–Roof-Truss Multiscale Plan/Section/Detail MVP",
+  "layer": "L5",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-SLICE-MTBL-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-DOM-WALL"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-DOM-DOC"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-DOC-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-CONT-01"
+    }
+  ],
+  "purpose": "Prove one authoritative slab-wall-roof construction junction can be interpreted correctly as both plan and section at eight scales, with coordinated details and revision-pinned issue history; no full townhouse or universal architectural authoring prerequisite.",
+  "fixture": {
+    "building": "Single test bay with slab-on-ground, two-layer external wall with timber/steel stud framing alternatives, opening, pitched roof and structural truss, connections at floor and roof.",
+    "semanticFacts": [
+      "Slab thickness/edge",
+      "wall reference axis, layers, stud members and cavities",
+      "roof/truss structural support, eaves/roof build-up",
+      "interfaces including damp-proof/membrane, flashing, insulation and fastening intent when known",
+      "one hosted opening and room boundary"
+    ],
+    "detailJunctions": [
+      "slab-to-stud-wall bottom plate, anchor, moisture/thermal/weather continuity",
+      "stud-wall head-to-truss bearing/eave interface and envelope continuity"
+    ],
+    "fixtures": "One approved reference baseline, one controlled wall-thickness edit, one timber→steel framing-system variant and one deliberately broken membrane/annotation continuity case.",
+    "scales": [
+      "1:1",
+      "1:2",
+      "1:5",
+      "1:10",
+      "1:20",
+      "1:50",
+      "1:100",
+      "1:200"
+    ],
+    "outputs": [
+      "plan per scale",
+      "section per scale",
+      "slab-wall and wall-roof annotated construction details as scale warrants",
+      "2D revision-pinned vector graphics",
+      "one sheet set and annotation/dimension index",
+      "quantity and assembly change digest"
+    ]
+  },
+  "approach": {
+    "minimalGraph": "Do not require full Rust kernel, universal 2D drawing engine, training dataset or full building. Use existing semantic/transaction, selected OCCT operations, representation primitives and narrow deterministic drawing grammar.",
+    "twoPass": "Exact geometry produces an authoritative cut/projected anchor source; drawing compiler synthesizes scale-appropriate 2D abstractions, component symbolism, annotation, omitted/combined parts, line hierarchy and needed callouts.",
+    "generalisation": "At every scale record each meaningful rule as omit, simplify, combine, emphasize or explain; preserve important interfaces even if their geometry is too small to draw exactly.",
+    "overrides": "Authored graphic exception is stored against semantic refs and drawing scope. On relevant model change, rebind if safe; otherwise flag as stale/needs_review; never silently retain misleading dimensions.",
+    "sourceOfTruth": "One authoritative building model and versioned documentation intent, separate derived drawing representations; issue package pinned to both states."
+  },
+  "testCases": [
+    {
+      "id": "DOC-AT-01",
+      "assert": "All eight declared scales generate repeatable plan and section with documented graphic grammar/legibility expectations and stable entity IDs."
+    },
+    {
+      "id": "DOC-AT-02",
+      "assert": "Change one wall layer thickness and verify exact model, slab/roof joins, space dimensions, annotations, quantities and every affected view update; unaffected views stay unchanged."
+    },
+    {
+      "id": "DOC-AT-03",
+      "assert": "Swap timber stud system to steel using pinned system definitions; compare before/after takes, expose unresolved connection/membrane/performance information and never invent substitute details."
+    },
+    {
+      "id": "DOC-AT-04",
+      "assert": "Capture detail-specific override and dimension anchors; edit/slit/resize the wall and verify rebase or explicit ambiguous-anchor warning with no hidden stale annotation."
+    },
+    {
+      "id": "DOC-AT-05",
+      "assert": "Deliberately contradict material, junction or window position between plan, section and detail. Deterministic continuity audit flags which authored content conflicts and provides traceable sources."
+    },
+    {
+      "id": "DOC-AT-06",
+      "assert": "Generate an immutable baseline issue set; modify the model; old issue remains byte-identical and new issue requires fresh approved coherent model+documentation revisions."
+    },
+    {
+      "id": "DOC-AT-07",
+      "assert": "Close/reopen in a normal application origin and recover model, intent, semantic anchor mappings, override decisions, authored annotations, issue history and deterministic drawing regeneration."
+    },
+    {
+      "id": "DOC-AT-08",
+      "assert": "With AI unavailable, complete direct/numeric editing, multiscale drawing generation, continuum checks, and issue approval. AI may propose labels/repairs but cannot approve or alter authority."
+    },
+    {
+      "id": "DOC-AT-09",
+      "assert": "Repeat bounded variant (single layer thickness) with declared invariants; show before/after geometry, quantities and drawing deltas; reject a violating proposal without changing accepted state."
+    },
+    {
+      "id": "DOC-AT-10",
+      "assert": "Required drawing/quantity/anchor/assembly artifact failure or stale result blocks issue; no provisional graphics silently become issued evidence."
+    }
+  ],
+  "completionGate": "All DOC-AT-01…10 executable and passing on pinned reference fixture with links to source/test/CI evidence and a real output issue set.",
+  "priority": "immediate-vertical-slice",
+  "implementationNotes": "No claims of completed construction detailing, wall feature parity, drawing automation, verified compliance or AI models at specification time."
+}

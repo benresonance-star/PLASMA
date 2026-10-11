@@ -298,6 +298,132 @@
         "failure": "Outside validity/trust, at discontinuities or where exact validation is required, the differential result is rejected as authoritative and the declared exact fallback is invoked.",
         "explanation": "PLS-DIFF-01 exposes local model behaviour around a named authoritative state without granting the differential layer write authority."
       }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Relationship",
+      "id": "rel-authority-documentation",
+      "version": "0.1.0",
+      "title": "author documentation intent",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        },
+        {
+          "type": "consumes",
+          "id": "documentation"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-DOC-01"
+        }
+      ],
+      "projection": {
+        "id": "rel-authority-documentation",
+        "from": "authority",
+        "to": "documentation",
+        "contract": "document-set",
+        "direction": "forward",
+        "label": "author documentation intent",
+        "payload": "DocumentIntentChange + ViewDefinition + IssuePolicy",
+        "mode": "bounded-async-or-sync",
+        "authoritySemantics": "Only authoritative transactions may commit authored documentation intent; documentation can never independently rewrite physical building truth.",
+        "failure": "Reject stale bases, orphan anchors, incoherent issue revisions and invalid approved overrides.",
+        "explanation": "Only authoritative transactions may commit authored documentation intent; documentation can never independently rewrite physical building truth. Specified only; no executable continuity/document pipeline is claimed."
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Relationship",
+      "id": "rel-documentation-representation",
+      "version": "0.1.0",
+      "title": "derive scale-specific view",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "documentation"
+        },
+        {
+          "type": "consumes",
+          "id": "representation"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-REP-01"
+        }
+      ],
+      "projection": {
+        "id": "rel-documentation-representation",
+        "from": "documentation",
+        "to": "representation",
+        "contract": "derive-representation",
+        "direction": "forward",
+        "label": "derive scale-specific view",
+        "payload": "ModelRevision + DocIntentRevision + ViewContract",
+        "mode": "bounded-async-or-sync",
+        "authoritySemantics": "The representation service receives approved building+doc-intent inputs and returns derived linework without gaining authority.",
+        "failure": "Return stale/failed/unknown results and block publication where required.",
+        "explanation": "The representation service receives approved building+doc-intent inputs and returns derived linework without gaining authority. Specified only; no executable continuity/document pipeline is claimed."
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Relationship",
+      "id": "rel-editorial-documentation",
+      "version": "0.1.0",
+      "title": "propose continuity correction",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "editorial-continuity"
+        },
+        {
+          "type": "consumes",
+          "id": "documentation"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-CONT-01"
+        }
+      ],
+      "projection": {
+        "id": "rel-editorial-documentation",
+        "from": "editorial-continuity",
+        "to": "documentation",
+        "contract": "continuity-audit",
+        "direction": "forward",
+        "label": "propose continuity correction",
+        "payload": "ProposedVariant + EvidenceRefs + PreservationLocks",
+        "mode": "bounded-async-or-sync",
+        "authoritySemantics": "Project-specific observations and variants yield sourced non-authoritative proposals; human review is mandatory before standard transaction commit.",
+        "failure": "An unverified caption, learned prediction, violation or rejected take cannot change an issued or accepted state.",
+        "explanation": "Project-specific observations and variants yield sourced non-authoritative proposals; human review is mandatory before standard transaction commit. Specified only; no executable continuity/document pipeline is claimed."
+      }
     }
   ]
 }

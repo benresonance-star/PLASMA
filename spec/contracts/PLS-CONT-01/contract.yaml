@@ -1,0 +1,92 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-CONT-01",
+  "version": "0.1.0",
+  "title": "Project-Grounded Editing and Cross-View Continuity Contract",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "proposal-evidence-boundary",
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-TX-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-EVIDENCE-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-CLAIM-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-DECISION-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-DOC-01"
+    }
+  ],
+  "purpose": "Borrow InterPositive's project-grounded, narrowly scoped editorial consistency approach for architectural design and documentation without delegating truth, judgement or publication authority to a learned model.",
+  "lineage": {
+    "inspiration": "Ben Affleck/InterPositive: project-grounded existing material, consistency across edits and human editorial control; adaptation is a Plasma design proposal, not a claim about InterPositive internals.",
+    "reference": "https://about.netflix.com/en/news/why-interpositive-is-joining-netflix"
+  },
+  "operations": {
+    "projectContext": "Read a permissioned project-specific corpus of accepted BIM states, annotations, issued drawings, material systems, photos, scans, project decisions and measured outcomes; preserve source IDs/licences/applicability; no default external model training or leakage.",
+    "controlledVariants": "On a branch propose one or a bounded set of declared parameter changes against a pinned base while locking stated design-preservation invariants; compare cost/geometry/quantities/doc impacts with reproducible deterministic evaluators.",
+    "continuityAudit": "Check the same entity, junction, material, dimension and accepted decision across 3D, plan, section, detail, elevation, schedules and issues. Record source-linked discrepancy claims and affected views; never silently reconcile divergent facts.",
+    "sourceLinkedCaptioner": "Optional image/document understanding yields source-referenced candidate labels, assembly interpretations and missing-information questions, not accepted facts, construction directions or certified details.",
+    "learnedPrediction": "Optional learned surrogate may rank candidate edits or forecast costly downstream change but must return validity region, uncertainty, training/source provenance and independent exact-evaluator fallback.",
+    "editorReview": "Every consequential proposed edit/drawing repair includes its bounded scope, before/after, preservation locks, change impact, confidence, reproducible checks and explicit approve/reject/defer action.",
+    "nonDestructive": "Failed/rejected/ambiguous proposals cannot modify accepted model, authored document intent or past issue history; approval uses the standard atomic transaction boundary."
+  },
+  "predictionPolicy": {
+    "training": "Small controlled datasets/ablations and project-specific adaptation only with explicit permission and scope. Never assume sufficient data for ML; begin with deterministic sensitivity maps and ranked heuristics.",
+    "authority": "Predictions, captions and visual plausibility are neither geometry proof, engineering sign-off, planning interpretation nor regulatory evidence.",
+    "exactFallback": "Required claims must be re-evaluated through declared deterministic geometry/quantities/rule/analysis providers before approval or issue; invalid domains defer to exact checks.",
+    "mvp": "No model training and no ML inference required for PLS-SLICE-DOC-01. Controlled variation, continuity audit, human approval and reversible commits must work deterministically."
+  },
+  "preservationLocks": [
+    "Preserve specified room functions, accepted boundary geometry, critical construction interfaces and approved dimensions unless explicitly changed.",
+    "Scope generated graphic edits to selected views/targets; show every violated lock and all impacted sheets.",
+    "Never reuse a prediction if base revision, rule/assembly version or context validity region has changed."
+  ],
+  "acceptanceGates": [
+    {
+      "id": "CONT-GATE-01",
+      "status": "unsatisfied",
+      "description": "Deterministic one-variable wall/framing variant compares all eight scales with locked-intent and reversible proposal evidence"
+    },
+    {
+      "id": "CONT-GATE-02",
+      "status": "unsatisfied",
+      "description": "Cross-view discrepancy injection is caught; approved exceptions are distinguishable from true inconsistencies"
+    },
+    {
+      "id": "CONT-GATE-03",
+      "status": "unsatisfied",
+      "description": "Any learned caption/prediction is bounded, source-linked and blocked from authoritative publication unless independently validated"
+    }
+  ],
+  "legacyProjectionId": "continuity-audit",
+  "projection": {
+    "id": "continuity-audit",
+    "name": "Project-Grounded ContinuityContract v0.1",
+    "from": "intelligence",
+    "to": "documentation",
+    "input": "Project-scoped source references + pinned model/doc revisions + bounded ChangeSet and preservation locks",
+    "output": "Before/after variant delta + sourced discrepancy claims + human-review proposal",
+    "semantics": "Deterministic comparisons first; optional project-conditioned predictions rank work but never certify, publish or commit. All edit proposals use shared transactional authority.",
+    "failure": "Uncertain/unavailable project context or missing exact-evaluator validation remains unresolved; cannot silently rewrite drawings, model or historical issues.",
+    "explanation": "Inspired by InterPositive's project-grounded editorial-consistency approach; this is an architectural adaptation, not an assertion about its internals."
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Capability",
+  "id": "PLS-23",
+  "version": "0.1.0",
+  "title": "Project-Grounded Editorial Intelligence and Continuity",
+  "phase": "Plasma",
+  "layer": "L3",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-10"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-22"
+    }
+  ],
+  "provides": [
+    "PLS-CONT-01"
+  ],
+  "activationGates": [],
+  "inspiration": {
+    "name": "InterPositive project-specific editorial consistency, adapted to architecture",
+    "source": "https://about.netflix.com/en/news/why-interpositive-is-joining-netflix",
+    "scope": "Inspired-by proposal, not reverse-engineered implementation or proof of learned model behaviour."
+  },
+  "architecture": [
+    "Project-scoped multimodal corpus links accepted building entities and revisions to drawings, photographs, scans, annotations, decisions and source records.",
+    "Build controlled deterministic perturbation studies, one variable at a time where possible, with invariants and ground-truth evaluator outcomes; use these for sensitivity and explanation.",
+    "Before/after takes or alternatives are explicit ChangeSets on revisions, never edits to historical issued artifacts.",
+    "Continuity contracts compare model/plan/section/detail/schedule/quantity/material/analysis and flag contradictions.",
+    "Optional project-conditioned learned models estimate change consequences and prioritise investigations but never replace exact or verified results.",
+    "Optional source-linked architectural captioner suggests annotations and deficiencies subject to human review.",
+    "All edits preserve locked intent unless explicit approval changes it; non-destructive proposal→evaluate→review→atomic commit."
+  ],
+  "stagedActivation": [
+    "Stage A deterministic continuity and variation, with AI off",
+    "Stage B source-linked annotation proposals and multimodal context under permissions",
+    "Stage C experimentally validated surrogate impact predictions with reliability thresholds, confidence, domain bounds and hard exact fallback"
+  ],
+  "guardrails": [
+    "No train-on-user-project by default",
+    "No compliance/structural/thermal certification from learned prediction",
+    "No unapproved change to building, documentation intent or issued package",
+    "No hidden change to project baselines or preservation locks"
+  ],
+  "referenceSlice": "PLS-SLICE-DOC-01",
+  "verification": {
+    "claim": "Specified only; deterministic MVP elements are requested, trained per-project models deferred until measured advantage and validation."
+  }
+}

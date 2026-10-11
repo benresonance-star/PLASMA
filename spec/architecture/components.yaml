@@ -401,6 +401,128 @@
           "exact-fallback"
         ]
       }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Component",
+      "id": "documentation",
+      "version": "0.1.0",
+      "title": "Architectural Documentation Plane",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        },
+        {
+          "type": "consumes",
+          "id": "representation"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-DOC-01"
+        }
+      ],
+      "projection": {
+        "id": "documentation",
+        "atlasId": "SYS.DOC.009",
+        "name": "Documentation Plane",
+        "kind": "authored-document-intent-plus-derived-documents",
+        "authority": "authored intent via world authority; strokes derived",
+        "band": "projection",
+        "summary": "Persistent plan/section/detail/sheet intent plus revision-pinned derived graphics and publication assurance.",
+        "explanation": "The authority layer owns committed view definitions, detail intent, annotations, semantic anchors, sheet layouts and controlled overrides; physical building truth remains distinct. Plan, section, detail and schedule graphics are produced by a deterministic scale/purpose-specific representation compiler; issued packages are immutable manifests. PLS-DOC-01 governs consistency and issue gates. Specified, not implemented.",
+        "status": "specified-not-implemented",
+        "owner": "Architectural documentation domain / representation services",
+        "contracts": [
+          "document-set",
+          "derive-representation"
+        ],
+        "dependencies": [
+          "authority",
+          "representation"
+        ],
+        "evidence": [],
+        "tags": [
+          "drawing",
+          "plan",
+          "section",
+          "detail",
+          "1:200-to-1:1",
+          "publication",
+          "model-coherence",
+          "first-class-intent"
+        ]
+      }
+    },
+    {
+      "apiVersion": "plasma.spec/v1",
+      "kind": "Component",
+      "id": "editorial-continuity",
+      "version": "0.1.0",
+      "title": "Project-Grounded Editorial Continuity",
+      "layer": "L1",
+      "status": {
+        "architecture": "accepted",
+        "specification": "complete",
+        "implementation": "not_started",
+        "verification": "none",
+        "release": "excluded"
+      },
+      "dependsOn": [
+        {
+          "type": "consumes",
+          "id": "authority"
+        },
+        {
+          "type": "consumes",
+          "id": "documentation"
+        },
+        {
+          "type": "consumes",
+          "id": "intelligence"
+        },
+        {
+          "type": "implements",
+          "id": "PLS-CONT-01"
+        }
+      ],
+      "projection": {
+        "id": "editorial-continuity",
+        "atlasId": "SYS.EDT.010",
+        "name": "Editorial Continuity Plane",
+        "kind": "proposal-and-evaluation",
+        "authority": "non-authoritative",
+        "band": "intent",
+        "summary": "Project-specific, reversible variation studies and cross-view continuity audits inspired by InterPositive.",
+        "explanation": "Uses permissioned project context and deterministic evaluation of controlled before/after variants to identify documentary and building inconsistencies. Optional learned change predictions and source-linked captioning may assist only when validated, while proposed changes remain reversible and require human-approved atomic transactions. No learned compliance or certification claims.",
+        "status": "specified-not-implemented",
+        "owner": "Project context and evaluation adapters",
+        "contracts": [
+          "continuity-audit"
+        ],
+        "dependencies": [
+          "authority",
+          "documentation",
+          "intelligence"
+        ],
+        "evidence": [],
+        "tags": [
+          "InterPositive-inspired",
+          "continuity",
+          "project-grounded",
+          "variant",
+          "preservation-locks",
+          "human-review"
+        ]
+      }
     }
   ]
 }
