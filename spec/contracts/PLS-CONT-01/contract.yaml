@@ -76,5 +76,17 @@
       "status": "unsatisfied",
       "description": "Any learned caption/prediction is bounded, source-linked and blocked from authoritative publication unless independently validated"
     }
-  ]
+  ],
+  "legacyProjectionId": "continuity-audit",
+  "projection": {
+    "id": "continuity-audit",
+    "name": "Project-Grounded ContinuityContract v0.1",
+    "from": "intelligence",
+    "to": "documentation",
+    "input": "Project-scoped source references + pinned model/doc revisions + bounded ChangeSet and preservation locks",
+    "output": "Before/after variant delta + sourced discrepancy claims + human-review proposal",
+    "semantics": "Deterministic comparisons first; optional project-conditioned predictions rank work but never certify, publish or commit. All edit proposals use shared transactional authority.",
+    "failure": "Uncertain/unavailable project context or missing exact-evaluator validation remains unresolved; cannot silently rewrite drawings, model or historical issues.",
+    "explanation": "Inspired by InterPositive's project-grounded editorial-consistency approach; this is an architectural adaptation, not an assertion about its internals."
+  }
 }
