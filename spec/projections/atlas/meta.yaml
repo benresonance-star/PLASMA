@@ -5,7 +5,7 @@
   "version": "1.0.0",
   "projection": {
     "id": "PLASMA.SYSTEM_ATLAS",
-    "version": "0.10.1",
+    "version": "0.10.2",
     "title": "Plasma System Atlas",
     "status": "foundation-evolving",
     "description": "A machine-readable architecture model projected into multiple interactive Atlas views.",
@@ -23,21 +23,29 @@
       "Specification synchronisation records requirements, not implementation proof; PLS-19 / PLS-WALL-01 remains unproven until applicable acceptance evidence exists.",
       "Differential computation may guide authority, but may never silently become authority.",
       "Atlas is a generated projection of the canonical Plasma Spec System v1 graph.",
-      "Canonical specification sources never depend on generated projections."
+      "Canonical specification sources never depend on generated projections.",
+      "Authored documentation intent is first-class transaction-governed state; projected linework and graphic caches remain derived.",
+      "Plans, sections and details use deterministic purpose- and scale-sensitive generalisation; missing construction evidence blocks unsupported claims.",
+      "Project-grounded editorial intelligence produces reversible, evidence-linked proposals; optional ML never certifies or self-commits."
     ],
     "specification": {
       "version": "0.4.29",
       "path": "./plasma-spec.html",
       "wallContract": "PLS-WALL-01@0.1.0",
       "wallCapability": "PLS-19",
-      "syncedAt": "2026-10-02",
+      "syncedAt": "2026-10-11",
       "status": "specified; differential architecture deferred and unimplemented",
       "differentialRenderingContract": "PLS-DR-01@0.1.0",
       "differentialRenderingCapability": "PLS-20",
       "differentialContract": "PLS-DIFF-01@0.1.0",
       "differentialCapability": "PLS-21",
       "specSystem": "1.0.0-draft",
-      "sourceMode": "generated-from-spec"
+      "sourceMode": "generated-from-spec",
+      "documentationContract": "PLS-DOC-01@0.1.0",
+      "documentationCapability": "PLS-22",
+      "continuityContract": "PLS-CONT-01@0.1.0",
+      "continuityCapability": "PLS-23",
+      "documentationMvp": "PLS-SLICE-DOC-01@0.1.0"
     }
   }
 }
