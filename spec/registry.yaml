@@ -25,7 +25,9 @@
       "spec/contracts/PLS-CLAIM-01/contract.yaml",
       "spec/contracts/PLS-EVIDENCE-01/contract.yaml",
       "spec/contracts/PLS-DECISION-01/contract.yaml",
-      "spec/contracts/PLS-SOLVER-01/contract.yaml"
+      "spec/contracts/PLS-SOLVER-01/contract.yaml",
+      "spec/contracts/PLS-DOC-01/contract.yaml",
+      "spec/contracts/PLS-CONT-01/contract.yaml"
     ],
     "languages": "spec/languages/languages.yaml",
     "transactions": "spec/transactions/transactions.yaml",
@@ -64,13 +66,17 @@
     "spec/capabilities/PLS-18.yaml",
     "spec/capabilities/PLS-19.yaml",
     "spec/capabilities/PLS-20.yaml",
-    "spec/capabilities/PLS-21.yaml"
+    "spec/capabilities/PLS-21.yaml",
+    "spec/capabilities/PLS-22.yaml",
+    "spec/capabilities/PLS-23.yaml"
   ],
   "domains": [
-    "spec/domains/wall/domain.yaml"
+    "spec/domains/wall/domain.yaml",
+    "spec/domains/documentation/domain.yaml"
   ],
   "verticalSlices": [
-    "spec/slices/minimum-trusted-building-loop/slice.yaml"
+    "spec/slices/minimum-trusted-building-loop/slice.yaml",
+    "spec/slices/multiscale-building-documentation/slice.yaml"
   ],
   "research": [
     "spec/research/RND-01.yaml",
