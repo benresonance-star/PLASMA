@@ -1,0 +1,175 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "Contract",
+  "id": "PLS-DOC-01",
+  "version": "0.1.0",
+  "title": "First-Class Architectural Documentation Contract",
+  "layer": "L2",
+  "status": {
+    "architecture": "accepted",
+    "specification": "complete",
+    "implementation": "not_started",
+    "verification": "none",
+    "release": "excluded"
+  },
+  "authorityClass": "typed-boundary",
+  "dependsOn": [
+    {
+      "type": "requires",
+      "id": "PLS-TX-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-REF-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-REP-01"
+    },
+    {
+      "type": "requires",
+      "id": "PLS-EVIDENCE-01"
+    }
+  ],
+  "purpose": "Coordinate model-grounded architectural plans, sections, elevations, details, annotations, schedules and issued sheets at multiple scales without treating projection linework or AI output as building truth.",
+  "authorityModel": {
+    "buildingTruth": "Entity/State/Relation plus pinned construction systems and accepted exact geometry remain authoritative physical design state.",
+    "authoredDocumentIntent": "View definitions, graphic grammar and view-specific exceptions, annotations, dimensions, detail intent, sheet layouts, issue/revision selections and approval decisions are first-class versioned semantic state, committed by the same transaction authority. Documentation authoring is not merely an image cache.",
+    "derivedOutputs": "Projected/abstracted geometry, vector strokes, hatches, visibility, generated symbols, layout previews and report data are derived artifacts pinned to building and documentation-intent revisions, tool versions and dependency fingerprints.",
+    "issuedRecord": "Approved issue packages are immutable publication records of a coherent revision set; superseding them creates a new issue, never silent regeneration of old issued PDFs.",
+    "conflictRule": "An authored detail or graphic exception may never secretly modify physical building facts. Inconsistency becomes a visible diagnostic with explicit user disposition and no false coordinated issue."
+  },
+  "coreRecords": {
+    "ViewDefinition": [
+      "id",
+      "purpose",
+      "plan/section/elevation/detail/schedule kind",
+      "model+document revisions",
+      "view frame and cut rules",
+      "discipline",
+      "scale",
+      "semantic fidelity",
+      "geometric tolerance",
+      "lineweight/pen/hatch grammar",
+      "visibility/context",
+      "source and selector refs"
+    ],
+    "DetailIntent": [
+      "id",
+      "junction or feature semantic references",
+      "construction function and interfaces",
+      "component roles",
+      "allowed omissions/generalisation",
+      "annotation intent",
+      "required evidence",
+      "unresolved assumptions"
+    ],
+    "GraphicRule": [
+      "id",
+      "scope/scale/purpose",
+      "priority",
+      "action omit|simplify|combine|emphasise|explain",
+      "semantic selector",
+      "representation expression",
+      "source and version"
+    ],
+    "Dimension": [
+      "id",
+      "typed semantic anchor refs",
+      "measurement convention",
+      "units/rounding/tolerance",
+      "driving vs reference",
+      "invalid-reference handling"
+    ],
+    "Annotation": [
+      "id",
+      "semantic target and source refs",
+      "text/symbol key",
+      "leader/placement policy",
+      "author and approval",
+      "reflow policy"
+    ],
+    "Override": [
+      "id",
+      "scope view/detail/element",
+      "semantic target",
+      "purpose/reason",
+      "allowed graphic delta",
+      "author",
+      "base revisions",
+      "rebase/disposition state"
+    ],
+    "SheetIssue": [
+      "id",
+      "view/schedule manifest",
+      "model revision",
+      "documentation revision",
+      "producers/versions",
+      "source evidence and exceptions",
+      "approval actor/time",
+      "immutable artifact hashes",
+      "supersession"
+    ]
+  },
+  "representationPipeline": [
+    "read coherent authoritative building and documentation-intent revisions",
+    "resolve stable semantic and geometric anchors",
+    "project exact/analytical geometry at purpose/scale",
+    "apply deterministic semantic generalisation and detail grammar",
+    "compose 2D authored annotations, symbolic conventions and controlled overrides",
+    "validate dimension anchors, graphics, construction interfaces and cross-view continuity",
+    "publish revision-pinned vector drawings, schedules and issue package with immutable manifest"
+  ],
+  "scalePolicy": {
+    "testScales": [
+      "1:200",
+      "1:100",
+      "1:50",
+      "1:20",
+      "1:10",
+      "1:5",
+      "1:2",
+      "1:1"
+    ],
+    "rule": "Scale is not a switch for geometry tessellation alone. Purpose and construction significance determine what to omit, simplify, combine, emphasize or explain. Scale rules and graphic abstractions are explicit, deterministic, inspectable and versioned.",
+    "examples": [
+      "At 1:200 communicate building mass, primary spaces and openings; suppress unhelpful component linework.",
+      "At 1:50 expose walls, openings, materials and basic structure with legible line hierarchy.",
+      "At 1:20 and 1:10 represent relevant assembly layers, framing and interfaces with construction conventions.",
+      "At 1:5, 1:2 and 1:1 resolve justified fixings, membranes, tolerances, seals and interface detail, or explicitly flag missing information rather than invent them."
+    ],
+    "drawingsAreInterpretations": "3D model sections are a geometry source, not sufficient drawing intelligence. Authoritative 3D plus semantic 2D/documentation intent produces the coordinated drawing; no unmanaged duplicated 2D building model."
+  },
+  "publicationGates": [
+    "Every published view/schedule in an issue references one mutually coherent approved model+documentation revision set.",
+    "No required view is missing, failed, stale, provisional or ambiguously anchored.",
+    "Cross-view identifiers, material/assembly choices, key dimensions, levels, annotation references and quantities agree or have an approved documented exception.",
+    "Breaking topology/host changes invalidate or request review of authored graphics and details; never silently leave misleading linework.",
+    "No required construction detail is represented as proven when underlying assembly/interface/evidence is unspecified.",
+    "Drawings remain usable with AI disabled; AI-generated drafting is never self-approved."
+  ],
+  "failureSemantics": [
+    "stale_view",
+    "unresolved_anchor",
+    "ambiguous_junction",
+    "missing_detail_intent",
+    "unverified_assembly",
+    "conflicting_override",
+    "cross_view_mismatch",
+    "issue_revision_mismatch",
+    "source_unavailable"
+  ],
+  "nonGoals": [
+    "A universal fully automatic 1:1 fabrication detail generator",
+    "Forcing every symbolic 2D drafting convention into physical 3D solids",
+    "Certification of building compliance or structural adequacy",
+    "Replacing all specialist drafting workflows in the first slice"
+  ],
+  "activationGates": [
+    {
+      "id": "DOC-GATE-01",
+      "status": "unsatisfied",
+      "description": "Working slab-wall-roof drawing set across eight scales under PLS-SLICE-DOC-01 with reproducible issue tests"
+    }
+  ]
+}
