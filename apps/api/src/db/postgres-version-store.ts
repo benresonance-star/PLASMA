@@ -85,15 +85,17 @@ export class PostgresVersionStore implements VersionStore {
     snapshots: Snapshot[],
     branch: Branch,
   ): Promise<void> {
-    await this.sql`
+    const updated = await this.sql`
       UPDATE vs_branches SET
         head_hash = ${branch.headHash},
         head_event_id = ${branch.headEventId},
         objects = ${JSON.stringify(Object.fromEntries(objects))}::jsonb,
         events = ${JSON.stringify(events)}::jsonb,
         snapshots = ${JSON.stringify(snapshots)}::jsonb
-      WHERE branch_id = ${row.branch_id}
+      WHERE branch_id = ${row.branch_id} AND head_hash = ${row.head_hash}
+      RETURNING branch_id
     `;
+    if (updated.length !== 1) throw new Error('HEAD_CONFLICT: branch changed during mutation');
   }
 
   async listObjects(branchId: string): Promise<Record<string, unknown>[]> {

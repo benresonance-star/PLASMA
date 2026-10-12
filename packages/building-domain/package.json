@@ -1,0 +1,1 @@
+{"name":"@spds/building-domain","version":"0.0.0","private":true,"type":"module","exports":{".":{"types":"./dist/index.d.ts","import":"./dist/index.js"}},"dependencies":{"@spds/semantic-core":"workspace:*","@spds/dependency-graph":"workspace:*"},"scripts":{"build":"tsc -p tsconfig.json","typecheck":"tsc -p tsconfig.json --noEmit","test":"vitest run"}}
