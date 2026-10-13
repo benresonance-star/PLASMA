@@ -1,3 +1,5 @@
+import { renderCouncilView, renderCouncilInspector, councilReverseLinks } from './atlas-council-renderer.js';
+
 const esc = value => String(value ?? '')
   .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
   .replaceAll('"','&quot;').replaceAll("'",'&#039;');
@@ -75,6 +77,11 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
           </a>
         </div>
         <div class="index-group">
+          <div class="index-label">Development governance</div>
+          <a class="index-item ${route.view==='council'?'active':''}" href="#council"><span class="dot agent"></span>Architecture Council</a>
+          ${model.council.roles.filter(x=>x.phase==='initial').map(x=>`<button class="index-item ${active('councilRole',x.id)}" data-atlas-type="councilRole" data-atlas-id="${esc(x.id)}"><span class="dot agent"></span>${esc(x.name)}</button>`).join('')}
+        </div>
+        <div class="index-group">
           <div class="index-label">Planes</div>
           ${['authority','interaction','intelligence'].map(id => {
             const x=c.get(id); return `<button class="index-item ${active('component',id)}" data-atlas-type="component" data-atlas-id="${id}"><span class="dot ${x.authority==='authoritative'?'authority':x.kind==='agentic'?'agent':'runtime'}"></span>${esc(x.name)}</button>`;
@@ -105,7 +112,8 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
 
   function renderView(route, options = {}) {
     const view = route.view;
-    if (view === 'integration') renderIntegration(route);
+    if (view === 'council') renderCouncilView(model, viewHost, route);
+    else if (view === 'integration') renderIntegration(route);
     else if (view === 'languages') renderLanguages(route);
     else if (view === 'transactions') renderTransactions(route);
     else if (view === 'components') renderComponents(route);
@@ -513,6 +521,8 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         ${r.requirements?`<section><h4>Requirements</h4><div class="inspector-list wall-requirements">${r.requirements.map(x=>`<div><span>${esc(x.id)}</span><p><b>${esc(x.title)}</b><br>${esc(x.must)}</p></div>`).join('')}</div></section>`:''}
         ${r.acceptanceGates?`<section><h4>Required acceptance gates · unproven</h4><div class="inspector-list wall-gates">${r.acceptanceGates.map(x=>`<div><span>${esc(x.id)}</span><p><b>${esc(x.title)}</b><br>${esc(x.assert)}<br>${esc(x.status)}</p></div>`).join('')}</div></section>`:''}
         ${r.activationGates?`<section><h4>Activation gates · all unsatisfied</h4><div class="inspector-list differential-gates">${r.activationGates.map(x=>`<div><span>${esc(x.id)}</span><p><b>${esc(x.title)}</b><br>Required: ${esc(x.required)} · ${esc(x.status)}</p></div>`).join('')}</div></section>`:''}`;
+    } else if(['councilRole','councilDecision','councilStage'].includes(ref.type)){
+      body=renderCouncilInspector(model,ref);
     } else if(ref.type==='domainLanguage'){
       body=`<div class="inspector-kv"><span>ID</span><b>${esc(r.atlasId)}</b><span>Maturity</span><b>${esc(labelize(r.maturity))}</b><span>Uses</span><b>${esc(r.uses.join(', '))}</b></div>
         <section><h4>Types</h4><div class="chip-row">${chips(r.types,'type-token')}</div></section>
@@ -578,6 +588,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
           </button>`).join(''):'<span class="muted">No Integration relationships reference this evidence.</span>'}</div></section>`;
     }
 
+    if(ref.type==='component'||ref.type==='contract') body+=councilReverseLinks(model,ref.type,ref.id);
     const graphLinks=ref.type==='integrationLink'?[]:model.related(ref.type,ref.id);
     const graphSection=graphLinks.length?`
       <section class="inspector-graph"><h4>Integration graph · ${graphLinks.length}</h4>
