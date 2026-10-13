@@ -25,14 +25,18 @@ try{
   assert((await page.locator('.council-stage').innerText()).includes('No agent runs recorded'),'Council must not imply agents have executed');
   await page.click('.council-role-card[data-atlas-id="systems"]');
   await page.waitForFunction(()=>location.hash==='#council/role/systems');
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Review only'));
   assert((await page.locator('#inspector').innerText()).includes('Review only'),'Council role authority must be explicit');
   await page.click('.council-step[data-atlas-id="wall-edit-architecture:challenge"]');
   await page.waitForFunction(()=>location.hash.includes('#council/stage/'));
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('not_run'));
   assert((await page.locator('#inspector').innerText()).includes('not_run'),'Decision step must state that no review ran');
   await page.goto(base+'#overview/component/authority',{waitUntil:'networkidle'});
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Architecture Council reviewers'));
   assert((await page.locator('#inspector').innerText()).includes('Architecture Council reviewers'),'Component inspector must expose Council assignments');
   await page.click('#inspector [data-atlas-type="councilDecision"]');
   await page.waitForFunction(()=>location.hash.startsWith('#council/decision/'));
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('unassessed'));
   assert((await page.locator('#inspector').innerText()).includes('unassessed'),'Decision inspector must show unassessed alternatives');
   const councilResponse=await page.request.get(base+'council.json');
   assert(councilResponse.ok(),'Generated Council catalogue must be served');
