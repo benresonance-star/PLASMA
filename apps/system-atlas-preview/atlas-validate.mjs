@@ -228,7 +228,7 @@ assert(atlas.transactions.invariants?.length>=8,'transaction model must expose k
 
 const runtimeModel=createAtlasModel(atlas,null,council,references);
 assert(runtimeModel.search('OpenCascade').some(x=>x.type==='referenceTechnology'&&x.id==='opencascade'),'Technology references must be searchable');
-assert(runtimeModel.search('why plasma').some(x=>x.type.startsWith('reference')),'Rationale text must be searchable');
+assert(runtimeModel.search('semantic building truth').some(x=>x.type.startsWith('reference')),'Rationale text must be searchable');
 assert(runtimeModel.resolve('referenceSystem','authority')?.raw?.why,'Reference system card must resolve canonical component');
 assert(runtimeModel.referenceLinksFor('component','geometry').some(x=>x.ref.id==='opencascade'),'Geometry reference must navigate to OCCT technology');
 assert(runtimeModel.referenceLinksFor('technology','threejs').some(x=>x.ref.type==='referenceSystem'),'Technology reference must reverse navigate to system');
