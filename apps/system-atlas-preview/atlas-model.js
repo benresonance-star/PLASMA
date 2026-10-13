@@ -4,6 +4,10 @@ export async function loadAtlas() {
   const response = await fetch('./atlas.json', { cache: 'no-store' });
   if (!response.ok) throw new Error(`Atlas model failed to load: ${response.status}`);
   const data = await response.json();
+  const councilResponse = await fetch('./council.json', { cache: 'no-store' });
+  if (!councilResponse.ok) throw new Error('Council projection failed to load: ' + councilResponse.status);
+  const council = await councilResponse.json();
+  if (!data.views.some(view => view.id === council.view.id)) data.views.push(council.view);
 
   let repositoryEvidence = null;
   try {
@@ -27,13 +31,14 @@ export async function loadAtlas() {
     };
   }
 
-  return createAtlasModel(data, repositoryEvidence);
+  return createAtlasModel(data, repositoryEvidence, council);
 }
 
 const keyFor = (type, id) => `${type}:${id}`;
 const evidenceStatus = evidence => evidence?.verification?.status || 'unlinked';
 
-export function createAtlasModel(data, repositoryEvidence = null) {
+export function createAtlasModel(data, repositoryEvidence = null, council = null) {
+  const governance = council || { roles: [], decisions: [] };
   const links = Array.isArray(data.links) ? data.links : [];
   const by = {
     component: new Map(data.components.map(x => [x.id, x])),
@@ -44,7 +49,10 @@ export function createAtlasModel(data, repositoryEvidence = null) {
     stage: new Map(data.transactions.stages.map(x => [x.id, x])),
     slice: new Map(data.slices.map(x => [x.id, x])),
     evidence: new Map(data.evidence.map(x => [x.id, x])),
-    integrationLink: new Map(links.map(x => [x.id, x]))
+    integrationLink: new Map(links.map(x => [x.id, x])),
+    councilRole: new Map(governance.roles.map(x => [x.id, x])),
+    councilDecision: new Map(governance.decisions.map(x => [x.id, x])),
+    councilStage: new Map(governance.decisions.flatMap(d => d.stages.map(stage => [d.id + ':' + stage.id, { ...stage, id: d.id + ':' + stage.id, decisionId: d.id }])))
   };
 
   const refs = [];
@@ -68,6 +76,9 @@ export function createAtlasModel(data, repositoryEvidence = null) {
   push('stage', data.transactions.stages);
   push('slice', data.slices);
   push('evidence', data.evidence);
+  push('councilRole', governance.roles);
+  push('councilDecision', governance.decisions);
+  push('councilStage', [...by.councilStage.values()]);
 
   const baseRefMap = new Map(refs.map(ref => [keyFor(ref.type, ref.id), ref]));
   const endpointName = endpoint => baseRefMap.get(keyFor(endpoint.type, endpoint.id))?.name || endpoint.id;
@@ -284,6 +295,10 @@ export function createAtlasModel(data, repositoryEvidence = null) {
           ...(raw.flow || []),
           ...(raw.proves || []),
           ...(raw.keySystems || []),
+          ...(raw.components || []),
+          ...(raw.contracts || []),
+          ...(raw.roleIds || []),
+          ...(raw.affectedRefs || []).map(item => item.id),
           ...(raw.evidenceRefs || []).map(item => by.evidence.get(item.id)?.name)
         ].filter(Boolean).join(' ').toLowerCase();
         const graphHaystack = graphTerms.filter(Boolean).join(' ').toLowerCase();
@@ -303,6 +318,15 @@ export function createAtlasModel(data, repositoryEvidence = null) {
 
   return {
     data,
+    council: governance,
+    councilRolesFor(type, id) {
+      if (type === 'component') return governance.roles.filter(role => role.components.includes(id));
+      if (type === 'contract') return governance.roles.filter(role => role.contracts.includes(id));
+      return [];
+    },
+    councilDecisionsFor(type, id) {
+      return governance.decisions.filter(decision => decision.affectedRefs.some(ref => ref.type === type && ref.id === id));
+    },
     by,
     refs,
     links,
@@ -325,6 +349,9 @@ export function routeForRef(ref) {
   if (!ref) return '#overview';
   if (ref.type === 'integrationLink') return `#integration/link/${encodeURIComponent(ref.id)}`;
   const prefix = {
+    councilRole: 'council/role',
+    councilDecision: 'council/decision',
+    councilStage: 'council/stage',
     component: 'components',
     relationship: 'overview/relationship',
     contract: 'contracts',
@@ -350,17 +377,23 @@ export function parseHash(hash) {
   if (view === 'languages' && parts[1] === 'domain') return { view, type: 'domainLanguage', id: parts[2] || null };
   if (view === 'languages' && parts[1] === 'core') return { view, type: 'coreLanguage', id: parts[2] || null };
   if (view === 'transactions' && parts[1] === 'stage') return { view, type: 'stage', id: parts[2] || null };
+  if (view === 'council' && parts[1] === 'role') return { view, type: 'councilRole', id: parts[2] || null };
+  if (view === 'council' && parts[1] === 'decision') return { view, type: 'councilDecision', id: parts[2] || null };
+  if (view === 'council' && parts[1] === 'stage') return { view, type: 'councilStage', id: parts[2] || null };
   if (view === 'components') return { view, type: 'component', id: parts[1] || null };
   if (view === 'contracts') return { view, type: 'contract', id: parts[1] || null };
   if (view === 'slices') return { view, type: 'slice', id: parts[1] || null };
   if (view === 'evidence') return { view, type: 'evidence', id: parts[1] || null };
-  return { view: ['overview','integration','languages','transactions','components','contracts','slices','evidence'].includes(view) ? view : 'overview', type: null, id: null };
+  return { view: ['overview','integration','languages','transactions','components','contracts','slices','evidence','council'].includes(view) ? view : 'overview', type: null, id: null };
 }
 
 export function routeForSelection(type, id, currentView = 'overview') {
   if (!type || !id) return `#${currentView}`;
   if (type === 'integrationLink') return `#integration/link/${encodeURIComponent(id)}`;
   if (currentView === 'integration') return `#integration/${encodeURIComponent(type)}/${encodeURIComponent(id)}`;
+  if (type === 'councilRole') return '#council/role/' + encodeURIComponent(id);
+  if (type === 'councilDecision') return '#council/decision/' + encodeURIComponent(id);
+  if (type === 'councilStage') return '#council/stage/' + encodeURIComponent(id);
   if (type === 'component') return currentView === 'overview' ? `#overview/component/${encodeURIComponent(id)}` : `#components/${encodeURIComponent(id)}`;
   if (type === 'relationship') return `#overview/relationship/${encodeURIComponent(id)}`;
   if (type === 'domainLanguage') return `#languages/domain/${encodeURIComponent(id)}`;
