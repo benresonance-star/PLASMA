@@ -35,3 +35,7 @@ pnpm spec:check
 ```
 
 `spec:check` validates identity, status values, hard dependency cycles, dependency direction, research isolation, exact-fallback rules, legacy manifest drift and generated-output drift.
+
+## System and technology reference cards
+
+`spec/references/catalog.yaml` contains curated rationale, strengths, weaknesses, alternatives, and typed relationships for all canonical system components and repository-grounded technology choices. `pnpm spec:build` generates `apps/system-atlas-preview/references.json`. Alternatives are comparative analysis only and do not imply dependencies or approved substitutions. Technology adoption describes repository declarations/configuration, not executable verification; component readiness remains canonical in `/spec/architecture/components.yaml`.

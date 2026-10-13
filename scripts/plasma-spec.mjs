@@ -83,6 +83,7 @@ const repositoryEvidence = read(registry.atlas.repositoryEvidence);
 const atlasMeta = read(registry.atlas.meta);
 const atlasViews = read(registry.atlas.views);
 const council = read(registry.council);
+const references = read(registry.references);
 
 const schemaFor = {
   SpecSystem: 'spec/schemas/spec-system.schema.json',
@@ -96,7 +97,8 @@ const schemaFor = {
   EvidenceCatalog: 'spec/schemas/evidence.schema.json',
   Research: 'spec/schemas/research.schema.json',
   Release: 'spec/schemas/release.schema.json',
-  ArchitectureCouncil: 'spec/schemas/council.schema.json'
+  ArchitectureCouncil: 'spec/schemas/council.schema.json',
+  ArchitectureReferences: 'spec/schemas/references.schema.json'
 };
 const validate = (record, label) => {
   const p = schemaFor[record.kind];
@@ -104,6 +106,7 @@ const validate = (record, label) => {
 };
 validate(system, 'spec-system');
 validate(council, registry.council);
+validate(references, registry.references);
 validate(constitution, registry.constitution);
 validate(componentCatalog, registry.atlas.components);
 validate(relationshipCatalog, registry.atlas.relationships);
@@ -220,6 +223,41 @@ for (const decision of councilDecisions) {
     for (const roleId of stage.roleIds || []) assert(roleIds.has(roleId), decision.id + ': unknown reviewer ' + roleId);
   }
 }
+
+
+const knownSystemIds = new Set((componentCatalog.items || []).map(item=>item.projection.id));
+const systemNotes = references.systems || [];
+const technologies = references.technologies || [];
+const knownTechIds = new Set(technologies.map(item=>item.id));
+uniqueIds(systemNotes, 'reference systems');
+uniqueIds(technologies, 'reference technologies');
+assert(systemNotes.length === knownSystemIds.size, 'every canonical component requires exactly one reference card');
+for (const id of knownSystemIds) assert(systemNotes.some(item=>item.id===id), 'missing reference card for component '+id);
+for (const item of systemNotes) assert(knownSystemIds.has(item.id), 'unknown reference system '+item.id);
+for (const item of [...systemNotes, ...technologies]) {
+  assert(item.why && item.strengths?.length && item.weaknesses?.length && item.alternatives?.length,
+    item.id + ': reference card must document rationale, strengths, limits and alternatives');
+  for (const ref of item.relationships || []) {
+    assert(['component','technology'].includes(ref.type), item.id + ': invalid relationship type '+ref.type);
+    assert(ref.role && (ref.type==='component' ? knownSystemIds.has(ref.id) : knownTechIds.has(ref.id)),
+      item.id + ': unresolved reference relationship '+ref.type+':'+ref.id);
+    assert(!(ref.type==='component' && item.id===ref.id), item.id+': self-relation is invalid');
+  }
+}
+for (const item of technologies) {
+  assert(item.what && item.adoption, item.id+': technology must describe itself and declare adoption');
+  assert(item.sourcePaths?.length>0, item.id+': technology requires repository source paths');
+  for (const sourcePath of item.sourcePaths||[]) {
+    assert(!sourcePath.includes('..') && fs.existsSync(abs(sourcePath)), item.id+': missing or unsafe repository source '+sourcePath);
+  }
+}
+
+const referencesProjection = {
+  view: { id:'references', label:'References', description:'System and technology decisions, trade-offs, alternatives and typed relationships.' },
+  disclaimer: references.disclaimer,
+  systems: systemNotes,
+  technologies
+};
 
 const atlas = {
   meta: atlasMeta.projection,
@@ -354,6 +392,7 @@ const html = `<!doctype html>
 
 output(system.outputs.atlas, atlas);
 output(system.outputs.council, council.projection);
+output(system.outputs.references, referencesProjection);
 output(system.outputs.repositoryEvidence, repositoryEvidence.projection);
 output(system.outputs.status, statusOut);
 output(system.outputs.humanHtml, html);

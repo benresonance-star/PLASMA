@@ -100,5 +100,6 @@
     "spec/schemas/release.schema.json",
     "spec/schemas/spec-system.schema.json"
   ],
-  "council": "spec/council/council.yaml"
+  "council": "spec/council/council.yaml",
+  "references": "spec/references/catalog.yaml"
 }

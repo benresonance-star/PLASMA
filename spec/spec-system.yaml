@@ -88,7 +88,8 @@
     "contractRegistry": "generated/spec-system/contracts/registry.json",
     "atlasSnapshot": "generated/spec-system/atlas/atlas.json",
     "evidenceSnapshot": "generated/spec-system/atlas/repository-evidence.json",
-    "council": "apps/system-atlas-preview/council.json"
+    "council": "apps/system-atlas-preview/council.json",
+    "references": "apps/system-atlas-preview/references.json"
   },
   "migration": {
     "mode": "generated-atlas-checked-legacy-html",
