@@ -15,8 +15,30 @@ try{
 
   assert(await visible('.overview-graph'),'Overview graph is not visible');
   assert(await visible('[data-overview-id="authority"]'),'Authority component is not visible');
-  assert((await page.locator('.view-tab').count())===9,'Expected nine functional top-level views');
+  assert((await page.locator('.view-tab').count())===10,'Expected ten functional top-level views');
 
+
+  await page.click('.view-tab[data-view="references"]');
+  await page.waitForSelector('.reference-card-grid',{state:'visible'});
+  assert((await page.locator('.reference-card[data-atlas-type="referenceSystem"]').count())===10,'Every Plasma system should have a reference card');
+  assert((await page.locator('.reference-card[data-atlas-type="referenceTechnology"]').count())===16,'All initial technologies should have reference cards');
+  await page.click('.reference-card[data-atlas-type="referenceTechnology"][data-atlas-id="opencascade"]');
+  await page.waitForFunction(()=>location.hash==='#references/technology/opencascade');
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Strengths'));
+  const refInspector=(await page.locator('#inspector').textContent())||'';
+  for(const section of ['What it is','Why we use it','Strengths','Weaknesses','Competitors','Relationships','Repository source evidence']){
+    assert(refInspector.includes(section),'Reference inspector missing section: '+section);
+  }
+  assert(refInspector.includes('Parasolid'),'OCCT card should compare competing CAD kernels');
+  await page.goto(base+'#components/geometry',{waitUntil:'networkidle'});
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('System reference card'));
+  assert((await page.locator('#inspector [data-atlas-type="referenceTechnology"][data-atlas-id="opencascade"]').count())===1,
+    'Geometry component should reverse-link to OpenCascade card');
+  await page.click('#inspector [data-atlas-type="referenceSystem"][data-atlas-id="geometry"]');
+  await page.waitForFunction(()=>location.hash==='#references/system/geometry');
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Weaknesses'));
+  assert(((await page.locator('#inspector').textContent())||'').includes('Topology'),'System reference must explain risks');
+  await page.goto(base+'#overview',{waitUntil:'networkidle'});
 
   await page.click('.view-tab[data-view="council"]');
   await page.waitForSelector('.council-role-grid',{state:'visible'});
@@ -26,23 +48,24 @@ try{
   await page.click('.council-role-card[data-atlas-id="systems"]');
   await page.waitForFunction(()=>location.hash==='#council/role/systems');
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Review only'));
-  assert((await page.locator('#inspector').innerText()).includes('Review only'),'Council role authority must be explicit');
+  assert((await page.locator('#inspector').textContent()).includes('Review only'),'Council role authority must be explicit');
   await page.click('.council-step[data-atlas-id="wall-edit-architecture:challenge"]');
   await page.waitForFunction(()=>location.hash.includes('#council/stage/'));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('not_run'));
-  assert((await page.locator('#inspector').innerText()).includes('not_run'),'Decision step must state that no review ran');
+  assert((await page.locator('#inspector').textContent()).includes('not_run'),'Decision step must state that no review ran');
   await page.goto(base+'#overview/component/authority',{waitUntil:'networkidle'});
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Architecture Council reviewers'));
-  assert((await page.locator('#inspector').innerText()).includes('Architecture Council reviewers'),'Component inspector must expose Council assignments');
+  assert((await page.locator('#inspector').textContent()).includes('Architecture Council reviewers'),'Component inspector must expose Council assignments');
   await page.click('#inspector [data-atlas-type="councilDecision"]');
   await page.waitForFunction(()=>location.hash.startsWith('#council/decision/'));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('unassessed'));
-  assert((await page.locator('#inspector').innerText()).includes('unassessed'),'Decision inspector must show unassessed alternatives');
+  assert((await page.locator('#inspector').textContent()).includes('unassessed'),'Decision inspector must show unassessed alternatives');
   const councilResponse=await page.request.get(base+'council.json');
   assert(councilResponse.ok(),'Generated Council catalogue must be served');
   await page.goto(base+'#overview',{waitUntil:'networkidle'});
 
   const views=[
+    ['references','.reference-card-grid'],
     ['integration','.integration-matrix'],
     ['languages','.domain-language-grid'],
     ['transactions','.transaction-flow'],
