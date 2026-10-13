@@ -8,6 +8,9 @@ const atlas=JSON.parse(fs.readFileSync(path.join(here,'atlas.json'),'utf8'));
 const repositoryEvidence=JSON.parse(fs.readFileSync(path.join(here,'repository-evidence.json'),'utf8'));
 const council=JSON.parse(fs.readFileSync(path.join(here,'council.json'),'utf8'));
 const canonicalCouncil=JSON.parse(fs.readFileSync(path.resolve(here,'../../spec/council/council.yaml'),'utf8'));
+const references=JSON.parse(fs.readFileSync(path.join(here,'references.json'),'utf8'));
+const canonicalReferences=JSON.parse(fs.readFileSync(path.resolve(here,'../../spec/references/catalog.yaml'),'utf8'));
+
 
 const specSystemStatus=JSON.parse(fs.readFileSync(path.join(here,'spec-system-status.json'),'utf8'));
 const generatedAtlasText=fs.readFileSync(path.resolve(here,'../../generated/spec-system/atlas/atlas.json'),'utf8');
@@ -29,6 +32,12 @@ assert(specSystemStatus.atlasVersion===atlas.meta.version,'Spec System status At
 assert(fs.existsSync(path.join(here,'spec-system.html')),'generated Spec System human view is missing');
 assert(generatedAtlasText===fs.readFileSync(path.join(here,'atlas.json'),'utf8'),'served Atlas must match generated canonical snapshot');
 assert(generatedEvidenceText===fs.readFileSync(path.join(here,'repository-evidence.json'),'utf8'),'served repository evidence must match generated canonical snapshot');
+assert(references.view.id==='references','Reference cards must have a dedicated Atlas view');
+assert(JSON.stringify(references.systems)===JSON.stringify(canonicalReferences.systems),'Reference system projections must match canonical spec');
+assert(JSON.stringify(references.technologies)===JSON.stringify(canonicalReferences.technologies),'Reference technologies must match canonical spec');
+assert(references.systems.length===atlas.components.length,'All canonical components need system reference cards');
+assert(references.technologies.length>=16,'Reference library must cover all tracked initial technologies');
+assert(references.technologies.every(t=>t.sourcePaths.length>0),'Technology cards must cite real repository declarations');
 assert(council.view.id==='council','Council must declare a dedicated view');
 assert(JSON.stringify(council)===JSON.stringify(canonicalCouncil.projection),'Served Council must match canonical /spec projection');
 assert(council.authority==='development-governance-only'&&council.executionStatus==='none','Council must not claim runtime authority or execution');
@@ -208,6 +217,7 @@ assert(atlas.slices.some(slice=>slice.id==='clothing-fabrication'),'vertical sli
 assert(atlas.slices.some(slice=>slice.id==='botanical-growth'),'vertical slices must include the botanical growth living-system test');
 
 const expectedViews=['overview','integration','languages','transactions','components','contracts','slices','evidence'];
+assert(references.technologies.every(item=>item.alternatives.every(a=>a.tradeoff)),'Every technology alternative must explain its trade-off');
 for(const id of expectedViews)assert(atlas.views.some(v=>v.id===id),`missing functional view ${id}`);
 
 assert(atlas.transactions.candidatePatch?.fields?.includes('base_revision'),'CandidatePatch must declare base_revision');
@@ -216,7 +226,14 @@ assert(atlas.transactions.candidatePatch?.fields?.includes('writes[]'),'Candidat
 assert(atlas.transactions.rejectionPaths?.length>=6,'transaction model must expose rejection paths');
 assert(atlas.transactions.invariants?.length>=8,'transaction model must expose kernel invariants');
 
-const runtimeModel=createAtlasModel(atlas,null,council);
+const runtimeModel=createAtlasModel(atlas,null,council,references);
+assert(runtimeModel.search('OpenCascade').some(x=>x.type==='referenceTechnology'&&x.id==='opencascade'),'Technology references must be searchable');
+assert(runtimeModel.search('why plasma').some(x=>x.type.startsWith('reference')),'Rationale text must be searchable');
+assert(runtimeModel.resolve('referenceSystem','authority')?.raw?.why,'Reference system card must resolve canonical component');
+assert(runtimeModel.referenceLinksFor('component','geometry').some(x=>x.ref.id==='opencascade'),'Geometry reference must navigate to OCCT technology');
+assert(runtimeModel.referenceLinksFor('technology','threejs').some(x=>x.ref.type==='referenceSystem'),'Technology reference must reverse navigate to system');
+assert(parseHash('#references/system/authority').type==='referenceSystem','System reference deep-link must parse');
+assert(parseHash('#references/technology/opencascade').type==='referenceTechnology','Technology reference deep-link must parse');
 assert(runtimeModel.councilRolesFor('component','authority').some(x=>x.id==='systems'),'World authority must link to Systems Architect');
 assert(runtimeModel.councilDecisionsFor('component','authority').some(x=>x.id==='wall-edit-architecture'),'World authority must link to the sample decision trace');
 assert(runtimeModel.search('Adversarial Architect').some(x=>x.type==='councilRole'),'Council roles must be searchable');
