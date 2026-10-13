@@ -82,6 +82,7 @@ const links = read(registry.atlas.links);
 const repositoryEvidence = read(registry.atlas.repositoryEvidence);
 const atlasMeta = read(registry.atlas.meta);
 const atlasViews = read(registry.atlas.views);
+const council = read(registry.council);
 
 const schemaFor = {
   SpecSystem: 'spec/schemas/spec-system.schema.json',
@@ -94,13 +95,15 @@ const schemaFor = {
   VerticalSlice: 'spec/schemas/slice.schema.json',
   EvidenceCatalog: 'spec/schemas/evidence.schema.json',
   Research: 'spec/schemas/research.schema.json',
-  Release: 'spec/schemas/release.schema.json'
+  Release: 'spec/schemas/release.schema.json',
+  ArchitectureCouncil: 'spec/schemas/council.schema.json'
 };
 const validate = (record, label) => {
   const p = schemaFor[record.kind];
   if (p) validateSchema(record, read(p), label);
 };
 validate(system, 'spec-system');
+validate(council, registry.council);
 validate(constitution, registry.constitution);
 validate(componentCatalog, registry.atlas.components);
 validate(relationshipCatalog, registry.atlas.relationships);
@@ -187,6 +190,34 @@ for (const contract of contracts.map(x => x.record)) {
     const ref = contract.exactFallback.contractRef;
     assert(ref && byId.has(ref), `${contract.id} requires an exact fallback contractRef`);
     assert((contract.dependsOn || []).some(x => x.type === 'requires' && x.id === ref), `${contract.id} exact fallback ${ref} must also be a requires dependency`);
+  }
+}
+
+// Council is a separate development-governance projection, not Plasma runtime intelligence.
+const councilRoles = council.projection.roles || [];
+const councilDecisions = council.projection.decisions || [];
+const uniqueIds = (items, label) => {
+  const ids = items.map(item => item.id);
+  assert(new Set(ids).size === ids.length, label + ' contains duplicate identifiers');
+};
+uniqueIds(councilRoles, 'council roles');
+uniqueIds(councilDecisions, 'council decisions');
+const validComponentIds = new Set((componentCatalog.items || []).map(x => x.projection.id));
+const validContractIds = new Set(contracts.map(x => x.record.projection?.id).filter(Boolean));
+const roleIds = new Set(councilRoles.map(x => x.id));
+const validReviewRef = ref => ref?.type === 'component' ? validComponentIds.has(ref.id) : ref?.type === 'contract' && validContractIds.has(ref.id);
+for (const role of councilRoles) {
+  assert(role.authority === 'review_only' && role.executionStatus === 'not_started', role.id + ': Council role must remain non-executing and review-only');
+  for (const id of role.components || []) assert(validComponentIds.has(id), role.id + ': missing component ' + id);
+  for (const id of role.contracts || []) assert(validContractIds.has(id), role.id + ': missing Atlas contract ' + id);
+}
+for (const decision of councilDecisions) {
+  assert(decision.reviewStatus === 'not_run' && decision.approvalStatus === 'not_requested', decision.id + ': illustrative reviews cannot claim execution or approval');
+  uniqueIds(decision.stages || [], decision.id + ' stages');
+  for (const ref of decision.affectedRefs || []) assert(validReviewRef(ref), decision.id + ': missing affected reference ' + ref.type + ':' + ref.id);
+  for (const stage of decision.stages || []) {
+    assert(stage.status === 'not_run', decision.id + ': stage must not claim execution without runtime evidence');
+    for (const roleId of stage.roleIds || []) assert(roleIds.has(roleId), decision.id + ': unknown reviewer ' + roleId);
   }
 }
 
@@ -322,6 +353,7 @@ const html = `<!doctype html>
 <div class="card"><h2>Migration</h2><p>${esc(system.migration.rule)}</p></div></div></body></html>\n`;
 
 output(system.outputs.atlas, atlas);
+output(system.outputs.council, council.projection);
 output(system.outputs.repositoryEvidence, repositoryEvidence.projection);
 output(system.outputs.status, statusOut);
 output(system.outputs.humanHtml, html);

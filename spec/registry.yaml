@@ -99,5 +99,6 @@
     "spec/schemas/research.schema.json",
     "spec/schemas/release.schema.json",
     "spec/schemas/spec-system.schema.json"
-  ]
+  ],
+  "council": "spec/council/council.yaml"
 }
