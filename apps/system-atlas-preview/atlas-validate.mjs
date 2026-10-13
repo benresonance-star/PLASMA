@@ -6,6 +6,9 @@ import { createAtlasModel, parseHash } from './atlas-model.js';
 const here=path.dirname(fileURLToPath(import.meta.url));
 const atlas=JSON.parse(fs.readFileSync(path.join(here,'atlas.json'),'utf8'));
 const repositoryEvidence=JSON.parse(fs.readFileSync(path.join(here,'repository-evidence.json'),'utf8'));
+const council=JSON.parse(fs.readFileSync(path.join(here,'council.json'),'utf8'));
+const canonicalCouncil=JSON.parse(fs.readFileSync(path.resolve(here,'../../spec/council/council.yaml'),'utf8'));
+
 const specSystemStatus=JSON.parse(fs.readFileSync(path.join(here,'spec-system-status.json'),'utf8'));
 const generatedAtlasText=fs.readFileSync(path.resolve(here,'../../generated/spec-system/atlas/atlas.json'),'utf8');
 const generatedEvidenceText=fs.readFileSync(path.resolve(here,'../../generated/spec-system/atlas/repository-evidence.json'),'utf8');
@@ -26,6 +29,12 @@ assert(specSystemStatus.atlasVersion===atlas.meta.version,'Spec System status At
 assert(fs.existsSync(path.join(here,'spec-system.html')),'generated Spec System human view is missing');
 assert(generatedAtlasText===fs.readFileSync(path.join(here,'atlas.json'),'utf8'),'served Atlas must match generated canonical snapshot');
 assert(generatedEvidenceText===fs.readFileSync(path.join(here,'repository-evidence.json'),'utf8'),'served repository evidence must match generated canonical snapshot');
+assert(council.view.id==='council','Council must declare a dedicated view');
+assert(JSON.stringify(council)===JSON.stringify(canonicalCouncil.projection),'Served Council must match canonical /spec projection');
+assert(council.authority==='development-governance-only'&&council.executionStatus==='none','Council must not claim runtime authority or execution');
+assert(council.roles.length===7,'Council must define seven specialist roles');
+assert(council.roles.every(role=>role.authority==='review_only'&&role.executionStatus==='not_started'),'Council roles must be non-executing reviewers');
+assert(council.decisions.every(d=>d.reviewStatus==='not_run'&&d.approvalStatus==='not_requested'&&d.stages.every(stage=>stage.status==='not_run')),'Illustrative decision traces must never report completed work');
 assert(Array.isArray(atlas.views)&&atlas.views.length>=7,'views must contain the functional Atlas views');
 assert(Array.isArray(atlas.components)&&atlas.components.length>0,'components are required');
 assert(Array.isArray(atlas.relationships),'relationships are required');
@@ -207,7 +216,14 @@ assert(atlas.transactions.candidatePatch?.fields?.includes('writes[]'),'Candidat
 assert(atlas.transactions.rejectionPaths?.length>=6,'transaction model must expose rejection paths');
 assert(atlas.transactions.invariants?.length>=8,'transaction model must expose kernel invariants');
 
-const runtimeModel=createAtlasModel(atlas);
+const runtimeModel=createAtlasModel(atlas,null,council);
+assert(runtimeModel.councilRolesFor('component','authority').some(x=>x.id==='systems'),'World authority must link to Systems Architect');
+assert(runtimeModel.councilDecisionsFor('component','authority').some(x=>x.id==='wall-edit-architecture'),'World authority must link to the sample decision trace');
+assert(runtimeModel.search('Adversarial Architect').some(x=>x.type==='councilRole'),'Council roles must be searchable');
+assert(runtimeModel.resolve('councilStage','wall-edit-architecture:challenge')?.raw?.status==='not_run','Decision stage must resolve with unexecuted status');
+assert(parseHash('#council/role/systems').type==='councilRole','Council role deep-link must parse');
+assert(parseHash('#council/decision/wall-edit-architecture').type==='councilDecision','Council decision deep-link must parse');
+assert(parseHash('#council/stage/wall-edit-architecture%3Achallenge').id==='wall-edit-architecture:challenge','Council stage deep-link must parse');
 assert(runtimeModel.search('submit transaction').some(ref=>ref.type==='contract'&&ref.id==='submit-transaction'),'search must resolve submitTransaction contract');
 assert(runtimeModel.search('transaction proposal').some(ref=>ref.type==='relationship'||ref.type==='contract'),'search must safely include relationships without names');
 assert(runtimeModel.linksFor('slice','window-door-system').length>0,'window/door slice must expose graph links');
