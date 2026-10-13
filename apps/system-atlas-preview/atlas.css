@@ -245,3 +245,33 @@ body.help-mode [data-atlas-type][data-atlas-id]{cursor:help!important}body.help-
 .council-disclaimer{font-size:10px;line-height:1.5;color:var(--muted);margin:16px 0 0}
 .council-inspector-links{border-left:2px solid var(--accent);padding-left:8px}
 @media(max-width:860px){.council-role-grid{grid-template-columns:1fr 1fr}.council-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* Canonical systems and technology reference library. */
+.reference-stage .atlas-section{margin-top:21px}
+.reference-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.reference-card{display:flex;flex-direction:column;gap:8px;text-align:left;min-width:0;border-radius:11px;border:1px solid var(--line);padding:13px;background:var(--panel-strong);color:var(--ink)}
+.reference-card:hover,.reference-card:focus-visible{border-color:var(--accent);outline:none}
+.reference-card.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.reference-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.reference-card-top .eyebrow{line-height:1.5;text-transform:none}
+.reference-card-arrow{font-size:13px;color:var(--accent-strong)}
+.reference-card h3{font-size:14px;margin:0}
+.reference-what{font-size:10px;line-height:1.5;color:var(--muted);margin:0}
+.reference-card-why{border-top:1px solid var(--line);padding-top:8px;margin-top:auto}
+.reference-card-why b{font-size:9px;color:var(--ink)}
+.reference-card-why p{font-size:10px;line-height:1.45;margin:5px 0 0;color:var(--muted)}
+.reference-mini-metrics{display:flex;flex-direction:column;gap:5px;font-size:9px}
+.reference-mini-metrics span:first-child{color:var(--green)}.reference-mini-metrics span:last-child{color:var(--amber)}
+.reference-card-foot{border-top:1px solid var(--line);padding-top:7px;font-size:9px;color:var(--faint)}
+.reference-bullets{padding-left:15px;margin:8px 0;color:var(--muted);font-size:10px;line-height:1.6}
+.reference-bullets li{padding:2px 0}
+.reference-alternatives{display:grid;gap:10px}
+.reference-alternatives>div{padding:9px;border-radius:8px;border:1px solid var(--line)}
+.reference-alternatives b{font-size:10px}.reference-alternatives p{font-size:10px;line-height:1.45;color:var(--muted);margin:5px 0 0}
+.reference-relations{display:grid;gap:8px}.reference-relation{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:8px;border:1px solid var(--line);border-radius:7px}
+.reference-relation>span{font-size:9px;color:var(--muted)}
+.reference-sources{display:flex;flex-direction:column;gap:7px;overflow-wrap:anywhere}
+.reference-inspector-links{border-left:2px solid var(--accent);padding-left:8px}
+@media(max-width:900px){.reference-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.reference-card-grid{grid-template-columns:1fr 1fr;gap:7px}.reference-card{padding:9px}.reference-card h3{font-size:12px}.reference-what{font-size:9px}}
