@@ -1,43 +1,60 @@
-import {parseSemanticObject,parseParameter,parseRelationship,createSemanticGraph} from '@spds/semantic-core';
-import {computeInvalidationSet} from '@spds/dependency-graph';
-const stamp='2026-10-13T00:00:00.000Z';
-const legacyUnits:Record<string,string>={windowCenter:'mm',windowWidth:'mm',windowSill:'mm',windowHeight:'mm',doorCenter:'mm',doorWidth:'mm',doorHeight:'mm',studSpacing:'mm',roofPitch:'deg'};
-const env=(id:string,kind:string,semanticType:string)=>({id,kind,semanticType,name:id,createdAt:stamp,updatedAt:stamp,schemaVersion:'1.0.0'});
-const numericUnits:Record<string,string>={...legacyUnits,buildingWidth:'mm',buildingDepth:'mm'};
-function graphFor(config:Record<string,unknown>,legacy=false){
- const units=legacy?legacyUnits:numericUnits;
- const entities=[['building','Model'],['slab','Entity'],['wall-front','Entity'],['wall-rear','Entity'],['wall-left','Entity'],['wall-right','Entity'],['roof','Entity'],['window','Entity'],['door','Entity']].map(([key,kind])=>parseSemanticObject({...env('entity:build:'+key,kind!,'architecture.'+key),metadata:{coordinateFrame:'WORLD_XY_Z_UP',units:'mm',...(key==='window'||key==='door'?{hostId:'entity:build:wall-front'}:{}),...(key==='slab'?{editableFootprint:!legacy}:{}),...(key==='building'?{fixture:legacy?'build-6x4':'build-rectangle',settings:Object.fromEntries(Object.entries(config).filter(([k])=>!Object.hasOwn(units,k)))}:{})}}));
- const parameters=Object.entries(units).map(([key,unit])=>parseParameter({...env('parameter:build:'+key.toLowerCase(),'Parameter','architecture.fixture-parameter'),metadata:{configKey:key},quantity:{value:Number(config[key])*(unit==='mm'?1000:1),unit},role:'design-variable',editableBy:['user','agent'],affects:key.startsWith('building')?['entity:build:slab','entity:build:wall-front','entity:build:wall-rear','entity:build:wall-left','entity:build:wall-right','entity:build:roof']:[key.startsWith('roof')?'entity:build:roof':'entity:build:wall-front']}));
- const relationships=entities.filter(e=>e.id!=='entity:build:building').map(e=>parseRelationship({...env('relationship:build:'+e.id.split(':').at(-1),'Relationship','architecture.membership'),relationType:e.metadata?.hostId?'architecture.hosted-by':'part-of',from:e.id,to:e.metadata?.hostId||'entity:build:building'}));
- createSemanticGraph([...entities,...parameters],relationships);
- return {schemaVersion:legacy?'plasma-build-fixture/0.1.0':'plasma-build-fixture/0.2.0',entities,parameters,relationships,scope:legacy?'Fixed 6x4 fixture; parameter editing only. Not a general wall/slab/roof editor.':'Centred rectangular footprint; hosted openings retain world-X offsets. Concept generation, not structural design.'};
+import {parseParameter,parseSemanticObject,parseRelationship,createSemanticGraph} from '@spds/semantic-core';
+import {buildFixtureGraph as priorGraph,fixtureConfig as priorConfig} from './legacy-fixture.js';
+export {buildingEdges,windowImpact,footprintEdges,footprintImpact,buildToPlasmaPoint,plasmaToBuildPoint} from './legacy-fixture.js';
+const defaults={buildingCenterX:0,buildingCenterZ:0,doorAnchor:'center',windowAnchor:'center'};
+export type WallSide='front'|'rear'|'left'|'right';
+export type OpeningAnchor='left'|'center'|'right';
+const sides:WallSide[]=['front','rear','left','right'];
+const round=(v:number)=>Math.round(v*1e6)/1e6;
+export function wallGeometry(c:Record<string,unknown>){
+ const x=Number(c.buildingCenterX??0),z=Number(c.buildingCenterZ??0),w=Number(c.buildingWidth??6),d=Number(c.buildingDepth??4),left=x-w/2,right=x+w/2,front=z-d/2,rear=z+d/2;
+ const point=(x:number,z:number)=>[round(x*1000),round(-z*1000),150];
+ return Object.fromEntries(sides.map(side=>[side,{startMm:point(side==='right'?right:left,side==='rear'?rear:front),endMm:point(side==='left'?left:right,side==='front'?front:rear),heightMm:2700,thicknessMm:side==='front'&&c.frontSystem==='steel'?93.5:90,reference:'Nominal 90 mm outside framing set-out; steel track projects 1.75 mm either side',assemblyType:side==='front'?c.frontSystem:'lvl',editable:['normal-offset'],heightThicknessPolicy:'Fixed by current framing recipe'}]));
 }
 export function buildFixtureGraph(input:Record<string,unknown>){
- const config={buildingWidth:6,buildingDepth:4,...input};
- for(const [key,min,max] of [['buildingWidth',5,6.5],['buildingDepth',3,6]] as const){const value=config[key];if(typeof value!=='number'||!Number.isFinite(value)||value<min||value>max)throw new Error('Unsupported rectangular footprint '+key)}
- return graphFor(config);
+ const c={...defaults,buildingWidth:6,buildingDepth:4,...input};
+ for(const k of ['buildingCenterX','buildingCenterZ'] as const)if(typeof c[k]!=='number'||!Number.isFinite(c[k])||Math.abs(c[k])>10)throw new Error('Building centre must be within ±10 m');
+ for(const k of ['windowAnchor','doorAnchor'] as const)if(!['left','center','right'].includes(c[k]))throw new Error('Unsupported opening anchor');
+ const g=priorGraph(c),geometry=wallGeometry(c);
+ const settings=g.entities.find(e=>e.id==='entity:build:building')!.metadata!.settings as Record<string,unknown>;
+ delete settings.buildingCenterX;delete settings.buildingCenterZ;
+ const template=g.parameters.find(p=>p.metadata?.configKey==='buildingWidth')!;
+ for(const k of ['buildingCenterX','buildingCenterZ'] as const)g.parameters.push(parseParameter({...template,id:'parameter:build:'+k.toLowerCase(),name:'parameter:build:'+k.toLowerCase(),metadata:{configKey:k},quantity:{value:c[k]*1000,unit:'mm'}}));
+ for(const e of g.entities){const key=e.id.split(':').at(-1)!;
+  if(key.startsWith('wall-'))e.metadata={...e.metadata,geometry:geometry[key.slice(5)]};
+  if(key==='window'||key==='door'){const anchor=c[(key+'Anchor') as keyof typeof c] as string,position=Number(c[(key+'Center') as keyof typeof c]),ref=c.buildingCenterX+(anchor==='left'?-1:anchor==='right'?1:0)*c.buildingWidth/2;e.metadata={...e.metadata,hosting:{anchor,offsetMm:round((position-ref)*1000),measurement:'Opening centre from host reference'}};}
+  if(key==='slab')e.metadata={...e.metadata,boundaryFrom:['entity:build:wall-front','entity:build:wall-right','entity:build:wall-rear','entity:build:wall-left'],edgeProjectionMm:220};
+  if(key==='roof')e.metadata={...e.metadata,supportedTopology:'rectangle',supports:['entity:build:wall-front','entity:build:wall-rear']};
+ }
+ const rel=g.relationships[0]!;
+ for(const [a,b] of [['front','left'],['front','right'],['rear','left'],['rear','right']])g.relationships.push(parseRelationship({...rel,id:'relationship:build:corner-'+a+'-'+b,name:'Corner '+a+' / '+b,semanticType:'architecture.corner',relationType:'architecture.corner',from:'entity:build:wall-'+a,to:'entity:build:wall-'+b,metadata:{geometry:'Orthogonal butt return',fixings:'unresolved',capacity:'unverified'}}));
+ createSemanticGraph([...g.entities,...g.parameters],g.relationships);
+ return {...g,schemaVersion:'plasma-build-fixture/0.3.0',scope:'Connected rectangular wall moves; fixed recipe heights/thicknesses; anchored front openings. No arbitrary wall topology or structural approval.'};
 }
-export function fixtureConfig(graph:unknown):Record<string,unknown>{const g=graph as ReturnType<typeof buildFixtureGraph>;
- const legacy=g.schemaVersion==='plasma-build-fixture/0.1.0';if(!legacy&&g.schemaVersion!=='plasma-build-fixture/0.2.0')throw new Error('Unsupported building graph');
- const entities=g.entities.map(parseSemanticObject),parameters=g.parameters.map(parseParameter),relations=g.relationships.map(parseRelationship);createSemanticGraph([...entities,...parameters],relations);
- const settings=entities.find(e=>e.id==='entity:build:building')?.metadata?.settings;if(!settings||typeof settings!=='object')throw new Error('Missing building settings');
- const config:Record<string,unknown>={...settings};for(const [key,unit] of Object.entries(legacy?legacyUnits:numericUnits)){const p=parameters.find(p=>p.metadata?.configKey===key);if(!p||p.quantity.unit!==unit)throw new Error('Missing or invalid parameter '+key);config[key]=p.quantity.value/(unit==='mm'?1000:1)}
- const canonical=legacy?graphFor(config,true):buildFixtureGraph(config);if(JSON.stringify(canonical)!==JSON.stringify(g))throw new Error('Unsupported graph structure / host edit');return {buildingWidth:6,buildingDepth:4,...config};
+export function fixtureConfig(graph:unknown):Record<string,unknown>{
+ const g=graph as ReturnType<typeof buildFixtureGraph>;
+ if(g.schemaVersion!=='plasma-build-fixture/0.3.0')return {...defaults,...priorConfig(graph)};
+ const entities=g.entities.map(parseSemanticObject),parameters=g.parameters.map(parseParameter),relationships=g.relationships.map(parseRelationship);createSemanticGraph([...entities,...parameters],relationships);
+ const settings=entities.find(e=>e.id==='entity:build:building')?.metadata?.settings;
+ if(!settings||typeof settings!=='object')throw new Error('Missing building settings');
+ const c:Record<string,unknown>={...settings};
+ for(const p of parameters){const key=p.metadata?.configKey;if(typeof key!=='string')throw new Error('Missing parameter key');const unit=key==='roofPitch'?'deg':'mm';if(p.quantity.unit!==unit)throw new Error('Invalid parameter unit');c[key]=p.quantity.value/(unit==='mm'?1000:1);}
+ if(JSON.stringify(buildFixtureGraph(c))!==JSON.stringify(g))throw new Error('Unsupported graph structure / host edit');return c;
 }
-export function editHostedWindow(graph:unknown,edit:{widthMm?:number;centerMm?:number}){const config=fixtureConfig(graph);if(edit.widthMm!==undefined)config.windowWidth=edit.widthMm/1000;if(edit.centerMm!==undefined)config.windowCenter=edit.centerMm/1000;return buildFixtureGraph(config)}
-export const buildingEdges=[{from:'entity:build:window',to:'generator:build:front-frame'},{from:'entity:build:window',to:'generator:build:front-veneer'},{from:'entity:build:window',to:'generator:build:opening-junction'},...['front-frame','front-veneer','opening-junction'].flatMap(g=>['drawings','bom','checks'].map(c=>({from:'generator:build:'+g,to:'output:build:'+c})))];
-export const windowImpact=()=>computeInvalidationSet(buildingEdges,['entity:build:window']);
-export const buildToPlasmaPoint=(p:readonly number[])=>[p[0]!*1000,-p[2]!*1000,p[1]!*1000];
-export const plasmaToBuildPoint=(p:readonly number[])=>[p[0]!/1000,p[2]!/1000,-p[1]!/1000];
-
-export function editRectangularFootprint(graph:unknown,edit:{widthMm?:number;depthMm?:number}){
- const config=fixtureConfig(graph);
- if(edit.widthMm!==undefined)config.buildingWidth=edit.widthMm/1000;
- if(edit.depthMm!==undefined)config.buildingDepth=edit.depthMm/1000;
- // Absolute X offsets remain unchanged. All front-hosted pieces follow its depth position.
- const half=Number(config.buildingWidth)/2;
- for(const name of ['door','window'])if(Number(config[name+'Center'])-Number(config[name+'Width'])/2< -half+.18||Number(config[name+'Center'])+Number(config[name+'Width'])/2>half-.18)throw new Error('Footprint leaves insufficient hosted-opening end clearance');
- return buildFixtureGraph(config);
+function rehost(before:Record<string,unknown>,after:Record<string,unknown>){
+ const oldX=Number(before.buildingCenterX),newX=Number(after.buildingCenterX),oldW=Number(before.buildingWidth),newW=Number(after.buildingWidth);
+ for(const name of ['window','door']){const anchor=after[name+'Anchor'],sign=anchor==='left'?-1:anchor==='right'?1:0;after[name+'Center']=round(Number(before[name+'Center'])+newX-oldX+sign*(newW-oldW)/2);}
+ const half=Number(after.buildingWidth)/2;
+ for(const name of ['window','door'])if(Number(after[name+'Center'])-Number(after[name+'Width'])/2<newX-half+.18-1e-9||Number(after[name+'Center'])+Number(after[name+'Width'])/2>newX+half-.18+1e-9)throw new Error('Footprint leaves insufficient hosted-opening end clearance');
+ if(Number(after.doorCenter)+Number(after.doorWidth)/2+.30>Number(after.windowCenter)-Number(after.windowWidth)/2+1e-9)throw new Error('Hosted openings need 300 mm separation');
+ return buildFixtureGraph(after);
 }
-export const footprintEdges=[...['slab','walls','roof','veneer','opening-junction'].map(g=>({from:'entity:build:building',to:'generator:build:'+g})),...['slab','walls','roof','veneer','opening-junction'].flatMap(g=>['drawings','bom','checks','load-paths'].map(c=>({from:'generator:build:'+g,to:'output:build:'+c})))];
-export const footprintImpact=()=>computeInvalidationSet(footprintEdges,['entity:build:building']);
+export function moveConnectedWall(graph:unknown,edit:{wall:WallSide;outwardMm:number;windowAnchor?:OpeningAnchor;doorAnchor?:OpeningAnchor}){
+ if(!sides.includes(edit.wall)||!Number.isFinite(edit.outwardMm)||Math.abs(edit.outwardMm)>2000)throw new Error('Unsupported wall move; normal offset must be within ±2000 mm');
+ const before=fixtureConfig(graph),after={...before},delta=edit.outwardMm/1000,axis=edit.wall==='left'||edit.wall==='right'?'X':'Z',dimension=axis==='X'?'buildingWidth':'buildingDepth',sign=edit.wall==='left'||edit.wall==='front'?-1:1;
+ after[dimension]=round(Number(before[dimension])+delta);after['buildingCenter'+axis]=round(Number(before['buildingCenter'+axis])+sign*delta/2);
+ if(edit.windowAnchor!==undefined)after.windowAnchor=edit.windowAnchor;if(edit.doorAnchor!==undefined)after.doorAnchor=edit.doorAnchor;
+ return rehost(before,after);
+}
+export function editRectangularFootprint(graph:unknown,edit:{widthMm?:number;depthMm?:number}){const before=fixtureConfig(graph),after={...before};if(edit.widthMm!==undefined)after.buildingWidth=edit.widthMm/1000;if(edit.depthMm!==undefined)after.buildingDepth=edit.depthMm/1000;return rehost(before,after)}
+export function editHostedWindow(graph:unknown,edit:{widthMm?:number;centerMm?:number}){const c=fixtureConfig(graph);if(edit.widthMm!==undefined)c.windowWidth=edit.widthMm/1000;if(edit.centerMm!==undefined)c.windowCenter=edit.centerMm/1000;return buildFixtureGraph(c)}

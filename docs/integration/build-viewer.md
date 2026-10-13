@@ -11,7 +11,7 @@ This branch fixes transaction authority defects and provides a portable synchron
 ## Browser adapter
 `@spds/transaction-core/portable` owns one accepted graph and compiles all candidates through an injected synchronous host compiler. It rejects invalid and stale proposals and uses one accepted-state assignment. Restoring a saved revision invalidates prepared candidate tokens. It deliberately does not claim durable writes, asynchronous worker authority, or cross-tab/multi-user locking: the host must supply persistence and concurrency policies.
 
-`@spds/building-domain` defines a bounded graph for Build's centred rectangular fixture: building, slab, four walls, roof, door, window and eleven dimensional parameters. Both openings are hosted by the front wall. Footprint width/depth and width/centre window commands and explicit downstream dependencies are provided. Build's existing compiler validates bounds/overlap and regenerates members. Geometry remains a derived consumer; no independent per-piece editing authority was introduced.
+`@spds/building-domain` defines a bounded graph for Build's rectangular fixture: building, slab, four walls, roof, door, window and thirteen dimensional parameters. Both openings are hosted by the front wall. Footprint width/depth and width/centre window commands and explicit downstream dependencies are provided. Build's existing compiler validates bounds/overlap and regenerates members. Geometry remains a derived consumer; no independent per-piece editing authority was introduced.
 
 Graph coordinates are millimetres with Z up. The right-handed conversion from Build metres/Y-up is `[x,y,z] -> [1000x,-1000z,1000y]`; the inverse is explicit. Dimensional parameters retain their named local meanings, including window-centre X and sill height. No arbitrary wall path or polygonal slab footprint, multiple roof systems or product-exact connection generator is claimed.
 
@@ -31,3 +31,10 @@ Schema `plasma-build-fixture/0.2.0` adds width/depth in millimetres. Existing 0.
 The pilot accepts 5,000–6,500 mm width and 3,000–6,000 mm depth. The width bound reflects Build's assumed 7.2 m stock, not structural capacity. Host compilation also enforces opening clearances and geometric checks. Retained sections are concept-only; Build blocks table sizing outside the original footprint pending design-basis revalidation.
 
 Validation: 58 focused source tests and TypeScript checking passed; Build verifies LVL/pine/steel across nine footprint cases, plus a controller test with rendering stubbed. PostgreSQL concurrency and actual browser/touch operation remain unverified. This change does not merge or release the asynchronous API changes.
+
+## Connected wall extension
+Schema `plasma-build-fixture/0.3.0` adds typed X/Z origins, explicit wall endpoints in mm/Z-up, recipe height/thickness/type, four corner relationships and signed left/centre/right opening-centre anchors. `moveConnectedWall` moves one wall normally, holds its opposite fixed and reconnects adjacent walls as a rectangle. `editRectangularFootprint` now preserves the saved anchors. Height and thickness remain recipe controlled.
+
+The legacy generator/parser in `legacy-fixture.ts` validates 0.1/0.2 graphs before canonical migration. Current graphs reject mutated derived endpoints, types, hosts and corners. Build compiles the graph into translated geometry and propagates it through hosted details, drawings, BOM and support-path checks. Geometric corner gaps block acceptance; contact leaves fasteners, mixed-system cutbacks and capacity explicitly unresolved.
+
+Validation: 60 focused source tests across 20 files and TypeScript checking passed. Build adds 36 wall/system/anchor combinations, translated-origin checks, backup migration, exact undo/redo, injected corner failure and a DOM controller workflow. Actual browser/GPU/touch and PostgreSQL remain unverified. No arbitrary wall topology or structural design is claimed.
