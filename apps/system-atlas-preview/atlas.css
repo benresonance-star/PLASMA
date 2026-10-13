@@ -225,3 +225,23 @@ body.help-mode [data-atlas-type][data-atlas-id]{cursor:help!important}body.help-
 .inspector-list.differential-gates>div,.inspector-list.contract-relations>div{grid-template-columns:88px minmax(0,1fr)}
 .inspector-list.differential-gates>div{border-color:var(--line);background:var(--panel-strong)}
 .inspector-list.contract-rules>div{grid-template-columns:34px minmax(0,1fr)}
+
+
+/* Development Architecture Council: review proposals, not runtime agents. */
+.council-stage .atlas-section{margin-top:20px}
+.council-role-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.council-role-card,.council-decision-title,.council-step{color:var(--ink);text-align:left;border:1px solid var(--line);background:var(--panel-strong);border-radius:12px;padding:14px;min-width:0}
+.council-role-card:hover,.council-step:hover,.council-decision-title:hover{border-color:var(--accent)}
+.council-role-card.selected,.council-step.selected,.council-decision.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.council-role-card h3,.council-decision-title h3{font-size:14px;margin:7px 0}
+.council-role-card p,.council-decision-title p{font-size:11px;line-height:1.5;color:var(--muted);margin:0}
+.council-role-counts{display:flex;gap:12px;margin-top:10px;font-size:10px;color:var(--accent-strong)}
+.council-decision{border:1px solid var(--line);border-radius:13px;padding:12px;background:var(--panel);margin-top:9px}
+.council-decision-title{display:block;width:100%;border:0;background:transparent;padding:5px}
+.council-stages{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:14px}
+.council-step{border-radius:9px;padding:9px;display:flex;flex-direction:column;gap:7px}
+.council-step b{font-size:11px}.council-step small{color:var(--muted);font-size:9px;line-height:1.45}
+.council-impact{padding-top:13px}.council-impact>b{font-size:11px}.council-impact .ref-list{margin-top:8px}
+.council-disclaimer{font-size:10px;line-height:1.5;color:var(--muted);margin:16px 0 0}
+.council-inspector-links{border-left:2px solid var(--accent);padding-left:8px}
+@media(max-width:860px){.council-role-grid{grid-template-columns:1fr 1fr}.council-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
