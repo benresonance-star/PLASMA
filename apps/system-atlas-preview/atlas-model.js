@@ -7,7 +7,11 @@ export async function loadAtlas() {
   const councilResponse = await fetch('./council.json', { cache: 'no-store' });
   if (!councilResponse.ok) throw new Error('Council projection failed to load: ' + councilResponse.status);
   const council = await councilResponse.json();
+  const referencesResponse = await fetch('./references.json', { cache: 'no-store' });
+  if (!referencesResponse.ok) throw new Error('Reference cards failed to load: ' + referencesResponse.status);
+  const references = await referencesResponse.json();
   if (!data.views.some(view => view.id === council.view.id)) data.views.push(council.view);
+  if (!data.views.some(view => view.id === references.view.id)) data.views.push(references.view);
 
   let repositoryEvidence = null;
   try {
@@ -31,14 +35,19 @@ export async function loadAtlas() {
     };
   }
 
-  return createAtlasModel(data, repositoryEvidence, council);
+  return createAtlasModel(data, repositoryEvidence, council, references);
 }
 
 const keyFor = (type, id) => `${type}:${id}`;
 const evidenceStatus = evidence => evidence?.verification?.status || 'unlinked';
 
-export function createAtlasModel(data, repositoryEvidence = null, council = null) {
+export function createAtlasModel(data, repositoryEvidence = null, council = null, references = null) {
   const governance = council || { roles: [], decisions: [] };
+  const library = references || { systems: [], technologies: [] };
+  const referenceSystems = library.systems.map(entry => {
+    const component = data.components.find(c => c.id === entry.id);
+    return { ...entry, name: component?.name || entry.id, what: component?.explanation || component?.summary || '', summary: component?.summary || '', currentState: component?.status || 'unknown', authority: component?.authority || 'unknown' };
+  });
   const links = Array.isArray(data.links) ? data.links : [];
   const by = {
     component: new Map(data.components.map(x => [x.id, x])),
@@ -50,6 +59,8 @@ export function createAtlasModel(data, repositoryEvidence = null, council = null
     slice: new Map(data.slices.map(x => [x.id, x])),
     evidence: new Map(data.evidence.map(x => [x.id, x])),
     integrationLink: new Map(links.map(x => [x.id, x])),
+    referenceSystem: new Map(referenceSystems.map(x => [x.id, x])),
+    referenceTechnology: new Map(library.technologies.map(x => [x.id, x])),
     councilRole: new Map(governance.roles.map(x => [x.id, x])),
     councilDecision: new Map(governance.decisions.map(x => [x.id, x])),
     councilStage: new Map(governance.decisions.flatMap(d => d.stages.map(stage => [d.id + ':' + stage.id, { ...stage, id: d.id + ':' + stage.id, decisionId: d.id }])))
@@ -76,6 +87,8 @@ export function createAtlasModel(data, repositoryEvidence = null, council = null
   push('stage', data.transactions.stages);
   push('slice', data.slices);
   push('evidence', data.evidence);
+  push('referenceSystem', referenceSystems);
+  push('referenceTechnology', library.technologies);
   push('councilRole', governance.roles);
   push('councilDecision', governance.decisions);
   push('councilStage', [...by.councilStage.values()]);
@@ -278,6 +291,12 @@ export function createAtlasModel(data, repositoryEvidence = null, council = null
           ref.summary,
           ref.explanation,
           raw.kind,
+          raw.what,
+          raw.why,
+          ...(raw.strengths || []),
+          ...(raw.weaknesses || []),
+          ...(raw.alternatives || []).map(item => item.name + ' ' + item.tradeoff),
+          ...(raw.relationships || []).map(item => item.id + ' ' + item.role),
           raw.authority,
           raw.owner,
           raw.maturity,
@@ -319,6 +338,15 @@ export function createAtlasModel(data, repositoryEvidence = null, council = null
   return {
     data,
     council: governance,
+    references: { ...library, systems: referenceSystems },
+    referenceLinksFor(type,id) {
+      const normalized = type === 'referenceSystem' ? 'component' : type === 'referenceTechnology' ? 'technology' : type;
+      const all = [...referenceSystems.map(item => ({ ...item, sourceType:'component' })), ...library.technologies.map(item => ({ ...item, sourceType:'technology' }))];
+      const own = all.find(item => item.sourceType===normalized && item.id===id);
+      const outgoing = (own?.relationships || []).map(link => ({ direction:'out', role:link.role, ref: {type:link.type==='component'?'referenceSystem':'referenceTechnology',id:link.id} }));
+      const incoming = all.filter(item => !(item.sourceType===normalized && item.id===id)).flatMap(item => (item.relationships || []).filter(link=>link.type===normalized && link.id===id).map(link=>({direction:'in',role:link.role,ref:{type:item.sourceType==='component'?'referenceSystem':'referenceTechnology',id:item.id}})));
+      return [...outgoing,...incoming].filter((item,i,array)=>array.findIndex(other=>other.ref.type===item.ref.type&&other.ref.id===item.ref.id&&other.role===item.role&&other.direction===item.direction)===i);
+    },
     councilRolesFor(type, id) {
       if (type === 'component') return governance.roles.filter(role => role.components.includes(id));
       if (type === 'contract') return governance.roles.filter(role => role.contracts.includes(id));
@@ -349,6 +377,8 @@ export function routeForRef(ref) {
   if (!ref) return '#overview';
   if (ref.type === 'integrationLink') return `#integration/link/${encodeURIComponent(ref.id)}`;
   const prefix = {
+    referenceSystem: 'references/system',
+    referenceTechnology: 'references/technology',
     councilRole: 'council/role',
     councilDecision: 'council/decision',
     councilStage: 'council/stage',
@@ -377,6 +407,8 @@ export function parseHash(hash) {
   if (view === 'languages' && parts[1] === 'domain') return { view, type: 'domainLanguage', id: parts[2] || null };
   if (view === 'languages' && parts[1] === 'core') return { view, type: 'coreLanguage', id: parts[2] || null };
   if (view === 'transactions' && parts[1] === 'stage') return { view, type: 'stage', id: parts[2] || null };
+  if (view === 'references' && parts[1] === 'system') return { view, type: 'referenceSystem', id: parts[2] || null };
+  if (view === 'references' && parts[1] === 'technology') return { view, type: 'referenceTechnology', id: parts[2] || null };
   if (view === 'council' && parts[1] === 'role') return { view, type: 'councilRole', id: parts[2] || null };
   if (view === 'council' && parts[1] === 'decision') return { view, type: 'councilDecision', id: parts[2] || null };
   if (view === 'council' && parts[1] === 'stage') return { view, type: 'councilStage', id: parts[2] || null };
@@ -384,13 +416,15 @@ export function parseHash(hash) {
   if (view === 'contracts') return { view, type: 'contract', id: parts[1] || null };
   if (view === 'slices') return { view, type: 'slice', id: parts[1] || null };
   if (view === 'evidence') return { view, type: 'evidence', id: parts[1] || null };
-  return { view: ['overview','integration','languages','transactions','components','contracts','slices','evidence','council'].includes(view) ? view : 'overview', type: null, id: null };
+  return { view: ['overview','integration','languages','transactions','components','contracts','slices','evidence','council','references'].includes(view) ? view : 'overview', type: null, id: null };
 }
 
 export function routeForSelection(type, id, currentView = 'overview') {
   if (!type || !id) return `#${currentView}`;
   if (type === 'integrationLink') return `#integration/link/${encodeURIComponent(id)}`;
   if (currentView === 'integration') return `#integration/${encodeURIComponent(type)}/${encodeURIComponent(id)}`;
+  if (type === 'referenceSystem') return '#references/system/' + encodeURIComponent(id);
+  if (type === 'referenceTechnology') return '#references/technology/' + encodeURIComponent(id);
   if (type === 'councilRole') return '#council/role/' + encodeURIComponent(id);
   if (type === 'councilDecision') return '#council/decision/' + encodeURIComponent(id);
   if (type === 'councilStage') return '#council/stage/' + encodeURIComponent(id);
