@@ -15,7 +15,28 @@ try{
 
   assert(await visible('.overview-graph'),'Overview graph is not visible');
   assert(await visible('[data-overview-id="authority"]'),'Authority component is not visible');
-  assert((await page.locator('.view-tab').count())===8,'Expected eight functional top-level views');
+  assert((await page.locator('.view-tab').count())===9,'Expected nine functional top-level views');
+
+
+  await page.click('.view-tab[data-view="council"]');
+  await page.waitForSelector('.council-role-grid',{state:'visible'});
+  assert((await page.locator('.council-role-card').count())===7,'Council must show seven proposed specialist roles');
+  assert((await page.locator('.council-step').count())===5,'Wall example must show five review steps');
+  assert((await page.locator('.council-stage').innerText()).includes('No agent runs recorded'),'Council must not imply agents have executed');
+  await page.click('.council-role-card[data-atlas-id="systems"]');
+  await page.waitForFunction(()=>location.hash==='#council/role/systems');
+  assert((await page.locator('#inspector').innerText()).includes('Review only'),'Council role authority must be explicit');
+  await page.click('.council-step[data-atlas-id="wall-edit-architecture:challenge"]');
+  await page.waitForFunction(()=>location.hash.includes('#council/stage/'));
+  assert((await page.locator('#inspector').innerText()).includes('not_run'),'Decision step must state that no review ran');
+  await page.goto(base+'#overview/component/authority',{waitUntil:'networkidle'});
+  assert((await page.locator('#inspector').innerText()).includes('Architecture Council reviewers'),'Component inspector must expose Council assignments');
+  await page.click('#inspector [data-atlas-type="councilDecision"]');
+  await page.waitForFunction(()=>location.hash.startsWith('#council/decision/'));
+  assert((await page.locator('#inspector').innerText()).includes('unassessed'),'Decision inspector must show unassessed alternatives');
+  const councilResponse=await page.request.get(base+'council.json');
+  assert(councilResponse.ok(),'Generated Council catalogue must be served');
+  await page.goto(base+'#overview',{waitUntil:'networkidle'});
 
   const views=[
     ['integration','.integration-matrix'],
