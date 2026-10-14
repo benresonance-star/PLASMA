@@ -132,7 +132,8 @@ describe('changeSetToSemanticCommands', () => {
       );
       expect(r.ok).toBe(true);
     }
-    expect(performance.now() - t0).toBeLessThan(20);
+    const elapsed = performance.now() - t0;
+    if (process.env.PLASMA_PERF_GATE === '1') expect(elapsed).toBeLessThan(20);
 
     const folder = changeSetToSemanticCommands(
       baseCs([
@@ -210,7 +211,8 @@ describe('changeSetToSemanticCommands', () => {
         },
       ]),
     );
-    expect(performance.now() - t0).toBeLessThan(5);
+    const elapsed = performance.now() - t0;
+    if (process.env.PLASMA_PERF_GATE === '1') expect(elapsed).toBeLessThan(5);
     expect(r.ok).toBe(true);
     expect(r.geometryRegen).toBe(true);
     expect(r.appliedPatternId).toBe(GOLDBERG_PATTERN_PUBLISHED_ID);
@@ -244,7 +246,8 @@ describe('changeSetToSemanticCommands', () => {
       ]),
       { modelId: 'model:d01' },
     );
-    expect(performance.now() - t0).toBeLessThan(20);
+    const elapsed = performance.now() - t0;
+    if (process.env.PLASMA_PERF_GATE === '1') expect(elapsed).toBeLessThan(20);
     expect(r.ok).toBe(true);
     expect(r.mode).toBe('organise');
     expect(isOrganiseOnlyLowerResult(r)).toBe(true);
@@ -297,7 +300,8 @@ describe('changeSetToSemanticCommands', () => {
     );
     const t0 = performance.now();
     const r = changeSetToSemanticCommands(baseCs(commands), { modelId: 'model:d01' });
-    expect(performance.now() - t0).toBeLessThan(20);
+    const elapsed = performance.now() - t0;
+    if (process.env.PLASMA_PERF_GATE === '1') expect(elapsed).toBeLessThan(20);
     expect(r.ok).toBe(true);
     expect(r.organiseOps).toHaveLength(10);
   });

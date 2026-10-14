@@ -80,14 +80,19 @@ describe('React Flow adapter (SD1)', () => {
     const removed = nodes.find((n) => n.data.semanticId === 'component:y:2')!;
     expect(changed.className).toContain('sdi-rf-node--provisional');
     expect(changed.className).toContain('sdi-rf-node--changed');
+    expect(changed.data.summary).toBe('update');
     expect(added.className).toContain('sdi-rf-node--provisional');
     expect(added.className).toContain('sdi-rf-node--added');
+    expect(added.data.summary).toBe('create');
     expect(removed.className).toContain('sdi-rf-node--removed');
     const removedNode = delta.nodes.find((n) => n.semanticId === 'component:y:2')!;
     expect(rfClassForProjectionNode(removedNode)).toContain('sdi-rf-node--removed');
 
     const t0 = performance.now();
-    for (let i = 0; i < 100; i += 1) projectionToReactFlow(delta);
-    expect(performance.now() - t0).toBeLessThan(10);
+    let mapped = projectionToReactFlow(delta);
+    for (let i = 1; i < 100; i += 1) mapped = projectionToReactFlow(delta);
+    const elapsed = performance.now() - t0;
+    expect(mapped.nodes.find(n=>n.data.semanticId==='component:y:2')?.className).toContain('sdi-rf-node--removed');
+    if (process.env.PLASMA_PERF_GATE === '1') expect(elapsed).toBeLessThan(10);
   });
 });

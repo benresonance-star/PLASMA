@@ -19,9 +19,21 @@ describe('G2.1 postgres migration', () => {
         await sql.end({ timeout: 5 });
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      if (message.includes('ECONNREFUSED') || message.includes('connect')) {
-        console.warn('[migrate.test] Postgres unavailable — skipping');
+      // CI provisions PostgreSQL and MUST exercise migration correctness.
+      // On local machines without Postgres, only known connection failures
+      // are optional; never silently ignore schema/permission/SQL errors.
+      if (process.env.SPDS_REQUIRE_POSTGRES === '1') throw err;
+      const failures = err instanceof AggregateError ? err.errors : [err];
+      const unavailable = failures.some((failure: unknown) =>
+        failure !== null &&
+        typeof failure === 'object' &&
+        'code' in failure &&
+        ['ECONNREFUSED', 'EHOSTUNREACH', 'ENETUNREACH', 'ETIMEDOUT'].includes(
+          String((failure as { code?: unknown }).code),
+        ),
+      );
+      if (unavailable) {
+        console.warn('[migrate.test] Local Postgres unavailable — skipping optional integration check');
         return;
       }
       throw err;

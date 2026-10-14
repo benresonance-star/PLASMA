@@ -1,0 +1,1068 @@
+{
+  "view": {
+    "id": "references",
+    "label": "References",
+    "description": "System and technology decisions, trade-offs, alternatives and typed relationships."
+  },
+  "disclaimer": "Curated architectural evaluations; alternatives are comparisons, not installed or selected components. Package declarations and configuration are not proof of working production features.",
+  "systems": [
+    {
+      "id": "interaction",
+      "why": "Interactive manipulation must feel immediate without turning speculative previews into accepted state.",
+      "strengths": [
+        "Fast user feedback independent of slow exact solvers",
+        "Human and agent changes can use a common semantic operation boundary"
+      ],
+      "weaknesses": [
+        "Previews can diverge from authoritative results",
+        "Requires explicit stale/candidate presentation"
+      ],
+      "alternatives": [
+        {
+          "name": "Direct model mutation",
+          "tradeoff": "Simpler initially, but creates unsafe hidden state changes"
+        },
+        {
+          "name": "CAD command stack",
+          "tradeoff": "Familiar interactions; correctness still requires transaction boundaries"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "proposes-to"
+        },
+        {
+          "type": "component",
+          "id": "geometry",
+          "role": "requests-preview-from"
+        },
+        {
+          "type": "technology",
+          "id": "react",
+          "role": "user-interface"
+        },
+        {
+          "type": "technology",
+          "id": "threejs",
+          "role": "render-viewport"
+        }
+      ]
+    },
+    {
+      "id": "intelligence",
+      "why": "Separate probabilistic reasoning from deterministic world authority.",
+      "strengths": [
+        "Can explore alternatives and critique decisions",
+        "Swappable model providers behind bounded interfaces"
+      ],
+      "weaknesses": [
+        "Proposals can be incorrect or underspecified",
+        "Context, tools and permissions require strict governance"
+      ],
+      "alternatives": [
+        {
+          "name": "Autonomous agent writes",
+          "tradeoff": "Fewer approval steps but unacceptable mutation and audit risks"
+        },
+        {
+          "name": "Single assistant prompt",
+          "tradeoff": "Lower orchestration cost but weaker specialist verification"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "submits-proposals-to"
+        },
+        {
+          "type": "component",
+          "id": "constraints",
+          "role": "gets-rule-feedback-from"
+        },
+        {
+          "type": "technology",
+          "id": "typescript",
+          "role": "agent-interface-contracts"
+        }
+      ]
+    },
+    {
+      "id": "authority",
+      "why": "Keep semantic building truth, identity, revisions and evidence in one governed place.",
+      "strengths": [
+        "Single source of truth",
+        "Transactions enable provenance and stable references"
+      ],
+      "weaknesses": [
+        "Complex state model and migration work",
+        "Concurrency and failure policies must be rigorously tested"
+      ],
+      "alternatives": [
+        {
+          "name": "Document-centric BIM database",
+          "tradeoff": "Mature and familiar but can couple geometry and authority"
+        },
+        {
+          "name": "Event-sourced graph store",
+          "tradeoff": "Natural history and relations, but additional operational complexity"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "geometry",
+          "role": "provides-authoritative-input-to"
+        },
+        {
+          "type": "component",
+          "id": "representation",
+          "role": "provides-revision-to"
+        },
+        {
+          "type": "technology",
+          "id": "postgresql",
+          "role": "persistence-backend"
+        },
+        {
+          "type": "technology",
+          "id": "zod",
+          "role": "validated-boundaries"
+        }
+      ]
+    },
+    {
+      "id": "geometry",
+      "why": "Generate candidate precise geometry without letting a particular kernel define semantic truth.",
+      "strengths": [
+        "Kernel-neutral geometry contracts",
+        "Exact and approximate strategies can be selected per task"
+      ],
+      "weaknesses": [
+        "Topology naming and tolerance handling are difficult",
+        "Expensive solves require fallbacks and timeouts"
+      ],
+      "alternatives": [
+        {
+          "name": "CGAL",
+          "tradeoff": "Strong computational geometry; different B-rep/CAD integration trade-offs"
+        },
+        {
+          "name": "Parasolid",
+          "tradeoff": "Mature commercial CAD kernel with licensing and distribution implications"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "returns-candidate-to"
+        },
+        {
+          "type": "component",
+          "id": "constraints",
+          "role": "submits-for-validation"
+        },
+        {
+          "type": "technology",
+          "id": "opencascade",
+          "role": "exact-kernel-adapter"
+        },
+        {
+          "type": "technology",
+          "id": "gmsh",
+          "role": "meshing-adapter"
+        }
+      ]
+    },
+    {
+      "id": "constraints",
+      "why": "Evaluate whether a candidate world satisfies technical and policy invariants before acceptance.",
+      "strengths": [
+        "Explicit rejection and repair evidence",
+        "Policies can be tested independently from render code"
+      ],
+      "weaknesses": [
+        "Regulations can be ambiguous or version-dependent",
+        "Cross-domain constraints can be computationally expensive"
+      ],
+      "alternatives": [
+        {
+          "name": "Hard-coded UI checks",
+          "tradeoff": "Quick prototyping but inconsistent enforcement"
+        },
+        {
+          "name": "External rule engine",
+          "tradeoff": "Powerful declarative policies with integration overhead"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "guards-commits"
+        },
+        {
+          "type": "component",
+          "id": "geometry",
+          "role": "checks-candidates"
+        },
+        {
+          "type": "technology",
+          "id": "zod",
+          "role": "structural-validation"
+        }
+      ]
+    },
+    {
+      "id": "representation",
+      "why": "Derive meshes, viewports, drawings and schedules from revisioned semantic state.",
+      "strengths": [
+        "One model can support many purpose-specific views",
+        "Derived artifacts can be discarded and regenerated"
+      ],
+      "weaknesses": [
+        "Invalidation and cache freshness add complexity",
+        "Mesh detail cannot replace authoritative building semantics"
+      ],
+      "alternatives": [
+        {
+          "name": "Single geometry-first scene graph",
+          "tradeoff": "Simple interactive renderer but difficult for robust documentation"
+        },
+        {
+          "name": "Full independent drawing model",
+          "tradeoff": "Flexible drafting but risks disconnected truth"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "reads-world-revision"
+        },
+        {
+          "type": "component",
+          "id": "documentation",
+          "role": "produces-drawing-outputs"
+        },
+        {
+          "type": "technology",
+          "id": "threejs",
+          "role": "interactive-3d"
+        },
+        {
+          "type": "technology",
+          "id": "minio",
+          "role": "derived-artifacts"
+        }
+      ]
+    },
+    {
+      "id": "external",
+      "why": "Keep regulations, analysis services, importers and fabrication adapters replaceable.",
+      "strengths": [
+        "Third-party systems cannot silently own world state",
+        "Traceable adapter inputs and outputs"
+      ],
+      "weaknesses": [
+        "Version and schema mismatches require careful translation",
+        "External data quality and provenance vary"
+      ],
+      "alternatives": [
+        {
+          "name": "Direct vendor integration",
+          "tradeoff": "Less boilerplate but high coupling"
+        },
+        {
+          "name": "Universal exchange format alone",
+          "tradeoff": "Interoperable files but incomplete semantic operations"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "provides-claims-to"
+        },
+        {
+          "type": "technology",
+          "id": "fastify",
+          "role": "service-boundaries"
+        },
+        {
+          "type": "technology",
+          "id": "docker",
+          "role": "isolated-workers"
+        }
+      ]
+    },
+    {
+      "id": "differential",
+      "why": "Reserve sensitivity-guided computation as optional advice, not as an exact authority shortcut.",
+      "strengths": [
+        "Can prioritize expensive solver calls",
+        "Useful for local previews and optimization proposals"
+      ],
+      "weaknesses": [
+        "Gradients fail around discontinuities",
+        "Requires trust radii, uncertainty and exact fallbacks"
+      ],
+      "alternatives": [
+        {
+          "name": "Finite differences",
+          "tradeoff": "Simple to apply, but potentially costly and noisy"
+        },
+        {
+          "name": "Full exact solve per proposal",
+          "tradeoff": "Higher authority but slower interactive feedback"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "derives-from"
+        },
+        {
+          "type": "component",
+          "id": "geometry",
+          "role": "advises-solver"
+        },
+        {
+          "type": "component",
+          "id": "constraints",
+          "role": "cannot-bypass"
+        }
+      ]
+    },
+    {
+      "id": "documentation",
+      "why": "Make authored view, sheet and annotation intent persistent while deriving scale-specific graphics.",
+      "strengths": [
+        "Model-linked details can remain revision coherent",
+        "Issue packages can be validated and immutable"
+      ],
+      "weaknesses": [
+        "Scale-specific simplification is difficult",
+        "Anchors and approved overrides require careful lifecycle management"
+      ],
+      "alternatives": [
+        {
+          "name": "Independent 2D CAD drafting",
+          "tradeoff": "Flexible detail work but difficult automatic coordination"
+        },
+        {
+          "name": "BIM-only 3D cut views",
+          "tradeoff": "Coherent geometry but insufficient drawing abstraction at every scale"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "commits-document-intent-through"
+        },
+        {
+          "type": "component",
+          "id": "representation",
+          "role": "requests-scale-views"
+        },
+        {
+          "type": "technology",
+          "id": "react",
+          "role": "document-editing-ui"
+        }
+      ]
+    },
+    {
+      "id": "editorial-continuity",
+      "why": "Compare project-grounded alternatives while preserving context, constraints and documentary coherence.",
+      "strengths": [
+        "Explicit reversible proposals",
+        "Cross-view continuity checks can expose unnoticed drift"
+      ],
+      "weaknesses": [
+        "Learned suggestions can hallucinate details",
+        "Requires strong source attribution and human sign-off"
+      ],
+      "alternatives": [
+        {
+          "name": "Manual drawing audits",
+          "tradeoff": "Reliable human judgement but slow and hard to reproduce"
+        },
+        {
+          "name": "Unconstrained generative correction",
+          "tradeoff": "Fast variants but can silently break intent"
+        }
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "documentation",
+          "role": "audits-continuity"
+        },
+        {
+          "type": "component",
+          "id": "intelligence",
+          "role": "uses-proposal-fabric"
+        },
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "cannot-direct-write"
+        }
+      ]
+    }
+  ],
+  "technologies": [
+    {
+      "id": "typescript",
+      "name": "TypeScript",
+      "category": "language",
+      "adoption": "Declared toolchain",
+      "what": "Statically typed JavaScript used for the monorepo's domain models, services and browser applications.",
+      "why": "One shared implementation language across contracts, front end and adapters.",
+      "strengths": [
+        "Strong editor tooling and typed interfaces",
+        "Shared DTO definitions across packages"
+      ],
+      "weaknesses": [
+        "Types vanish at runtime",
+        "Large generics and build graphs can be complex"
+      ],
+      "alternatives": [
+        {
+          "name": "Rust",
+          "tradeoff": "Stronger memory-safety/performance potential but greater implementation and interop cost"
+        },
+        {
+          "name": "Plain JavaScript",
+          "tradeoff": "Lighter tooling but fewer compile-time guarantees"
+        }
+      ],
+      "sourcePaths": [
+        "package.json"
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "implements-domain-contracts"
+        },
+        {
+          "type": "component",
+          "id": "interaction",
+          "role": "implements-ui-events"
+        }
+      ]
+    },
+    {
+      "id": "pnpm",
+      "name": "pnpm",
+      "category": "tooling",
+      "adoption": "Declared package manager",
+      "what": "Node package manager supporting workspace linking and efficient dependency installation.",
+      "why": "Single lockfile and shared local packages in the monorepo.",
+      "strengths": [
+        "Efficient package storage",
+        "Explicit workspace resolution"
+      ],
+      "weaknesses": [
+        "Requires Node tooling discipline",
+        "Workspace dependency drift still needs CI"
+      ],
+      "alternatives": [
+        {
+          "name": "npm workspaces",
+          "tradeoff": "Ubiquitous, simpler defaults; different performance and lockfile semantics"
+        },
+        {
+          "name": "Yarn",
+          "tradeoff": "Comparable workspace management with different configuration choices"
+        }
+      ],
+      "sourcePaths": [
+        "package.json"
+      ],
+      "relationships": [
+        {
+          "type": "technology",
+          "id": "typescript",
+          "role": "manages-toolchain"
+        }
+      ]
+    },
+    {
+      "id": "turborepo",
+      "name": "Turborepo",
+      "category": "tooling",
+      "adoption": "Declared build orchestrator",
+      "what": "Task graph runner for builds, linting and tests across interdependent packages.",
+      "why": "Coordinates monorepo verification without manually scripting every package.",
+      "strengths": [
+        "Incremental execution and caching",
+        "Understands package task dependencies"
+      ],
+      "weaknesses": [
+        "Cache correctness needs attention",
+        "Build graph complexity can hide failed edges"
+      ],
+      "alternatives": [
+        {
+          "name": "Nx",
+          "tradeoff": "Richer project graph and tooling with greater framework complexity"
+        },
+        {
+          "name": "Plain scripts",
+          "tradeoff": "Transparent but less scalable for dependency orchestration"
+        }
+      ],
+      "sourcePaths": [
+        "package.json"
+      ],
+      "relationships": [
+        {
+          "type": "technology",
+          "id": "pnpm",
+          "role": "runs-workspaces"
+        }
+      ]
+    },
+    {
+      "id": "vitest",
+      "name": "Vitest",
+      "category": "testing",
+      "adoption": "Declared testing framework",
+      "what": "JavaScript and TypeScript test runner integrated into project packages.",
+      "why": "Make contract and regression checks runnable in CI.",
+      "strengths": [
+        "Fast development loop",
+        "Compatible with modern TypeScript tooling"
+      ],
+      "weaknesses": [
+        "Benchmark results depend on environment",
+        "Integration and browser tests need other tools"
+      ],
+      "alternatives": [
+        {
+          "name": "Jest",
+          "tradeoff": "Large ecosystem but more configuration in modern ESM stacks"
+        },
+        {
+          "name": "Node test runner",
+          "tradeoff": "Fewer dependencies, more limited built-in ecosystem"
+        }
+      ],
+      "sourcePaths": [
+        "package.json"
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "constraints",
+          "role": "verifies-policies"
+        },
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "verifies-invariants"
+        }
+      ]
+    },
+    {
+      "id": "zod",
+      "name": "Zod",
+      "category": "validation",
+      "adoption": "Declared dependency",
+      "what": "Runtime schema parsing and validation for TypeScript data boundaries.",
+      "why": "Validate input and serialized domain contracts where static types are insufficient.",
+      "strengths": [
+        "Types inferred from schemas",
+        "Readable structured validation errors"
+      ],
+      "weaknesses": [
+        "Parsing large payloads has measurable cost",
+        "Schemas do not prove engineering correctness"
+      ],
+      "alternatives": [
+        {
+          "name": "JSON Schema/Ajv",
+          "tradeoff": "Interoperable schemas; separate type synchronization"
+        },
+        {
+          "name": "Valibot",
+          "tradeoff": "Modular validation footprint with different API trade-offs"
+        }
+      ],
+      "sourcePaths": [
+        "packages/semantic-core/package.json"
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "validates-shapes"
+        },
+        {
+          "type": "component",
+          "id": "constraints",
+          "role": "validates-inputs"
+        }
+      ]
+    },
+    {
+      "id": "react",
+      "name": "React",
+      "category": "frontend",
+      "adoption": "Declared dependency",
+      "what": "Component-based user interface library for the designer application.",
+      "why": "Supports composable inspection, editing and workbench views.",
+      "strengths": [
+        "Large ecosystem",
+        "Fine-grained component composition"
+      ],
+      "weaknesses": [
+        "Complex state synchronization can cause bugs",
+        "Not a geometry kernel or state authority"
+      ],
+      "alternatives": [
+        {
+          "name": "Vue",
+          "tradeoff": "Approachable reactive component model"
+        },
+        {
+          "name": "Svelte",
+          "tradeoff": "Compile-time approach with distinct ecosystem trade-offs"
+        }
+      ],
+      "sourcePaths": [
+        "apps/designer-web/package.json"
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "interaction",
+          "role": "renders-controls"
+        },
+        {
+          "type": "component",
+          "id": "documentation",
+          "role": "renders-editor"
+        }
+      ]
+    },
+    {
+      "id": "vite",
+      "name": "Vite",
+      "category": "frontend-tooling",
+      "adoption": "Declared dependency",
+      "what": "Browser development server and bundling tool.",
+      "why": "Keep the designer app's development and build feedback fast.",
+      "strengths": [
+        "Fast local iteration",
+        "Works with React/TypeScript stack"
+      ],
+      "weaknesses": [
+        "Build and runtime configurations can diverge",
+        "Does not manage backend deployment"
+      ],
+      "alternatives": [
+        {
+          "name": "Webpack",
+          "tradeoff": "Mature configurability with more setup"
+        },
+        {
+          "name": "Rspack",
+          "tradeoff": "Fast bundler with ecosystem compatibility considerations"
+        }
+      ],
+      "sourcePaths": [
+        "apps/designer-web/package.json"
+      ],
+      "relationships": [
+        {
+          "type": "technology",
+          "id": "react",
+          "role": "bundles-ui"
+        }
+      ]
+    },
+    {
+      "id": "threejs",
+      "name": "Three.js",
+      "category": "graphics",
+      "adoption": "Declared dependency",
+      "what": "WebGL-oriented 3D scene and rendering library.",
+      "why": "Render interactive derived models while semantic state lives elsewhere.",
+      "strengths": [
+        "Strong browser 3D ecosystem",
+        "Good support for selection, camera and mesh workflows"
+      ],
+      "weaknesses": [
+        "Not an exact CAD solid modeller",
+        "Large scenes require careful draw-call and memory management"
+      ],
+      "alternatives": [
+        {
+          "name": "Babylon.js",
+          "tradeoff": "Integrated real-time engine and tooling"
+        },
+        {
+          "name": "Custom WebGPU renderer",
+          "tradeoff": "Fine control but higher maintenance cost"
+        }
+      ],
+      "sourcePaths": [
+        "apps/designer-web/package.json",
+        "docs/architecture/ADR-003-derived-representations.md"
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "representation",
+          "role": "renders-derived-meshes"
+        },
+        {
+          "type": "component",
+          "id": "interaction",
+          "role": "provides-viewport"
+        }
+      ]
+    },
+    {
+      "id": "opencascade",
+      "name": "OpenCascade / OCCT",
+      "category": "geometry",
+      "adoption": "Declared kernel adapter bindings",
+      "what": "Boundary-representation solid modelling kernel accessed through a dedicated geometry service.",
+      "why": "Precise CAD operations behind engine-neutral contracts for reusable semantics.",
+      "strengths": [
+        "Exact solid modelling and topology operations",
+        "Open-source kernel with broad CAD file ecosystem"
+      ],
+      "weaknesses": [
+        "Topology naming and numerical tolerances are difficult",
+        "WASM/native packaging and worker isolation are nontrivial"
+      ],
+      "alternatives": [
+        {
+          "name": "Parasolid",
+          "tradeoff": "Commercial solid kernel with licensing and distribution trade-offs"
+        },
+        {
+          "name": "CGAL",
+          "tradeoff": "Powerful geometry algorithms, not a drop-in full CAD B-rep replacement"
+        }
+      ],
+      "sourcePaths": [
+        "services/geometry-occt/package.json",
+        "docs/architecture/ADR-002-occt-adapter-boundary.md"
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "geometry",
+          "role": "exact-resolver"
+        },
+        {
+          "type": "technology",
+          "id": "threejs",
+          "role": "provides-render-meshes-to"
+        }
+      ]
+    },
+    {
+      "id": "fastify",
+      "name": "Fastify",
+      "category": "backend",
+      "adoption": "Declared dependency",
+      "what": "Node.js HTTP server framework used by API and geometry services.",
+      "why": "Keep service boundaries small with explicit request validation and error handling.",
+      "strengths": [
+        "Low framework overhead",
+        "Plugin-oriented route architecture"
+      ],
+      "weaknesses": [
+        "Requires disciplined schema and authentication design",
+        "Not a persistence or orchestration layer"
+      ],
+      "alternatives": [
+        {
+          "name": "Express",
+          "tradeoff": "Simpler ubiquity with different type/performance characteristics"
+        },
+        {
+          "name": "NestJS",
+          "tradeoff": "Batteries-included modular architecture with more framework weight"
+        }
+      ],
+      "sourcePaths": [
+        "apps/api/package.json",
+        "services/geometry-occt/package.json"
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "external",
+          "role": "exposes-typed-adapters"
+        },
+        {
+          "type": "component",
+          "id": "geometry",
+          "role": "hosts-geometry-service"
+        }
+      ]
+    },
+    {
+      "id": "postgresql",
+      "name": "PostgreSQL",
+      "category": "persistence",
+      "adoption": "Configured local database",
+      "what": "Relational database configured in Docker Compose for application persistence.",
+      "why": "Persist governed revisions, entities and transactional application records.",
+      "strengths": [
+        "ACID transactions and mature indexing",
+        "Strong operational ecosystem"
+      ],
+      "weaknesses": [
+        "Graph traversals may need explicit indexes/models",
+        "Schema migration and database operations require care"
+      ],
+      "alternatives": [
+        {
+          "name": "Neo4j",
+          "tradeoff": "Native graph traversal model but added consistency/operational concerns"
+        },
+        {
+          "name": "SQLite",
+          "tradeoff": "Very simple deployments with different concurrency/scaling envelope"
+        }
+      ],
+      "sourcePaths": [
+        "docker-compose.yml",
+        "apps/api/package.json"
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "persists-app-records"
+        }
+      ]
+    },
+    {
+      "id": "drizzle",
+      "name": "Drizzle ORM",
+      "category": "persistence",
+      "adoption": "Declared dependency",
+      "what": "TypeScript-friendly object-relational mapping and SQL schema tooling.",
+      "why": "Keep database access close to typed application models.",
+      "strengths": [
+        "SQL-aware query builder",
+        "TypeScript integration"
+      ],
+      "weaknesses": [
+        "Migrations require governance",
+        "Not a substitute for domain transaction invariants"
+      ],
+      "alternatives": [
+        {
+          "name": "Prisma",
+          "tradeoff": "Higher-level ORM/tooling with different query control"
+        },
+        {
+          "name": "Kysely",
+          "tradeoff": "Typed SQL builder with less ORM schema machinery"
+        }
+      ],
+      "sourcePaths": [
+        "apps/api/package.json"
+      ],
+      "relationships": [
+        {
+          "type": "technology",
+          "id": "postgresql",
+          "role": "accesses-database"
+        },
+        {
+          "type": "component",
+          "id": "authority",
+          "role": "supports-persistence"
+        }
+      ]
+    },
+    {
+      "id": "minio",
+      "name": "MinIO",
+      "category": "artifact-storage",
+      "adoption": "Configured local service",
+      "what": "S3-compatible object storage service present in the Docker Compose stack.",
+      "why": "Store generated geometry and documents separately from authoritative relational metadata.",
+      "strengths": [
+        "S3-compatible workflows",
+        "Object storage suited to large binary artifacts"
+      ],
+      "weaknesses": [
+        "Durability requires correct deployment settings",
+        "Object storage does not enforce semantic revision coherence"
+      ],
+      "alternatives": [
+        {
+          "name": "AWS S3",
+          "tradeoff": "Managed storage and scale; cloud cost and dependency"
+        },
+        {
+          "name": "Filesystem",
+          "tradeoff": "Simple local storage, harder multi-worker coordination"
+        }
+      ],
+      "sourcePaths": [
+        "docker-compose.yml",
+        "services/artifact-store/package.json"
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "representation",
+          "role": "stores-generated-artifacts"
+        },
+        {
+          "type": "component",
+          "id": "external",
+          "role": "exposes-binary-storage"
+        }
+      ]
+    },
+    {
+      "id": "docker",
+      "name": "Docker Compose",
+      "category": "infrastructure",
+      "adoption": "Configured local services",
+      "what": "Container orchestration configuration for PostgreSQL, MinIO, geometry and optional meshing service.",
+      "why": "Reproducible isolated development/service environments.",
+      "strengths": [
+        "Explicit service boundaries",
+        "Repeatable local setup"
+      ],
+      "weaknesses": [
+        "Resource use and build overhead",
+        "Development compose is not production orchestration"
+      ],
+      "alternatives": [
+        {
+          "name": "Kubernetes",
+          "tradeoff": "Scalable production orchestration with significantly higher complexity"
+        },
+        {
+          "name": "Local processes",
+          "tradeoff": "Faster debugging but less environment isolation"
+        }
+      ],
+      "sourcePaths": [
+        "docker-compose.yml"
+      ],
+      "relationships": [
+        {
+          "type": "technology",
+          "id": "postgresql",
+          "role": "runs-database"
+        },
+        {
+          "type": "technology",
+          "id": "minio",
+          "role": "runs-artifact-store"
+        },
+        {
+          "type": "technology",
+          "id": "opencascade",
+          "role": "runs-geometry-worker"
+        }
+      ]
+    },
+    {
+      "id": "gmsh",
+      "name": "Gmsh",
+      "category": "meshing",
+      "adoption": "Optional Compose profile",
+      "what": "Meshing software offered as an optional container profile.",
+      "why": "Provide mesh generation for analysis and specialist geometric workflows.",
+      "strengths": [
+        "High-quality meshing algorithms",
+        "Scriptable geometry/mesh pipeline"
+      ],
+      "weaknesses": [
+        "Mesh quality depends on source geometry",
+        "Not authoritative for semantic B-rep state"
+      ],
+      "alternatives": [
+        {
+          "name": "TetGen",
+          "tradeoff": "Specialist tetrahedral meshing with different feature envelope"
+        },
+        {
+          "name": "Netgen",
+          "tradeoff": "Alternative open meshing toolkit"
+        }
+      ],
+      "sourcePaths": [
+        "docker-compose.yml"
+      ],
+      "relationships": [
+        {
+          "type": "component",
+          "id": "geometry",
+          "role": "optional-meshing"
+        },
+        {
+          "type": "component",
+          "id": "external",
+          "role": "analysis-adapter"
+        }
+      ]
+    },
+    {
+      "id": "playwright",
+      "name": "Playwright",
+      "category": "testing",
+      "adoption": "Declared CI browser test dependency",
+      "what": "Automated real-browser interaction testing used by Atlas smoke workflow.",
+      "why": "Verify navigation, responsive behaviour and inspector UI beyond schema checks.",
+      "strengths": [
+        "Browser-level regression coverage",
+        "Mobile viewport simulation"
+      ],
+      "weaknesses": [
+        "Tests can be timing-sensitive",
+        "Requires browser downloads and CI maintenance"
+      ],
+      "alternatives": [
+        {
+          "name": "Cypress",
+          "tradeoff": "Alternative browser E2E framework with different architecture"
+        },
+        {
+          "name": "Pure unit tests",
+          "tradeoff": "Cheaper but cannot verify user-visible navigation"
+        }
+      ],
+      "sourcePaths": [
+        ".github/workflows/atlas-smoke.yml"
+      ],
+      "relationships": [
+        {
+          "type": "technology",
+          "id": "vitest",
+          "role": "complements-unit-tests"
+        },
+        {
+          "type": "component",
+          "id": "interaction",
+          "role": "checks-browser-ui"
+        }
+      ]
+    }
+  ]
+}

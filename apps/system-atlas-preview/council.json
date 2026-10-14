@@ -1,0 +1,332 @@
+{
+  "view": {
+    "id": "council",
+    "label": "Council",
+    "description": "Development architecture reviewers, affected systems and unexecuted decision traces."
+  },
+  "authority": "development-governance-only",
+  "implementationStatus": "not_started",
+  "executionStatus": "none",
+  "roles": [
+    {
+      "id": "systems",
+      "name": "Systems Architect",
+      "phase": "initial",
+      "summary": "Protects system boundaries and coherence across architectural decisions.",
+      "responsibilities": [
+        "Review ownership and coupling",
+        "Compare alternative system decompositions",
+        "Flag competing sources of truth"
+      ],
+      "learning": "Bounded contexts, dependency rules and architectural trade-offs.",
+      "components": [
+        "authority",
+        "interaction",
+        "intelligence",
+        "documentation"
+      ],
+      "contracts": [
+        "submit-transaction",
+        "transaction-proposal",
+        "document-set"
+      ],
+      "authority": "review_only",
+      "executionStatus": "not_started",
+      "modelBinding": null,
+      "forbidden": [
+        "direct authoritative state mutation",
+        "self-approval or marking checks verified without linked evidence"
+      ]
+    },
+    {
+      "id": "code",
+      "name": "Repository & Code Architect",
+      "phase": "initial",
+      "summary": "Maps existing implementations and tests reuse and change impacts.",
+      "responsibilities": [
+        "Audit packages before new code",
+        "Review interface and dependency compatibility",
+        "Identify maintainability and migration risks"
+      ],
+      "learning": "TypeScript modules, source navigation and code review.",
+      "components": [
+        "geometry",
+        "representation",
+        "authority"
+      ],
+      "contracts": [
+        "resolve-geometry",
+        "derive-representation",
+        "submit-transaction"
+      ],
+      "authority": "review_only",
+      "executionStatus": "not_started",
+      "modelBinding": null,
+      "forbidden": [
+        "direct authoritative state mutation",
+        "self-approval or marking checks verified without linked evidence"
+      ]
+    },
+    {
+      "id": "verification",
+      "name": "Verification Architect",
+      "phase": "initial",
+      "summary": "Defines falsifiable tests and independently reviews implementation evidence.",
+      "responsibilities": [
+        "Write acceptance and regression cases",
+        "Require exact commit and test provenance",
+        "Separate observed results from unverified claims"
+      ],
+      "learning": "Property, integration, mutation, negative and end-to-end testing.",
+      "components": [
+        "constraints",
+        "authority",
+        "representation",
+        "documentation"
+      ],
+      "contracts": [
+        "validate-candidate",
+        "submit-transaction",
+        "document-set"
+      ],
+      "authority": "review_only",
+      "executionStatus": "not_started",
+      "modelBinding": null,
+      "forbidden": [
+        "direct authoritative state mutation",
+        "self-approval or marking checks verified without linked evidence"
+      ]
+    },
+    {
+      "id": "adversarial",
+      "name": "Adversarial Architect",
+      "phase": "initial",
+      "summary": "Challenges proposals with simpler alternatives, failure modes and conflicting assumptions.",
+      "responsibilities": [
+        "Seek counterexamples",
+        "Review stale-state, concurrency and rollback risks",
+        "Expose untested assumptions"
+      ],
+      "learning": "Threat modelling, adversarial testing and design simplicity.",
+      "components": [
+        "intelligence",
+        "authority",
+        "geometry",
+        "documentation"
+      ],
+      "contracts": [
+        "transaction-proposal",
+        "validate-candidate",
+        "document-set"
+      ],
+      "authority": "review_only",
+      "executionStatus": "not_started",
+      "modelBinding": null,
+      "forbidden": [
+        "direct authoritative state mutation",
+        "self-approval or marking checks verified without linked evidence"
+      ]
+    },
+    {
+      "id": "domain",
+      "name": "Domain Architect",
+      "phase": "deferred",
+      "summary": "Protects semantic identity and domain meaning through model changes.",
+      "responsibilities": [
+        "Review entities and relationships",
+        "Preserve modelling semantics across domains",
+        "Detect duplicate representations of building truth"
+      ],
+      "learning": "Domain-driven design and schema evolution.",
+      "components": [
+        "authority",
+        "documentation"
+      ],
+      "contracts": [
+        "read-world-slice",
+        "resolve-reference",
+        "parametric-wall"
+      ],
+      "authority": "review_only",
+      "executionStatus": "not_started",
+      "modelBinding": null,
+      "forbidden": [
+        "direct authoritative state mutation",
+        "self-approval or marking checks verified without linked evidence"
+      ]
+    },
+    {
+      "id": "transactions",
+      "name": "State & Transaction Architect",
+      "phase": "deferred",
+      "summary": "Reviews atomicity, version control, concurrency and invalidation.",
+      "responsibilities": [
+        "Test atomic mutation boundaries",
+        "Review revision and optimistic concurrency policy",
+        "Protect rollback and history"
+      ],
+      "learning": "Atomic transactions, event sourcing and concurrency.",
+      "components": [
+        "authority",
+        "constraints"
+      ],
+      "contracts": [
+        "submit-transaction",
+        "transaction-proposal",
+        "validate-candidate"
+      ],
+      "authority": "review_only",
+      "executionStatus": "not_started",
+      "modelBinding": null,
+      "forbidden": [
+        "direct authoritative state mutation",
+        "self-approval or marking checks verified without linked evidence"
+      ]
+    },
+    {
+      "id": "computational",
+      "name": "Computational Architect",
+      "phase": "deferred",
+      "summary": "Reviews geometry robustness, numerical methods and dependent representations.",
+      "responsibilities": [
+        "Check topology and numerical tolerances",
+        "Review exact versus approximate representations",
+        "Challenge solver assumptions"
+      ],
+      "learning": "Boundary representations, numerical robustness and dependency graphs.",
+      "components": [
+        "geometry",
+        "constraints",
+        "representation"
+      ],
+      "contracts": [
+        "resolve-geometry",
+        "derive-representation",
+        "validate-candidate"
+      ],
+      "authority": "review_only",
+      "executionStatus": "not_started",
+      "modelBinding": null,
+      "forbidden": [
+        "direct authoritative state mutation",
+        "self-approval or marking checks verified without linked evidence"
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "id": "wall-edit-architecture",
+      "name": "Parametric wall edit — architecture trace",
+      "status": "illustrative",
+      "reviewStatus": "not_run",
+      "approvalStatus": "not_requested",
+      "summary": "Illustrative decision workflow for changing a wall layer thickness and coordinating derived outputs; no review or implementation evidence is claimed.",
+      "problem": "A wall-layer edit must update only causally dependent geometry, drawings and quantities without violating accepted revision authority.",
+      "alternatives": [
+        {
+          "name": "Direct geometry mutation",
+          "status": "unassessed",
+          "tradeoff": "Appears simple but risks a second source of truth and untracked dependent outputs."
+        },
+        {
+          "name": "Semantic edit through transaction authority",
+          "status": "unassessed",
+          "tradeoff": "Preserves coherent authoritative state but requires dependency and revision tracking."
+        }
+      ],
+      "affectedRefs": [
+        {
+          "type": "component",
+          "id": "authority"
+        },
+        {
+          "type": "component",
+          "id": "geometry"
+        },
+        {
+          "type": "component",
+          "id": "constraints"
+        },
+        {
+          "type": "component",
+          "id": "representation"
+        },
+        {
+          "type": "component",
+          "id": "documentation"
+        },
+        {
+          "type": "contract",
+          "id": "submit-transaction"
+        },
+        {
+          "type": "contract",
+          "id": "resolve-geometry"
+        },
+        {
+          "type": "contract",
+          "id": "document-set"
+        }
+      ],
+      "stages": [
+        {
+          "id": "scope",
+          "name": "Scope",
+          "roleIds": [
+            "systems",
+            "domain"
+          ],
+          "status": "not_run",
+          "question": "What is authoritative, what changes and what remains derived?",
+          "output": "Impact map, invariants and candidate designs"
+        },
+        {
+          "id": "review",
+          "name": "Review",
+          "roleIds": [
+            "code",
+            "transactions",
+            "computational"
+          ],
+          "status": "not_run",
+          "question": "Can existing packages preserve identity, geometry and revisions without a competing model?",
+          "output": "Reviewed design and alternatives"
+        },
+        {
+          "id": "challenge",
+          "name": "Challenge",
+          "roleIds": [
+            "adversarial",
+            "verification"
+          ],
+          "status": "not_run",
+          "question": "Which failures, stale reads, broken joins and concurrent edits falsify the proposal?",
+          "output": "Adversarial cases and required acceptance tests"
+        },
+        {
+          "id": "approval",
+          "name": "Approval",
+          "roleIds": [
+            "systems"
+          ],
+          "status": "not_run",
+          "question": "Has a human approved a reasoned design before implementation?",
+          "output": "Explicit human approval or rejection"
+        },
+        {
+          "id": "evidence",
+          "name": "Evidence",
+          "roleIds": [
+            "code",
+            "verification"
+          ],
+          "status": "not_run",
+          "question": "Which exact commits, tests, CI runs and outputs demonstrate behaviour?",
+          "output": "Traceable repository-backed verification"
+        }
+      ],
+      "evidenceRefs": [],
+      "source": "council-example-only"
+    }
+  ]
+}

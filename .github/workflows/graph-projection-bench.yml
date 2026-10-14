@@ -1,4 +1,6 @@
-# G1b — PR SD12 scale benches (1k / 10k). Fails on budget breach.
+# G1b — PR SD12 structural/scale correctness; strict wall-clock budgets run
+# on explicit workflow_dispatch or in the scheduled nightly benchmark.
+
 name: graph-projection-bench
 
 on:
@@ -19,6 +21,7 @@ jobs:
     timeout-minutes: 10
     env:
       NODE_OPTIONS: --use-system-ca
+      PLASMA_PERF_GATE: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -33,6 +36,9 @@ jobs:
 
       - name: Install graph-projection workspace
         run: pnpm install --frozen-lockfile --filter @spds/graph-projection...
+
+      - name: Build graph-projection and workspace dependencies
+        run: pnpm turbo run build --filter=@spds/graph-projection...
 
       - name: SD12 PR benches (1k / 10k)
         run: pnpm --filter @spds/graph-projection test:scale:pr

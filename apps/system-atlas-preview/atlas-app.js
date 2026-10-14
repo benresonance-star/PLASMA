@@ -1,6 +1,7 @@
 import { loadAtlas, parseHash, routeForRef, routeForSelection } from './atlas-model.js';
 import { createRenderer } from './atlas-renderer.js';
 import { setupHelp } from './atlas-help.js';
+import { comprehensionFocus, normalizeComprehensionLens, WALL_EDIT_TRACE } from './atlas-comprehension.js';
 
 const $ = selector => document.querySelector(selector);
 const clamp = (value,min,max) => Math.max(min,Math.min(max,value));
@@ -39,8 +40,22 @@ async function boot() {
   };
 
   els.status.textContent = model.data.meta.status.replaceAll('-',' ');
-  els.tabs.innerHTML = model.data.views.map(view =>
-    `<a class="view-tab" data-view="${view.id}" href="#${view.id}">${view.label}</a>`
+  // Five recognizable workspaces; every legacy view and deep-link stays available
+  // from the compact left outline. Switching workspaces does not change the map model.
+  const workspaces=[
+    {id:'map',label:'System map',route:'overview'},
+    {id:'flows',label:'Flows',route:'transactions'},
+    {id:'assure',label:'Assure',route:'integration'},
+    {id:'library',label:'Library',route:'references'},
+    {id:'council',label:'Council',route:'council'}
+  ];
+  const workspaceForView={
+    overview:'map',components:'map',languages:'map',contracts:'map',
+    transactions:'flows',slices:'flows',integration:'assure',evidence:'assure',
+    references:'library',council:'council'
+  };
+  els.tabs.innerHTML = workspaces.map(x=>
+    `<a class="workspace-tab" data-workspace="${x.id}" href="#${x.route}">${x.label}</a>`
   ).join('');
 
   const renderer = createRenderer({
@@ -65,7 +80,9 @@ async function boot() {
   const state = {
     route: parseHash(location.hash),
     showRelationships: localStorage.getItem('plasma-atlas-relationships') !== 'off',
-    sheetZoom: Number(localStorage.getItem('plasma-atlas-sheet-zoom')) || 1
+    sheetZoom: Number(localStorage.getItem('plasma-atlas-sheet-zoom')) || 1,
+    lens: normalizeComprehensionLens(localStorage.getItem('plasma-atlas-lens')),
+    scenarioStep: null
   };
 
   function currentViewMeta() {
@@ -93,7 +110,7 @@ async function boot() {
     } else if (state.route.view === 'slices') {
       els.viewControls.innerHTML = `<span class="toolbar-note">No implementation percentages without linked evidence.</span>`;
     } else {
-      els.viewControls.innerHTML = '';
+      els.viewControls.innerHTML = '<a class="back-to-map" href="#overview">← Whole-system map</a>';
     }
   }
 
@@ -104,7 +121,7 @@ async function boot() {
     els.zoomLabel.textContent = `${Math.round(state.sheetZoom*100)}%`;
     localStorage.setItem('plasma-atlas-sheet-zoom', String(state.sheetZoom));
     requestAnimationFrame(() => {
-      if (state.route.view === 'overview') renderer.drawRelationships(state.showRelationships,state.route);
+      if (state.route.view === 'overview') renderer.drawRelationships(state.showRelationships,state.route,comprehensionFocus(state.lens,state.route,state.scenarioStep,model));
     });
   }
 
@@ -122,8 +139,8 @@ async function boot() {
   }
 
   function updateTabs() {
-    els.tabs.querySelectorAll('[data-view]').forEach(tab => {
-      const active=tab.dataset.view===state.route.view;
+    els.tabs.querySelectorAll('[data-workspace]').forEach(tab => {
+      const active=tab.dataset.workspace===workspaceForView[state.route.view];
       tab.classList.toggle('active',active);
       tab.setAttribute('aria-current',active?'page':'false');
     });
@@ -135,7 +152,7 @@ async function boot() {
     els.viewSubtitle.textContent=meta.description;
     updateTabs();
     renderControls();
-    renderer.renderView(state.route,{showRelationships:state.showRelationships});
+    renderer.renderView(state.route,{showRelationships:state.showRelationships,lens:state.lens,scenarioStep:state.scenarioStep});
     renderer.renderInspector(selectedRef());
     applySheetZoom();
     document.body.classList.toggle('has-selection',Boolean(selectedRef()));
@@ -154,8 +171,35 @@ async function boot() {
     document.body.classList.remove('nav-open','inspector-open');
   }
 
+  function refreshComprehension() {
+    const scroll=els.viewHost.querySelector('.view-scroll');
+    const top=scroll?.scrollTop||0, left=scroll?.scrollLeft||0;
+    render();
+    const next=els.viewHost.querySelector('.view-scroll');
+    if(next){next.scrollTop=top;next.scrollLeft=left;}
+  }
+
   document.addEventListener('click', event => {
     if (event.target.closest('.help-ui,.search-shell,.zoom-controls')) return;
+    const lens=event.target.closest('[data-lens]');
+    if(lens){
+      state.lens=normalizeComprehensionLens(lens.dataset.lens);
+      state.scenarioStep=null;
+      localStorage.setItem('plasma-atlas-lens',state.lens);
+      event.preventDefault();refreshComprehension();return;
+    }
+    const scenario=event.target.closest('[data-scenario-step]');
+    if(scenario){
+      const index=Number(scenario.dataset.scenarioStep);
+      if(Number.isInteger(index)&&index>=0&&index<WALL_EDIT_TRACE.length){
+        state.scenarioStep=index;
+        event.preventDefault();refreshComprehension();
+      }
+      return;
+    }
+    if(event.target.closest('[data-scenario-reset]')){
+      state.scenarioStep=null;event.preventDefault();refreshComprehension();return;
+    }
     const target=event.target.closest('[data-atlas-type][data-atlas-id]');
     if(!target)return;
     const type=target.dataset.atlasType,id=target.dataset.atlasId;
@@ -202,7 +246,16 @@ async function boot() {
     }
   });
   document.addEventListener('keydown',event=>{
-    if(event.key==='/' && !/input|textarea/i.test(document.activeElement?.tagName||'')){
+    const relation=event.target.closest?.('.rel-hit[data-atlas-id]');
+    if(relation&&(event.key==='Enter'||event.key===' ')){
+      event.preventDefault();
+      navigate(routeForSelection('relationship',relation.dataset.atlasId,'overview'));
+      return;
+    }
+  });
+
+  document.addEventListener('keydown',event=>{
+    if((event.key==='/' || ((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k')) && !/input|textarea/i.test(document.activeElement?.tagName||'')){
       event.preventDefault();els.searchInput.focus();
     }
   });
@@ -243,10 +296,8 @@ async function boot() {
   state.route=parseHash(location.hash);
   render();
 
-  // Fit on a narrow first load without scaling the surrounding application shell.
-  if(window.innerWidth<900 && !localStorage.getItem('plasma-atlas-sheet-zoom')){
-    requestAnimationFrame(fitZoom);
-  }
+  // Preserve readable labels on mobile. The spatial map pans horizontally,
+  // rather than silently shrinking its text to 6–8 px on first load.
 
   window.__PLASMA_ATLAS__={model,state,render,navigate,fitZoom};
 }

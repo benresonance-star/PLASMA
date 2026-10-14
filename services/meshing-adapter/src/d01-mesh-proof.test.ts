@@ -5,11 +5,17 @@ import { runMeshJob } from './index.js';
 describe('E5 D01 geometry → analysis mesh proof', () => {
   it('meshes D01 representations with semantic physical groups', async () => {
     const pipeline = await runD01ReferencePipeline({ yLimit: 3 });
-    expect(pipeline.representations.length).toBe(3);
+    // yLimit=3 selects three semantic Y components, each with three
+    // separately generated arm/sweep representations (9 geometry artifacts).
+    expect(pipeline.representations).toHaveLength(9);
+    const owners = [...new Set(pipeline.representations.map((r) => r.semanticOwner))];
+    expect(owners).toHaveLength(3);
 
-    const groups = pipeline.representations.map((r) => ({
-      name: `group:${r.semanticOwner}`,
-      semanticIds: [r.semanticOwner],
+    // Physical groups are semantic component groups, not one group per
+    // ephemeral geometry artifact; preserve one mapping per semantic owner.
+    const groups = owners.map((owner) => ({
+      name: `group:${owner}`,
+      semanticIds: [owner],
       role: 'material' as const,
     }));
 

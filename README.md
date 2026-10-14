@@ -61,3 +61,11 @@ SPEC/           build-candidate specification
 ## Architecture invariant
 
 The semantic parametric model is the source of truth. Geometry, meshes, and UI representations are derived.
+
+## Correctness CI versus performance budgets
+
+Correctness CI runs the test suites and asserts functional outputs. Absolute wall-clock microbenchmarks (5/20/25/75 ms) in schema assembly, feature resolution, compile parsing, agent proposals, parametric mapping and designer interaction are **diagnostic, not correctness proof**, because shared GitHub runners introduce CPU contention. Their original limits have **not** been relaxed or deleted: run them explicitly with `PLASMA_PERF_GATE=1` using the `performance-budgets (diagnostic)` workflow (`workflow_dispatch`). Failures there represent an open performance requirement, not a passing performance claim. Before making performance thresholds release-gating, benchmark on a pinned hardware/runtime environment with warmups and reproducible baselines.
+
+B17 release recovery independently re-runs the pipeline and compares the **complete** manifest, including fabrication and exact-geometry hashes. A partial manifest must not pass as `exact`.
+
+Graph projection PR checks always verify graph size, connectivity and bounded projections; hard wall-clock thresholds remain enforced via manual SD12 benchmark dispatch and the scheduled SD12 nightly benchmark. Shared-runner timing is not reported as proof of baseline performance.

@@ -46,6 +46,8 @@ jobs:
           git config user.email "plasma-spec-bot@users.noreply.github.com"
           git add \
             apps/system-atlas-preview/atlas.json \
+            apps/system-atlas-preview/council.json \
+            apps/system-atlas-preview/references.json \
             apps/system-atlas-preview/repository-evidence.json \
             apps/system-atlas-preview/wall-contract.json \
             apps/system-atlas-preview/differential-contract.json \

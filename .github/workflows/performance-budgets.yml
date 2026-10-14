@@ -1,0 +1,74 @@
+name: performance-budgets (diagnostic)
+
+# Absolute millisecond thresholds are highly sensitive to CPU sharing. Keep
+# these checks explicit and runnable, without misclassifying functional CI.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plasma-performance-budgets
+  cancel-in-progress: false
+
+jobs:
+  performance:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --use-system-ca
+      PLASMA_PERF_GATE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build dependencies
+        run: pnpm turbo run build --filter=@spds/semantic-core... --filter=@spds/geometry-contracts... --filter=@spds/ai-interface... --filter=@spds/reference-pipeline... --filter=@spds/designer-web... --filter=@spds/api...
+      - name: Schema assembly budgets
+        run: pnpm --filter @spds/semantic-core exec vitest run src/schema-payload.test.ts --maxWorkers=1
+      - name: Feature resolution budgets
+        run: pnpm --filter @spds/geometry-contracts exec vitest run src/measure.test.ts --maxWorkers=1
+      - name: Geometry parsing budgets
+        run: pnpm --filter @spds/geometry-contracts exec vitest run src/compile.test.ts --maxWorkers=1
+      - name: Agent proposal lowering budgets
+        run: pnpm --filter @spds/ai-interface exec vitest run src/changeset-accept.test.ts --maxWorkers=1
+      - name: Parametric compile mapping budgets
+        run: pnpm --filter @spds/reference-pipeline exec vitest run src/compile-mapper.test.ts --maxWorkers=1
+      - name: Designer reducer and viewport budgets
+        run: |
+          pnpm --filter @spds/designer-web exec vitest run src/app-session.test.ts --maxWorkers=1
+          pnpm --filter @spds/designer-web exec vitest run src/ui/three-scene.test.ts --maxWorkers=1
+      - name: Schema projection budgets
+        run: pnpm --filter @spds/designer-web exec vitest run src/schema-projection.test.ts --maxWorkers=1
+      - name: React Flow delta class and pane mapping budgets
+        run: |
+          pnpm --filter @spds/designer-web exec vitest run src/sdi/reactflow-adapter.test.ts --maxWorkers=1
+          pnpm --filter @spds/designer-web exec vitest run src/right-pane.test.ts --maxWorkers=1
+      - name: API organisation timing budgets
+        run: pnpm --filter @spds/api exec vitest run src/model-groups.test.ts --maxWorkers=1
+      - name: Designer comprehension and interaction timing budgets
+        run: |
+          pnpm --filter @spds/designer-web exec vitest run \
+            src/explorer-from-graph.test.ts \
+            src/schema-item-docs.test.ts \
+            src/pending-changeset-preview.test.ts \
+            src/pending-impact.test.ts \
+            src/schema-draft.test.ts \
+            src/schema-reactflow-adapter.test.ts \
+            src/schema-view.test.ts \
+            src/sketch-intent.test.ts \
+            src/ui-preferences.test.ts \
+            src/ui/PatternCardView.test.ts \
+            src/what-if-session.test.ts --maxWorkers=1
+      - name: API proposal and compensation microbudgets
+        run: |
+          pnpm --filter @spds/api exec vitest run src/ai-branch-seed.test.ts src/ai-changeset-accept.test.ts src/compensating-command.test.ts --maxWorkers=1
+      - name: Agent organisation and tool router microbudgets
+        run: pnpm --filter @spds/ai-interface exec vitest run src/organise-propose.test.ts src/tool-router.test.ts --maxWorkers=1

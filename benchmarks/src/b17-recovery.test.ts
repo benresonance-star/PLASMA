@@ -46,12 +46,20 @@ describe('E7 B17 release recovery proof', () => {
     expect(parsed.release.status).toBe('published');
     expect(parsed.pipelineHash).toBe(pipeline.pipelineHash);
 
+    // The published manifest contains both fabrication and exact-geometry hashes.
+    // Reconstructing it from fabrication files alone would discard authoritative
+    // artifact identities and incorrectly downgrade an exact restore to compatible.
+    expect(parsed.release.manifest.artifactHashes).toEqual(pipeline.release.manifest.artifactHashes);
+    const replay = await runD01ReferencePipeline({ yLimit: 4 });
+    expect(assessReproducibility(parsed.release.manifest, replay.release.manifest)).toBe('exact');
+
+    // Losing exact-geometry hashes must NOT pass as an exact recovery.
     expect(
       assessReproducibility(parsed.release.manifest, {
-        ...pipeline.release.manifest,
-        artifactHashes: pipeline.fabrication.artifacts.map((a) => a.contentHash),
+        ...replay.release.manifest,
+        artifactHashes: replay.fabrication.artifacts.map((artifact) => artifact.contentHash),
       }),
-    ).toBe('exact');
+    ).not.toBe('exact');
 
     const t0 = performance.now();
     // Re-verify restored meta set (recovery timing precursor).

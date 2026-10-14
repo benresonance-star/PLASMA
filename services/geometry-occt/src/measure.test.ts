@@ -63,7 +63,7 @@ describe('kernel + HTTP measure (incl. angle)', () => {
     });
     expect(Math.abs(a.quantity - b.quantity)).toBeLessThanOrEqual(0.25);
     expect(b.provenance).toBe('brep');
-  });
+  }, 90_000);
 
   it('wasm measure is mesh-indicative', () => {
     const k = new OcctWasmKernel();

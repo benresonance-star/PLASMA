@@ -225,3 +225,172 @@ body.help-mode [data-atlas-type][data-atlas-id]{cursor:help!important}body.help-
 .inspector-list.differential-gates>div,.inspector-list.contract-relations>div{grid-template-columns:88px minmax(0,1fr)}
 .inspector-list.differential-gates>div{border-color:var(--line);background:var(--panel-strong)}
 .inspector-list.contract-rules>div{grid-template-columns:34px minmax(0,1fr)}
+
+
+/* Development Architecture Council: review proposals, not runtime agents. */
+.council-stage .atlas-section{margin-top:20px}
+.council-role-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.council-role-card,.council-decision-title,.council-step{color:var(--ink);text-align:left;border:1px solid var(--line);background:var(--panel-strong);border-radius:12px;padding:14px;min-width:0}
+.council-role-card:hover,.council-step:hover,.council-decision-title:hover{border-color:var(--accent)}
+.council-role-card.selected,.council-step.selected,.council-decision.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.council-role-card h3,.council-decision-title h3{font-size:14px;margin:7px 0}
+.council-role-card p,.council-decision-title p{font-size:11px;line-height:1.5;color:var(--muted);margin:0}
+.council-role-counts{display:flex;gap:12px;margin-top:10px;font-size:10px;color:var(--accent-strong)}
+.council-decision{border:1px solid var(--line);border-radius:13px;padding:12px;background:var(--panel);margin-top:9px}
+.council-decision-title{display:block;width:100%;border:0;background:transparent;padding:5px}
+.council-stages{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin-top:14px}
+.council-step{border-radius:9px;padding:9px;display:flex;flex-direction:column;gap:7px}
+.council-step b{font-size:11px}.council-step small{color:var(--muted);font-size:9px;line-height:1.45}
+.council-impact{padding-top:13px}.council-impact>b{font-size:11px}.council-impact .ref-list{margin-top:8px}
+.council-disclaimer{font-size:10px;line-height:1.5;color:var(--muted);margin:16px 0 0}
+.council-inspector-links{border-left:2px solid var(--accent);padding-left:8px}
+@media(max-width:860px){.council-role-grid{grid-template-columns:1fr 1fr}.council-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* Canonical systems and technology reference library. */
+.reference-stage .atlas-section{margin-top:21px}
+.reference-card-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.reference-card{display:flex;flex-direction:column;gap:8px;text-align:left;min-width:0;border-radius:11px;border:1px solid var(--line);padding:13px;background:var(--panel-strong);color:var(--ink)}
+.reference-card:hover,.reference-card:focus-visible{border-color:var(--accent);outline:none}
+.reference-card.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.reference-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.reference-card-top .eyebrow{line-height:1.5;text-transform:none}
+.reference-card-arrow{font-size:13px;color:var(--accent-strong)}
+.reference-card h3{font-size:14px;margin:0}
+.reference-what{font-size:10px;line-height:1.5;color:var(--muted);margin:0}
+.reference-card-why{border-top:1px solid var(--line);padding-top:8px;margin-top:auto}
+.reference-card-why b{font-size:9px;color:var(--ink)}
+.reference-card-why p{font-size:10px;line-height:1.45;margin:5px 0 0;color:var(--muted)}
+.reference-mini-metrics{display:flex;flex-direction:column;gap:5px;font-size:9px}
+.reference-mini-metrics span:first-child{color:var(--green)}.reference-mini-metrics span:last-child{color:var(--amber)}
+.reference-card-foot{border-top:1px solid var(--line);padding-top:7px;font-size:9px;color:var(--faint)}
+.reference-bullets{padding-left:15px;margin:8px 0;color:var(--muted);font-size:10px;line-height:1.6}
+.reference-bullets li{padding:2px 0}
+.reference-alternatives{display:grid;gap:10px}
+.reference-alternatives>div{padding:9px;border-radius:8px;border:1px solid var(--line)}
+.reference-alternatives b{font-size:10px}.reference-alternatives p{font-size:10px;line-height:1.45;color:var(--muted);margin:5px 0 0}
+.reference-relations{display:grid;gap:8px}.reference-relation{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:8px;border:1px solid var(--line);border-radius:7px}
+.reference-relation>span{font-size:9px;color:var(--muted)}
+.reference-sources{display:flex;flex-direction:column;gap:7px;overflow-wrap:anywhere}
+.reference-inspector-links{border-left:2px solid var(--accent);padding-left:8px}
+@media(max-width:900px){.reference-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.reference-card-grid{grid-template-columns:1fr 1fr;gap:7px}.reference-card{padding:9px}.reference-card h3{font-size:12px}.reference-what{font-size:9px}}
+
+
+/* Atlas comprehension-first layout: five workspaces, stable ten-system map. */
+.topbar{grid-template-columns:165px minmax(0,1fr) 245px;padding-right:54px}
+.workspace{grid-template-columns:188px minmax(0,1fr) 310px;gap:8px;padding:8px}
+.center-nav{grid-template-columns:minmax(0,1fr) minmax(160px,240px);gap:8px}
+.workspace-tab{flex:none;display:inline-flex;align-items:center;justify-content:center;text-decoration:none;padding:9px 11px;border-radius:8px;font-size:11px;font-weight:650;color:var(--muted);white-space:nowrap;border:1px solid transparent}
+.workspace-tab:hover,.workspace-tab.active{color:var(--ink);background:var(--panel-strong)}
+.workspace-tab.active{border-color:var(--line-strong);box-shadow:var(--shadow-soft)}
+.view-tabs{justify-content:flex-start}
+.panel-head p{font-size:11px;line-height:1.45}
+.index-label{font-size:9px;letter-spacing:.08em}
+.index-item{font-size:11px;line-height:1.35;padding:9px 8px;min-height:34px}
+.index-details{border-top:1px solid var(--line);padding-top:8px}
+.index-details summary{font-size:10px;list-style:none;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.index-details summary:before{content:'▸';margin-right:6px}
+.index-details[open] summary:before{content:'▾'}
+.index-detail-note{font-size:10px;line-height:1.5;color:var(--muted);padding:0 8px}
+.index-view-link{font-size:11px}
+.back-to-map{color:var(--accent-strong);font-size:11px;text-decoration:none;white-space:nowrap}
+.back-to-map:hover{text-decoration:underline}
+.search-input{font-size:12px}
+.titleline span{font-size:11px}
+.tool{font-size:11px;padding:7px 10px}
+.overview-stage{min-width:865px;padding:14px}
+.comprehension-header{padding:6px 3px 12px}
+.comprehension-intro h2{font-size:24px;line-height:1.12;letter-spacing:-.025em;margin:6px 0}
+.comprehension-intro p{margin:0 0 12px;max-width:660px;color:var(--muted);font-size:12px;line-height:1.55}
+.lens-bar{display:flex;flex-wrap:wrap;gap:6px;padding:5px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.lens-tab{border:1px solid transparent;background:transparent;border-radius:8px;padding:9px 12px;font-size:12px;font-weight:650;color:var(--muted)}
+.lens-tab:hover{color:var(--ink)}
+.lens-tab.active{border-color:var(--line-strong);background:var(--panel-strong);color:var(--ink);box-shadow:var(--shadow-soft)}
+.lens-tab:focus-visible,.scenario-step:focus-visible,.trace-reset:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.comprehension-statement{display:flex;justify-content:space-between;align-items:center;gap:15px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:6px 10px 10px 6px;padding:12px 14px;margin-top:12px}
+.comprehension-statement strong{font-size:14px}
+.comprehension-statement p{font-size:12px;line-height:1.55;margin:5px 0 0;color:var(--muted)}
+.comprehension-context{font-size:11px;color:var(--accent-strong);white-space:nowrap;max-width:240px;text-align:right}
+.comprehension-legend{display:flex;flex-wrap:wrap;gap:10px;padding-top:11px}
+.comprehension-legend span{display:inline-flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}
+.overview-graph{grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:126px 130px 128px 128px 122px;gap:24px 12px;padding:17px 18px 17px 47px}
+.overview-graph .slot{transition:opacity .18s ease,filter .18s ease}
+.overview-graph .slot.deemphasized{opacity:.52}
+.overview-graph .slot-interaction{grid-column:1/span 3;grid-row:1}
+.overview-graph .slot-intelligence{grid-column:4/span 3;grid-row:1}
+.overview-graph .slot-authority{grid-column:2/span 4;grid-row:2}
+.overview-graph .slot-geometry{grid-column:1/span 3;grid-row:3}
+.overview-graph .slot-constraints{grid-column:4/span 3;grid-row:3}
+.overview-graph .slot-representation{grid-column:1/span 3;grid-row:4}
+.overview-graph .slot-documentation{grid-column:4/span 3;grid-row:4}
+.overview-graph .slot-external{grid-column:1/span 2;grid-row:5}
+.overview-graph .slot-differential{grid-column:3/span 2;grid-row:5}
+.overview-graph .slot-editorial-continuity{grid-column:5/span 2;grid-row:5}
+.overview-graph .band-label{font-size:9px;left:11px;letter-spacing:.1em}
+.overview-graph .band-intent-label{top:57px}
+.overview-graph .band-authority-label{top:200px}
+.overview-graph .band-execution-label{top:348px}
+.overview-graph .band-projection-label{top:510px}
+.overview-graph .atlas-card{padding:11px 12px}
+.overview-graph .atlas-card h3{font-size:14px;margin:6px 0}
+.overview-graph .atlas-card p{font-size:11px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.overview-graph .card-kicker{font-size:9px}
+.overview-graph .status-badge{font-size:9px;padding:4px 6px}
+.overview-graph .card-meta>span:last-child{font-size:9px}
+.overview-graph .slot-editorial-continuity .atlas-card h3,.overview-graph .slot-differential .atlas-card h3{font-size:12px}
+.comprehension-trace{margin:14px 0;padding:16px;border:1px solid var(--line);background:var(--panel);border-radius:12px}
+.trace-heading{display:flex;align-items:start;justify-content:space-between;gap:12px}
+.trace-heading h3{font-size:16px;margin:5px 0 13px}
+.trace-heading>span{font-size:11px;color:var(--muted)}
+.trace-steps{display:flex;gap:7px;flex-wrap:wrap}
+.scenario-step{border:1px solid var(--line);background:var(--panel-strong);border-radius:8px;padding:9px 10px;font-size:12px;display:flex;align-items:center;gap:7px;font-weight:600}
+.scenario-step span{display:grid;place-items:center;background:var(--authority-soft);border-radius:50%;height:22px;width:22px;font-size:10px}
+.scenario-step.active{background:var(--accent-soft);color:var(--accent-strong);border-color:var(--accent)}
+.trace-reset{border:0;color:var(--muted);background:transparent;font-size:11px;margin-left:auto;padding:8px}
+.trace-reset:disabled{opacity:.4}
+.trace-explanation{font-size:12px;line-height:1.6;color:var(--muted);margin:12px 0 0}
+.relationship-ledger{padding:13px 15px}
+.relationship-ledger-toggle{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer;font-size:13px}
+.relationship-ledger-toggle::-webkit-details-marker{display:none}
+.relationship-ledger-toggle:before{content:'▸';color:var(--accent-strong)}
+.relationship-ledger[open]>.relationship-ledger-toggle:before{content:'▾'}
+.relationship-ledger-toggle span{font-size:11px;color:var(--muted);margin-left:auto}
+.relationship-ledger .section-heading{margin-top:14px}
+.overview-stage .relation-card strong{font-size:11px}.overview-stage .relation-card>span{font-size:10px;line-height:1.5}.overview-stage .relation-card small{font-size:10px;line-height:1.4}
+.inspector{padding:15px}
+.inspector-content h2,.inspector-empty h2{font-size:19px}
+.inspector-empty p,.inspector-summary,.inspector-explanation,.inspector-content section p{font-size:12px;line-height:1.55}
+.inspector-title>span{font-size:9px}.inspector-kv{font-size:11px;grid-template-columns:78px 1fr}
+.inspector-content section h4{font-size:10px}.ref-chip{font-size:11px;padding:7px 9px}
+.inspector-content .block-code{font-size:11px}
+.reference-alternatives b,.reference-alternatives p{font-size:11px}
+.reference-bullets{font-size:11px}
+@media(max-width:1160px){
+  .topbar{grid-template-columns:155px minmax(0,1fr) 192px}
+  .workspace{grid-template-columns:160px minmax(0,1fr) 280px}
+  .workspace-tab{padding:8px 8px;font-size:10px}
+}
+@media(max-width:860px){
+  .topbar{grid-template-columns:auto minmax(0,1fr) auto;padding:0 54px 0 8px}
+  .workspace{display:block;padding:7px}
+  .center-nav{grid-template-columns:minmax(0,1fr)}
+  .workspace-tab{font-size:10px;padding:9px 11px}
+  .view-tabs{overflow-x:auto}
+  .overview-stage{min-width:860px;padding:13px}
+  .comprehension-intro h2{font-size:21px}
+  .comprehension-statement p{font-size:12px}
+  .view-scroll{overscroll-behavior-x:contain}
+  .zoom-controls{opacity:.92}
+}
+
+/* Inspectable spatial boundaries and evidence-backed component explanations. */
+.relationship-layer{pointer-events:none}
+.rel-hit{pointer-events:stroke;fill:none;stroke:transparent;stroke-width:14px;cursor:pointer}
+.rel-hit:focus-visible{stroke:var(--accent);stroke-opacity:.24;outline:none}
+.inspector-understanding{border-left:3px solid var(--accent)!important;padding-left:12px}
+.inspector-understanding h4{font-size:10px}
+.understanding-tradeoffs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.understanding-tradeoffs>div{border:1px solid var(--line);border-radius:8px;padding:9px;min-width:0}
+.understanding-tradeoffs b{font-size:10px;color:var(--ink)}
+.understanding-tradeoffs p{margin:5px 0 0;font-size:11px;line-height:1.45}
