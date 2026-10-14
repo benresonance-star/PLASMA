@@ -36,6 +36,7 @@ try{
   await page.click('.view-tab[data-view="strategy"]');
   await page.click('.strategy-objective[data-atlas-id="STR-04"]');
   assert((await locationHash(page))==='#strategy/STR-04','Strategy objective deep link missing');
+  await page.waitForFunction(() => document.querySelector('.strategy-proof')?.textContent?.includes('PLS-SLICE-DOC-01'));
   assert((await page.locator('.strategy-proof').innerText()).includes('PLS-SLICE-DOC-01'),'Strategy proof slice missing');
   assert((await page.locator('#inspector').innerText()).includes('Documentation as a product'),'Strategy inspector missing');
   await page.click('.view-tab[data-view="integration"]');
