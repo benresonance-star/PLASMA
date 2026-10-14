@@ -10,7 +10,10 @@ describe('schema-payload', () => {
   it('static assembler includes all kinds and part-of aliases', () => {
     const t0 = performance.now();
     const staticPart = buildStaticSchema();
-    expect(performance.now() - t0).toBeLessThan(5);
+    const elapsed = performance.now() - t0;
+    // Machine-specific absolute budgets belong to an isolated performance run,
+    // not correctness CI, where shared-runner contention causes false failures.
+    if (process.env.PLASMA_PERF_GATE === '1') expect(elapsed).toBeLessThan(5);
     expect(staticPart.kinds.length).toBe(SEMANTIC_KINDS.length);
     expect(staticPart.kinds.length).toBeGreaterThanOrEqual(30);
     expect(staticPart.kinds).toEqual([...SEMANTIC_KINDS]);
@@ -30,7 +33,8 @@ describe('schema-payload', () => {
         tags: ['ui.folder'],
       },
     ]);
-    expect(performance.now() - t0).toBeLessThan(20);
+    const elapsed = performance.now() - t0;
+    if (process.env.PLASMA_PERF_GATE === '1') expect(elapsed).toBeLessThan(20);
     expect(payload.liveTypes.some((t) => t.semanticType === 'structural.y-component')).toBe(
       true,
     );
