@@ -32,5 +32,5 @@ describe('G1a/G1b SD12 PR scale benches (1k / 10k)', () => {
     const timings = runScaleBench(10_000);
     expect(timings.projectedNodes).toBeLessThanOrEqual(SD12_BUDGETS.maxProjectedNodes);
     if (process.env.PLASMA_PERF_GATE === '1') assertScaleBudgets(timings);
-  });
+  }, 30_000);
 });

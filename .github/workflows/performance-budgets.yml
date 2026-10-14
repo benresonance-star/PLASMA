@@ -45,3 +45,5 @@ jobs:
         run: |
           pnpm --filter @spds/designer-web exec vitest run src/app-session.test.ts --maxWorkers=1
           pnpm --filter @spds/designer-web exec vitest run src/ui/three-scene.test.ts --maxWorkers=1
+      - name: Schema projection budgets
+        run: pnpm --filter @spds/designer-web exec vitest run src/schema-projection.test.ts --maxWorkers=1
