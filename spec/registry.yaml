@@ -35,7 +35,8 @@
     "evidence": "spec/verification/evidence/catalog.yaml",
     "integration": "spec/verification/integration/integration.yaml",
     "links": "spec/verification/integration/links.yaml",
-    "repositoryEvidence": "spec/verification/bindings/repository-evidence.yaml"
+    "repositoryEvidence": "spec/verification/bindings/repository-evidence.yaml",
+    "strategy": "spec/strategy/traceability.yaml"
   },
   "capabilities": [
     "spec/capabilities/FND-01.yaml",
