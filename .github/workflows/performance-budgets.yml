@@ -1,0 +1,39 @@
+name: performance-budgets (diagnostic)
+
+# Absolute millisecond thresholds are highly sensitive to CPU sharing. Keep
+# these checks explicit and runnable, without misclassifying functional CI.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plasma-performance-budgets
+  cancel-in-progress: false
+
+jobs:
+  performance:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --use-system-ca
+      PLASMA_PERF_GATE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build dependencies
+        run: pnpm turbo run build --filter=@spds/semantic-core... --filter=@spds/geometry-contracts...
+      - name: Schema assembly budgets
+        run: pnpm --filter @spds/semantic-core exec vitest run src/schema-payload.test.ts --maxWorkers=1
+      - name: Feature resolution budgets
+        run: pnpm --filter @spds/geometry-contracts exec vitest run src/measure.test.ts --maxWorkers=1
+      - name: Geometry parsing budgets
+        run: pnpm --filter @spds/geometry-contracts exec vitest run src/compile.test.ts --maxWorkers=1
