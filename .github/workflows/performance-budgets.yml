@@ -70,3 +70,5 @@ jobs:
       - name: API proposal and compensation microbudgets
         run: |
           pnpm --filter @spds/api exec vitest run src/ai-branch-seed.test.ts src/ai-changeset-accept.test.ts src/compensating-command.test.ts --maxWorkers=1
+      - name: Agent organisation and tool router microbudgets
+        run: pnpm --filter @spds/ai-interface exec vitest run src/organise-propose.test.ts src/tool-router.test.ts --maxWorkers=1
