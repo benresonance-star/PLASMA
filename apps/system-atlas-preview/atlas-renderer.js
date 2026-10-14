@@ -1,6 +1,7 @@
 import { renderCouncilView, renderCouncilInspector, councilReverseLinks } from './atlas-council-renderer.js';
 
 import { renderReferenceView, renderReferenceInspector, referenceReverseLinks } from './atlas-reference-renderer.js';
+import { comprehensionFocus, renderComprehensionHeader, renderComprehensionTrace } from './atlas-comprehension.js';
 
 const esc = value => String(value ?? '')
   .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
@@ -65,55 +66,30 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
   let lastOverviewSelection = null;
 
   function renderIndex(route) {
-    const c = model.by.component;
-    const domain = model.data.languages.domain;
-    const core = model.data.languages.crossCutting;
-    const active = (type,id) => route.type === type && route.id === id ? 'active' : '';
-    indexHost.innerHTML = `
+    const c=model.by.component;
+    const active=(type,id)=>route.type===type&&route.id===id?'active':'';
+    const deepViews=model.data.views.filter(view=>view.id!=='overview');
+    indexHost.innerHTML=`
       <div class="index-scroll">
         <div class="index-group">
-          <div class="index-label">Plasma sections</div>
-          <a class="index-item current-section" href="#overview"><span class="dot authority"></span>System Atlas</a>
-          <a class="index-item external-link" href="https://benresonance-star.github.io/AI_DEV_OPS/#build" target="_blank" rel="noopener">
-            <span class="dot runtime"></span>Build · AI Dev Ops <span class="external-mark">↗</span>
-          </a>
+          <div class="index-label">Always start with the whole</div>
+          <a class="index-item ${route.view==='overview'?'active current-section':''}" href="#overview"><span class="dot authority"></span>Whole-system map</a>
         </div>
         <div class="index-group">
-          <div class="index-label">Development governance</div>
-          <a class="index-item ${route.view==='council'?'active':''}" href="#council"><span class="dot agent"></span>Architecture Council</a>
-          ${model.council.roles.filter(x=>x.phase==='initial').map(x=>`<button class="index-item ${active('councilRole',x.id)}" data-atlas-type="councilRole" data-atlas-id="${esc(x.id)}"><span class="dot agent"></span>${esc(x.name)}</button>`).join('')}
+          <div class="index-label">System outline · ${c.size} components</div>
+          ${model.data.components.map(x=>`<button class="index-item ${active('component',x.id)}" type="button" data-atlas-type="component" data-atlas-id="${esc(x.id)}"><span class="dot ${x.authority==='authoritative'?'authority':x.kind==='agentic'?'agent':x.authority==='external'?'external':x.authority==='derived'?'derived':'runtime'}"></span>${esc(x.name)}</button>`).join('')}
         </div>
-        <div class="index-group">
-          <div class="index-label">Reference library</div>
-          <a class="index-item ${route.view==='references'?'active':''}" href="#references"><span class="dot derived"></span>Systems & technologies</a>
-        </div>
-        <div class="index-group">
-          <div class="index-label">Planes</div>
-          ${['authority','interaction','intelligence'].map(id => {
-            const x=c.get(id); return `<button class="index-item ${active('component',id)}" data-atlas-type="component" data-atlas-id="${id}"><span class="dot ${x.authority==='authoritative'?'authority':x.kind==='agentic'?'agent':'runtime'}"></span>${esc(x.name)}</button>`;
-          }).join('')}
-        </div>
-        <div class="index-group">
-          <div class="index-label">Execution + projection</div>
-          ${['geometry','constraints','representation','differential','external'].map(id => {
-            const x=c.get(id); return `<button class="index-item ${active('component',id)}" data-atlas-type="component" data-atlas-id="${id}"><span class="dot ${x.authority==='external'?'external':x.authority==='derived'?'derived':'runtime'}"></span>${esc(x.name)}</button>`;
-          }).join('')}
-        </div>
-        <div class="index-group">
-          <div class="index-label">Domain languages</div>
-          ${domain.map(x => `<button class="index-item ${active('domainLanguage',x.id)}" data-atlas-type="domainLanguage" data-atlas-id="${esc(x.id)}"><span class="dot language"></span>${esc(x.name)}</button>`).join('')}
-        </div>
-        <details class="index-group compact" ${route.type==='coreLanguage'?'open':''}>
-          <summary class="index-label">Cross-cutting languages <span>${core.length}</span></summary>
-          ${core.map(x => `<button class="index-item ${active('coreLanguage',x.id)}" data-atlas-type="coreLanguage" data-atlas-id="${esc(x.id)}"><span class="dot core"></span>${esc(x.name)}</button>`).join('')}
+        <details class="index-group index-details" ${route.view!=='overview'?'open':''}>
+          <summary class="index-label">All detailed views <span>${deepViews.length}</span></summary>
+          <p class="index-detail-note">Existing contracts, slices, evidence and data are preserved. Open any view and return to the same map.</p>
+          ${deepViews.map(view=>`<a class="index-item view-tab ${route.view===view.id?'active':''}" data-view="${esc(view.id)}" href="#${esc(view.id)}"><span class="dot derived"></span>${esc(view.label)}</a>`).join('')}
         </details>
+        <div class="index-group">
+          <div class="index-label">Related resources</div>
+          <a class="index-item external-link" href="https://benresonance-star.github.io/AI_DEV_OPS/#build" target="_blank" rel="noopener"><span class="dot runtime"></span>Build · AI Dev Ops <span class="external-mark">↗</span></a>
+        </div>
       </div>
-      <div class="index-legend">
-        <span><i class="dot authority"></i>authoritative</span>
-        <span><i class="dot runtime"></i>runtime</span>
-        <span><i class="dot agent"></i>agentic</span>
-        <span><i class="dot external"></i>external</span>
-      </div>`;
+      <div class="index-legend"><span><i class="dot authority"></i>authoritative</span><span><i class="dot agent"></i>agentic</span><span><i class="dot runtime"></i>execution</span><span><i class="dot derived"></i>derived</span></div>`;
   }
 
   function renderView(route, options = {}) {
@@ -131,33 +107,29 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
     renderIndex(route);
   }
 
-  function renderOverview(route, { showRelationships = true } = {}) {
+  function renderOverview(route, { showRelationships = true, lens = 'architecture', scenarioStep = null } = {}) {
     const selectedId = route.type === 'component' ? route.id : null;
     lastOverviewSelection = selectedId;
     const item = id => model.by.component.get(id);
+    const focus = comprehensionFocus(lens,route,scenarioStep,model);
+    const focused = id => focus.includes(id);
+    const dimmed = id => focus.length && !focused(id) ? 'deemphasized' : '';
     viewHost.innerHTML = `
       <div class="view-scroll">
         <section class="view-stage overview-stage" data-base-width="980">
-          <div class="view-intro">
-            <div><div class="eyebrow">System Atlas · live projection</div><h2>Authority hierarchy</h2>
-            <p>Read top to bottom: intent proposes, authority owns truth, execution computes, projections and external systems remain non-authoritative.</p></div>
-            <div class="principle">Proposal ≠ authority</div>
-          </div>
-          <div class="overview-graph" id="overviewGraph">
+          ${renderComprehensionHeader(model,lens,route,scenarioStep)}
+          <div class="overview-graph lens-${esc(lens)}" id="overviewGraph" role="group" aria-label="Ten-system Plasma architecture map">
             <svg class="relationship-layer ${showRelationships?'':'hidden'}" id="relationshipLayer" aria-hidden="true"></svg>
-            <div class="band-label band-intent-label">Intent</div>
+            <div class="band-label band-intent-label">Proposals</div>
             <div class="band-label band-authority-label">Authority</div>
-            <div class="band-label band-execution-label">Execution</div>
-            <div class="band-label band-projection-label">Derived / boundary</div>
-            <div class="slot slot-interaction">${componentCard(item('interaction'),selectedId==='interaction')}</div>
-            <div class="slot slot-intelligence">${componentCard(item('intelligence'),selectedId==='intelligence')}</div>
-            <div class="slot slot-authority">${componentCard(item('authority'),selectedId==='authority')}</div>
-            <div class="slot slot-geometry">${componentCard(item('geometry'),selectedId==='geometry')}</div>
-            <div class="slot slot-constraints">${componentCard(item('constraints'),selectedId==='constraints')}</div>
-            <div class="slot slot-representation">${componentCard(item('representation'),selectedId==='representation')}</div>
-            <div class="slot slot-external">${componentCard(item('external'),selectedId==='external')}</div>
+            <div class="band-label band-execution-label">Resolution</div>
+            <div class="band-label band-projection-label">Derived and external</div>
+            ${['interaction','intelligence','authority','geometry','constraints','representation','documentation','external','differential','editorial-continuity'].map(id=>`<div class="slot slot-${esc(id)} ${dimmed(id)}">${componentCard(item(id),selectedId===id)}</div>`).join('')}
           </div>
-          <section class="relationship-ledger">
+          ${renderComprehensionTrace(scenarioStep)}
+          <details class="relationship-ledger" ${route.type==='relationship'?'open':''}>
+            <summary class="relationship-ledger-toggle"><b>Declared cross-system contracts</b><span>${model.data.relationships.length} typed connections · inspect any boundary to see payload, authority and failure behavior</span></summary>
+
             <div class="section-heading"><div><div class="eyebrow">Typed relationships</div><h3>Contracts crossing boundaries</h3></div><span>${model.data.relationships.length} relationships</span></div>
             <div class="relation-grid">
               ${model.data.relationships.map(rel => {
@@ -171,13 +143,13 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
                 </button>`;
               }).join('')}
             </div>
-          </section>
+          </details>
         </section>
       </div>`;
-    requestAnimationFrame(() => drawRelationships(showRelationships, route));
+    requestAnimationFrame(() => drawRelationships(showRelationships, route, focus));
   }
 
-  function drawRelationships(showRelationships = true, route = {}) {
+  function drawRelationships(showRelationships = true, route = {}, focus = []) {
     const graph = viewHost.querySelector('#overviewGraph');
     const svg = viewHost.querySelector('#relationshipLayer');
     if (!graph || !svg || !showRelationships) return;
@@ -223,7 +195,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         d=`M ${p1.x} ${p1.y} L ${p1.x} ${mid} L ${p2.x} ${mid} L ${p2.x} ${p2.y}`;
       }
       const tone=rel.from==='external'?'green':(rel.to==='geometry'||rel.to==='constraints')?'amber':'blue';
-      const hot=route.type==='component' ? (route.id===rel.from||route.id===rel.to) : route.type==='relationship' ? route.id===rel.id : true;
+      const hot=route.type==='relationship' ? route.id===rel.id : focus.length ? (focus.includes(rel.from)&&focus.includes(rel.to)) : route.type==='component' ? (route.id===rel.from||route.id===rel.to) : true;
       const path=document.createElementNS('http://www.w3.org/2000/svg','path');
       path.setAttribute('d',d);path.setAttribute('class',`rel-line ${tone} ${hot?'hot':'faded'}`);
       path.setAttribute('marker-end',`url(#arrow${tone[0].toUpperCase()+tone.slice(1)})`);
@@ -511,6 +483,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
     } else if(ref.type==='relationship'){
       const contract=model.by.contract.get(r.contract);
       body=`<div class="inspector-kv"><span>From</span><b>${esc(model.by.component.get(r.from)?.name||r.from)}</b><span>To</span><b>${esc(model.by.component.get(r.to)?.name||r.to)}</b><span>Payload</span><b>${esc(r.payload)}</b><span>Mode</span><b>${esc(r.mode)}</b><span>Authority</span><b>${esc(r.authoritySemantics)}</b></div>
+        <section><h4>Why this boundary exists</h4><p>${esc(r.explanation||r.authoritySemantics)}</p></section>
         <section><h4>Contract</h4><div class="ref-list">${contract?refButton('contract',contract.id,contract.name):''}</div></section>
         <section><h4>Failure behavior</h4><p>${esc(r.failure)}</p></section>`;
     } else if(ref.type==='contract'){
