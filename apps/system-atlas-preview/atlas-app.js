@@ -246,6 +246,15 @@ async function boot() {
     }
   });
   document.addEventListener('keydown',event=>{
+    const relation=event.target.closest?.('.rel-hit[data-atlas-id]');
+    if(relation&&(event.key==='Enter'||event.key===' ')){
+      event.preventDefault();
+      navigate(routeForSelection('relationship',relation.dataset.atlasId,'overview'));
+      return;
+    }
+  });
+
+  document.addEventListener('keydown',event=>{
     if((event.key==='/' || ((event.metaKey||event.ctrlKey)&&event.key.toLowerCase()==='k')) && !/input|textarea/i.test(document.activeElement?.tagName||'')){
       event.preventDefault();els.searchInput.focus();
     }
