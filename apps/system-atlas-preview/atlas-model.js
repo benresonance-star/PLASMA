@@ -54,9 +54,9 @@ export function createAtlasModel(data, repositoryEvidence = null) {
       type,
       id: item.id,
       atlasId: item.atlasId || item.id,
-      name: item.name || item.label || item.id,
-      summary: item.summary || item.description || item.semantics || item.explanation || '',
-      explanation: item.explanation || item.description || item.semantics || item.summary || '',
+      name: item.name || item.label || item.title || item.id,
+      summary: item.summary || item.outcome || item.description || item.semantics || item.explanation || '',
+      explanation: item.explanation || item.capability || item.description || item.semantics || item.summary || '',
       raw: item
     });
   });
@@ -278,6 +278,11 @@ export function createAtlasModel(data, repositoryEvidence = null) {
           raw.verification?.status,
           raw.verification?.method,
           raw.claim,
+          raw.outcome,
+          raw.capability,
+          ...(raw.contracts || []),
+          ...(raw.patterns || []).map(item => item.name),
+          ...(raw.code || []).map(item => item.path),
           ...(raw.tags || []),
           ...(raw.types || []),
           ...(raw.verbs || []),
