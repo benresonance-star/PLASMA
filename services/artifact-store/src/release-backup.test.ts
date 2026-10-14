@@ -22,12 +22,20 @@ describe('E1 artifact integrity + release backup/restore', () => {
       expect(restored.verify(meta.contentHash)).toBe(true);
     }
 
-    expect(
-      assessReproducibility(pipeline.release.manifest, {
-        ...pipeline.release.manifest,
-        artifactHashes: pipeline.fabrication.artifacts.map((a) => a.contentHash),
-      }),
-    ).toBe('exact');
+    // A published manifest includes exact geometry artifacts as well as fabrication.
+    // Persist and recover the complete release record, rather than synthesising
+    // a partial manifest that cannot meet the exact reproducibility contract.
+    const releaseBlob = store.put(JSON.stringify(pipeline.release), 'application/json', ['d01', 'release-manifest']);
+    const releaseBackup = store.exportBackup();
+    const fullyRestored = new InMemoryObjectStore();
+    fullyRestored.restoreBackup(releaseBackup);
+    expect(fullyRestored.verify(releaseBlob.contentHash)).toBe(true);
+    const releaseBody = fullyRestored.get(releaseBlob.objectKey);
+    expect(releaseBody).toBeTruthy();
+    const recovered = JSON.parse(releaseBody!) as typeof pipeline.release;
+    expect(recovered.manifest.artifactHashes).toEqual(pipeline.release.manifest.artifactHashes);
+    const replay = await runD01ReferencePipeline({ yLimit: 4 });
+    expect(assessReproducibility(recovered.manifest, replay.release.manifest)).toBe('exact');
   });
 
   it('puts and verifies against live MinIO when available', async () => {

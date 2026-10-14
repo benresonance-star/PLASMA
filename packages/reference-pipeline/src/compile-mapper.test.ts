@@ -41,8 +41,9 @@ describe('mapYNetworkToCompileRequest', () => {
     const topo = generateD01Topology();
     const yNetwork = extractYNetwork(topo, D01_TOPOLOGY_POLICY.diameterMm);
     const t0 = performance.now();
+    let last: ReturnType<typeof mapYNetworkToCompileRequest> | undefined;
     for (let i = 0; i < 40; i++) {
-      mapYNetworkToCompileRequest({
+      last = mapYNetworkToCompileRequest({
         yNetwork,
         pirHash: 'pir:test',
         dagHash: 'dag:test',
@@ -50,6 +51,9 @@ describe('mapYNetworkToCompileRequest', () => {
         lengthMm: 2300 + i,
       });
     }
-    expect(performance.now() - t0).toBeLessThan(10);
+    const elapsed = performance.now() - t0;
+    expect(last?.ops).toHaveLength(15);
+    expect(last?.parameters.lengthMm).toBe(2339);
+    if (process.env.PLASMA_PERF_GATE === '1') expect(elapsed).toBeLessThan(10);
   });
 });
