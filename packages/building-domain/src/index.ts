@@ -1,8 +1,10 @@
-import {fixtureConfig as rectangleConfig} from './legacy-rectangle.js';
+import {fixtureConfig as rectangleConfig} from './legacy-recess.js';
+import {cleanHostedOpenings,wallFrames,type HostedOpening} from './openings.js';
+export {cleanHostedOpenings,wallFrames,type HostedOpening} from './openings.js';
 import {parseParameter,parseSemanticObject,parseRelationship,createSemanticGraph} from '@spds/semantic-core';
 import {buildFixtureGraph as priorGraph,fixtureConfig as priorConfig} from './legacy-fixture.js';
 export {buildingEdges,windowImpact,footprintEdges,footprintImpact,buildToPlasmaPoint,plasmaToBuildPoint} from './legacy-fixture.js';
-const defaults={recessWidth:0,recessDepth:0,buildingCenterX:0,buildingCenterZ:0,doorAnchor:'center',windowAnchor:'center'};
+const defaults={hostedOpenings:[] as HostedOpening[],recessWidth:0,recessDepth:0,buildingCenterX:0,buildingCenterZ:0,doorAnchor:'center',windowAnchor:'center'};
 export type WallSide='front'|'rear'|'left'|'right';
 export type OpeningAnchor='left'|'center'|'right';
 const sides:WallSide[]=['front','rear','left','right'];
@@ -23,10 +25,11 @@ export function buildFixtureGraph(input:Record<string,unknown>){
  const rw=Number(c.recessWidth),rd=Number(c.recessDepth),isL=rw>0||rd>0;
  if(!Number.isFinite(rw)||!Number.isFinite(rd)||(isL&&(rw<.8||rw>2.5||rd<.8||rd>2||Number(c.buildingWidth)-rw<2.5||Number(c.buildingDepth)-rd<2))||(!isL&&(rw!==0||rd!==0)))throw new Error('Corner recess requires width 800–2500 mm, depth 800–2000 mm and remaining wings at least 2500 / 2000 mm');
  if(isL&&c['roofArrangement' as keyof typeof c]!=='level-joists')throw new Error('L footprint requires the level-joists arrangement');
+ c.hostedOpenings=cleanHostedOpenings(c);
  const g=priorGraph(c),geometry=wallGeometry(c),boundary=footprintBoundary(c);
  if(isL){const template=g.entities.find(e=>e.id==='entity:build:wall-rear')!;for(const side of ['recess-rear','recess-side'])g.entities.push(parseSemanticObject({...template,id:'entity:build:wall-'+side,name:side+' wall'}));}
  const settings=g.entities.find(e=>e.id==='entity:build:building')!.metadata!.settings as Record<string,unknown>;
- delete settings.buildingCenterX;delete settings.buildingCenterZ;delete settings.recessWidth;delete settings.recessDepth;
+ delete settings.hostedOpenings;delete settings.buildingCenterX;delete settings.buildingCenterZ;delete settings.recessWidth;delete settings.recessDepth;
  const template=g.parameters.find(p=>p.metadata?.configKey==='buildingWidth')!;
  for(const k of ['buildingCenterX','buildingCenterZ','recessWidth','recessDepth'] as const)g.parameters.push(parseParameter({...template,id:'parameter:build:'+k.toLowerCase(),name:'parameter:build:'+k.toLowerCase(),metadata:{configKey:k},quantity:{value:c[k]*1000,unit:'mm'}}));
  for(const e of g.entities){const key=e.id.split(':').at(-1)!;
@@ -38,17 +41,24 @@ export function buildFixtureGraph(input:Record<string,unknown>){
  const rel=g.relationships[0]!;
  for(const [a,b] of (isL?[['front','left'],['front','right'],['right','recess-rear'],['recess-rear','recess-side'],['recess-side','rear'],['rear','left']]:[['front','left'],['front','right'],['rear','left'],['rear','right']]))g.relationships.push(parseRelationship({...rel,id:'relationship:build:corner-'+a+'-'+b,name:'Corner '+a+' / '+b,semanticType:'architecture.corner',relationType:'architecture.corner',from:'entity:build:wall-'+a,to:'entity:build:wall-'+b,metadata:{geometry:'Orthogonal butt return',fixings:'unresolved',capacity:'unverified'}}));
  if(isL){const contains=g.relationships.find(r=>r.from==='entity:build:wall-rear'&&r.relationType==='part-of')!;for(const side of ['recess-rear','recess-side'])g.relationships.push(parseRelationship({...contains,id:'relationship:build:contains-'+side,from:'entity:build:wall-'+side}));}
+ const openingTemplate=g.entities.find(e=>e.id==='entity:build:window')!;
+ for(const o of c.hostedOpenings){const id='entity:build:'+o.id,hostId='entity:build:wall-'+o.wall;
+  g.entities.push(parseSemanticObject({...openingTemplate,id,name:o.id,semanticType:'architecture.hosted-opening',metadata:{coordinateFrame:'HOST_U_Y',units:'mm',hostId,openingId:o.id,openingKind:o.kind,positionReference:'Host framing centre; positive u follows wall frame tangent',detailStatus:'Framing and veneer only; product, flashing, supports and fixings unresolved'}}));
+  for(const key of ['centerMm','widthMm','heightMm','sillMm'] as const)g.parameters.push(parseParameter({...template,id:'parameter:build:'+o.id+'-'+key.toLowerCase(),name:o.id+' '+key,metadata:{openingId:o.id,openingKey:key},quantity:{value:o[key],unit:'mm'},affects:[id,hostId]}));
+  g.relationships.push(parseRelationship({...rel,id:'relationship:build:host-'+o.id,name:o.id+' host',relationType:'architecture.hosted-by',from:id,to:hostId}));
+ }
  createSemanticGraph([...g.entities,...g.parameters],g.relationships);
- return {...g,schemaVersion:'plasma-build-fixture/0.4.0',scope:'Rectangle or bounded rear-right recess; anchored front openings; concept framing. No arbitrary topology or structural approval.'};
+ return {...g,schemaVersion:'plasma-build-fixture/0.5.0',scope:'Rectangle or bounded rear-right recess; anchored front detail openings and additional wall-local openings; concept framing. No arbitrary topology or structural approval.'};
 }
 export function fixtureConfig(graph:unknown):Record<string,unknown>{
  const g=graph as ReturnType<typeof buildFixtureGraph>;
- if(g.schemaVersion!=='plasma-build-fixture/0.4.0')return {...defaults,...rectangleConfig(graph)};
+ if(g.schemaVersion!=='plasma-build-fixture/0.5.0')return {...defaults,...rectangleConfig(graph)};
  const entities=g.entities.map(parseSemanticObject),parameters=g.parameters.map(parseParameter),relationships=g.relationships.map(parseRelationship);createSemanticGraph([...entities,...parameters],relationships);
  const settings=entities.find(e=>e.id==='entity:build:building')?.metadata?.settings;
  if(!settings||typeof settings!=='object')throw new Error('Missing building settings');
- const c:Record<string,unknown>={...settings};
- for(const p of parameters){const key=p.metadata?.configKey;if(typeof key!=='string')throw new Error('Missing parameter key');const unit=key==='roofPitch'?'deg':'mm';if(p.quantity.unit!==unit)throw new Error('Invalid parameter unit');c[key]=p.quantity.value/(unit==='mm'?1000:1);}
+ const c:Record<string,unknown>={...settings,hostedOpenings:[]};
+ for(const p of parameters.filter(p=>!p.metadata?.openingId)){const key=p.metadata?.configKey;if(typeof key!=='string')throw new Error('Missing parameter key');const unit=key==='roofPitch'?'deg':'mm';if(p.quantity.unit!==unit)throw new Error('Invalid parameter unit');c[key]=p.quantity.value/(unit==='mm'?1000:1);}
+ c.hostedOpenings=entities.filter(e=>e.semanticType==='architecture.hosted-opening').map(e=>{const m=e.metadata!;const o:Record<string,unknown>={id:m.openingId,kind:m.openingKind,wall:String(m.hostId).replace('entity:build:wall-','')};for(const key of ['centerMm','widthMm','heightMm','sillMm']){const p=parameters.find(p=>p.metadata?.openingId===m.openingId&&p.metadata?.openingKey===key);if(!p||p.quantity.unit!=='mm')throw new Error('Missing hosted opening parameter');o[key]=p.quantity.value;}return o;});
  if(JSON.stringify(buildFixtureGraph(c))!==JSON.stringify(g))throw new Error('Unsupported graph structure / host edit');return c;
 }
 function rehost(before:Record<string,unknown>,after:Record<string,unknown>){
@@ -70,3 +80,11 @@ export function editRectangularFootprint(graph:unknown,edit:{widthMm?:number;dep
 export function editHostedWindow(graph:unknown,edit:{widthMm?:number;centerMm?:number}){const c=fixtureConfig(graph);if(edit.widthMm!==undefined)c.windowWidth=edit.widthMm/1000;if(edit.centerMm!==undefined)c.windowCenter=edit.centerMm/1000;return buildFixtureGraph(c)}
 
 export function editCornerRecess(graph:unknown,edit:{widthMm:number;depthMm:number}){const c=fixtureConfig(graph);c.recessWidth=edit.widthMm/1000;c.recessDepth=edit.depthMm/1000;if(c.recessWidth===0&&c.recessDepth===0){c.roofArrangement='unresolved';c.roofArrangementRef='';}else {c.roofArrangement='level-joists';c.roofArrangementRef='Bounded L footprint: level joists on front/rear/recess walls; drainage, deck, connections and capacity unresolved';}return buildFixtureGraph(c)}
+
+export function editWallOpening(graph:unknown,edit:{operation:'upsert';opening:HostedOpening}|{operation:'remove';id:string}){
+ const c=fixtureConfig(graph),list=cleanHostedOpenings(c);
+ if(edit.operation==='remove'){if(!list.some(o=>o.id===edit.id))throw new Error('Hosted opening not found');c.hostedOpenings=list.filter(o=>o.id!==edit.id);}
+ else if(edit.operation==='upsert'){c.hostedOpenings=[...list.filter(o=>o.id!==edit.opening.id),edit.opening];}
+ else throw new Error('Unsupported opening command');
+ return buildFixtureGraph(c);
+}
