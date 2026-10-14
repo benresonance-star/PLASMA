@@ -32,6 +32,14 @@ try{
   await page.click('[data-scenario-reset]');
   await page.click('[data-lens="architecture"]');
   assert((await page.locator('.overview-graph .slot.deemphasized').count())===0,'Restoring architecture lens must show all components with equal emphasis');
+  const boundary=page.locator('.rel-hit[data-atlas-id="rel-interaction-authority"]');
+  assert((await page.locator('.rel-hit').count())===10,'Every declared architecture boundary must be inspectable on the map');
+  await boundary.focus();
+  await page.keyboard.press('Enter');
+  await page.waitForFunction(()=>location.hash==='#overview/relationship/rel-interaction-authority');
+  await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Failure behavior'));
+  assert((await page.locator('#inspector').textContent()).includes('proposal-only'),'Boundary must explain authority semantics');
+  await page.goto(base+'#overview',{waitUntil:'networkidle'});
   await page.click('.workspace-tab[data-workspace="library"]');
   await page.waitForFunction(()=>location.hash==='#references');
   await page.goto(base+'#overview',{waitUntil:'networkidle'});
@@ -214,6 +222,8 @@ try{
   await page.waitForFunction(()=>location.hash.includes('overview/component/authority'));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('World + Authority Plane'));
   assert((await page.locator('#inspector').innerText()).includes('World + Authority Plane'),'Inspector did not resolve Authority');
+  assert((await page.locator('#inspector').textContent()).includes('Why this system exists'),'Component details should include its rationale without navigating away');
+  assert((await page.locator('#inspector [data-atlas-type="referenceSystem"]').count())>=1,'Full system reference must remain accessible');
 
   await page.fill('#atlasSearch','submit transaction');
   await page.waitForSelector('#searchResults.open .search-result',{state:'visible'});
