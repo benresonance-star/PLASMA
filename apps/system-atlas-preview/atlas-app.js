@@ -86,6 +86,8 @@ async function boot() {
         localStorage.setItem('plasma-atlas-relationships', state.showRelationships ? 'on' : 'off');
         render();
       });
+    } else if (state.route.view === 'strategy') {
+      els.viewControls.innerHTML = `<span class="toolbar-note">Source presence is not implementation proof; verification status comes from the canonical slice.</span>`;
     } else if (state.route.view === 'integration') {
       els.viewControls.innerHTML = `<span class="toolbar-note">Matrix status is gated by required evidence. Supporting evidence is corroborating context and never changes the relationship pass/fail state.</span>`;
     } else if (state.route.view === 'evidence') {
