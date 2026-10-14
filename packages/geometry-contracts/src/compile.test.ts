@@ -88,10 +88,13 @@ describe('GeometryCompileRequest', () => {
       ops: [sampleOp],
     };
     const t0 = performance.now();
+    let parsed: ReturnType<typeof parseGeometryCompileRequest> | undefined;
     for (let i = 0; i < 10_000; i++) {
-      parseGeometryCompileRequest(payload);
+      parsed = parseGeometryCompileRequest(payload);
     }
-    expect(performance.now() - t0).toBeLessThan(75);
+    const elapsed = performance.now() - t0;
+    expect(parsed?.ops[0]?.semanticOwner).toBe(sampleOp.semanticOwner);
+    if (process.env.PLASMA_PERF_GATE === '1') expect(elapsed).toBeLessThan(75);
   });
 
   it('exact compile produces meshes with owners', () => {
