@@ -102,8 +102,8 @@ async function boot() {
   function applySheetZoom() {
     const stage = els.viewHost.querySelector('.view-stage');
     if (!stage) return;
-    stage.style.zoom = state.sheetZoom;
-    els.zoomLabel.textContent = `${Math.round(state.sheetZoom*100)}%`;
+    stage.style.zoom = state.route.view === 'strategy' ? 1 : state.sheetZoom;
+    els.zoomLabel.textContent = `${Math.round((state.route.view==='strategy'?1:state.sheetZoom)*100)}%`;
     localStorage.setItem('plasma-atlas-sheet-zoom', String(state.sheetZoom));
     requestAnimationFrame(() => {
       if (state.route.view === 'overview') renderer.drawRelationships(state.showRelationships,state.route);
@@ -136,6 +136,7 @@ async function boot() {
     els.viewTitle.textContent=meta.label;
     els.viewSubtitle.textContent=meta.description;
     updateTabs();
+    document.body.classList.toggle('strategy-view',state.route.view==='strategy');
     renderControls();
     renderer.renderView(state.route,{showRelationships:state.showRelationships});
     renderer.renderInspector(selectedRef());
