@@ -1,3 +1,4 @@
+import { renderStrategy, renderStrategyInspector } from './atlas-strategy.js';
 const esc = value => String(value ?? '')
   .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
   .replaceAll('"','&quot;').replaceAll("'",'&#039;');
@@ -70,6 +71,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         <div class="index-group">
           <div class="index-label">Plasma sections</div>
           <a class="index-item current-section" href="#overview"><span class="dot authority"></span>System Atlas</a>
+          <a class="index-item ${route.view==='strategy'?'active':''}" href="#strategy"><span class="dot runtime"></span>Strategy → Code</a>
           <a class="index-item external-link" href="https://benresonance-star.github.io/AI_DEV_OPS/#build" target="_blank" rel="noopener">
             <span class="dot runtime"></span>Build · AI Dev Ops <span class="external-mark">↗</span>
           </a>
@@ -105,7 +107,8 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
 
   function renderView(route, options = {}) {
     const view = route.view;
-    if (view === 'integration') renderIntegration(route);
+    if (view === 'strategy') viewHost.innerHTML = renderStrategy(model,route);
+    else if (view === 'integration') renderIntegration(route);
     else if (view === 'languages') renderLanguages(route);
     else if (view === 'transactions') renderTransactions(route);
     else if (view === 'components') renderComponents(route);
@@ -482,7 +485,9 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
     }
     const r=ref.raw;
     let body='';
-    if(ref.type==='component'){
+    if(ref.type==='strategy') {
+      body=renderStrategyInspector(model,r,refButton);
+    } else if(ref.type==='component'){
       const contractButtons=(r.contracts||[]).map(id=>{const c=model.by.contract.get(id);return c?refButton('contract',id,c.name):''}).join('');
       const depButtons=(r.dependencies||[]).map(id=>{const c=model.by.component.get(id);return c?refButton('component',id,c.name):''}).join('');
       const evButtons=(r.evidence||[]).map(id=>{const e=model.by.evidence.get(id);return e?refButton('evidence',id,e.name):''}).join('');
