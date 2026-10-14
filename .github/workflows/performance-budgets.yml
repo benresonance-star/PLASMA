@@ -30,10 +30,12 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Build dependencies
-        run: pnpm turbo run build --filter=@spds/semantic-core... --filter=@spds/geometry-contracts...
+        run: pnpm turbo run build --filter=@spds/semantic-core... --filter=@spds/geometry-contracts... --filter=@spds/ai-interface...
       - name: Schema assembly budgets
         run: pnpm --filter @spds/semantic-core exec vitest run src/schema-payload.test.ts --maxWorkers=1
       - name: Feature resolution budgets
         run: pnpm --filter @spds/geometry-contracts exec vitest run src/measure.test.ts --maxWorkers=1
       - name: Geometry parsing budgets
         run: pnpm --filter @spds/geometry-contracts exec vitest run src/compile.test.ts --maxWorkers=1
+      - name: Agent proposal lowering budgets
+        run: pnpm --filter @spds/ai-interface exec vitest run src/changeset-accept.test.ts --maxWorkers=1
