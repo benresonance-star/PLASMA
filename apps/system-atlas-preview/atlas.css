@@ -383,3 +383,14 @@ body.help-mode [data-atlas-type][data-atlas-id]{cursor:help!important}body.help-
   .view-scroll{overscroll-behavior-x:contain}
   .zoom-controls{opacity:.92}
 }
+
+/* Inspectable spatial boundaries and evidence-backed component explanations. */
+.relationship-layer{pointer-events:none}
+.rel-hit{pointer-events:stroke;fill:none;stroke:transparent;stroke-width:14px;cursor:pointer}
+.rel-hit:focus-visible{stroke:var(--accent);stroke-opacity:.24;outline:none}
+.inspector-understanding{border-left:3px solid var(--accent)!important;padding-left:12px}
+.inspector-understanding h4{font-size:10px}
+.understanding-tradeoffs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.understanding-tradeoffs>div{border:1px solid var(--line);border-radius:8px;padding:9px;min-width:0}
+.understanding-tradeoffs b{font-size:10px;color:var(--ink)}
+.understanding-tradeoffs p{margin:5px 0 0;font-size:11px;line-height:1.45}
