@@ -119,7 +119,7 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         <section class="view-stage overview-stage" data-base-width="980">
           ${renderComprehensionHeader(model,lens,route,scenarioStep)}
           <div class="overview-graph lens-${esc(lens)}" id="overviewGraph" role="group" aria-label="Ten-system Plasma architecture map">
-            <svg class="relationship-layer ${showRelationships?'':'hidden'}" id="relationshipLayer" aria-hidden="true"></svg>
+            <svg class="relationship-layer ${showRelationships?'':'hidden'}" id="relationshipLayer" role="group" aria-label="Inspect declared system boundaries"></svg>
             <div class="band-label band-intent-label">Proposals</div>
             <div class="band-label band-authority-label">Authority</div>
             <div class="band-label band-execution-label">Resolution</div>
@@ -201,6 +201,18 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
       path.setAttribute('marker-end',`url(#arrow${tone[0].toUpperCase()+tone.slice(1)})`);
       if(rel.direction==='bidirectional')path.setAttribute('marker-start',`url(#arrow${tone[0].toUpperCase()+tone.slice(1)})`);
       svg.appendChild(path);
+      const hit=document.createElementNS('http://www.w3.org/2000/svg','path');
+      hit.setAttribute('d',d);
+      hit.setAttribute('class','rel-hit');
+      hit.setAttribute('data-atlas-type','relationship');
+      hit.setAttribute('data-atlas-id',rel.id);
+      hit.setAttribute('role','link');
+      hit.setAttribute('tabindex','0');
+      hit.setAttribute('aria-label',`${rel.label}: ${rel.from} to ${rel.to}. Inspect boundary.`);
+      const title=document.createElementNS('http://www.w3.org/2000/svg','title');
+      title.textContent=rel.label+' — '+rel.authoritySemantics;
+      hit.appendChild(title);
+      svg.appendChild(hit);
     });
   }
 
@@ -474,8 +486,13 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
       const depButtons=(r.dependencies||[]).map(id=>{const c=model.by.component.get(id);return c?refButton('component',id,c.name):''}).join('');
       const evButtons=(r.evidence||[]).map(id=>{const e=model.by.evidence.get(id);return e?refButton('evidence',id,e.name):''}).join('');
       const rels=model.data.relationships.filter(x=>x.from===r.id||x.to===r.id);
+      const reference=model.by.referenceSystem.get(r.id);
+      const understanding=reference? `<section class="inspector-understanding"><h4>Why this system exists</h4><p>${esc(reference.why)}</p>
+        <div class="understanding-tradeoffs"><div><b>Strength</b><p>${esc(reference.strengths[0])}</p></div><div><b>Risk</b><p>${esc(reference.weaknesses[0])}</p></div></div>
+        <div class="ref-list">${refButton('referenceSystem',r.id,'Full rationale, alternatives & relationships →')}</div></section>`:'';
       body=`
         <div class="inspector-kv"><span>Authority</span><b>${esc(labelize(r.authority))}</b><span>Status</span><b>${esc(labelize(r.status))}</b><span>Owner</span><b>${esc(r.owner)}</b></div>
+        ${understanding}
         <section><h4>Contracts</h4><div class="ref-list">${contractButtons||'<span class="muted">None declared</span>'}</div></section>
         <section><h4>Dependencies</h4><div class="ref-list">${depButtons||'<span class="muted">None declared</span>'}</div></section>
         <section><h4>Relationships</h4><div class="ref-list">${rels.map(x=>refButton('relationship',x.id,x.label)).join('')}</div></section>
