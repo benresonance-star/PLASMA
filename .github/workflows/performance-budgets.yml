@@ -67,3 +67,6 @@ jobs:
             src/ui-preferences.test.ts \
             src/ui/PatternCardView.test.ts \
             src/what-if-session.test.ts --maxWorkers=1
+      - name: API proposal and compensation microbudgets
+        run: |
+          pnpm --filter @spds/api exec vitest run src/ai-branch-seed.test.ts src/ai-changeset-accept.test.ts src/compensating-command.test.ts --maxWorkers=1
