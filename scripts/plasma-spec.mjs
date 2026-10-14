@@ -210,6 +210,7 @@ for (const item of strategyMap.projection.objectives || []) {
 }
 const strategy = {
   ...strategyMap.projection,
+  invariants: Object.fromEntries(constitution.invariants.map(x => [x.id, x.rule])),
   objectives: strategyMap.projection.objectives.map(item => {
     const slice = byId.get(item.verificationSlice);
     return {
