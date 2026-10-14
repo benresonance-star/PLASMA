@@ -37,6 +37,7 @@ export function createAtlasModel(data, repositoryEvidence = null) {
   const links = Array.isArray(data.links) ? data.links : [];
   const by = {
     component: new Map(data.components.map(x => [x.id, x])),
+    strategy: new Map((data.strategy?.objectives || []).map(x => [x.id,x])),
     relationship: new Map(data.relationships.map(x => [x.id, x])),
     contract: new Map(data.contracts.map(x => [x.id, x])),
     domainLanguage: new Map(data.languages.domain.map(x => [x.id, x])),
@@ -53,14 +54,15 @@ export function createAtlasModel(data, repositoryEvidence = null) {
       type,
       id: item.id,
       atlasId: item.atlasId || item.id,
-      name: item.name || item.label || item.id,
-      summary: item.summary || item.description || item.semantics || item.explanation || '',
-      explanation: item.explanation || item.description || item.semantics || item.summary || '',
+      name: item.name || item.label || item.title || item.id,
+      summary: item.summary || item.outcome || item.description || item.semantics || item.explanation || '',
+      explanation: item.explanation || item.capability || item.description || item.semantics || item.summary || '',
       raw: item
     });
   });
 
   push('component', data.components);
+  push('strategy',data.strategy?.objectives || []);
   push('relationship', data.relationships);
   push('contract', data.contracts);
   push('domainLanguage', data.languages.domain);
@@ -276,6 +278,11 @@ export function createAtlasModel(data, repositoryEvidence = null) {
           raw.verification?.status,
           raw.verification?.method,
           raw.claim,
+          raw.outcome,
+          raw.capability,
+          ...(raw.contracts || []),
+          ...(raw.patterns || []).map(item => item.name),
+          ...(raw.code || []).map(item => item.path),
           ...(raw.tags || []),
           ...(raw.types || []),
           ...(raw.verbs || []),
@@ -325,6 +332,7 @@ export function routeForRef(ref) {
   if (!ref) return '#overview';
   if (ref.type === 'integrationLink') return `#integration/link/${encodeURIComponent(ref.id)}`;
   const prefix = {
+    strategy: 'strategy',
     component: 'components',
     relationship: 'overview/relationship',
     contract: 'contracts',
@@ -350,11 +358,12 @@ export function parseHash(hash) {
   if (view === 'languages' && parts[1] === 'domain') return { view, type: 'domainLanguage', id: parts[2] || null };
   if (view === 'languages' && parts[1] === 'core') return { view, type: 'coreLanguage', id: parts[2] || null };
   if (view === 'transactions' && parts[1] === 'stage') return { view, type: 'stage', id: parts[2] || null };
+  if (view === 'strategy') return { view, type: parts[1] ? 'strategy' : null, id: parts[1] || null };
   if (view === 'components') return { view, type: 'component', id: parts[1] || null };
   if (view === 'contracts') return { view, type: 'contract', id: parts[1] || null };
   if (view === 'slices') return { view, type: 'slice', id: parts[1] || null };
   if (view === 'evidence') return { view, type: 'evidence', id: parts[1] || null };
-  return { view: ['overview','integration','languages','transactions','components','contracts','slices','evidence'].includes(view) ? view : 'overview', type: null, id: null };
+  return { view: ['overview','strategy','integration','languages','transactions','components','contracts','slices','evidence'].includes(view) ? view : 'overview', type: null, id: null };
 }
 
 export function routeForSelection(type, id, currentView = 'overview') {
@@ -366,6 +375,7 @@ export function routeForSelection(type, id, currentView = 'overview') {
   if (type === 'domainLanguage') return `#languages/domain/${encodeURIComponent(id)}`;
   if (type === 'coreLanguage') return `#languages/core/${encodeURIComponent(id)}`;
   if (type === 'stage') return `#transactions/stage/${encodeURIComponent(id)}`;
+  if (type === 'strategy') return `#strategy/${encodeURIComponent(id)}`;
   if (type === 'contract') return `#contracts/${encodeURIComponent(id)}`;
   if (type === 'slice') return `#slices/${encodeURIComponent(id)}`;
   if (type === 'evidence') return `#evidence/${encodeURIComponent(id)}`;

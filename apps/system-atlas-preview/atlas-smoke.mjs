@@ -15,9 +15,10 @@ try{
 
   assert(await visible('.overview-graph'),'Overview graph is not visible');
   assert(await visible('[data-overview-id="authority"]'),'Authority component is not visible');
-  assert((await page.locator('.view-tab').count())===8,'Expected eight functional top-level views');
+  assert((await page.locator('.view-tab').count())===9,'Expected nine functional top-level views');
 
   const views=[
+    ['strategy','.strategy-chain'],
     ['integration','.integration-matrix'],
     ['languages','.domain-language-grid'],
     ['transactions','.transaction-flow'],
@@ -32,6 +33,12 @@ try{
     assert((await locationHash(page))===`#${view}`,`Unexpected hash after opening ${view}`);
   }
 
+  await page.click('.view-tab[data-view="strategy"]');
+  await page.click('.strategy-objective[data-atlas-id="STR-04"]');
+  assert((await locationHash(page))==='#strategy/STR-04','Strategy objective deep link missing');
+  await page.waitForFunction(() => document.querySelector('.strategy-proof')?.textContent?.includes('PLS-SLICE-DOC-01'));
+  assert((await page.locator('.strategy-proof').innerText()).includes('PLS-SLICE-DOC-01'),'Strategy proof slice missing');
+  assert((await page.locator('#inspector').innerText()).includes('Documentation as a product'),'Strategy inspector missing');
   await page.click('.view-tab[data-view="integration"]');
   await page.waitForSelector('.integration-matrix',{state:'visible'});
   assert((await page.locator('.repository-evidence-summary').count())===1,'Repository evidence status summary is missing');

@@ -10,6 +10,11 @@
       "description": "Authority hierarchy and typed system relationships."
     },
     {
+      "id": "strategy",
+      "label": "Strategy → Code",
+      "description": "Trace mission and product outcomes through principles, architecture, patterns, source files and verification."
+    },
+    {
       "id": "integration",
       "label": "Integration",
       "description": "Cross-view coverage: which slices exercise which systems, languages, contracts, transaction stages and evidence."

@@ -82,6 +82,7 @@ const links = read(registry.atlas.links);
 const repositoryEvidence = read(registry.atlas.repositoryEvidence);
 const atlasMeta = read(registry.atlas.meta);
 const atlasViews = read(registry.atlas.views);
+const strategyMap = read(registry.atlas.strategy);
 
 const schemaFor = {
   SpecSystem: 'spec/schemas/spec-system.schema.json',
@@ -190,9 +191,53 @@ for (const contract of contracts.map(x => x.record)) {
   }
 }
 
+const componentIds = new Set((componentCatalog.items || []).map(x => x.projection.id));
+const strategyIds = new Set();
+assert(strategyMap.kind === 'StrategyTraceabilityMap', 'strategy traceability must declare its kind');
+assert(strategyMap.apiVersion === 'plasma.spec/v1', 'strategy traceability has wrong apiVersion');
+for (const item of strategyMap.projection.objectives || []) {
+  assert(!strategyIds.has(item.id), `duplicate strategy objective: ${item.id}`);
+  strategyIds.add(item.id);
+  assert(item.title && item.outcome && item.capability, `strategy objective ${item.id} missing intent`);
+  assert(constitution.invariants.some(x => x.id === item.invariant), `strategy objective ${item.id}: missing invariant ${item.invariant}`);
+  for (const id of item.components || []) assert(componentIds.has(id), `strategy objective ${item.id}: unknown component ${id}`);
+  for (const id of item.contracts || []) assert(byId.get(id)?.kind === 'Contract', `strategy objective ${item.id}: unknown contract ${id}`);
+  assert(byId.get(item.verificationSlice)?.kind === 'VerticalSlice', `strategy objective ${item.id}: unknown proof slice ${item.verificationSlice}`);
+  for (const file of item.code || []) {
+    assert(!file.path.startsWith('/') && !file.path.includes('..'), `strategy objective ${item.id}: unsafe code path ${file.path}`);
+    assert(fs.existsSync(abs(file.path)), `strategy objective ${item.id}: missing code reference ${file.path}`);
+  }
+}
+const strategy = {
+  ...strategyMap.projection,
+  invariants: Object.fromEntries(constitution.invariants.map(x => [x.id, x.rule])),
+  objectives: strategyMap.projection.objectives.map(item => {
+    const slice = byId.get(item.verificationSlice);
+    return {
+      ...item,
+      contractsResolved: item.contracts.map(id => ({
+        id,
+        title: byId.get(id)?.title || id,
+        atlasId: byId.get(id)?.projection?.id || null,
+        source: sources.get(id)
+      })),
+      code: item.code.map(file => ({ ...file, exists: fs.existsSync(abs(file.path)) })),
+      proof: {
+        id: slice.id,
+        title: slice.title,
+        source: sources.get(slice.id),
+        implementation: slice.status.implementation,
+        verification: slice.status.verification,
+        release: slice.status.release
+      }
+    };
+  })
+};
+
 const atlas = {
   meta: atlasMeta.projection,
   views: atlasViews.projection,
+  strategy,
   components: (componentCatalog.items || []).map(x => x.projection),
   relationships: (relationshipCatalog.items || []).map(x => x.projection),
   contracts: contracts.map(x => x.record.projection).filter(Boolean),

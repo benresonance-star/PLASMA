@@ -33,6 +33,25 @@ assert(Array.isArray(atlas.contracts),'contracts are required');
 assert(Array.isArray(atlas.slices),'slices are required');
 assert(Array.isArray(atlas.evidence),'evidence is required');
 assert(Array.isArray(atlas.links),'typed integration links are required');
+assert(atlas.views.some(x=>x.id==='strategy'),'Strategy → Code view missing');
+assert(Array.isArray(atlas.strategy?.path)&&atlas.strategy.path.length>=7,'Strategy hierarchy missing');
+assert(Array.isArray(atlas.strategy?.objectives)&&atlas.strategy.objectives.length>0,'Strategy objectives missing');
+unique(atlas.strategy.objectives,'strategy objectives');
+for(const item of atlas.strategy.objectives){
+  assert(atlas.strategy.invariants[item.invariant],`Strategy ${item.id}: invariant missing`);
+  assert(item.components.every(id=>atlas.components.some(c=>c.id===id)),`Strategy ${item.id}: component missing`);
+  assert(item.contractsResolved.length===item.contracts.length,`Strategy ${item.id}: contract resolution mismatch`);
+  assert(item.contractsResolved.every(x=>x.id&&x.source&&fs.existsSync(path.resolve(here,'../..',x.source))),`Strategy ${item.id}: contract source missing`);
+  assert(item.code.every(x=>x.exists&&fs.existsSync(path.resolve(here,'../..',x.path))),`Strategy ${item.id}: code reference missing`);
+  assert(item.proof?.source&&fs.existsSync(path.resolve(here,'../..',item.proof.source)),`Strategy ${item.id}: canonical slice missing`);
+  if(item.proof?.source){
+    const slice=JSON.parse(fs.readFileSync(path.resolve(here,'../..',item.proof.source),'utf8'));
+    assert(slice.id===item.verificationSlice,`Strategy ${item.id}: wrong proof ID`);
+    for(const axis of ['implementation','verification','release']) assert(slice.status[axis]===item.proof[axis],`Strategy ${item.id}: proof status drift in ${axis}`);
+  }
+  assert(parseHash(`#strategy/${item.id}`).id===item.id,`Strategy ${item.id}: deep-link failure`);
+}
+
 assert(atlas.integration?.matrixRows?.length,'integration matrix rows are required');
 
 unique(atlas.views,'views');
