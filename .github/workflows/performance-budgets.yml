@@ -53,3 +53,17 @@ jobs:
           pnpm --filter @spds/designer-web exec vitest run src/right-pane.test.ts --maxWorkers=1
       - name: API organisation timing budgets
         run: pnpm --filter @spds/api exec vitest run src/model-groups.test.ts --maxWorkers=1
+      - name: Designer comprehension and interaction timing budgets
+        run: |
+          pnpm --filter @spds/designer-web exec vitest run \
+            src/explorer-from-graph.test.ts \
+            src/schema-item-docs.test.ts \
+            src/pending-changeset-preview.test.ts \
+            src/pending-impact.test.ts \
+            src/schema-draft.test.ts \
+            src/schema-reactflow-adapter.test.ts \
+            src/schema-view.test.ts \
+            src/sketch-intent.test.ts \
+            src/ui-preferences.test.ts \
+            src/ui/PatternCardView.test.ts \
+            src/what-if-session.test.ts --maxWorkers=1
