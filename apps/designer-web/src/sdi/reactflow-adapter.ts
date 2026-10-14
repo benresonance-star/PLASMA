@@ -57,9 +57,15 @@ export function formatRelationHover(input: {
 export function rfClassForProjectionNode(n: GraphViewNode): string {
   const parts = [`sdi-rf-node--${n.projectionRole}`, `sdi-rf-node--family-${n.family}`];
   if (n.projectionRole === 'provisional') parts.push('sdi-rf-node--provisional');
+  // ChangeSet projection preserves the specific proposal verb in summary.
+  // Interpret that verb for visual delta classes without overwriting source semantics.
   if (n.summary === 'removed') parts.push('sdi-rf-node--removed');
-  if (n.summary === 'added') parts.push('sdi-rf-node--added');
-  if (n.summary === 'changed') parts.push('sdi-rf-node--changed');
+  if (['added', 'create', 'create_group', 'apply_pattern'].includes(n.summary ?? '')) {
+    parts.push('sdi-rf-node--added');
+  }
+  if (['changed', 'update', 'connect'].includes(n.summary ?? '')) {
+    parts.push('sdi-rf-node--changed');
+  }
   return parts.join(' ');
 }
 

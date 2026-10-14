@@ -30,7 +30,7 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
       - name: Build dependencies
-        run: pnpm turbo run build --filter=@spds/semantic-core... --filter=@spds/geometry-contracts... --filter=@spds/ai-interface... --filter=@spds/reference-pipeline... --filter=@spds/designer-web...
+        run: pnpm turbo run build --filter=@spds/semantic-core... --filter=@spds/geometry-contracts... --filter=@spds/ai-interface... --filter=@spds/reference-pipeline... --filter=@spds/designer-web... --filter=@spds/api...
       - name: Schema assembly budgets
         run: pnpm --filter @spds/semantic-core exec vitest run src/schema-payload.test.ts --maxWorkers=1
       - name: Feature resolution budgets
@@ -47,3 +47,9 @@ jobs:
           pnpm --filter @spds/designer-web exec vitest run src/ui/three-scene.test.ts --maxWorkers=1
       - name: Schema projection budgets
         run: pnpm --filter @spds/designer-web exec vitest run src/schema-projection.test.ts --maxWorkers=1
+      - name: React Flow delta class and pane mapping budgets
+        run: |
+          pnpm --filter @spds/designer-web exec vitest run src/sdi/reactflow-adapter.test.ts --maxWorkers=1
+          pnpm --filter @spds/designer-web exec vitest run src/right-pane.test.ts --maxWorkers=1
+      - name: API organisation timing budgets
+        run: pnpm --filter @spds/api exec vitest run src/model-groups.test.ts --maxWorkers=1

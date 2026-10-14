@@ -48,10 +48,13 @@ describe('rightPaneForPanel', () => {
 
   it('benchmarks 10k map calls under 5ms', () => {
     const t0 = performance.now();
+    let last: ReturnType<typeof rightPaneForPanel> = 'inspector';
     for (let i = 0; i < 10_000; i++) {
-      rightPaneForPanel(PANELS[i % PANELS.length]!);
+      last = rightPaneForPanel(PANELS[i % PANELS.length]!);
     }
-    expect(performance.now() - t0).toBeLessThan(5);
+    const elapsed = performance.now() - t0;
+    expect(last).toBe(rightPaneForPanel(PANELS[9999 % PANELS.length]!));
+    if (process.env.PLASMA_PERF_GATE === '1') expect(elapsed).toBeLessThan(5);
   });
 });
 
