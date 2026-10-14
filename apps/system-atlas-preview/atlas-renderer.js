@@ -87,6 +87,8 @@ export function createRenderer({ model, viewHost, inspector, indexHost }) {
         <div class="index-group">
           <div class="index-label">Related resources</div>
           <a class="index-item external-link" href="https://benresonance-star.github.io/AI_DEV_OPS/#build" target="_blank" rel="noopener"><span class="dot runtime"></span>Build · AI Dev Ops <span class="external-mark">↗</span></a>
+          <a class="index-item external-link" href="./plasma-spec.html#specs" target="_blank" rel="noopener"><span class="dot derived"></span>Plasma specification <span class="external-mark">↗</span></a>
+          <a class="index-item external-link" href="./spec-system.html" target="_blank" rel="noopener"><span class="dot derived"></span>Spec System v1 <span class="external-mark">↗</span></a>
         </div>
       </div>
       <div class="index-legend"><span><i class="dot authority"></i>authoritative</span><span><i class="dot agent"></i>agentic</span><span><i class="dot runtime"></i>execution</span><span><i class="dot derived"></i>derived</span></div>`;
