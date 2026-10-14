@@ -51,6 +51,11 @@
       "description": "Authority hierarchy and typed system relationships."
     },
     {
+      "id": "strategy",
+      "label": "Strategy → Code",
+      "description": "Trace mission and product outcomes through principles, architecture, patterns, source files and verification."
+    },
+    {
       "id": "integration",
       "label": "Integration",
       "description": "Cross-view coverage: which slices exercise which systems, languages, contracts, transaction stages and evidence."
@@ -86,6 +91,523 @@
       "description": "Claims, required evidence and current linkage state."
     }
   ],
+  "strategy": {
+    "mission": "Make good buildings radically easier, faster and less costly to design, verify, document and deliver.",
+    "thesis": "One authoritative building state, with many governed ways for people and agents to propose, analyse, represent and prove changes.",
+    "path": [
+      {
+        "id": "mission",
+        "label": "Mission",
+        "question": "Why should this exist?"
+      },
+      {
+        "id": "strategy",
+        "label": "Strategy",
+        "question": "Which outcome matters?"
+      },
+      {
+        "id": "capability",
+        "label": "Capability",
+        "question": "What must the product do?"
+      },
+      {
+        "id": "invariant",
+        "label": "Principle",
+        "question": "What must always remain true?"
+      },
+      {
+        "id": "architecture",
+        "label": "Architecture",
+        "question": "Which system is responsible?"
+      },
+      {
+        "id": "pattern",
+        "label": "Patterns",
+        "question": "What reusable solution applies?"
+      },
+      {
+        "id": "code",
+        "label": "Code",
+        "question": "Where is it implemented?"
+      },
+      {
+        "id": "verification",
+        "label": "Proof",
+        "question": "What evidence demonstrates it works?"
+      }
+    ],
+    "objectives": [
+      {
+        "id": "STR-01",
+        "title": "Fast architectural iteration",
+        "outcome": "Reduce the time and risk of modifying buildings without losing design intent.",
+        "capability": "Edit semantic building elements and propagate their effects across dependent outputs.",
+        "invariant": "CONST-001",
+        "components": [
+          "interaction",
+          "authority",
+          "geometry",
+          "representation"
+        ],
+        "contracts": [
+          "PLS-TX-01",
+          "PLS-GR-01",
+          "PLS-REF-01"
+        ],
+        "patterns": [
+          {
+            "name": "Semantic command",
+            "why": "Edits express architectural intent, not mesh manipulation."
+          },
+          {
+            "name": "Atomic transaction",
+            "why": "A failed edit must not partially mutate the accepted world."
+          },
+          {
+            "name": "Dependency invalidation",
+            "why": "Only affected derived outputs require regeneration."
+          }
+        ],
+        "code": [
+          {
+            "path": "packages/semantic-commands/src/index.ts",
+            "role": "Typed command vocabulary",
+            "exists": true
+          },
+          {
+            "path": "packages/transaction-core/src/engine.ts",
+            "role": "Transaction infrastructure",
+            "exists": true
+          },
+          {
+            "path": "packages/dependency-graph/src/invalidation.ts",
+            "role": "Coarse dependency invalidation",
+            "exists": true
+          }
+        ],
+        "verificationSlice": "PLS-SLICE-MTBL-01",
+        "proofExpectation": "Modify one wall; verify dependent geometry, plan/section, save/reopen, and zero-state-change on failure.",
+        "contractsResolved": [
+          {
+            "id": "PLS-TX-01",
+            "title": "submitTransaction()",
+            "atlasId": "submit-transaction",
+            "source": "spec/contracts/PLS-TX-01/contract.yaml"
+          },
+          {
+            "id": "PLS-GR-01",
+            "title": "resolveGeometry()",
+            "atlasId": "resolve-geometry",
+            "source": "spec/contracts/PLS-GR-01/contract.yaml"
+          },
+          {
+            "id": "PLS-REF-01",
+            "title": "resolveReference()",
+            "atlasId": "resolve-reference",
+            "source": "spec/contracts/PLS-REF-01/contract.yaml"
+          }
+        ],
+        "proof": {
+          "id": "PLS-SLICE-MTBL-01",
+          "title": "Minimum Trusted Building Loop",
+          "source": "spec/slices/minimum-trusted-building-loop/slice.yaml",
+          "implementation": "not_started",
+          "verification": "none",
+          "release": "excluded"
+        }
+      },
+      {
+        "id": "STR-02",
+        "title": "Trustworthy decisions",
+        "outcome": "Make architectural decisions explainable, reviewable and grounded in evidence.",
+        "capability": "Evaluate proposed changes against constraints, invariants and traceable sources.",
+        "invariant": "CONST-006",
+        "components": [
+          "authority",
+          "constraints"
+        ],
+        "contracts": [
+          "PLS-VALIDATE-01",
+          "PLS-EVIDENCE-01",
+          "PLS-DECISION-01"
+        ],
+        "patterns": [
+          {
+            "name": "Validation pipeline",
+            "why": "Separate candidate evaluation from accepted state."
+          },
+          {
+            "name": "Provenance graph",
+            "why": "Keep evidence, revision and applicability attached to claims."
+          },
+          {
+            "name": "Fail closed",
+            "why": "Unknown or contradicting required evidence cannot silently satisfy a gate."
+          }
+        ],
+        "code": [
+          {
+            "path": "packages/validation-core/src/index.ts",
+            "role": "Validation primitives",
+            "exists": true
+          },
+          {
+            "path": "packages/validation-core/src/index.test.ts",
+            "role": "Unit-test source",
+            "exists": true
+          },
+          {
+            "path": "packages/transaction-core/src/types.ts",
+            "role": "Transaction and publication types",
+            "exists": true
+          }
+        ],
+        "verificationSlice": "PLS-SLICE-MTBL-01",
+        "proofExpectation": "Reject a violating change and preserve accepted state; trace a decision to its evidence.",
+        "contractsResolved": [
+          {
+            "id": "PLS-VALIDATE-01",
+            "title": "validateCandidate()",
+            "atlasId": "validate-candidate",
+            "source": "spec/contracts/PLS-VALIDATE-01/contract.yaml"
+          },
+          {
+            "id": "PLS-EVIDENCE-01",
+            "title": "EvidenceContract",
+            "atlasId": null,
+            "source": "spec/contracts/PLS-EVIDENCE-01/contract.yaml"
+          },
+          {
+            "id": "PLS-DECISION-01",
+            "title": "DecisionContract",
+            "atlasId": null,
+            "source": "spec/contracts/PLS-DECISION-01/contract.yaml"
+          }
+        ],
+        "proof": {
+          "id": "PLS-SLICE-MTBL-01",
+          "title": "Minimum Trusted Building Loop",
+          "source": "spec/slices/minimum-trusted-building-loop/slice.yaml",
+          "implementation": "not_started",
+          "verification": "none",
+          "release": "excluded"
+        }
+      },
+      {
+        "id": "STR-03",
+        "title": "Human + agent co-design",
+        "outcome": "Scale design exploration without granting AI unsafe mutation privileges.",
+        "capability": "Allow bounded agent proposals through exactly the same authority path as human edits.",
+        "invariant": "CONST-002",
+        "components": [
+          "intelligence",
+          "authority",
+          "interaction"
+        ],
+        "contracts": [
+          "PLS-AGENT-01",
+          "PLS-WORLD-01",
+          "PLS-TX-01"
+        ],
+        "patterns": [
+          {
+            "name": "Ports and adapters",
+            "why": "Separate agent reasoning tools from world authority."
+          },
+          {
+            "name": "Typed proposal",
+            "why": "Constrain an agent action to explicit operations and bounded reads."
+          },
+          {
+            "name": "Evaluator / critic",
+            "why": "Compare and review candidates before requesting a commit."
+          }
+        ],
+        "code": [
+          {
+            "path": "packages/ai-interface/src/agent-runner.ts",
+            "role": "Agent orchestration substrate",
+            "exists": true
+          },
+          {
+            "path": "packages/ai-interface/src/changeset-accept.ts",
+            "role": "AI changeset interface",
+            "exists": true
+          },
+          {
+            "path": "packages/semantic-commands/src/index.test.ts",
+            "role": "Command tests",
+            "exists": true
+          }
+        ],
+        "verificationSlice": "PLS-SLICE-MTBL-01",
+        "proofExpectation": "Exercise a bounded agent wall-edit proposal, including stale-revision rejection; no agent direct write path.",
+        "contractsResolved": [
+          {
+            "id": "PLS-AGENT-01",
+            "title": "proposeTransaction()",
+            "atlasId": "transaction-proposal",
+            "source": "spec/contracts/PLS-AGENT-01/contract.yaml"
+          },
+          {
+            "id": "PLS-WORLD-01",
+            "title": "readWorldSlice()",
+            "atlasId": "read-world-slice",
+            "source": "spec/contracts/PLS-WORLD-01/contract.yaml"
+          },
+          {
+            "id": "PLS-TX-01",
+            "title": "submitTransaction()",
+            "atlasId": "submit-transaction",
+            "source": "spec/contracts/PLS-TX-01/contract.yaml"
+          }
+        ],
+        "proof": {
+          "id": "PLS-SLICE-MTBL-01",
+          "title": "Minimum Trusted Building Loop",
+          "source": "spec/slices/minimum-trusted-building-loop/slice.yaml",
+          "implementation": "not_started",
+          "verification": "none",
+          "release": "excluded"
+        }
+      },
+      {
+        "id": "STR-04",
+        "title": "Documentation as a product",
+        "outcome": "Make coordinated documentation a first-class output of the building model.",
+        "capability": "Produce revision-coherent, multiscale plans, sections, details and issued sheets.",
+        "invariant": "CONST-003",
+        "components": [
+          "authority",
+          "representation",
+          "geometry"
+        ],
+        "contracts": [
+          "PLS-DOC-01",
+          "PLS-CONT-01",
+          "PLS-REP-01"
+        ],
+        "patterns": [
+          {
+            "name": "Projection compiler",
+            "why": "Derive drawings from model and authored documentation intent."
+          },
+          {
+            "name": "Purpose-aware generalisation",
+            "why": "Choose omit, simplify, combine, emphasise or explain per scale."
+          },
+          {
+            "name": "Immutable publication",
+            "why": "Pin issued records to accepted model and document revisions."
+          }
+        ],
+        "code": [
+          {
+            "path": "packages/representation-core/src/index.ts",
+            "role": "Existing representation substrate",
+            "exists": true
+          },
+          {
+            "path": "packages/representation-core/src/domains.ts",
+            "role": "Existing representation-domain types",
+            "exists": true
+          }
+        ],
+        "verificationSlice": "PLS-SLICE-DOC-01",
+        "proofExpectation": "Generate plan and section at eight scales and pass DOC-AT-01 through DOC-AT-10; current documentation capability is unimplemented.",
+        "contractsResolved": [
+          {
+            "id": "PLS-DOC-01",
+            "title": "First-Class Architectural Documentation Contract",
+            "atlasId": "document-set",
+            "source": "spec/contracts/PLS-DOC-01/contract.yaml"
+          },
+          {
+            "id": "PLS-CONT-01",
+            "title": "Project-Grounded Editing and Cross-View Continuity Contract",
+            "atlasId": "continuity-audit",
+            "source": "spec/contracts/PLS-CONT-01/contract.yaml"
+          },
+          {
+            "id": "PLS-REP-01",
+            "title": "deriveRepresentation()",
+            "atlasId": "derive-representation",
+            "source": "spec/contracts/PLS-REP-01/contract.yaml"
+          }
+        ],
+        "proof": {
+          "id": "PLS-SLICE-DOC-01",
+          "title": "Slab–Stud–Roof-Truss Multiscale Plan/Section/Detail MVP",
+          "source": "spec/slices/multiscale-building-documentation/slice.yaml",
+          "implementation": "not_started",
+          "verification": "none",
+          "release": "excluded"
+        }
+      },
+      {
+        "id": "STR-05",
+        "title": "Cost-aware generation",
+        "outcome": "Explore more credible lower-cost building alternatives without sacrificing quality or safety.",
+        "capability": "Generate, compare and score construction alternatives with geometry, quantity and constraint effects.",
+        "invariant": "CONST-008",
+        "components": [
+          "authority",
+          "constraints",
+          "geometry",
+          "external"
+        ],
+        "contracts": [
+          "PLS-SOLVER-01",
+          "PLS-VALIDATE-01",
+          "PLS-TX-01"
+        ],
+        "patterns": [
+          {
+            "name": "Strategy pattern",
+            "why": "Swap cost, assembly or optimisation evaluators behind typed contracts."
+          },
+          {
+            "name": "Branching candidate worlds",
+            "why": "Compare alternatives without modifying the approved design."
+          },
+          {
+            "name": "Dependency-aware evaluation",
+            "why": "Recompute only affected quantities, assemblies and tests."
+          }
+        ],
+        "code": [
+          {
+            "path": "packages/pattern-engine/src/compile.ts",
+            "role": "Existing pattern compilation",
+            "exists": true
+          },
+          {
+            "path": "packages/dependency-graph/src/invalidation.ts",
+            "role": "Existing invalidation substrate",
+            "exists": true
+          }
+        ],
+        "verificationSlice": "PLS-SLICE-MTBL-01",
+        "proofExpectation": "Compare bounded wall alternatives with quantity and assembly deltas; do not claim whole-building cost optimisation is proven.",
+        "contractsResolved": [
+          {
+            "id": "PLS-SOLVER-01",
+            "title": "SolverContract",
+            "atlasId": null,
+            "source": "spec/contracts/PLS-SOLVER-01/contract.yaml"
+          },
+          {
+            "id": "PLS-VALIDATE-01",
+            "title": "validateCandidate()",
+            "atlasId": "validate-candidate",
+            "source": "spec/contracts/PLS-VALIDATE-01/contract.yaml"
+          },
+          {
+            "id": "PLS-TX-01",
+            "title": "submitTransaction()",
+            "atlasId": "submit-transaction",
+            "source": "spec/contracts/PLS-TX-01/contract.yaml"
+          }
+        ],
+        "proof": {
+          "id": "PLS-SLICE-MTBL-01",
+          "title": "Minimum Trusted Building Loop",
+          "source": "spec/slices/minimum-trusted-building-loop/slice.yaml",
+          "implementation": "not_started",
+          "verification": "none",
+          "release": "excluded"
+        }
+      },
+      {
+        "id": "STR-06",
+        "title": "Continuity and recoverability",
+        "outcome": "Make design work durable across agents, devices, services, crashes and revisions.",
+        "capability": "Preserve stable identity, provenance, revisions and reproducible derived outputs.",
+        "invariant": "CONST-007",
+        "components": [
+          "authority",
+          "representation",
+          "external"
+        ],
+        "contracts": [
+          "PLS-TX-01",
+          "PLS-REP-01",
+          "PLS-EVIDENCE-01"
+        ],
+        "patterns": [
+          {
+            "name": "Event history",
+            "why": "Retain revision-producing decisions and undoable change history."
+          },
+          {
+            "name": "Revision-token concurrency",
+            "why": "Reject stale candidate writes and stale downstream jobs."
+          },
+          {
+            "name": "Content-addressed artifacts",
+            "why": "Bind derived outputs to versioned sources and producer hashes."
+          }
+        ],
+        "code": [
+          {
+            "path": "packages/version-core/src/store.ts",
+            "role": "Version-store contract",
+            "exists": true
+          },
+          {
+            "path": "packages/transaction-core/src/engine.ts",
+            "role": "Transaction lifecycle",
+            "exists": true
+          },
+          {
+            "path": "packages/representation-core/src/domains.test.ts",
+            "role": "Representation test source",
+            "exists": true
+          }
+        ],
+        "verificationSlice": "PLS-SLICE-MTBL-01",
+        "proofExpectation": "Close/reopen; preserve IDs, history and annotations; prevent stale computation from overwriting newer results.",
+        "contractsResolved": [
+          {
+            "id": "PLS-TX-01",
+            "title": "submitTransaction()",
+            "atlasId": "submit-transaction",
+            "source": "spec/contracts/PLS-TX-01/contract.yaml"
+          },
+          {
+            "id": "PLS-REP-01",
+            "title": "deriveRepresentation()",
+            "atlasId": "derive-representation",
+            "source": "spec/contracts/PLS-REP-01/contract.yaml"
+          },
+          {
+            "id": "PLS-EVIDENCE-01",
+            "title": "EvidenceContract",
+            "atlasId": null,
+            "source": "spec/contracts/PLS-EVIDENCE-01/contract.yaml"
+          }
+        ],
+        "proof": {
+          "id": "PLS-SLICE-MTBL-01",
+          "title": "Minimum Trusted Building Loop",
+          "source": "spec/slices/minimum-trusted-building-loop/slice.yaml",
+          "implementation": "not_started",
+          "verification": "none",
+          "release": "excluded"
+        }
+      }
+    ],
+    "invariants": {
+      "CONST-001": "Canonical world state has one governed authority path.",
+      "CONST-002": "A proposal is never authoritative state.",
+      "CONST-003": "Derived representations cannot become a second source of truth.",
+      "CONST-004": "Stale computation cannot overwrite a newer authoritative revision.",
+      "CONST-005": "Failure of a candidate operation cannot corrupt accepted state.",
+      "CONST-006": "Evidence retains provenance, applicability and freshness.",
+      "CONST-007": "History is preserved through revision-producing events.",
+      "CONST-008": "Non-authoritative computation may guide authority but cannot silently become authority."
+    }
+  },
   "components": [
     {
       "id": "interaction",
