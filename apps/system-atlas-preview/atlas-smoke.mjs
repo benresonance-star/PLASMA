@@ -15,10 +15,29 @@ try{
 
   assert(await visible('.overview-graph'),'Overview graph is not visible');
   assert(await visible('[data-overview-id="authority"]'),'Authority component is not visible');
-  assert((await page.locator('.view-tab').count())===10,'Expected ten functional top-level views');
+  assert((await page.locator('.workspace-tab').count())===5,'Five primary workspaces must replace crowded tab strip');
+  assert((await page.locator('.index-details .view-tab').count())===9,'Nine original deep-dive views must remain discoverable');
+  assert((await page.locator('.overview-graph [data-overview-id]').count())===10,'Whole-system canvas must show all ten canonical components');
+  const beforeLens=await page.locator('[data-overview-id="authority"]').boundingBox();
+  await page.click('[data-lens="authority"]');
+  assert((await page.locator('[data-lens="authority"]').getAttribute('aria-pressed'))==='true','Authority lens did not activate');
+  assert((await page.locator('.overview-graph [data-overview-id]').count())===10,'Lenses must not hide any system');
+  const afterLens=await page.locator('[data-overview-id="authority"]').boundingBox();
+  assert(beforeLens && afterLens && Math.abs(beforeLens.x-afterLens.x)<2 && Math.abs(beforeLens.y-afterLens.y)<2,
+    'Changing architectural lens must not move the canonical map');
+  assert((await page.locator('.overview-graph .slot.deemphasized').count())>0,'Lens should visually emphasize boundaries without removing them');
+  await page.click('[data-scenario-step="4"]');
+  assert((await page.locator('.trace-explanation').textContent()).includes('documentation'),'Illustrative wall-edit trace is missing downstream meaning');
+  assert((await page.locator('.slot-documentation.deemphasized').count())===0,'Wall trace should highlight documentation');
+  await page.click('[data-scenario-reset]');
+  await page.click('[data-lens="architecture"]');
+  assert((await page.locator('.overview-graph .slot.deemphasized').count())===0,'Restoring architecture lens must show all components with equal emphasis');
+  await page.click('.workspace-tab[data-workspace="library"]');
+  await page.waitForFunction(()=>location.hash==='#references');
+  await page.goto(base+'#overview',{waitUntil:'networkidle'});
 
 
-  await page.click('.view-tab[data-view="references"]');
+  await page.click('.workspace-tab[data-workspace="library"]');
   await page.waitForSelector('.reference-card-grid',{state:'visible'});
   assert((await page.locator('.reference-card[data-atlas-type="referenceSystem"]').count())===10,'Every Plasma system should have a reference card');
   assert((await page.locator('.reference-card[data-atlas-type="referenceTechnology"]').count())===16,'All initial technologies should have reference cards');
@@ -40,7 +59,7 @@ try{
   assert(((await page.locator('#inspector').textContent())||'').includes('Topology'),'System reference must explain risks');
   await page.goto(base+'#overview',{waitUntil:'networkidle'});
 
-  await page.click('.view-tab[data-view="council"]');
+  await page.click('.workspace-tab[data-workspace="council"]');
   await page.waitForSelector('.council-role-grid',{state:'visible'});
   assert((await page.locator('.council-role-card').count())===7,'Council must show seven proposed specialist roles');
   assert((await page.locator('.council-step').count())===5,'Wall example must show five review steps');
@@ -75,12 +94,12 @@ try{
     ['evidence','.evidence-list']
   ];
   for(const [view,selector] of views){
-    await page.click(`.view-tab[data-view="${view}"]`);
+    await page.goto(base+`#${view}`,{waitUntil:'networkidle'});
     await page.waitForSelector(selector,{state:'visible'});
     assert((await locationHash(page))===`#${view}`,`Unexpected hash after opening ${view}`);
   }
 
-  await page.click('.view-tab[data-view="integration"]');
+  await page.click('.workspace-tab[data-workspace="assure"]');
   await page.waitForSelector('.integration-matrix',{state:'visible'});
   assert((await page.locator('.repository-evidence-summary').count())===1,'Repository evidence status summary is missing');
   const repositorySummary=(await page.locator('.repository-evidence-summary').textContent())||'';
@@ -171,7 +190,7 @@ try{
   await page.waitForFunction(()=>location.hash.startsWith('#integration/link/'));
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Required evidence'));
 
-  await page.click('.view-tab[data-view="slices"]');
+  await page.goto(base+'#slices',{waitUntil:'networkidle'});
   await page.waitForSelector('.slice-catalogue',{state:'visible'});
   assert((await page.locator('[data-atlas-id="townhouse-system"]').count())===1,'Townhouse system slice is missing');
   assert((await page.locator('[data-atlas-id="apartment-system"]').count())===1,'Apartment system slice is missing');
@@ -189,7 +208,7 @@ try{
   await page.waitForFunction(()=>document.querySelector('#inspector')?.textContent?.includes('Success criteria'));
   assert((await page.locator('#inspector h4').filter({hasText:'Success criteria'}).count())===1,'Expanded slice detail did not render in inspector');
 
-  await page.click('.view-tab[data-view="overview"]');
+  await page.click('.workspace-tab[data-workspace="map"]');
   await page.waitForSelector('.overview-graph',{state:'visible'});
   await page.click('[data-overview-id="authority"]');
   await page.waitForFunction(()=>location.hash.includes('overview/component/authority'));
@@ -249,6 +268,9 @@ try{
   await page.goto(base+'#overview',{waitUntil:'networkidle'});
   await page.waitForFunction(()=>Boolean(window.__PLASMA_ATLAS__));
   assert(await visible('#viewHost'),'Main viewport is not visible on mobile');
+  assert((await page.locator('.workspace-tab').count())===5,'Mobile must retain the five principal destinations');
+  const mobileZoom=await page.evaluate(()=>window.__PLASMA_ATLAS__.state.sheetZoom);
+  assert(mobileZoom>=.95,'Mobile architecture map should pan without shrinking readable text automatically');
   await page.click('#navToggle');
   assert(await visible('.left-panel'),'Mobile Index drawer did not open');
   await page.click('#navToggle');
