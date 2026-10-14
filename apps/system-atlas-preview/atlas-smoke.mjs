@@ -33,6 +33,7 @@ try{
   await page.click('[data-lens="architecture"]');
   assert((await page.locator('.overview-graph .slot.deemphasized').count())===0,'Restoring architecture lens must show all components with equal emphasis');
   const boundary=page.locator('.rel-hit[data-atlas-id="rel-interaction-authority"]');
+  await page.waitForFunction(()=>document.querySelectorAll('.rel-hit').length===window.__PLASMA_ATLAS__.model.data.relationships.length);
   assert((await page.locator('.rel-hit').count())===10,'Every declared architecture boundary must be inspectable on the map');
   await boundary.focus();
   await page.keyboard.press('Enter');
