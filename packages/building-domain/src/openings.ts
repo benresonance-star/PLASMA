@@ -1,7 +1,7 @@
 export type HostedOpening={id:string;wall:string;kind:'window'|'door';centerMm:number;widthMm:number;heightMm:number;sillMm:number};
 export function wallFrames(c:Record<string,unknown>){
  const w=Number(c.buildingWidth??6),d=Number(c.buildingDepth??4),rw=Number(c.recessWidth??0),rd=Number(c.recessDepth??0),x=Number(c.buildingCenterX??0),z=Number(c.buildingCenterZ??0);
- const frame=(id:string,length:number,ox:number,oz:number,angle:number)=>({id,length,origin:[x+ox,z+oz],angle,tangent:[Math.cos(angle),-Math.sin(angle)],system:id==='front'?String(c.frontSystem??'lvl'):'lvl'});
+ const frame=(id:string,length:number,ox:number,oz:number,angle:number)=>({id,length,origin:[x+ox,z+oz],angle,tangent:[Math.cos(angle),-Math.sin(angle)],system:id==='front'?String(c.frontSystem??'lvl'):String((c.wallSystems as Record<string,string>|undefined)?.[id]??'lvl')});
  return [frame('front',w,0,-d/2+.045,0),frame('rear',w-rw,-rw/2,d/2-.045,0),frame('left',d-.18,-w/2+.045,0,Math.PI/2),frame('right',d-rd-.18,w/2-.045,-rd/2,Math.PI/2),...(rw>0?[frame('recess-rear',rw+.09,(w-rw-.09)/2,d/2-rd-.045,0),frame('recess-side',rd-.09,w/2-rw-.045,(d-rd-.09)/2,Math.PI/2)]:[])];
 }
 export function cleanHostedOpenings(c:Record<string,unknown>):HostedOpening[]{
