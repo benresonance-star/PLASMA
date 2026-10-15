@@ -1,3 +1,5 @@
+import {applyOriginalOpening} from './opening-catalog.js';
+export {openingCatalog,openingCapabilities} from './opening-catalog.js';
 import {fixtureConfig as rectangleConfig} from './legacy-recess.js';
 import {cleanHostedOpenings,wallFrames,type HostedOpening} from './openings.js';
 export {cleanHostedOpenings,wallFrames,type HostedOpening} from './openings.js';
@@ -87,4 +89,14 @@ export function editWallOpening(graph:unknown,edit:{operation:'upsert';opening:H
  else if(edit.operation==='upsert'){c.hostedOpenings=[...list.filter(o=>o.id!==edit.opening.id),edit.opening];}
  else throw new Error('Unsupported opening command');
  return buildFixtureGraph(c);
+}
+
+/** Shared command facade; preserves original parameter and entity identities. */
+export function editOpening(graph:unknown,edit:{operation:'upsert';opening:HostedOpening}|{operation:'remove';id:string}){
+ const id=edit.operation==='upsert'?edit.opening.id:edit.id;
+ if(id==='window'||id==='door'){
+  if(edit.operation==='remove')throw new Error('Original opening removal requires coordinated detail and drawing migration');
+  return buildFixtureGraph(applyOriginalOpening(fixtureConfig(graph),edit.opening));
+ }
+ return editWallOpening(graph,edit);
 }
