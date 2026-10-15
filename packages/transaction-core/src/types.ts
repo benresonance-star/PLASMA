@@ -63,6 +63,7 @@ export interface PublicationManifest {
   readonly validationHash: string;
   readonly artifactHashes: readonly string[];
   readonly workerGeneration: number;
+  readonly authority: 'validated' | 'mock';
 }
 
 export interface PublicationGateResult {

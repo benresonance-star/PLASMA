@@ -78,8 +78,9 @@ export class InMemoryVersionStore implements VersionStore {
       throw new Error(`HEAD_CONFLICT: expected ${input.expectedHeadHash}, got ${state.branch.headHash}`);
     }
     const beforeHash = state.branch.headHash;
-    const invalidationSet = input.mutate(state.objects);
-    const afterObjects = Object.fromEntries(state.objects);
+    const nextObjects = structuredClone(state.objects);
+    const invalidationSet = input.mutate(nextObjects);
+    const afterObjects = Object.fromEntries(nextObjects);
     const afterHash = hashState(afterObjects);
     const event: ChangeEvent = {
       eventId: `event:${randomUUID()}`,
@@ -93,9 +94,10 @@ export class InMemoryVersionStore implements VersionStore {
       timestamp: new Date().toISOString(),
       correlationId: input.correlationId ?? randomUUID(),
       invalidationSet,
-      payload: { objectCount: state.objects.size },
+      payload: { objectCount: nextObjects.size },
       ...(input.reason !== undefined ? { reason: input.reason } : {}),
     };
+    state.objects = nextObjects;
     state.events.push(event);
     state.branch = {
       ...state.branch,

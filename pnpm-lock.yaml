@@ -14,6 +14,9 @@ importers:
       '@types/node':
         specifier: ^22.13.10
         version: 22.20.1
+      esbuild:
+        specifier: 0.25.12
+        version: 0.25.12
       eslint:
         specifier: ^9.22.0
         version: 9.39.5(jiti@2.7.0)
@@ -266,6 +269,15 @@ importers:
       vitest:
         specifier: ^3.0.8
         version: 3.2.7(@types/node@22.20.1)(jiti@2.7.0)(jsdom@26.1.0)(lightningcss@1.32.0)(tsx@4.23.11)
+
+  packages/building-domain:
+    dependencies:
+      '@spds/dependency-graph':
+        specifier: workspace:*
+        version: link:../dependency-graph
+      '@spds/semantic-core':
+        specifier: workspace:*
+        version: link:../semantic-core
 
   packages/ai-interface:
     dependencies:

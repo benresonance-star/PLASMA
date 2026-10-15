@@ -31,6 +31,7 @@
     "turbo": "^2.4.4",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.26.1",
-    "vitest": "^3.0.8"
+    "vitest": "^3.0.8",
+    "esbuild": "0.25.12"
   }
 }

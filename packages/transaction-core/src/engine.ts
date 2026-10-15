@@ -50,6 +50,7 @@ export class TransactionEngine {
   private readonly manifests = new Map<string, PublicationManifest>();
   private publishedHeadObjects = new Map<string, Record<string, unknown>>();
   private workerGeneration = 1;
+  private readonly committing = new Set<string>();
   private compileAdapter: CompileAdapter | null = null;
 
   constructor(private readonly store: VersionStore) {}
@@ -63,11 +64,11 @@ export class TransactionEngine {
   }
 
   getTransaction(id: string): DesignTransaction | undefined {
-    return this.txns.get(id);
+    return structuredClone(this.txns.get(id));
   }
 
   getCandidate(id: string): CandidateRevision | undefined {
-    return this.candidates.get(id);
+    return structuredClone(this.candidates.get(id));
   }
 
   async getPublishedObjects(
@@ -93,7 +94,7 @@ export class TransactionEngine {
   }): Promise<DesignTransaction> {
     const existingId = this.byIdempotency.get(input.idempotencyKey);
     if (existingId) {
-      return this.txns.get(existingId)!;
+      return structuredClone(this.txns.get(existingId)!);
     }
     const head = (await asPromise(this.store.getBranchHead(input.branchId))).headHash;
     assertExpectedHead({
@@ -117,18 +118,18 @@ export class TransactionEngine {
     };
     this.txns.set(txn.id, txn);
     this.byIdempotency.set(input.idempotencyKey, txn.id);
-    return txn;
+    return structuredClone(txn);
   }
 
   appendCommand(txnId: string, command: DesignCommand): DesignTransaction {
     const txn = this.requireOpen(txnId);
     const next: DesignTransaction = {
       ...txn,
-      commands: [...txn.commands, command],
+      commands: [...txn.commands, structuredClone(command)],
       updatedAt: new Date().toISOString(),
     };
     this.txns.set(txnId, next);
-    return next;
+    return structuredClone(next);
   }
 
   abort(txnId: string, reason?: string): DesignTransaction {
@@ -141,7 +142,7 @@ export class TransactionEngine {
       ...(reason !== undefined ? { failureStage: reason } : {}),
     };
     this.txns.set(txnId, next);
-    return next;
+    return structuredClone(next);
   }
 
   async buildCandidate(txnId: string): Promise<CandidateRevision> {
@@ -165,7 +166,7 @@ export class TransactionEngine {
       updatedAt: new Date().toISOString(),
     };
     this.txns.set(txnId, next);
-    return candidate;
+    return structuredClone(candidate);
   }
 
   mockCompile(
@@ -232,22 +233,22 @@ export class TransactionEngine {
       validationHash: compiled.validationHash,
       artifactHashes: compiled.artifactHashes,
       workerGeneration,
+      authority: 'mock',
     };
     this.manifests.set(manifest.id, manifest);
     this.patch(txnId, {
       status: 'gated',
       publicationManifestId: manifest.id,
     });
-    return manifest;
+    return structuredClone(manifest);
   }
 
   async compile(
     txnId: string,
     options?: { failAt?: CompileStage; workerGeneration?: number },
   ): Promise<PublicationManifest> {
-    if (!this.compileAdapter || options?.failAt) {
-      return this.mockCompile(txnId, options);
-    }
+    if (options?.failAt) return this.mockCompile(txnId, options);
+    if (!this.compileAdapter) throw new Error('PUBLICATION_BLOCKED: real compile adapter required');
     const txn = this.txns.get(txnId);
     if (!txn?.candidateRevisionId) {
       throw createSpdsError({
@@ -258,12 +259,15 @@ export class TransactionEngine {
       });
     }
     const candidate = this.candidates.get(txn.candidateRevisionId)!;
+    const generation = options?.workerGeneration ?? this.workerGeneration;
+    if (generation !== this.workerGeneration) throw new Error('STALE_RESULT: stale worker');
     this.patch(txnId, { status: 'compiling' });
     const result = await this.compileAdapter({
       transactionId: txnId,
-      candidate,
-      commands: txn.commands,
+      candidate: structuredClone(candidate),
+      commands: structuredClone(txn.commands),
     });
+    if (generation !== this.workerGeneration || this.txns.get(txnId)?.status !== 'compiling') throw new Error('STALE_RESULT: compile invalidated');
     if (!result.ok) {
       this.patch(txnId, { status: 'failed', failureStage: result.failAt ?? 'geometry' });
       throw createSpdsError({
@@ -282,14 +286,15 @@ export class TransactionEngine {
       envHash: sha256Canonical({ node: process.version, pipelineHash: result.pipelineHash ?? null }),
       validationHash: result.validationHash,
       artifactHashes: result.artifactHashes,
-      workerGeneration: options?.workerGeneration ?? this.workerGeneration,
+      workerGeneration: generation,
+      authority: 'validated',
     };
     this.manifests.set(manifest.id, manifest);
     this.patch(txnId, {
       status: 'gated',
       publicationManifestId: manifest.id,
     });
-    return manifest;
+    return structuredClone(manifest);
   }
 
   async publicationGate(txnId: string): Promise<PublicationGateResult> {
@@ -297,6 +302,11 @@ export class TransactionEngine {
     if (!txn || txn.status !== 'gated' || !txn.publicationManifestId) {
       return { ok: false, reason: 'not-gated' };
     }
+    const manifest = this.manifests.get(txn.publicationManifestId);
+    const candidate = this.candidates.get(txn.candidateRevisionId!);
+    if (!manifest || manifest.authority !== 'validated') return {ok:false, reason:'MOCK_PUBLICATION_BLOCKED'};
+    if (manifest.workerGeneration !== this.workerGeneration) return {ok:false, reason:'STALE_RESULT'};
+    if (!candidate || manifest.snapshotHash !== sha256Canonical(candidate.objects)) return {ok:false, reason:'CANDIDATE_CHANGED'};
     const head = (await asPromise(this.store.getBranchHead(txn.branchId))).headHash;
     if (head !== txn.expectedHeadHash) {
       return { ok: false, reason: 'HEAD_CONFLICT' };
@@ -317,28 +327,23 @@ export class TransactionEngine {
     }
     const txn = this.txns.get(txnId)!;
     const candidate = this.candidates.get(txn.candidateRevisionId!)!;
-    let head = txn.expectedHeadHash;
-    for (const cmd of txn.commands) {
-      const event = await asPromise(
-        this.store.applyMutation({
-          branchId: txn.branchId,
-          actor: { type: txn.actorType, id: txn.actorId },
-          command: cmd.type,
-          expectedHeadHash: head,
-          targetIds: [...cmd.targetIds],
-          mutate: (objects) => {
-            const asRecord = Object.fromEntries(objects);
-            applyCommand(asRecord, cmd);
-            objects.clear();
-            for (const [k, v] of Object.entries(asRecord)) {
-              objects.set(k, v as Record<string, unknown>);
-            }
-            return [...cmd.targetIds];
-          },
-        }),
-      );
-      head = event.afterHash;
-    }
+    if (this.committing.has(txnId)) throw new Error('PUBLICATION_BLOCKED: commit in progress');
+    this.committing.add(txnId);
+    try {
+      await asPromise(this.store.applyMutation({
+        branchId: txn.branchId, actor: {type:txn.actorType,id:txn.actorId},
+        command: 'TRANSACTION', correlationId:txn.id, expectedHeadHash:txn.expectedHeadHash,
+        targetIds:[...new Set(txn.commands.flatMap(c=>c.targetIds))],
+        mutate: objects => {
+          const manifest=this.manifests.get(txn.publicationManifestId!)!;
+          if(manifest.workerGeneration!==this.workerGeneration) throw new Error('STALE_RESULT');
+          const next=structuredClone(candidate.objects) as Record<string,Record<string,unknown>>;
+          objects.clear();for(const [id,value] of Object.entries(next))objects.set(id,value);
+          return [...new Set(txn.commands.flatMap(c=>c.targetIds))];
+        }
+      }));
+    } catch(error) {this.patch(txnId,{status:'failed',failureStage:'commit'});throw error;}
+    finally {this.committing.delete(txnId);}
     this.publishedHeadObjects.set(
       txn.branchId,
       structuredClone(candidate.objects) as Record<string, unknown>,
@@ -349,7 +354,7 @@ export class TransactionEngine {
       updatedAt: new Date().toISOString(),
     };
     this.txns.set(txnId, committed);
-    return committed;
+    return structuredClone(committed);
   }
 
   bumpWorkerGeneration(): number {
@@ -367,7 +372,7 @@ export class TransactionEngine {
         recoverable: false,
       });
     }
-    return txn;
+    return structuredClone(txn);
   }
 
   private requireMutable(txnId: string): DesignTransaction {
@@ -380,7 +385,7 @@ export class TransactionEngine {
         recoverable: false,
       });
     }
-    return txn;
+    return structuredClone(txn);
   }
 
   private patch(
@@ -408,10 +413,8 @@ function applyCommand(objects: Record<string, unknown>, cmd: DesignCommand): voi
       const prev = (objects[id] as Record<string, unknown> | undefined) ?? { id };
       const path = typeof cmd.payload['path'] === 'string' ? cmd.payload['path'] : undefined;
       const value = cmd.payload['value'];
-      objects[id] =
-        path === 'lengthMm'
-          ? { ...prev, id, lengthMm: value, value }
-          : { ...prev, id, value };
+      if(path !== undefined && (!/^[A-Za-z][A-Za-z0-9_]*$/.test(path) || ['id','kind','constructor','prototype','__proto__'].includes(path) || !Object.hasOwn(prev,path))) throw new Error('SEMANTIC_INVALID: unsupported parameter path');
+      objects[id] = path ? {...prev,[path]:structuredClone(value)} : {...prev,id,value:structuredClone(value)};
       break;
     }
     case 'CREATE_OBJECT': {

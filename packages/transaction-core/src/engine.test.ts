@@ -119,7 +119,8 @@ describe('G3C transactions publication undo precursors', () => {
       payload: { id: 'param:y', object: { id: 'param:y', value: 9 } },
     });
     await engine.buildCandidate(txn2.id);
-    engine.mockCompile(txn2.id);
+    engine.setCompileAdapter(async()=>({ok:true,pirHash:'test-pir',dagHash:'test-dag',validationHash:'test-validation',artifactHashes:[]}));
+    await engine.compile(txn2.id);
     const committed = await engine.commit(txn2.id);
     expect(committed.status).toBe('committed');
     expect(store.getObject(branchId, 'param:y')).toEqual({ id: 'param:y', value: 9 });
