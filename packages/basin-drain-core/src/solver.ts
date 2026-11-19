@@ -1,3 +1,4 @@
+import {inspectAustralianProducts} from './australian-catalogue.js';
 import type {BasinModel,Finding,FindingCode,FlowSolution,Point3,Port} from './types.js';
 const distance=(a:Point3,b:Point3):number=>Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
 const dot=(a:readonly number[],b:readonly number[]):number=>a.reduce((s,v,i)=>s+v*b[i]!,0);
@@ -167,9 +168,11 @@ export function solveBasinDrain(model:BasinModel):FlowSolution {
   if(model.input.dischargeLps>hydro.capacityLps+1e-9)
     report('HYDRAULIC_OVERLOAD','block','grade-branch','Requested flow '+model.input.dischargeLps.toFixed(3)+' L/s exceeds steady Manning capacity '+hydro.capacityLps.toFixed(3)+' L/s');
   verifiedChecks.push('Steady uniform partially-full circular Manning equation evaluated for graded branch only.');
-  const productFamilies=new Set(model.components.map(c=>c.family));
+  const productGate=inspectAustralianProducts(model);
   report('UNVERIFIED_PRODUCT','review','catalogue',
-    String(productFamilies.size)+' generic component family types require matching to actual manufacturer ports, sockets, dimensions and installation instructions');
+    productGate.productMatchedCount+' of '+model.components.length+' model components mapped to named Australian WaterMark-listed product candidates; '+
+    productGate.blockedComponents.length+' still have unresolved connection/geometry selection requirements. '+
+    'ABCB register active status and installed combination have not been verified.');
   report('UNVERIFIED_TRAP_SEAL','review','trap','Dynamic trap seal loss and pressure fluctuation not modelled');
   report('UNVERIFIED_VENT','review','stack','Airflow, ventilation and downstream pressure boundary conditions not solved');
   report('UNVERIFIED_DETAIL','review','openings','Waterproofing, acoustic/fire seals, structural consent, socket assembly and cleanout access not verified');
