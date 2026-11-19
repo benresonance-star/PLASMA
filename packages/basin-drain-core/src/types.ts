@@ -7,6 +7,7 @@ export interface Component {
  readonly id:string;readonly family:Family;readonly name:string;readonly path:readonly Point3[];
  readonly portIds:readonly string[];readonly internalLinks:readonly (readonly [string,string])[];
  readonly diameterMm:number;readonly productStatus:'generic-unverified';
+ readonly australianProductCandidateId:string|null;
  readonly installationNotes:readonly string[];
 }
 export interface Joint {

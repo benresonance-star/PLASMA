@@ -2,11 +2,11 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import {setTimeout as sleep} from 'node:timers/promises';
 let targets;
-for(let i=0;i<45;i++){
+for(let i=0;i<140;i++){
   try{targets=await (await fetch('http://127.0.0.1:9222/json')).json();break;}
   catch{await sleep(250);}
 }
-assert(Array.isArray(targets),'Chrome debugging not available');
+assert(Array.isArray(targets),'Chrome debugging not available; browser did not start within 35 seconds');
 const page=targets.find(t=>t.type==='page');
 assert(page?.webSocketDebuggerUrl,'Chrome page unavailable');
 const socket=new WebSocket(page.webSocketDebuggerUrl);
@@ -56,6 +56,18 @@ assert(before.canvasWidth>=430&&before.canvasHeight>=400,'WebGL viewport undersi
 assert(Number(before.triangleCount)>500,'WebGL geometry not rendered');
 assert(before.result?.includes('MODEL CHECKS PASS'),'Baseline should be indicative pass');
 assert(before.flow==='true','Solving flow must enable water particles');
+
+const australian=await js('({coverage:document.querySelector("#catalogueCoverage")?.textContent,unresolved:document.querySelector("#catalogueBlocked")?.textContent,notice:document.querySelector(".catalogue-approval")?.textContent,items:document.querySelector("#catalogueList")?.textContent})');
+console.log('AU_WATERMARK_CATALOGUE',JSON.stringify({coverage:australian.coverage,unresolved:australian.unresolved,notice:australian.notice}));
+assert(australian.coverage==='9/11','Australian product mapping missing');
+assert(Number(australian.unresolved)>=5,'Unverified physical connections not flagged');
+assert(australian.notice?.includes('Not approved for installation'),'Unsafe compliance claim');
+assert(australian.items?.includes('WMKA1305')&&australian.items?.includes('D0024088'),'Australian certified product evidence not shown');
+await js("(()=>{const b=[...document.querySelectorAll('.part-list button')].find(x=>x.dataset.id==='bend-top');b?.click();return true})()");
+const bend=await js('({detail:document.querySelector("#selectedDetail")?.textContent,link:document.querySelector("#selectedDetail a")?.href})');
+assert(bend.detail?.includes('D0024088'),'Inspected bend does not show actual product model');
+assert(bend.detail?.includes('88°')&&bend.link?.includes('iplex.com.au'),'Bend mismatch or product evidence absent');
+
 const startX=Number(await js('document.documentElement.dataset.tracerX'));
 await sleep(350);
 const endX=Number(await js('document.documentElement.dataset.tracerX'));
