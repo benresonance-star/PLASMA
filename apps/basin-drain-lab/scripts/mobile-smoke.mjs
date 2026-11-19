@@ -2,11 +2,11 @@ import fs from 'node:fs';
 import assert from 'node:assert/strict';
 import {setTimeout as sleep} from 'node:timers/promises';
 let targets;
-for(let i=0;i<45;i++){
+for(let i=0;i<140;i++){
   try{targets=await (await fetch('http://127.0.0.1:9222/json')).json();break;}
   catch{await sleep(250);}
 }
-assert(Array.isArray(targets),'Chrome debugging not available');
+assert(Array.isArray(targets),'Chrome debugging not available; browser did not start within 35 seconds');
 const page=targets.find(t=>t.type==='page');
 assert(page?.webSocketDebuggerUrl,'Chrome page unavailable');
 const socket=new WebSocket(page.webSocketDebuggerUrl);
