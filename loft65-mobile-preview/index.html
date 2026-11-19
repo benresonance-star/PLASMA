@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#11191e"><title>Loft 65 · iPhone Preview</title>
+<style>
+:root{color-scheme:dark;--bg:#11191e;--panel:#19242a;--line:#30424b;--muted:#92aab5;--accent:#54c6dd;--text:#e7f1f5;font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);overflow:hidden}button,input{font:inherit}button{background:#26363e;color:#e8f3f6;border:1px solid #3d535d;border-radius:7px;padding:9px 12px;cursor:pointer}button:active,button:hover{border-color:var(--accent)}button.primary{background:#54c6dd;color:#09242d;border-color:#54c6dd;font-weight:750}
+header{height:58px;display:flex;gap:12px;align-items:center;padding:0 18px;border-bottom:1px solid var(--line);background:#141c21}header .logo{background:#55bfd6;color:#06212b;border-radius:9px;padding:7px 11px;font-weight:900}header .brand{font-size:12px;font-weight:800;letter-spacing:.12em}header .sub{font-size:10px;color:var(--muted);letter-spacing:.02em;font-weight:400}header .space{flex:1}header button{font-size:12px;padding:7px 10px}
+main{display:grid;grid-template-columns:220px minmax(0,1fr) 288px;height:calc(100dvh - 84px);min-height:250px}
+aside{background:var(--panel);min-height:0;overflow:auto}aside.left{border-right:1px solid var(--line)}aside.right{border-left:1px solid var(--line)}.label{font-size:10px;color:#9bb2c0;text-transform:uppercase;letter-spacing:.1em;font-weight:700;padding:17px 17px 10px}
+.tree{padding:5px 12px;font-size:12px}.branch{border-bottom:1px solid #2e404a;padding:11px 7px;font-weight:700;display:flex;gap:7px}.branch .count{margin-left:auto;color:#9bb0bb;font-weight:400}.twig{padding:7px 0 7px 25px;font-size:11px;color:#b8cbd2}.twig span{color:#6cc6d6}
+.viewport{position:relative;min-width:0;min-height:0;background:radial-gradient(circle at 50% 35%,#25343d,#121a1f 74%);overflow:hidden;touch-action:none}.viewport canvas{width:100%;height:100%;display:block;touch-action:none}.viewtag{position:absolute;top:12px;left:12px;padding:7px 10px;border-radius:6px;background:#1f3039dd;border:1px solid #45616e;font-size:11px;font-weight:750;pointer-events:none}.note{position:absolute;bottom:15px;left:12px;right:12px;font-size:11px;color:#b5ccd5;line-height:1.45;background:#15242dcc;border:1px solid #34515f;padding:9px 11px;border-radius:7px;pointer-events:none}.viewtools{position:absolute;right:12px;top:12px;display:flex;gap:6px}.viewtools button{padding:7px 10px;font-size:12px;background:#1d2e37dd}
+.prop{padding:14px 16px;border-bottom:1px solid var(--line)}.prop strong{font-size:12px}.prop small{display:block;color:var(--muted);font-size:11px;margin-top:5px;line-height:1.5}.setting{margin:15px 0}.setting label{font-size:11px;color:#b0c9d4;display:flex;justify-content:space-between;gap:7px;margin-bottom:9px}.setting b{color:white;font-size:11px}.setting input{width:100%;accent-color:#56c7db;cursor:pointer}.tiny{color:#adc2ca;font-size:11px;line-height:1.6}.notice{border:1px solid #836d43;border-radius:7px;color:#e7cb8f;background:#302b20;padding:11px;font-size:11px;line-height:1.5;margin:12px}
+footer{height:26px;display:flex;align-items:center;padding:0 12px;background:#1c292f;border-top:1px solid var(--line);font-size:10px;color:#a7c5cf;gap:9px}footer .dot{width:7px;height:7px;background:#70d0b8;border-radius:50%}.modal{position:fixed;inset:0;background:#050a0bc7;display:none;align-items:center;justify-content:center;padding:18px;z-index:30}.modal.open{display:flex}.sheet{background:#1d2a30;border:1px solid #44616c;border-radius:14px;width:min(530px,100%);max-height:75dvh;overflow:auto;padding:18px}.sheet h2{font-size:18px;margin:2px 0 8px}.sheet p{font-size:12px;color:#a9c0c9;line-height:1.5}.proj{width:100%;display:flex;justify-content:space-between;align-items:center;text-align:left;margin-top:10px;padding:15px;background:#263640}.proj strong{font-size:13px}.proj small{font-size:11px;color:#a9beca;display:block;margin-top:4px}.tabs{display:none}#mobileShade{display:none}
+@media(max-width:950px){main{grid-template-columns:185px minmax(0,1fr) 240px}header{padding:0 8px;gap:6px}header .brand{font-size:10px}}
+@media(max-width:700px){header{height:54px}header .sub{font-size:9px}header .brand{font-size:10px}header button{padding:7px 8px}main{display:block;height:calc(100dvh - 118px)}aside{position:absolute;z-index:15;top:54px;bottom:64px;width:min(84vw,335px);box-shadow:0 0 40px #0009;display:none}aside.left{left:0}aside.right{right:0}aside.open{display:block}.viewport{height:100%;width:100%}.tabs{display:flex;height:38px;align-items:center;justify-content:space-around;border-top:1px solid var(--line);background:#1b272e}.tabs button{border:none;background:transparent;padding:7px 17px;color:#d7e8ee;font-size:11px}footer{height:26px;font-size:9px}.viewtools button{padding:6px 9px}.note{font-size:10px;bottom:12px}.modal{align-items:flex-end;padding:0}.sheet{border-radius:16px 16px 0 0;max-height:82dvh;padding-bottom:max(20px,env(safe-area-inset-bottom))}}
+</style></head>
+<body>
+<header><div class="logo">L</div><div><div class="brand">LOFT / 65</div><div class="sub">MOBILE REVIEW PREVIEW</div></div><div class="space"></div><button id="projectBtn">Projects</button><button id="treeBtn">Tree</button><button id="propsBtn" class="primary">Parameters</button></header>
+<main><aside id="tree" class="left"><div class="label">Geometry tree</div><div class="tree" id="parts"></div></aside>
+<section id="view" class="viewport"><canvas id="canvas" aria-label="Interactive project geometry preview"></canvas><div class="viewtag" id="viewlabel">SPIRAL STAIR · AXONOMETRIC</div><div class="viewtools"><button id="fit">Fit</button><button id="zoomIn">+</button><button id="zoomOut">−</button></div><div class="note">Visual review mode · Drag to orbit · Pinch to zoom. Exact OpenCascade modelling and project writes are not connected.</div></section>
+<aside id="props" class="right"><div class="label">Parameters</div><div class="prop"><strong id="projectTitle">LPIT-03 · Spiral staircase</strong><small id="projectDesc">14 risers · 11 authored parts · 102 exact source occurrences in the saved desktop model.</small></div>
+<div id="paramControls"><div class="prop"><div class="setting"><label>Floor height <b id="heightVal"></b></label><input id="height" type="range" min="2100" max="3600" step="50" value="2700"></div><div class="setting"><label>Risers <b id="risersVal"></b></label><input id="risers" type="range" min="10" max="20" step="1" value="14"></div><div class="setting"><label>Overall rotation <b id="rotationVal"></b></label><input id="rotation" type="range" min="180" max="450" step="5" value="330"></div><div class="setting"><label>Outside radius <b id="radiusVal"></b></label><input id="radius" type="range" min="750" max="1350" step="25" value="990"></div></div><p class="tiny">These controls update a lightweight visual representation only. The source Loft project remains unchanged.</p></div>
+<div class="notice">This GitHub/Vercel preview is intentionally read-only. Full sketch editing, exact Booleans, STEP export and authoritative saves require the separately hosted Python/OpenCascade service.</div></aside></main>
+<nav class="tabs"><button data-drawer="tree">☷ Model tree</button><button id="projectsTab">▤ Projects</button><button data-drawer="props">⚙ Parameters</button></nav>
+<footer><span class="dot"></span><span>LOFT 65 · iPhone interface test</span><span style="margin-left:auto">PREVIEW · NOT AUTHORITATIVE CAD</span></footer>
+<div id="modal" class="modal"><div class="sheet"><div style="display:flex;align-items:center;justify-content:space-between"><h2>Projects</h2><button id="close">Close</button></div><p>Saved Loft 65 reference studies. Opening a project changes the visual inspection model; it does not modify the actual saved CAD file.</p><button class="proj" data-project="spiral"><span><strong>LPIT-03 · Editable Spiral Stair</strong><small>11 definitions · 102 exact source occurrences</small></span><span>Open</span></button><button class="proj" data-project="skylight"><span><strong>Skylight Mullion Study</strong><small>Editable loft profiles and guide paths in desktop Loft</small></span><span>Open</span></button><button class="proj" data-project="blank"><span><strong>Blank Workspace</strong><small>Start with an empty model view</small></span><span>Open</span></button></div></div>
+<script>
+(function(){
+'use strict';
+var state={project:'spiral',yaw:-.77,pitch:.55,zoom:1};
+var C=document.getElementById('canvas'),ctx=C.getContext('2d'),view=document.getElementById('view');
+var byId=function(x){return document.getElementById(x)};
+var settings=['height','risers','rotation','radius'];
+function num(k){return +byId(k).value;}
+function project(p){state.project=p;state.yaw=-.77;state.pitch=.55;state.zoom=1;byId('modal').classList.remove('open');byId('tree').classList.remove('open');byId('props').classList.remove('open');
+ byId('viewlabel').textContent=p==='spiral'?'SPIRAL STAIR · AXONOMETRIC':p==='skylight'?'SKYLIGHT LOFT · AXONOMETRIC':'EMPTY WORKSPACE';
+ byId('projectTitle').textContent=p==='spiral'?'LPIT-03 · Spiral staircase':p==='skylight'?'Skylight Mullion Study':'Blank Workspace';
+ byId('projectDesc').textContent=p==='spiral'?'11 exact part definitions, 102 original CAD occurrences. Preview geometry is simplified.':p==='skylight'?'Profiles, primary rails and a doubly curved surface. Simplified preview only.':'No geometry in the new workspace.';
+ byId('paramControls').style.display=p==='spiral'?'':'none';
+ byId('parts').innerHTML=p==='spiral'?'<div class="branch">⌄ Spiral Assembly <span class="count">102</span></div><div class="twig">↳ <span>Master parameters</span></div><div class="twig">↳ <span>SteelPan / Terrazzo</span></div><div class="twig">↳ <span>AntiSlip / Connectors</span></div><div class="twig">↳ <span>Handrail / Balusters</span></div><div class="twig">↳ <span>Column / BasePlate</span></div>':p==='skylight'?'<div class="branch">⌄ Skylight Loft</div><div class="twig">↳ Profile 01 / 02</div><div class="twig">↳ Guide rails A–D</div><div class="twig">↳ Generated loft surface</div>':'<div class="branch">Project contains no geometry</div>';
+ draw();}
+function setup(){var rect=view.getBoundingClientRect(),d=Math.min(window.devicePixelRatio||1,2);C.width=Math.max(1,Math.round(rect.width*d));C.height=Math.max(1,Math.round(rect.height*d));ctx.setTransform(d,0,0,d,0,0);draw();}
+function rot(a){var c=Math.cos(state.yaw),s=Math.sin(state.yaw),x=c*a[0]-s*a[1],y=s*a[0]+c*a[1];return [x,y,a[2]]}
+function pnt(a){var r=rot(a),rect=view.getBoundingClientRect(),scale=Math.min(rect.width/2400,rect.height/4100)*state.zoom*1.9,cy=Math.cos(state.pitch),sy=Math.sin(state.pitch);
+ return [rect.width/2+r[0]*scale,rect.height*.58-(r[2]*cy+r[1]*sy)*scale,r[1]*cy-r[2]*sy];}
+function poly(a,fill,stroke){if(a.length<3)return;ctx.beginPath();a.forEach(function(q,i){var v=pnt(q);if(i)ctx.lineTo(v[0],v[1]);else ctx.moveTo(v[0],v[1]);});ctx.closePath();ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.lineWidth=.75;ctx.strokeStyle=stroke;ctx.stroke();}}
+function line(a,color,width){if(a.length<2)return;ctx.beginPath();a.forEach(function(q,i){var v=pnt(q);if(i)ctx.lineTo(v[0],v[1]);else ctx.moveTo(v[0],v[1]);});ctx.lineWidth=width||2;ctx.lineJoin='round';ctx.strokeStyle=color;ctx.stroke();}
+function circlePath(radius,z,from,to,n){var a=[];for(var i=0;i<=n;i++){var t=from+(to-from)*i/n;a.push([radius*Math.cos(t),radius*Math.sin(t),z]);}return a;}
+function drawSpiral(){var n=num('risers'),h=num('height'),R=num('radius'),total=num('rotation')*Math.PI/180,dz=h/n,inner=150,angle=total/n;
+ // architectural reference grid
+ for(var x=-1500;x<=1500;x+=500)line([[x,-1500,-100],[x,1500,-100]],'#233743',.7);
+ for(var y=-1500;y<=1500;y+=500)line([[-1500,y,-100],[1500,y,-100]],'#233743',.7);
+ // central structural column
+ var slices=22;
+ for(var i=0;i<slices;i++){var a=i/slices*Math.PI*2,b=(i+1)/slices*Math.PI*2;poly([[78*Math.cos(a),78*Math.sin(a),0],[78*Math.cos(b),78*Math.sin(b),0],[78*Math.cos(b),78*Math.sin(b),h+1000],[78*Math.cos(a),78*Math.sin(a),h+1000]],i%2?'#59849a':'#668fa2');}
+ poly(circlePath(78,h+1000,0,Math.PI*2,26),'#82b1bf');
+ // tread pans and terrazzo; visual reconstruction of saved param values, not kernel tessellation
+ var faces=[];
+ for(var k=0;k<n;k++){var a=k*angle-.18,b=a+angle*.92,z=(k+1)*dz;
+ var top=[],under=[];for(var j=0;j<=8;j++){var t=a+(b-a)*j/8;top.push([R*Math.cos(t),R*Math.sin(t),z]);under.push([R*Math.cos(t),R*Math.sin(t),z-44]);}
+ for(var j=8;j>=0;j--){var t=a+(b-a)*j/8;top.push([inner*Math.cos(t),inner*Math.sin(t),z]);under.push([inner*Math.cos(t),inner*Math.sin(t),z-44]);}
+ faces.push({p:under,c:'#497488',edge:'#4a7b90'});faces.push({p:top,c:k%2?'#c9ccc8':'#d5d4cb',edge:'#709bad'});
+ line([under[0],top[0]],'#31566c',1);line([under[8],top[8]],'#31566c',1);
+ // inward slip-resistant strip along curved nosing
+ var strip=[];for(var j=0;j<=10;j++){var t=a+(b-a)*j/10;strip.push([(R-68)*Math.cos(t),(R-68)*Math.sin(t),z+1]);}
+ // displayed in drawing pass
+ faces.push({p:strip.map(function(v){return [v[0],v[1],v[2]]}).concat(strip.slice().reverse().map(function(v){var t=Math.atan2(v[1],v[0]);return [(R-48)*Math.cos(t),(R-48)*Math.sin(t),z+1]})),c:'#aa9470',edge:'#93876d'});
+ }
+ faces.sort(function(a,b){var ma=a.p.reduce(function(s,v){return s+pnt(v)[2]},0)/a.p.length,mb=b.p.reduce(function(s,v){return s+pnt(v)[2]},0)/b.p.length;return mb-ma;});
+ faces.forEach(function(f){poly(f.p,f.c,f.edge)});
+ // outer balusters and helical rail
+ for(var i=0;i<=n;i++){var a=i*angle-.18,r=R+35,z=Math.min(h,i*dz);
+ line([[r*Math.cos(a),r*Math.sin(a),z],[r*Math.cos(a),r*Math.sin(a),z+920]],'#5aacc0',2.1);}
+ var rail=[];for(var j=0;j<=160;j++){var t=j/160*total-.18;rail.push([(R+35)*Math.cos(t),(R+35)*Math.sin(t),920+h*j/160]);}
+ line(rail,'#60c4d9',5.7);line(rail,'#b1e2e9',1);
+}
+function drawSkylight(){for(var u=0;u<21;u++){var a=u/20,pts=[];for(var v=0;v<=16;v++){var b=v/16;pts.push([a*1650-825,b*1100-550,250+Math.sin(a*Math.PI)*190+Math.cos(b*Math.PI)*95]);}
+ line(pts,u%5===0?'#80d2df':'#477987',u%5===0?3:1);}
+ for(var v=0;v<=8;v++){var pts=[];for(var u=0;u<=35;u++){var a=u/35,b=v/8;pts.push([a*1650-825,b*1100-550,250+Math.sin(a*Math.PI)*190+Math.cos(b*Math.PI)*95]);}line(pts,v===0||v===8?'#d9bc7f':'#6ab0be',v===0||v===8?4:1.5);}
+}
+function draw(){var rect=view.getBoundingClientRect();if(!rect.width||!rect.height)return;ctx.clearRect(0,0,rect.width,rect.height);var gr=ctx.createLinearGradient(0,0,0,rect.height);gr.addColorStop(0,'#1f303a');gr.addColorStop(1,'#10191e');ctx.fillStyle=gr;ctx.fillRect(0,0,rect.width,rect.height);
+ if(state.project==='spiral')drawSpiral();else if(state.project==='skylight')drawSkylight();else{ctx.fillStyle='#829aa5';ctx.textAlign='center';ctx.font='14px sans-serif';ctx.fillText('Empty project · Open Projects to inspect an example',rect.width/2,rect.height/2);}}
+function update(){settings.forEach(function(k){byId(k+'Val').textContent=byId(k).value+(k==='height'||k==='radius'?' mm':k==='rotation'?'°':'');});draw();}
+settings.forEach(function(k){byId(k).addEventListener('input',update);});
+byId('projectBtn').onclick=byId('projectsTab').onclick=function(){byId('modal').classList.add('open')};
+byId('close').onclick=function(){byId('modal').classList.remove('open')};
+byId('modal').onclick=function(e){if(e.target===byId('modal'))byId('modal').classList.remove('open');var el=e.target.closest('[data-project]');if(el)project(el.dataset.project)};
+function toggle(x){byId(x).classList.toggle('open');byId(x==='tree'?'props':'tree').classList.remove('open');}
+byId('treeBtn').onclick=function(){toggle('tree')};byId('propsBtn').onclick=function(){toggle('props')};
+document.querySelectorAll('[data-drawer]').forEach(function(el){el.onclick=function(){toggle(el.dataset.drawer)}});
+byId('fit').onclick=function(){state.zoom=1;state.yaw=-.77;state.pitch=.55;draw()};byId('zoomIn').onclick=function(){state.zoom=Math.min(3,state.zoom*1.25);draw()};byId('zoomOut').onclick=function(){state.zoom=Math.max(.38,state.zoom/1.25);draw()};
+var down=new Map(),old=null,lastDist=0;
+C.addEventListener('pointerdown',function(e){C.setPointerCapture(e.pointerId);down.set(e.pointerId,[e.clientX,e.clientY]);old=[e.clientX,e.clientY];});
+C.addEventListener('pointermove',function(e){if(!down.has(e.pointerId))return;var cur=[e.clientX,e.clientY],arr=Array.from(down.values());if(down.size>1){var pts=Array.from(down.entries()).map(function(x){return x[0]===e.pointerId?cur:x[1]});var dist=Math.hypot(pts[0][0]-pts[1][0],pts[0][1]-pts[1][1]);if(lastDist)state.zoom=Math.max(.35,Math.min(3.5,state.zoom*dist/lastDist));lastDist=dist;}else if(old){state.yaw+=(cur[0]-old[0])*.009;state.pitch=Math.max(.15,Math.min(1.35,state.pitch+(cur[1]-old[1])*.005));}down.set(e.pointerId,cur);old=cur;draw();});
+function end(e){down.delete(e.pointerId);lastDist=0;old=null}C.addEventListener('pointerup',end);C.addEventListener('pointercancel',end);C.addEventListener('wheel',function(e){e.preventDefault();state.zoom=Math.max(.35,Math.min(3.5,state.zoom*(e.deltaY>0?.89:1.12)));draw()},{passive:false});
+window.addEventListener('resize',setup);project('spiral');update();setTimeout(setup,50);
+})();
+</script></body></html>
