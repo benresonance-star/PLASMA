@@ -37,6 +37,7 @@ jobs:
           test -s /tmp/wet-desktop.png
           "$CHROME" --headless --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --virtual-time-budget=5000 --dump-dom http://127.0.0.1:4173/ > /tmp/wet-dom.html 2>/tmp/wet-dom.log
           grep -q 'id="connected">5/5' /tmp/wet-dom.html
+          node -e 'const s=require("fs").readFileSync("/tmp/wet-dom.html","utf8"); const c=s.match(/<canvas[^>]*>/)?.[0]; const w=Number(c?.match(/width="(\d+)"/)?.[1]); const h=Number(c?.match(/height="(\d+)"/)?.[1]); console.log("BROWSER_CANVAS_DIMENSIONS:",w,h); if(!(w>=200&&h>=300)) process.exit(1);'
           grep -q 'Semantic ID: bath-basin' /tmp/wet-dom.html
           echo 'BROWSER_SMOKE_PASS: App JS, semantic inspector and screenshot artifacts'
           echo "MOBILE_SCREENSHOT_BASE64_START"
