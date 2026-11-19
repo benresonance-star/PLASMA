@@ -79,7 +79,18 @@ export class WetCoreViewport {
       if(picked)this.onSelection(String(picked.object.userData.semanticId));
     });
     new ResizeObserver(()=>this.resize()).observe(node);
-    this.renderer.setAnimationLoop(()=>{this.controls.update();this.renderer.render(this.scene,this.camera);});
+    this.renderer.setAnimationLoop(()=>{
+      this.controls.update();
+      this.renderer.render(this.scene,this.camera);
+      // Read-only browser smoke telemetry. No model mutations or authority effects.
+      const d=document.documentElement.dataset;
+      d.wetCoreObjects=String(this.root.children.length);
+      d.wetCoreTriangles=String(this.renderer.info.render.triangles);
+      d.wetCoreDrawCalls=String(this.renderer.info.render.calls);
+      const rect=this.renderer.domElement.getBoundingClientRect();
+      d.wetCoreCanvasRect=[Math.round(rect.x),Math.round(rect.y),
+        Math.round(rect.width),Math.round(rect.height)].join(',');
+    });
   }
   private mesh(geometry:THREE.BufferGeometry,material:THREE.Material,
     center:THREE.Vector3,id?:string):THREE.Mesh{
