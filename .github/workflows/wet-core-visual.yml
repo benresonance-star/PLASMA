@@ -39,6 +39,7 @@ jobs:
           grep -q 'id="connected">5/5' /tmp/wet-dom.html
           node -e 'const s=require("fs").readFileSync("/tmp/wet-dom.html","utf8"); const c=s.match(/<canvas[^>]*>/)?.[0]; const w=Number(c?.match(/width="(\d+)"/)?.[1]); const h=Number(c?.match(/height="(\d+)"/)?.[1]); console.log("BROWSER_CANVAS_DIMENSIONS:",w,h); if(!(w>=200&&h>=300)) process.exit(1);'
           grep -q 'Semantic ID: bath-basin' /tmp/wet-dom.html
+          node -e 'const s=require("fs").readFileSync("/tmp/wet-dom.html","utf8"); const keys=["wet-core-objects","wet-core-triangles","wet-core-draw-calls","wet-core-canvas-rect"]; for(const key of keys){console.log("WEBGL_SMOKE",key,s.match(new RegExp("data-"+key+"=\\\"([^\\\"]+)\\\""))?.[1]??"MISSING");}'
           echo 'BROWSER_SMOKE_PASS: App JS, semantic inspector and screenshot artifacts'
           echo "MOBILE_SCREENSHOT_BASE64_START"
           base64 -w0 /tmp/wet-mobile.png
