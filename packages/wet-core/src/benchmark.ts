@@ -184,6 +184,16 @@ export function buildWetCore(options: { readonly basinShiftMm?: number } = {}): 
     structure.push({id,kind,minMm:a,maxMm:b,structural});
   }
   element('ground:slab','slab',[0,0,-150],[4800,3600,0],true);
+  element('ground:tile-finish','tile-finish',[0,0,0],[4800,3600,18],false);
+  element('upper:subfloor','subfloor',[0,0,2980],[4800,3600,3000],false);
+  element('upper:tile-finish','tile-finish',[0,0,3000],[4800,3600,3018],false);
+  for(const storey of [0,3000]){
+    element('rear:bottom-plate:'+storey,'plate',[0,3500,storey],[4800,3580,storey+45],true);
+    element('rear:top-plate:'+storey,'plate',[0,3500,storey+2580],[4800,3580,storey+2625],true);
+    for(const x of [0,450,900,1350,1800,2250,2700,3150,3600,4050,4500])
+      element('rear:stud:'+storey+':'+x,'stud',[x,3500,storey+45],[x+45,3580,storey+2580],true);
+    element('rear:lining:'+storey,'lining',[0,3580,storey],[4800,3593,storey+2625],false);
+  }
   for(const x of [360,810,1260,1710,2610,3060,3510,3960,4410])
     element('floor:joist:'+x,'joist',[x,150,2760],[x+45,3450,2985],true);
   for(const storey of [0,3000]){

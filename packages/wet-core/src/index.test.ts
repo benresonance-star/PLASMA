@@ -11,6 +11,8 @@ describe('TH-01 wet-core semantic engineering benchmark', () => {
     expect(model.fittings.length).toBeGreaterThan(18);
     expect(model.structure.filter(x=>x.kind==='joist').length).toBe(9);
     expect(model.structure.filter(x=>x.kind==='stud').length).toBeGreaterThan(8);
+    expect(model.structure.filter(x=>x.kind==='tile-finish')).toHaveLength(2);
+    expect(model.structure.some(x=>x.id==='rear:stud:3000:900')).toBe(true);
     expect(model.components.find(c=>c.id==='bath-basin')?.portIds)
       .toEqual(['bath-basin:cold','bath-basin:hot','bath-basin:waste']);
     expect(model.committed).toBe(false);

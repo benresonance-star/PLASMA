@@ -45,7 +45,7 @@ export interface WetRun {
 }
 export interface StructuralMember {
   readonly id: string;
-  readonly kind: 'slab' | 'joist' | 'stud' | 'plate' | 'lining' | 'chase-boundary';
+  readonly kind: 'slab' | 'joist' | 'stud' | 'plate' | 'lining' | 'chase-boundary' | 'tile-finish' | 'subfloor';
   readonly minMm: Point3;
   readonly maxMm: Point3;
   readonly structural: boolean;

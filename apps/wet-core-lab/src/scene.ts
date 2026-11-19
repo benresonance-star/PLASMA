@@ -116,17 +116,21 @@ export class WetCoreViewport {
   private visible(z:number):boolean{
     return this.level==='both'||(this.level==='upper'?z>=2900:z<2900);
   }
-  private floor():void{
-    for(const z of [0,3000]){
-      if(!this.visible(z+30))continue;
-      this.box([0,0,z+5],[4800,3600,z+20],paints.tile,.95,'floor:'+z,3);
+  private floor(m:WetCoreModel):void{
+    for(const layer of m.structure.filter(s=>s.kind==='tile-finish')){
+      const z=layer.minMm[2];
+      if(!this.visible(z+10))continue;
+      this.box(layer.minMm,layer.maxMm,paints.tile,z===0?.95:.42,layer.id,2);
       const coords:number[]=[];
-      for(let x=0;x<=4800;x+=600)coords.push(x,z+24,0,x,z+24,3600);
-      for(let y=0;y<=3600;y+=600)coords.push(0,z+24,y,4800,z+24,y);
+      const top=layer.maxMm[2]+3;
+      for(let x=0;x<=m.dimensionsMm[0];x+=600)
+        coords.push(x,top,0,x,top,m.dimensionsMm[1]);
+      for(let y=0;y<=m.dimensionsMm[1];y+=600)
+        coords.push(0,top,y,m.dimensionsMm[0],top,y);
       const geometry=new THREE.BufferGeometry();
       geometry.setAttribute('position',new THREE.Float32BufferAttribute(coords,3));
       this.root.add(new THREE.LineSegments(geometry,
-        new THREE.LineBasicMaterial({color:0xc5cfce,opacity:.48,transparent:true})));
+        new THREE.LineBasicMaterial({color:0xc3cecd,opacity:.43,transparent:true})));
     }
     if(this.level!=='ground')this.label('UPPER BATHROOM',[1100,550,3050]);
     if(this.level!=='upper')this.label('LAUNDRY / POWDER',[1150,520,60]);
@@ -139,20 +143,14 @@ export class WetCoreViewport {
       if(s.kind==='chase-boundary'){
         this.box(s.minMm,s.maxMm,0x92a6a6,.065,s.id);continue;
       }
-      if(s.kind==='lining'){this.box(s.minMm,s.maxMm,0xb6c4c4,.15,s.id);continue;}
+      if(s.kind==='tile-finish')continue;
+      if(s.kind==='lining'){this.box(s.minMm,s.maxMm,0xb6c4c4,.13,s.id);continue;}
+      if(s.kind==='subfloor'){this.box(s.minMm,s.maxMm,0xd7cec1,.23,s.id);continue;}
       const colour=s.kind==='slab'?paints.concrete:paints.timber;
       this.box(s.minMm,s.maxMm,colour,s.kind==='slab'?.86:.98,s.id,s.kind==='joist'?2:0);
     }
-    // Architectural context is explicitly illustrative; only the structural
-    // members above belong to the authored semantic benchmark.
-    const levels=[0,3000].filter(z=>this.visible(z+800));
-    for(const base of levels){
-      for(let x=0;x<4800;x+=450)
-        this.box([x,3520,base],[x+45,3565,base+2590],0xb8aa97,.64);
-      this.box([0,3520,base+2590],[4800,3565,base+2635],0xb8aa97,.64);
-      this.box([0,3570,base],[4800,3582,base+2620],0xc2cccc,.075);
-    }
   }
+
   private fixture(c:WetComponent):void{
     const [x,y,z]=c.originMm,[w,d,h]=c.sizeMm;
     if(c.kind==='water-meter'){
@@ -228,7 +226,7 @@ export class WetCoreViewport {
   show(m:WetCoreModel,layers:Layers,level:LevelMode,selected:string|null):void{
     for(const child of [...this.root.children]){this.root.remove(child);destroy(child);}
     this.layers=layers;this.level=level;
-    this.floor();this.structural(m);
+    this.floor(m);this.structural(m);
     for(const c of m.components)
       if(level==='both'||this.visible(c.originMm[2]+c.sizeMm[2]/2)||
         c.kind==='sanitary-stack')this.fixture(c);
