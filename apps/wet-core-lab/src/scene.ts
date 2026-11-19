@@ -51,13 +51,13 @@ export class WetCoreViewport {
     this.renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
     this.renderer.outputColorSpace=THREE.SRGBColorSpace;
     this.renderer.toneMapping=THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure=1.4;
+    this.renderer.toneMappingExposure=1.1;
     node.append(this.renderer.domElement);
     this.scene.add(this.root);
-    this.scene.add(new THREE.HemisphereLight(0xffffff,0xc8cfcb,2.2));
-    const key=new THREE.DirectionalLight(0xffffff,2.5);
+    this.scene.add(new THREE.HemisphereLight(0xffffff,0xc8cfcb,1.55));
+    const key=new THREE.DirectionalLight(0xffffff,1.85);
     key.position.set(-4500,11000,7000);this.scene.add(key);
-    const fill=new THREE.DirectionalLight(0xd0e2ec,1.0);
+    const fill=new THREE.DirectionalLight(0xd0e2ec,.7);
     fill.position.set(8000,6000,-5000);this.scene.add(fill);
     this.controls=new OrbitControls(this.camera,this.renderer.domElement);
     this.controls.enableDamping=true;this.controls.dampingFactor=.11;
@@ -174,7 +174,7 @@ export class WetCoreViewport {
       if(s.kind==='lining'){this.box(s.minMm,s.maxMm,0xb6c4c4,.13,s.id);continue;}
       if(s.kind==='subfloor'){this.box(s.minMm,s.maxMm,0xd7cec1,.23,s.id);continue;}
       const colour=s.kind==='slab'?paints.concrete:paints.timber;
-      this.box(s.minMm,s.maxMm,colour,s.kind==='slab'?.86:.98,s.id,s.kind==='joist'?2:0);
+      this.box(s.minMm,s.maxMm,colour,s.kind==='slab'?.86:s.id.startsWith('rear:')?.52:.91,s.id,s.kind==='joist'?2:0);
     }
   }
 
@@ -295,14 +295,14 @@ export class WetCoreViewport {
     }else if(view==='section'){
       this.camera.position.copy(center).add(new THREE.Vector3(0,0,15000));
     }else{
-      this.camera.position.copy(center).add(new THREE.Vector3(8900,7600,10500));
+      this.camera.position.copy(center).add(new THREE.Vector3(8200,7600,-11000));
     }
     this.camera.zoom=1;this.camera.lookAt(center);this.camera.updateProjectionMatrix();
     this.controls.update();this.resize();
   }
   private resize():void{
     const w=Math.max(1,this.node.clientWidth),h=Math.max(1,this.node.clientHeight),aspect=w/h;
-    const height=Math.max(9000,6400/aspect);
+    const height=Math.max(7600,5400/aspect);
     this.camera.left=-height*aspect/2;this.camera.right=height*aspect/2;
     this.camera.top=height/2;this.camera.bottom=-height/2;
     this.camera.updateProjectionMatrix();
