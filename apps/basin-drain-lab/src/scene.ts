@@ -251,6 +251,9 @@ export class DrainViewport {
     const valid=!!s&&!!m&&s.status==='indicative-pass'&&this.showWater&&
       s.velocityMps!==null&&s.waterDepthMm!==null&&s.velocityMps>0;
     for(const bead of this.particles)bead.visible=valid;
+    if(new URLSearchParams(window.location.search).has('smoke')){
+      document.documentElement.dataset.tracerActive=String(valid);
+    }
     if(!valid||!s||!m||s.velocityMps===null||s.waterDepthMm===null)return;
     const start=m.gradedStart,end=m.gradedEnd;
     const length=end[0]-start[0];
@@ -260,6 +263,7 @@ export class DrainViewport {
       const x=start[0]+u*length,z=start[2]+u*(end[2]-start[2]);
       const height=-m.input.diameterMm/2+s.waterDepthMm*(.25+.4*((i%3)/2));
       this.particles[i]!.position.copy(V([x,1110+(i%3-1)*6,z+height]));
+      if(i===0&&new URLSearchParams(window.location.search).has('smoke'))document.documentElement.dataset.tracerX=String(x);
     }
   }
   fit():void {
