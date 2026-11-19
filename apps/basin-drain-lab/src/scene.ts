@@ -37,7 +37,8 @@ export class DrainViewport {
   private progress=0;
   private solution:FlowSolution|null=null;
   private model:BasinModel|null=null;
-  private playing=true,showWater=true;
+  private playing=true;
+  private showWater=true;
   private selected:string|null=null;
   constructor(host:HTMLElement,onSelect:(id:string)=>void){
     this.host=host;this.onSelect=onSelect;this.scene.background=new THREE.Color(P.background);
