@@ -47,6 +47,19 @@ jobs:
           base64 -w0 /tmp/wet-mobile.png
           echo
           echo "MOBILE_SCREENSHOT_BASE64_END"
+      - name: Genuine iPhone viewport emulation
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          pnpm --filter @spds/wet-core-lab exec vite preview --host 127.0.0.1 --port 4174 --strictPort > /tmp/wet-vite-cdp.log 2>&1 &
+          for i in $(seq 1 25); do
+            if curl -fsS http://127.0.0.1:4174/ -o /dev/null; then break; fi
+            sleep 1
+          done
+          "$CHROME" --headless --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --remote-debugging-port=9222 --remote-allow-origins='*' --user-data-dir=/tmp/wet-cdp-chrome about:blank > /tmp/wet-cdp.log 2>&1 &
+          node apps/wet-core-lab/scripts/mobile-cdp.mjs
+          test -s /tmp/wet-mobile-cdp.png
+          test -s /tmp/wet-mobile-frame.png
       - uses: actions/upload-artifact@v4
         with:
           name: wet-core-visual-inspection
@@ -54,4 +67,6 @@ jobs:
             /tmp/wet-mobile.png
             /tmp/wet-desktop.png
             /tmp/wet-canvas.png
+            /tmp/wet-mobile-cdp.png
+            /tmp/wet-mobile-frame.png
           retention-days: 7
