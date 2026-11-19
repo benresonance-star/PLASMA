@@ -1,3 +1,4 @@
+import {AU_WATERMARK_COMPONENT_SELECTION} from './australian-catalogue.js';
 import type {Point3,Vector3,Component,Port,Joint,Member,BasinModel,Scenario} from './types.js';
 const point=(x:number,y:number,z:number):Point3=>[x,y,z];
 function dir(a:Point3,b:Point3):Vector3 {
@@ -31,6 +32,7 @@ export function createBasinModel(options:Scenario={}):BasinModel {
     components.push({id,family,name,path,portIds:ownPorts.map(p=>p.id),
       internalLinks:special?.links??[[id+':in',id+':out']],
       diameterMm:family==='soil-stack'?96:diameter,productStatus:'generic-unverified',
+      australianProductCandidateId:AU_WATERMARK_COMPONENT_SELECTION[id]??null,
       installationNotes:notes});
   }
   const basinOutlet=point(850,830,3450);

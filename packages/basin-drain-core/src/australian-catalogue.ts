@@ -81,7 +81,7 @@ const byId=new Map(AU_WATERMARK_CANDIDATES.map(x=>[x.id,x]));
 function catalog(id:string):ProductRecord {
   const c=byId.get(id);if(!c)throw Error('Missing Australian product entry '+id);return c;
 }
-const chosen:Readonly<Record<string,string|null>>={
+export const AU_WATERMARK_COMPONENT_SELECTION:Readonly<Record<string,string|null>>={
   basin:null,trap:'fix-a-drain-p-trap-40',adapter:null,
   'pipe-wall':'iplex-dn40-dwv-pipe','bend-top':'iplex-dn40-88-bend',
   dropper:'iplex-dn40-dwv-pipe','bend-bottom':'iplex-dn40-88-bend',
@@ -91,7 +91,7 @@ const chosen:Readonly<Record<string,string|null>>={
 };
 export function inspectAustralianProducts(model:BasinModel):ProductGate {
   const assignments:ProductAssignment[]=model.components.map(component=>{
-    const choice=chosen[component.id]??null;
+    const choice=component.australianProductCandidateId;
     const product=choice?catalog(choice):null;
     let status:FitStatus='provisional-match';
     const blockingIssues:string[]=[];

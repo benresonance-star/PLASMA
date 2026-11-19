@@ -77,6 +77,7 @@ describe('Australian WaterMark manufacturer evidence / physical product matching
    const result=inspectAustralianProducts(createBasinModel());
    expect(result.candidateCount).toBeGreaterThanOrEqual(7);
    expect(result.productMatchedCount).toBeGreaterThanOrEqual(7);
+   expect(createBasinModel().components.find(c=>c.id==='bend-top')?.australianProductCandidateId).toBe('iplex-dn40-88-bend');
    const elbow=result.assignments.find(x=>x.componentId==='bend-top')!;
    expect(elbow.product?.modelOrSku).toBe('D0024088');
    expect(elbow.product?.watermarkLicence).toBe('WMKA1305');
