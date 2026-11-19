@@ -31,8 +31,8 @@ describe('TH-01 basin to stack — engineering acceptance',()=>{
  it('calculates physically consistent half-full circular section at low flow',()=>{
    const v=manningPartFull(38,.011,.02,.30);
    expect(v.capacityLps).toBeGreaterThan(.6);
-   expect(v.waterDepthMm).toBeGreaterThan(16);
-   expect(v.waterDepthMm).toBeLessThan(25);
+   expect(v.depthMm).toBeGreaterThan(16);
+   expect(v.depthMm).toBeLessThan(25);
    expect(v.velocityMps).toBeGreaterThan(.3);
  });
  it('fails an excessively flat branch instead of animating flow as if valid',()=>{
