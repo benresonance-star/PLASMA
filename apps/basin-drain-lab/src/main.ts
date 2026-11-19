@@ -18,7 +18,7 @@ let model:BasinModel=createBasinModel(),solution:FlowSolution=solveBasinDrain(mo
 let selected='grade-branch',playing=true,view:'3d'|'section'='3d';
 let viewport:DrainViewport|null=null;
 try{
-  viewport=new DrainViewport($('render3d'),id=>{selected=id;updateDetails();highlightParts();});
+  viewport=new DrainViewport($('render3d'),id=>{selected=id;updateDetails();highlightParts();viewport?.show(model,solution,layers,selected,playing);});
 }catch(error){
   console.error('WebGL unavailable; engineering section remains available',error);
   view='section';
@@ -91,7 +91,7 @@ function partSelector():void {
   for(const key of keys){
     const button=newElement('button','',key.label);
     button.dataset.id=key.id;button.type='button';
-    button.addEventListener('click',()=>{selected=key.id;updateDetails();highlightParts();});
+    button.addEventListener('click',()=>{selected=key.id;updateDetails();highlightParts();viewport?.show(model,solution,layers,selected,playing);});
     list.append(button);
   }
   highlightParts();
@@ -108,7 +108,7 @@ function issueList():void {
       newElement('p','',f.description));
     article.title='Select '+f.ownerId;
     article.tabIndex=0;article.setAttribute('role','button');
-    const activate=()=>{selected=f.ownerId;updateDetails();highlightParts();};
+    const activate=()=>{selected=f.ownerId;updateDetails();highlightParts();viewport?.show(model,solution,layers,selected,playing);};
     article.addEventListener('click',activate);
     article.addEventListener('keydown',event=>{
       if(event.key==='Enter'||event.key===' '){event.preventDefault();activate();}

@@ -5,7 +5,7 @@ import type {BasinModel,FlowSolution,Point3,Component,Member} from '@spds/basin-
 
 export interface Layers {frame:boolean;joints:boolean;water:boolean;}
 const P={wood:0xb98f61,frame:0x896d54,finish:0xdde1db,lining:0xb2c3c3,
-  pvc:0x6f929b,fitting:0x7f9aa0,soil:0x6f7c82,ceramic:0xf2f4ee,
+  pvc:0x397f92,fitting:0x508392,soil:0x637985,ceramic:0xf2f4ee,
   chrome:0x819ca4,water:0x0f9ccd,warning:0xd76e5b,sleeve:0x9ba7a2,
   background:0xe7eae6};
 const V=(p:Point3):THREE.Vector3=>new THREE.Vector3(p[0],p[2],p[1]);
@@ -213,7 +213,7 @@ export class DrainViewport {
       }
       if(b.kind==='lining'){this.wallWithHole(b,holeWall.at,58);continue;}
       const risky=conflicts.has(b.id);
-      this.box(b.min,b.max,risky?P.warning:P.wood,b.kind==='stud'?.58:.72,b.id,2);
+      this.box(b.min,b.max,risky?P.warning:P.wood,b.kind==='stud'?.28:.41,b.id,2);
     }
     for(const p of m.penetrations)this.sleeve(p.at,p.axis,p.sleeveODMm,p.id);
   }
@@ -267,9 +267,9 @@ export class DrainViewport {
     }
   }
   fit():void {
-    const center=new THREE.Vector3(1720,3370,1180);
+    const center=new THREE.Vector3(1730,3180,1150);
     this.controls.target.copy(center);
-    this.camera.position.copy(center).add(new THREE.Vector3(6600,6500,-7800));
+    this.camera.position.copy(center).add(new THREE.Vector3(4600,5500,-7300));
     this.camera.up.set(0,1,0);
     this.camera.lookAt(center);this.camera.zoom=1;this.camera.updateProjectionMatrix();
     this.controls.update();this.resize();
