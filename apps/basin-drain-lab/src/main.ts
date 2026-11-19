@@ -1,4 +1,4 @@
-import {createBasinModel,solveBasinDrain,type BasinModel,type FlowSolution} from '@spds/basin-drain-core';
+import {createBasinModel,solveBasinDrain,inspectAustralianProducts,type BasinModel,type FlowSolution} from '@spds/basin-drain-core';
 import {DrainViewport,type Layers} from './scene.js';
 import './style.css';
 
@@ -58,7 +58,24 @@ function updateDetails():void {
     row('Geometry',component.path.length+' modelled centreline points; generic part representation');
     row('Install',component.installationNotes[0]??'Supplier installation detail required');
     row('Ports',component.portIds.join(' · '));
-    row('Supplier','Not selected. Sockets, bend radii and materials unverified.');
+    const assignment=inspectAustralianProducts(model).assignments.find(x=>x.componentId===component.id);
+    if(assignment?.product){
+      row('Proposed manufacturer',assignment.product.brand);
+      row('Catalogue product',assignment.product.name);
+      row('Model/SKU',assignment.product.modelOrSku??'Exact SKU not established');
+      row('Published WaterMark',assignment.product.watermarkLicence+' ('+assignment.product.standard+')');
+      row('Physical matching',assignment.status.replaceAll('-',' ')+' — not an approval');
+      row('Live ABCB WaterMark search','NOT independently checked');
+      const link=newElement('a','supplier-link','Open original Australian product listing');
+      link.href=assignment.product.productUrl;
+      link.target='_blank';link.rel='noopener noreferrer';
+      root.append(link);
+      for(const item of assignment.blockingIssues)root.append(newElement('div','product-warning',item));
+    }else{
+      row('Australian product','No compatible manufacturer model selected.');
+      if(assignment)for(const item of assignment.blockingIssues)
+        root.append(newElement('div','product-warning',item));
+    }
   }else if(joint){
     row('From',joint.from);row('To',joint.to);
     row('Method',joint.method);row('Assumed socket insertion',joint.socketDepthAssumedMm+' mm');
@@ -96,6 +113,34 @@ function partSelector():void {
   }
   highlightParts();
 }
+function productCatalogue():void {
+  const gate=inspectAustralianProducts(model);
+  $('catalogueCoverage').textContent=gate.productMatchedCount+'/'+gate.assignments.length;
+  $('catalogueBlocked').textContent=String(gate.blockedComponents.length);
+  const list=$('catalogueList');list.replaceChildren();
+  for(const item of gate.assignments){
+    const card=newElement('div','catalogue-item');
+    const title=newElement('strong','',item.componentId+' — '+(item.product?.name??'No product matched'));
+    card.append(title);
+    const spec=item.product;
+    if(spec){
+      card.append(newElement('div','',
+        spec.brand+' · '+(spec.modelOrSku??'SKU missing')+' · WaterMark '+spec.watermarkLicence));
+      const link=newElement('a','supplier-link','Manufacturer evidence');
+      link.href=spec.productUrl;link.rel='noopener noreferrer';link.target='_blank';
+      card.append(link);
+    }
+    card.append(newElement('div','catalogue-status',item.status.replaceAll('-',' ')));
+    for(const issue of item.blockingIssues)card.append(newElement('p','product-warning',issue));
+    card.addEventListener('click',event=>{
+      if((event.target as HTMLElement).closest('a'))return;
+      selected=item.componentId;
+      updateDetails();highlightParts();
+      viewport?.show(model,solution,layers,selected,playing);
+    });
+    list.append(card);
+  }
+}
 function issueList():void {
   const output=$('issues');output.replaceChildren();
   const ordered=[...solution.findings].sort((a,b)=>
@@ -131,8 +176,8 @@ function metrics():void {
   outcome.className='outcome '+(s.status==='indicative-pass'?'pass':'blocked');
   const blocks=s.findings.filter(f=>f.severity==='block');
   if(s.status==='indicative-pass'){
-    $('resultName').textContent='MODEL CHECKS PASS · NOT CODE VERIFIED';
-    $('resultExplanation').textContent='Steady part-full branch result is available. Tracer speed follows '+number(s.velocityMps,2)+' m/s. Supplier details, trap/vent and statutory checks remain unresolved.';
+    $('resultName').textContent='MODEL CHECKS PASS · PRODUCT FIT UNVERIFIED';
+    $('resultExplanation').textContent='Steady part-full branch result is available. Tracer speed follows '+number(s.velocityMps,2)+' m/s. Australian manufacturer product candidates are linked, but WaterMark licence status, geometry, joint compatibility and statutory checks remain unverified.';
     $('stateDetail').textContent='Indicative model pass';
   }else if(s.status==='off'){
     $('resultName').textContent='FIXTURE OFF · NO DISCHARGE';
@@ -197,7 +242,7 @@ function svgSection():void {
 function updateModel():void {
   model=createBasinModel(scenario());
   solution=solveBasinDrain(model);
-  metrics();svgSection();partSelector();updateDetails();
+  metrics();svgSection();partSelector();updateDetails();productCatalogue();
   if(viewport)viewport.show(model,solution,layers,selected,playing);
 }
 function setView(next:'3d'|'section'):void{
