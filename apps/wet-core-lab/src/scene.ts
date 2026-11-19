@@ -47,7 +47,7 @@ export class WetCoreViewport {
   constructor(node:HTMLElement,onSelection:(id:string)=>void){
     this.node=node;this.onSelection=onSelection;
     this.scene.background=new THREE.Color(0xe6e9e8);
-    this.renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power'});
+    this.renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power',preserveDrawingBuffer:new URLSearchParams(window.location.search).has('smoke')});
     this.renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
     this.renderer.outputColorSpace=THREE.SRGBColorSpace;
     this.renderer.toneMapping=THREE.ACESFilmicToneMapping;
@@ -79,17 +79,33 @@ export class WetCoreViewport {
       if(picked)this.onSelection(String(picked.object.userData.semanticId));
     });
     new ResizeObserver(()=>this.resize()).observe(node);
+    let smokeFrame=0;
+    const smoke=new URLSearchParams(window.location.search).has('smoke');
     this.renderer.setAnimationLoop(()=>{
       this.controls.update();
       this.renderer.render(this.scene,this.camera);
-      // Read-only browser smoke telemetry. No model mutations or authority effects.
-      const d=document.documentElement.dataset;
-      d.wetCoreObjects=String(this.root.children.length);
-      d.wetCoreTriangles=String(this.renderer.info.render.triangles);
-      d.wetCoreDrawCalls=String(this.renderer.info.render.calls);
-      const rect=this.renderer.domElement.getBoundingClientRect();
-      d.wetCoreCanvasRect=[Math.round(rect.x),Math.round(rect.y),
-        Math.round(rect.width),Math.round(rect.height)].join(',');
+      if(smoke){
+        // Read-only browser smoke telemetry and actual GPU framebuffer capture.
+        const d=document.documentElement.dataset;
+        d.wetCoreObjects=String(this.root.children.length);
+        d.wetCoreTriangles=String(this.renderer.info.render.triangles);
+        d.wetCoreDrawCalls=String(this.renderer.info.render.calls);
+        const rect=this.renderer.domElement.getBoundingClientRect();
+        d.wetCoreCanvasRect=[Math.round(rect.x),Math.round(rect.y),
+          Math.round(rect.width),Math.round(rect.height)].join(',');
+        if(++smokeFrame===8){
+          const gl=this.renderer.getContext(),pixels=new Uint8Array(4),samples:string[]=[];
+          for(const px of [0.2,0.4,0.6,0.8])
+            for(const py of [0.2,0.4,0.6,0.8]){
+              gl.readPixels(Math.floor(this.renderer.domElement.width*px),
+                Math.floor(this.renderer.domElement.height*py),1,1,gl.RGBA,
+                gl.UNSIGNED_BYTE,pixels);
+              samples.push(Array.from(pixels).join('-'));
+            }
+          d.wetCorePixelSamples=samples.join(';');
+          d.wetCoreFramePng=this.renderer.domElement.toDataURL('image/png');
+        }
+      }
     });
   }
   private mesh(geometry:THREE.BufferGeometry,material:THREE.Material,
