@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
-import type { Point3, WetCoreModel, WetComponent, WetRun, StructuralMember, WetFitting } from '@spds/wet-core';
+import type { Point3, WetCoreModel, WetComponent, WetRun, WetFitting } from '@spds/wet-core';
 
 export type ViewMode='3d'|'plan'|'section';
 export type LevelMode='both'|'upper'|'ground';
