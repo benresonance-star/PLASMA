@@ -39,7 +39,7 @@ await call('Emulation.setDeviceMetricsOverride',{
   width:430,height:932,deviceScaleFactor:3,mobile:true,screenWidth:430,screenHeight:932,
 });
 await call('Emulation.setTouchEmulationEnabled',{enabled:true,maxTouchPoints:5});
-await call('Page.navigate',{url:'http://127.0.0.1:4173/?smoke=1'});
+await call('Page.navigate',{url:'http://127.0.0.1:4174/?smoke=1'});
 await sleep(4500);
 async function evaluate(expression){
   const r=await call('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});
