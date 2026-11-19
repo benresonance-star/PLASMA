@@ -1,4 +1,4 @@
-import type { Point3, WetCoreModel, WetAssessment, WetPort, WetIssue, WetMedium, WetRun } from './types.js';
+import type { Point3, WetCoreModel, WetAssessment, WetPort, WetIssue } from './types.js';
 
 const tol=1;
 function length(a: Point3,b:Point3):number{return Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);}
