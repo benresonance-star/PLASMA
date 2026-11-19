@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#181b20">
+  <title>PLASMA — House Services Lab</title>
+</head>
+<body>
+  <main>
+    <header class="topbar">
+      <div class="identity"><small>PLASMA / SYSTEMS ENGINEERING LAB</small><h1>House services coordination</h1><p>Small house study · 96 m² illustrative model · 10 service routes</p></div>
+      <span class="status">PROPOSAL · NOT VERIFIED</span>
+    </header>
+    <section class="controls" aria-label="Service routing controls">
+      <div class="checks">
+        <label><input id="water" type="checkbox" checked><span class="dot water"></span>Water</label>
+        <label><input id="electric" type="checkbox" checked><span class="dot electric"></span>Electrical</label>
+        <label><input id="obstacle" type="checkbox" checked><span class="dot obstacle"></span>Structural obstruction</label>
+        <label><input id="before" type="checkbox"><span class="dot clash"></span>Show original clashes</label>
+      </div>
+      <div class="actions"><button id="plan" class="secondary">Plan</button><button id="three-d" class="secondary active">3D</button><button id="generate" class="primary">Reroute</button></div>
+    </section>
+    <section class="workspace">
+      <div class="scene-wrap">
+        <div id="viewport" role="img" aria-label="Interactive three-dimensional schematic house with room labels and coordinated water and electrical routes"></div>
+        <div class="view-label"><strong>DESIGN STUDY</strong><span>Drag to orbit · Pinch to zoom</span></div>
+        <div class="legend"><span><i class="dot water"></i>Water</span><span><i class="dot electric"></i>Electrical</span><span><i class="dot obstacle"></i>Structure</span><span><i class="dot clash"></i>Pre-correction</span></div>
+      </div>
+      <aside>
+        <div class="stats">
+          <div><small>ROUTES GENERATED</small><strong id="count">—</strong></div>
+          <div><small>CLASHES RESOLVED</small><strong id="resolved">—</strong></div>
+          <div><small>UNRESOLVED RUNS</small><strong id="unresolved">—</strong></div>
+        </div>
+        <h2>Routing results</h2>
+        <p id="summary" role="status" aria-live="polite">Generating proposal…</p>
+        <div id="runs" class="run-list"></div>
+        <details><summary>Evidence & limitations</summary><ul id="evidence"></ul></details>
+        <div class="notice"><b>Geometric routing only.</b> Fixtures and walls are illustrative. Wall penetration design, flows, loads and regulatory compliance have not been validated. No design is committed.</div>
+      </aside>
+    </section>
+  </main>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>
