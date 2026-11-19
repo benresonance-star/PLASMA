@@ -25,5 +25,5 @@ jobs:
       - run: pnpm --filter @spds/basin-drain-core typecheck
       - run: pnpm --filter @spds/basin-drain-core build
       - run: pnpm --filter @spds/basin-drain-core test
-      - run: pnpm --filter @spds/basin-drain-lab lint --if-present
-      - run: pnpm --filter @spds/basin-drain-lab... build --if-present
+      - run: pnpm --filter @spds/basin-drain-lab lint
+      - run: pnpm --filter @spds/basin-drain-lab... build
