@@ -162,7 +162,7 @@ function svgSection():void {
   const all=['basin','trap','adapter','pipe-wall','bend-top','dropper','bend-bottom','grade-branch','wye','stack'];
   const s=solution;
   const success=s.status==='indicative-pass';
-  const waterY=(p:readonly number[])=>Y(p[2]-model.input.diameterMm/2+(s.waterDepthMm??0));
+  const waterY=(p:readonly [number,number,number])=>Y(p[2]-model.input.diameterMm/2+(s.waterDepthMm??0));
   const branchA=model.gradedStart,branchB=model.gradedEnd;
   const marker=(x:number,y:number,label:string,desc:string)=>'<g><circle cx="'+x+'" cy="'+y+'" r="5" fill="#4d7d91" stroke="#fff" stroke-width="2"/><text x="'+(x+9)+'" y="'+(y-9)+'" font-size="11" fill="#3f5964">'+label+'</text><title>'+desc+'</title></g>';
   const pipeList=all.map(id=>'<path d="'+path(id)+'" fill="none" stroke="'+

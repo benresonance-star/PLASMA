@@ -190,7 +190,7 @@ export class DrainViewport {
       const to:[number,number,number]=[
         a.at[0]+direction[0]*26,a.at[1]+direction[1]*26,a.at[2]+direction[2]*26,
       ];
-      this.cylinder(a.at,to,radius,j.id);
+      this.cylinder(a.at,to,radius,P.fitting,j.id);
     }
   }
   private supports(m:BasinModel):void {
