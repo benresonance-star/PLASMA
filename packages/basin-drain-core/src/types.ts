@@ -44,7 +44,7 @@ export type FindingCode=
  'MISSING_JOINT'|'PORT_GAP'|'PORT_DIRECTION'|'PORT_DIAMETER'|'NO_CONNECTED_ROUTE'|
  'JOIST_INTERFERENCE'|'PENETRATION_CONFLICT'|'SUPPORT_SPACING'|'GRADE_BENCHMARK_FAIL'|
  'REVERSE_GRADE'|'HYDRAULIC_OVERLOAD'|'FITTING_ANGLE'|'UNVERIFIED_PRODUCT'|
- 'UNVERIFIED_VENT'|'UNVERIFIED_TRAP_SEAL'|'UNVERIFIED_DETAIL'|'UNVERIFIED_CODE';
+ 'UNVERIFIED_VENT'|'UNVERIFIED_TRAP_SEAL'|'UNVERIFIED_DETAIL'|'UNVERIFIED_CODE'|'UNVERIFIED_DISCHARGE';
 export interface Finding {readonly code:FindingCode;readonly severity:'block'|'review';readonly ownerId:string;readonly description:string;}
 export interface FlowSolution {
  readonly modelId:string;readonly status:'indicative-pass'|'blocked'|'off';
