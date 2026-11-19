@@ -1,0 +1,30 @@
+name: TH-01 wet core benchmark
+on:
+  push:
+    branches: [feat/wet-core-benchmark-v03]
+  pull_request:
+    paths:
+      - 'packages/wet-core/**'
+      - 'apps/wet-core-lab/**'
+      - 'docs/th01-wet-core-benchmark-v03.md'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/wet-core.yml'
+jobs:
+  wet-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @spds/wet-core lint
+      - run: pnpm --filter @spds/wet-core typecheck
+      - run: pnpm --filter @spds/wet-core build
+      - run: pnpm --filter @spds/wet-core test
+      - run: pnpm --filter @spds/wet-core-lab lint
+      - run: pnpm --filter @spds/wet-core-lab... build

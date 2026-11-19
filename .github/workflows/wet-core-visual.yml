@@ -1,0 +1,72 @@
+name: TH-01 wet core visual verification
+on:
+  push:
+    branches: [feat/wet-core-benchmark-v03]
+    paths:
+      - 'packages/wet-core/**'
+      - 'apps/wet-core-lab/**'
+      - '.github/workflows/wet-core-visual.yml'
+jobs:
+  screenshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @spds/wet-core-lab... build
+      - name: Browser smoke and mobile screenshot
+        run: |
+          set -euo pipefail
+          pnpm --filter @spds/wet-core-lab exec vite preview --host 127.0.0.1 --port 4173 > /tmp/wet-vite.log 2>&1 &
+          for i in $(seq 1 25); do
+            if curl -fsS http://127.0.0.1:4173/ -o /tmp/wet-index.html; then break; fi
+            sleep 1
+          done
+          grep -q 'TH-01 Wet Core' /tmp/wet-index.html
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          echo "Using Chrome: $CHROME"
+          "$CHROME" --headless --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --window-size=430,932 --virtual-time-budget=10000 --screenshot=/tmp/wet-mobile.png http://127.0.0.1:4173/ >/tmp/wet-browser.log 2>&1
+          "$CHROME" --headless --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --window-size=1365,840 --virtual-time-budget=10000 --screenshot=/tmp/wet-desktop.png http://127.0.0.1:4173/ >>/tmp/wet-browser.log 2>&1
+          test -s /tmp/wet-mobile.png
+          test -s /tmp/wet-desktop.png
+          "$CHROME" --headless --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --virtual-time-budget=5000 --dump-dom 'http://127.0.0.1:4173/?smoke=1' > /tmp/wet-dom.html 2>/tmp/wet-dom.log
+          grep -q 'id="connected">5/5' /tmp/wet-dom.html
+          node -e 'const s=require("fs").readFileSync("/tmp/wet-dom.html","utf8"); const c=s.match(/<canvas[^>]*>/)?.[0]; const w=Number(c?.match(/width="(\d+)"/)?.[1]); const h=Number(c?.match(/height="(\d+)"/)?.[1]); console.log("BROWSER_CANVAS_DIMENSIONS:",w,h); if(!(w>=200&&h>=300)) process.exit(1);'
+          grep -q 'Semantic ID: bath-basin' /tmp/wet-dom.html
+          node -e 'const fs=require("fs"); const s=fs.readFileSync("/tmp/wet-dom.html","utf8"); const m=s.match(/data-wet-core-frame-png="data:image\/png;base64,([^"]+)"/); if(!m)throw Error("Missing GPU framebuffer capture"); fs.writeFileSync("/tmp/wet-canvas.png",Buffer.from(m[1],"base64")); const pixels=s.match(/data-wet-core-pixel-samples="([^"]+)"/)?.[1]??""; const count=new Set(pixels.split(";")).size; console.log("WEBGL_FRAMEBUFFER_SAMPLE_DIVERSITY",count); if(count<3)process.exit(1);'
+          test -s /tmp/wet-canvas.png
+          node -e 'const s=require("fs").readFileSync("/tmp/wet-dom.html","utf8"); const keys=["wet-core-objects","wet-core-triangles","wet-core-draw-calls","wet-core-canvas-rect"]; for(const key of keys){console.log("WEBGL_SMOKE",key,s.match(new RegExp("data-"+key+"=\\\"([^\\\"]+)\\\""))?.[1]??"MISSING");}'
+          echo 'BROWSER_SMOKE_PASS: App JS, semantic inspector and screenshot artifacts'
+          echo "MOBILE_SCREENSHOT_BASE64_START"
+          base64 -w0 /tmp/wet-mobile.png
+          echo
+          echo "MOBILE_SCREENSHOT_BASE64_END"
+      - name: Genuine iPhone viewport emulation
+        run: |
+          set -euo pipefail
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || command -v chromium-browser)"
+          pnpm --filter @spds/wet-core-lab exec vite preview --host 127.0.0.1 --port 4174 --strictPort > /tmp/wet-vite-cdp.log 2>&1 &
+          for i in $(seq 1 25); do
+            if curl -fsS http://127.0.0.1:4174/ -o /dev/null; then break; fi
+            sleep 1
+          done
+          "$CHROME" --headless --no-sandbox --disable-dev-shm-usage --enable-unsafe-swiftshader --remote-debugging-port=9222 --remote-allow-origins='*' --user-data-dir=/tmp/wet-cdp-chrome about:blank > /tmp/wet-cdp.log 2>&1 &
+          node apps/wet-core-lab/scripts/mobile-cdp.mjs
+          test -s /tmp/wet-mobile-cdp.png
+          test -s /tmp/wet-mobile-frame.png
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wet-core-visual-inspection
+          path: |
+            /tmp/wet-mobile.png
+            /tmp/wet-desktop.png
+            /tmp/wet-canvas.png
+            /tmp/wet-mobile-cdp.png
+            /tmp/wet-mobile-frame.png
+          retention-days: 7

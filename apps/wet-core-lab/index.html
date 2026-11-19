@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#171a1e">
+  <title>PLASMA | TH-01 Wet Core</title>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="eyebrow">PLASMA <span class="slash">/</span> BUILDING SYSTEMS <span class="slash">/</span> BENCHMARK 01</span>
+      <h1>TH-01 <span>Wet-services core</span></h1>
+      <p>Two-storey architectural, structural and connected hydraulic assemblies</p>
+    </div>
+    <span class="state" title="No approved or compliant engineering determination">CANDIDATE <span>·</span> NOT ENGINEERED</span>
+  </header>
+  <nav class="toolbar" aria-label="Model and display controls">
+    <div class="control-cluster" role="group" aria-label="View orientation">
+      <button data-view="3d" class="selected">3D</button>
+      <button data-view="plan">Plan</button>
+      <button data-view="section">Section</button>
+    </div>
+    <div class="control-cluster" role="group" aria-label="Storey filter">
+      <button data-level="both" class="selected">Both levels</button>
+      <button data-level="upper">Upper</button>
+      <button data-level="ground">Ground</button>
+    </div>
+    <div class="layer-toggles">
+      <label><input type="checkbox" id="cold" checked><i class="key cold"></i>Cold</label>
+      <label><input type="checkbox" id="hot" checked><i class="key hot"></i>Hot</label>
+      <label><input type="checkbox" id="waste" checked><i class="key waste"></i>Waste</label>
+      <label><input type="checkbox" id="frame" checked><i class="key frame"></i>Frame</label>
+      <label><input type="checkbox" id="ports">Ports</label>
+    </div>
+    <div class="control-cluster">
+      <button id="shift" title="Preview basin shifted 400 mm, without approving the design">Move basin +400</button>
+      <button id="reset" title="Reset view and design">Reset</button>
+    </div>
+  </nav>
+  <main class="workspace">
+    <section class="viewport-shell" aria-label="TH-01 model viewport">
+      <div id="viewport" role="img" aria-label="Interactive physical wet-area assemblies, structural framing and typed service routes"></div>
+      <div class="overlay top-left">
+        <span class="overline" id="view-label">ASSEMBLY / ISOMETRIC</span>
+        <strong id="level-label">Upper bathroom + ground laundry</strong>
+        <span class="micro">Orbit · Zoom · Tap a component</span>
+      </div>
+      <div class="overlay lower-left legend">
+        <span><i class="key cold"></i>Cold supply</span><span><i class="key hot"></i>Hot supply</span>
+        <span><i class="key waste"></i>Sanitary</span><span><i class="key frame"></i>Framing</span>
+      </div>
+      <div class="overlay lower-right"><button id="fit">Fit model</button></div>
+    </section>
+    <aside id="inspector" aria-label="Model inspector and engineering evidence">
+      <div class="aside-head"><span class="eyebrow">SEMANTIC MODEL / TH-01</span><h2>Coordination evidence</h2></div>
+      <div class="metrics">
+        <div><small>FIXTURES CONNECTED</small><strong id="connected">—</strong></div>
+        <div><small>ROUTES</small><strong id="route-count">—</strong></div>
+        <div><small>FITTINGS</small><strong id="fitting-count">—</strong></div>
+      </div>
+      <div id="change-note" class="change-note">Baseline semantic model · not committed.</div>
+      <section class="inspector-section"><h3 id="selection-name">Selected element</h3>
+        <div id="selection-detail" class="detail">Tap a fixture, fitting, structure or service run in the viewport.</div>
+      </section>
+      <section class="inspector-section"><h3>Systems &amp; connections</h3><div id="systems" class="system-list"></div></section>
+      <section class="inspector-section"><h3>Unresolved engineering review <span id="issue-count"></span></h3><div id="issues" class="issues"></div></section>
+      <details class="scope"><summary>Scope, quantities and limitations</summary><div id="quantities"></div><ul id="assumptions"></ul></details>
+      <div class="caution">Preliminary geometric and connectivity benchmark. Not a substitute for hydraulic design, product selection, structural approvals, standards checks or construction documentation.</div>
+    </aside>
+  </main>
+</div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>
