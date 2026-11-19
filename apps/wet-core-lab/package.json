@@ -1,0 +1,24 @@
+{
+  "name": "@spds/wet-core-lab",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -p tsconfig.json && vite build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src --max-warnings 0",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@spds/wet-core": "workspace:*",
+    "three": "0.185.1"
+  },
+  "devDependencies": {
+    "@types/three": "0.185.0",
+    "typescript": "^5.8.2",
+    "vite": "6.3.5",
+    "vitest": "^3.0.8",
+    "eslint": "^9.22.0"
+  }
+}
