@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#17191c"><title>PLASMA | Services Routing Lab</title></head>
+<body>
+<main>
+  <header><div><small>PLASMA / ENGINEERING LAB / 01</small><h1>Services coordination</h1><p>Geometric water and electrical routing, clash checking and automatic rerouting. Design study only.</p></div>
+  <div class="actions"><label><input id="obstacle" type="checkbox" checked> Structural obstruction</label><label><input id="electric" type="checkbox" checked> Electrical run</label><button id="generate">Generate proposal</button></div></header>
+  <div class="workspace">
+    <div id="viewport" role="img" aria-label="Interactive three-dimensional house services routing"></div>
+    <aside><small>UNCOMMITTED · NOT ENGINEERED</small><h2 id="summary" role="status" aria-live="polite"></h2><h3>Proposed runs</h3><div id="runs"></div><h3>Evidence / limitations</h3><ul id="evidence"></ul><p class="disclaimer">No hydraulic sizing, electrical load or code compliance is verified. No changes are committed to a project.</p></aside>
+  </div>
+</main><script type="module" src="/src/main.ts"></script>
+</body></html>
