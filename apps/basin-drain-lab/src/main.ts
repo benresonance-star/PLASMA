@@ -1,4 +1,4 @@
-import {createBasinModel,solveBasinDrain,type BasinModel,type FlowSolution,type Finding,type Component,type Port} from '@spds/basin-drain-core';
+import {createBasinModel,solveBasinDrain,type BasinModel,type FlowSolution} from '@spds/basin-drain-core';
 import {DrainViewport,type Layers} from './scene.js';
 import './style.css';
 

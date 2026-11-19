@@ -30,7 +30,8 @@ export class DrainViewport {
   readonly controls:OrbitControls;
   private readonly host:HTMLElement;
   private readonly onSelect:(id:string)=>void;
-  private readonly ray=new THREE.Raycaster(),pointer=new THREE.Vector2();
+  private readonly ray=new THREE.Raycaster();
+  private readonly pointer=new THREE.Vector2();
   private pointerDown:{x:number;y:number}|null=null;
   private readonly particles:THREE.Mesh[]=[];
   private progress=0;
