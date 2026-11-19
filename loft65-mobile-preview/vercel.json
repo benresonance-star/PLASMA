@@ -1,0 +1,14 @@
+{
+  "framework": null,
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "/api/gateway?path=:path*"
+    }
+  ],
+  "functions": {
+    "api/gateway.js": {
+      "maxDuration": 120
+    }
+  }
+}
