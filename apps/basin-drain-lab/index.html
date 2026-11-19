@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#16191c"/><title>PLASMA / Basin hydraulic bench</title></head>
+<body>
+<div class="shell">
+  <header class="header">
+    <div class="brand">
+      <div class="eyebrow">PLASMA / BUILD / ENGINEERING BENCHMARK 04</div>
+      <h1>Basin <span>→</span> sanitary stack</h1>
+      <p>Component-level gravity drainage · framed floor · service wall · solver-driven flow</p>
+    </div>
+    <div class="authority"><strong>UNCOMMITTED CANDIDATE</strong><span>Not an engineered or code-approved installation</span></div>
+  </header>
+  <nav class="nav" aria-label="Model views and layers">
+    <div class="seg" role="group" aria-label="View mode">
+      <button id="mode3d" class="active" type="button">3D assembly</button>
+      <button id="modeSection" type="button">Long section</button>
+    </div>
+    <div class="checks">
+      <label><input id="showFrame" type="checkbox" checked/> Framing</label>
+      <label><input id="showJoints" type="checkbox" checked/> Joints</label>
+      <label><input id="showWater" type="checkbox" checked/> Water tracer</label>
+    </div>
+    <button class="mini" id="fit" type="button">Fit view</button>
+  </nav>
+  <main class="workspace">
+    <section class="left" aria-label="Engineering model">
+      <div class="viewport" id="view3d">
+        <div id="render3d"></div>
+        <div class="corner">
+          <div class="eyebrow dark">COMPONENTS / 1:1 DIMENSIONS</div>
+          <strong>Upper basin · underfloor waste · stack</strong>
+          <small>Drag to orbit · pinch to zoom · tap a component</small>
+        </div>
+        <div class="legend">
+          <span><i class="swatch ceramic"></i> Fixture</span>
+          <span><i class="swatch dwv"></i> DN40 DWV</span>
+          <span><i class="swatch wood"></i> Framing</span>
+          <span><i class="swatch flow"></i> Simulated branch water</span>
+        </div>
+      </div>
+      <div id="sectionView" class="section-view" hidden>
+        <div class="section-title"><strong>Longitudinal drainage section</strong><span id="sectionSub">Invert profile calculated from scenario</span></div>
+        <svg id="sectionSvg" viewBox="0 0 800 410" role="img" aria-label="Measured basin waste, trap, penetrations, underfloor grade and stack longitudinal section"></svg>
+        <div class="section-explanation">Diagram is a projection of semantic centreline geometry. It exposes joints, grade and water depth; outlet, trap performance and vent pressure still need an engineered design.</div>
+      </div>
+      <div class="bottom-strip">
+        <div><small>PIPE PATH</small><strong id="pathDetail">DN40 solvent PVC-U (generic)</strong></div>
+        <div><small>BRANCH FALL</small><strong id="dropDetail">—</strong></div>
+        <div><small>ENGINEERING STATUS</small><strong id="stateDetail">—</strong></div>
+      </div>
+    </section>
+    <aside class="inspector">
+      <div class="section-header"><span class="eyebrow">SIMULATION CONTROL</span><h2>Gravity flow test</h2></div>
+      <div class="field">
+        <div class="field-title"><label for="demand">Basin discharge</label><output id="demandLabel">0.12 L/s</output></div>
+        <input type="range" id="demand" min="0" max="1.2" step="0.01" value="0.12"/>
+        <div class="range-ends"><span>Off</span><span>1.20 L/s</span></div>
+      </div>
+      <div class="dual">
+        <div class="field"><label for="grade">Designed branch grade</label>
+          <select id="grade"><option value="50">1:50</option><option value="80">1:80</option><option value="120">1:120 — fault</option></select>
+        </div>
+        <div class="field"><label for="diameter">Assumed internal bore</label>
+          <select id="diameter"><option value="38">38 mm</option><option value="28">28 mm</option><option value="48">48 mm</option></select>
+        </div>
+      </div>
+      <div class="faults">
+        <label><input id="joistFault" type="checkbox"/> Introduce joist conflict</label>
+        <label><input id="jointFault" type="checkbox"/> Disconnect pipe joint</label>
+      </div>
+      <div class="playback">
+        <button id="play" type="button" class="play" aria-label="Pause or play water flow">Pause</button>
+        <span id="playingDesc">Illustrative steady-flow tracer • calculated branch speed</span>
+        <button id="reset" type="button" class="mini">Reset</button>
+      </div>
+      <div class="outcome" id="outcome">
+        <div id="resultName" class="result-name">Calculating</div>
+        <div id="resultExplanation">The system is checking geometry and hydraulic capacity.</div>
+      </div>
+      <div class="stats">
+        <div><small>CAPACITY (MODEL)</small><strong id="capacity">—</strong></div>
+        <div><small>WATER DEPTH</small><strong id="depth">—</strong></div>
+        <div><small>FILL FRACTION</small><strong id="fill">—</strong></div>
+        <div><small>MEAN VELOCITY</small><strong id="velocity">—</strong></div>
+        <div><small>BRANCH TRANSIT</small><strong id="transit">—</strong></div>
+        <div><small>CONTINUITY RESIDUAL</small><strong id="residual">—</strong></div>
+      </div>
+      <div class="detail">
+        <div class="section-header"><span class="eyebrow">COMPONENT INSPECTOR</span><h2 id="selectedTitle">Selected element</h2></div>
+        <div id="selectedDetail">Tap a component in 3D or choose a part below.</div>
+        <div id="partList" class="part-list"></div>
+      </div>
+      <div class="detail">
+        <div class="section-header"><span class="eyebrow">INDEPENDENT CHECKS</span><h2>Unresolved conditions <span id="issuesCount"></span></h2></div>
+        <div id="issues"></div>
+      </div>
+      <details class="disclosure"><summary>What is verified vs assumed?</summary>
+        <div class="disclosure-content">
+          <h3>Calculated / assessed</h3><div id="passes"></div>
+          <h3>Unverified by this model</h3><p>Vendor fittings and actual sockets, vent and trap seal performance, self-cleansing, transient discharge, structure/penetration approval, waterproofing/fire/acoustic detailing, downstream boundary conditions and NCC / AS/NZS statutory compliance.</p>
+        </div>
+      </details>
+      <p class="safety">Manning calculation is an indicative steady, part-full model of one graded branch. The moving water is a visual interpretation of that solved mean velocity, not a transient CFD model or a compliant hydraulic design.</p>
+    </aside>
+  </main>
+</div>
+<script type="module" src="/src/main.ts"></script>
+</body></html>
