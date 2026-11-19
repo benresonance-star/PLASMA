@@ -1,0 +1,33 @@
+name: services-routing-lab
+
+on:
+  pull_request:
+    paths:
+      - 'packages/services-network-core/**'
+      - 'apps/services-routing-lab/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/services-routing-lab.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'packages/services-network-core/**'
+      - 'apps/services-routing-lab/**'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/services-routing-lab.yml'
+
+jobs:
+  verify-services:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @spds/services-network-core typecheck
+      - run: pnpm --filter @spds/services-network-core test
+      - run: pnpm --filter @spds/services-routing-lab... build
