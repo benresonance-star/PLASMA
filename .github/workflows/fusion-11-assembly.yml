@@ -1,0 +1,87 @@
+name: Fusion 11 Native Assembly Scene
+
+on:
+  pull_request:
+    paths:
+      - 'apps/api/src/fusion-assembly*'
+      - 'apps/api/src/server.ts'
+      - 'apps/designer-web/src/ui/NorthstarStudio.tsx'
+      - 'apps/designer-web/src/ui/northstar.css'
+      - '.github/workflows/fusion-11-assembly.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  native-assembly:
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install locked workspace
+        run: pnpm install --frozen-lockfile
+      - name: Build API, geometry and UI
+        run: |
+          pnpm --filter '@spds/api^...' build
+          pnpm --filter @spds/api build
+          pnpm --filter '@spds/geometry-occt^...' build
+          pnpm --filter @spds/geometry-occt build
+          pnpm --filter '@spds/designer-web^...' build
+          pnpm --filter @spds/designer-web typecheck
+          pnpm --filter @spds/designer-web lint
+      - name: Verify unsupported features and source identity safety
+        run: pnpm --filter @spds/api exec vitest run src/fusion-assembly.test.ts
+      - name: Native assembly service and live Northstar proof
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p f11-verified-snapshots
+          GEOMETRY_KERNEL=occt-native PORT=7080 node services/geometry-occt/dist/server-main.js > /tmp/f11-native.log 2>&1 &
+          NATIVE_PID=$!
+          SPDS_API_LISTEN=1 GEOMETRY_URL=http://127.0.0.1:7080 PORT=3001 node apps/api/dist/index.js > /tmp/f11-api.log 2>&1 &
+          API_PID=$!
+          pnpm --filter @spds/designer-web exec vite --host 127.0.0.1 --port 5173 > /tmp/f11-vite.log 2>&1 &
+          VITE_PID=$!
+          trap 'kill "$NATIVE_PID" "$API_PID" "$VITE_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 110); do
+            if curl -fs http://127.0.0.1:7080/health >/dev/null &&
+               curl -fs http://127.0.0.1:3001/health >/dev/null &&
+               curl -fs http://127.0.0.1:5173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fs http://127.0.0.1:7080/health || { cat /tmp/f11-native.log; exit 1; }
+          curl -fs http://127.0.0.1:3001/health || { cat /tmp/f11-api.log; exit 1; }
+          GEOMETRY_URL=http://127.0.0.1:7080 pnpm --filter @spds/api exec vitest run src/fusion-assembly.test.ts
+          BROWSER=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
+          test -n "$BROWSER"
+          FLAGS="--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu --hide-scrollbars --virtual-time-budget=22000"
+          URL="http://127.0.0.1:5173/?northstar-qa=1&stage=F11"
+          "$BROWSER" $FLAGS --window-size=1660,1040 --dump-dom "$URL" > f11-verified-snapshots/F11-dom.html 2>/tmp/f11-chrome.err
+          grep -q 'northstar-qa-banner' f11-verified-snapshots/F11-dom.html
+          grep -q 'fusion-assembly-passed' f11-verified-snapshots/F11-dom.html || {
+            echo 'F11 UI did not confirm native six-solid assembly'
+            tail -40 /tmp/f11-api.log; cat /tmp/f11-chrome.err | tail -20; exit 1;
+          }
+          "$BROWSER" $FLAGS --window-size=1660,1040 --screenshot=f11-verified-snapshots/F11-native-assembly-desktop.png "$URL" >/dev/null 2>/tmp/f11-shot.err
+          python3 - <<'PY'
+          import struct
+          with open('f11-verified-snapshots/F11-native-assembly-desktop.png','rb') as f:
+              b=f.read(24)
+          assert b[:8]==bytes.fromhex('89504e470d0a1a0a')
+          assert struct.unpack('>II',b[16:24]) == (1660,1040)
+          print('F11 native six-solid Northstar UI screenshot validated')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: F11-native-assembly-verified-snapshot
+          path: f11-verified-snapshots/*.png
+          retention-days: 14

@@ -194,3 +194,9 @@
 .northstar-native span { line-height:1.5; color:#426c51; }
 .northstar-native span[role=alert] { color:#a34a37; }
 @media(max-width:850px) { .northstar-native { flex-direction:column; align-items:stretch; } }
+
+.northstar-assembly { display:flex; align-items:center; flex-wrap:wrap; gap:8px; border-top:1px solid #becdc5; padding:8px 0; }
+.northstar-assembly button { background:#af583f; color:white; padding:9px 12px; font-size:10px; border-radius:3px; }
+.northstar-assembly button:disabled { opacity:.5; }
+.northstar-assembly span { color:#356f5a; line-height:1.5; font-size:10px; }
+.northstar-assembly span[role=alert] { color:#a64432; }

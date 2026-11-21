@@ -77,6 +77,10 @@ export function NorthstarStudio(props: NorthstarProps) {
   const [geometryError, setGeometryError] = useState('');
   const [geometryBusy, setGeometryBusy] = useState(false);
   const [nativeBusy, setNativeBusy] = useState(false);
+  const [assemblyBusy, setAssemblyBusy] = useState(false);
+  const [assemblyError, setAssemblyError] = useState('');
+  const [assemblyEvidence, setAssemblyEvidence] = useState<{readonly partCount:number;readonly materials:readonly string[];readonly kernel:string}|null>(null);
+  const qaAssemblyTriggered = useRef(false);
   const [nativeError, setNativeError] = useState('');
   const [nativeProof, setNativeProof] = useState<{readonly kernel:string; readonly topologyElementCount:number;readonly maximumBoundingErrorMm:number;readonly relativeVolumeError:number;readonly sourceScope:string}|null>(null);
   const qaGeomTriggered = useRef(false);
@@ -85,7 +89,7 @@ export function NorthstarStudio(props: NorthstarProps) {
   const [siteFit, setSiteFit] = useState<{readonly rmsResidualMm:number;readonly pointCount:number}|null>(null);
   useEffect(() => () => { if (media) URL.revokeObjectURL(media.url); }, [media]);
   useEffect(() => { setImpact(null); setImpactError(''); setParameterId(''); setLinkKey(''); setGeometryMeshes([]); setGeometryInfo(''); }, [fusion]);
-  useEffect(() => { setGeometryMeshes([]); setGeometryInfo(''); setNativeProof(null); setNativeError(''); }, [headHash, fusion, selectedSemanticId]);
+  useEffect(() => { setGeometryMeshes([]); setGeometryInfo(''); setNativeProof(null); setNativeError(''); setAssemblyEvidence(null); setAssemblyError(''); }, [headHash, fusion, selectedSemanticId]);
 
   const preview = fusion?.preview;
   const selection = preview?.objects.find((o) => o.id === selectedSemanticId);
@@ -196,6 +200,36 @@ export function NorthstarStudio(props: NorthstarProps) {
     }
   }
   const canPropose = Boolean(fusion && modelId && branchId && headHash && selectedParameter && !running);
+  async function previewNativeAssembly() {
+    if (!fusion || !modelId || !branchId || !headHash) return;
+    setAssemblyBusy(true); setAssemblyError(''); setAssemblyEvidence(null);
+    try {
+      const response=await fetch(apiBaseUrl()+'/imports/fusion/native-assembly',{
+        method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({
+          buildProject:fusion.buildProject,loftProject:fusion.loftProject,
+          bindings:fusion.bindings,
+          expectedSourceHashes:{
+            build:fusion.preview.sources.find(s=>s.system==='build')?.sourceHash,
+            loft:fusion.preview.sources.find(s=>s.system==='loft')?.sourceHash,
+          },
+          modelId,branchId,expectedHeadHash:headHash,
+        }),
+      });
+      const data:unknown=await response.json();
+      if(!response.ok)throw new Error(String(object(data)?.['summary']??
+        object(data)?.['failureCode']??'Native assembly unavailable'));
+      const proof=data as {
+        readonly meshes:readonly DisplayMeshInput[];
+        readonly partCount:number;readonly materials:readonly string[];readonly kernel:string;
+      };
+      setGeometryMeshes([...proof.meshes]);
+      setAssemblyEvidence({partCount:proof.partCount,materials:proof.materials,kernel:proof.kernel});
+      setGeometryInfo(proof.partCount+' actual native OCCT parts · candidate only');
+    }catch(err){
+      setAssemblyError(err instanceof Error?err.message:'Assembly verification failed');
+    }finally{setAssemblyBusy(false);}
+  }
   async function verifyNativeOpenCascade() {
     if (!fusion || !selectedLoftOccurrence || !modelId || !branchId || !headHash) return;
     setNativeBusy(true); setNativeError(''); setNativeProof(null);
@@ -260,6 +294,15 @@ export function NorthstarStudio(props: NorthstarProps) {
     qaNativeTriggered.current=true;
     void verifyNativeOpenCascade();
   }, [canPreviewGeometry, fusion, selectedSemanticId, headHash]);
+
+  useEffect(()=>{
+    if(typeof window==='undefined'||!import.meta.env.DEV||
+      new URLSearchParams(window.location.search).get('northstar-qa')!=='1'||
+      new URLSearchParams(window.location.search).get('stage')!=='F11'||
+      qaAssemblyTriggered.current||!fusion||!modelId||!branchId||!headHash)return;
+    qaAssemblyTriggered.current=true;
+    void previewNativeAssembly();
+  },[fusion,modelId,branchId,headHash]);
 
   return (
     <section className="northstar" data-focus={focus} aria-label="Plasma Northstar spatial studio">
@@ -348,6 +391,17 @@ export function NorthstarStudio(props: NorthstarProps) {
               <span>{geometryInfo || 'Supported: single centred rectangle sketch + extrusion only'}</span>
             </div>
             {geometryError && <p role="alert" className="northstar-error">{geometryError}</p>}
+            <div className="northstar-assembly" data-testid="fusion-assembly-instrument">
+              <button type="button" onClick={() => void previewNativeAssembly()}
+                disabled={!fusion || !modelId || !branchId || !headHash || assemblyBusy}>
+                {assemblyBusy ? 'Building OpenCascade assembly…' : 'Preview all native Loft components'}
+              </button>
+              {assemblyEvidence && <span data-testid="fusion-assembly-passed">
+                {assemblyEvidence.kernel} · {assemblyEvidence.partCount} verified solids ·
+                {assemblyEvidence.materials.join(' / ')} · candidate only
+              </span>}
+              {assemblyError && <span role="alert">{assemblyError}</span>}
+            </div>
             <div className="northstar-native">
               <button type="button" data-testid="fusion-native-verify"
                 onClick={() => void verifyNativeOpenCascade()}
