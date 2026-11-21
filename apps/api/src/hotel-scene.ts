@@ -46,6 +46,7 @@ function classify(material:string):string{
   if(x.includes('stone')||x.includes('limestone'))return 'stone';
   if(x.includes('insulation')||x.includes('thermal'))return 'insulation';
   if(x.includes('timber'))return 'timber';
+  if(x.includes('ceramic'))return 'ceramic';
   if(x.includes('plant')||x.includes('green'))return 'planting';
   return 'plaster';
 }
@@ -128,10 +129,13 @@ function makeRoomMeshes(room:HotelRoom,module:SourceCompiled,windows:SourceCompi
     for(const solid of compiled.meshes){
       const part=owners.get(solid.semanticOwner);
       if(!part)throw new Error('HOTEL_NATIVE_PART_LINEAGE_MISSING');
-      const sourceRole=part.sourcePartId.toLowerCase();
+      const sourceRole=part.sourceRole.toLowerCase();
       const material=classify(part.material);
-      const isInternal=['bathroompod','bedplatform','partywallleft','partywallright',
-        'guestroomslab'].some(t=>sourceRole===t);
+      const hiddenExteriorRoles=new Set([
+        'floor','partition','interior','wet-area','wet-wall','wet-screen',
+        'sanitary','door','joinery','bed-base','soft-furnishing',
+      ]);
+      const isInternal=hiddenExteriorRoles.has(sourceRole);
       if(!allowed(sourceRole)||(!fullInterior&&isInternal))continue;
       const placed=transform(solid,room,offset,material,compiled.moduleId);
       const list=sourceGroups.get(material)??[];
