@@ -23,6 +23,7 @@ import {
 import { parseBoxFeaturePath, type FaceKey } from '@spds/geometry-contracts/measure';
 import type { FieldInfluenceOverlay } from '@spds/graph-projection';
 import type { DisplayMeshInput } from '../mesh-bridge.js';
+import { createSyntheticHotelSurroundings } from './hotel-study-context.js';
 
 export interface ScenePickHit {
   readonly meshId: string;
@@ -235,6 +236,7 @@ export function buildDualEngineScene(
   geometryServiceMeshes: readonly DisplayMeshInput[] | undefined,
   chrome: ViewportChrome = 'candidate',
   dark = true,
+  syntheticUrbanContext = false,
 ): {
   readonly scene: Scene;
   readonly camera: PerspectiveCamera;
@@ -282,6 +284,10 @@ export function buildDualEngineScene(
   }
 
   scene.add(root);
+  if(syntheticUrbanContext){
+    // Display-only city illustration; not surveyed or native B-rep evidence.
+    scene.add(createSyntheticHotelSurroundings());
+  }
   return { scene, camera, root, referenceRoot, geometryServiceRoot };
 }
 
