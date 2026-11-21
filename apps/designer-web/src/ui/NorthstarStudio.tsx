@@ -78,6 +78,10 @@ export function NorthstarStudio(props: NorthstarProps) {
   const [geometryBusy, setGeometryBusy] = useState(false);
   const [nativeBusy, setNativeBusy] = useState(false);
   const [assemblyBusy, setAssemblyBusy] = useState(false);
+  const [hostBusy,setHostBusy] = useState(false);
+  const [hostError,setHostError] = useState('');
+  const [hostProof,setHostProof] = useState<{readonly remainingWallVolumeMm3:number;readonly relativeVolumeError:number;readonly openingVolumeMm3:number;readonly jambsMm:{readonly left:number;readonly right:number}}|null>(null);
+  const qaHostTriggered=useRef(false);
   const [assemblyError, setAssemblyError] = useState('');
   const [assemblyEvidence, setAssemblyEvidence] = useState<{readonly partCount:number;readonly materials:readonly string[];readonly kernel:string}|null>(null);
   const qaAssemblyTriggered = useRef(false);
@@ -93,6 +97,12 @@ export function NorthstarStudio(props: NorthstarProps) {
 
   const preview = fusion?.preview;
   const selection = preview?.objects.find((o) => o.id === selectedSemanticId);
+  const hosting = preview?.relationships.filter(r=>r.relationType==='architecture.hosted-by' &&
+    (r.from===selectedSemanticId||r.to===selectedSemanticId)) ?? [];
+  const currentHost=hosting.length===1?hosting[0]:null;
+  const hostHasDimensions=Boolean(
+    preview?.objects.find(o=>o.id===currentHost?.to)?.metadata?.['geometryMm'] &&
+    preview?.objects.find(o=>o.id===currentHost?.from)?.metadata?.['openingMm']);
   const edges = useMemo(() =>
     (preview?.relationships ?? []).filter((r) => r.from === selectedSemanticId || r.to === selectedSemanticId).slice(0, 12),
   [preview, selectedSemanticId]);
@@ -200,6 +210,38 @@ export function NorthstarStudio(props: NorthstarProps) {
     }
   }
   const canPropose = Boolean(fusion && modelId && branchId && headHash && selectedParameter && !running);
+  async function previewHostedWallCut() {
+    if(!fusion||!modelId||!branchId||!headHash||!currentHost||!hostHasDimensions)return;
+    setHostBusy(true);setHostError('');setHostProof(null);
+    try{
+      const response=await fetch(apiBaseUrl()+'/imports/fusion/host-opening-preview',{
+        method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({
+          buildProject:fusion.buildProject,loftProject:fusion.loftProject,
+          bindings:fusion.bindings,
+          expectedSourceHashes:{
+            build:fusion.preview.sources.find(s=>s.system==='build')?.sourceHash,
+            loft:fusion.preview.sources.find(s=>s.system==='loft')?.sourceHash,
+          },
+          modelId,branchId,expectedHeadHash:headHash,
+          hostWallId:currentHost.to,hostedOpeningId:currentHost.from,
+        }),
+      });
+      const data:unknown=await response.json();
+      if(!response.ok)throw new Error(String(object(data)?.['summary']??
+        object(data)?.['failureCode']??'Host opening unavailable'));
+      const report=data as {
+        readonly mesh:DisplayMeshInput;readonly remainingWallVolumeMm3:number;
+        readonly relativeVolumeError:number;readonly openingVolumeMm3:number;
+        readonly jambsMm:{readonly left:number;readonly right:number};
+      };
+      setGeometryMeshes([report.mesh]);
+      setGeometryInfo('Real OpenCascade wall-opening Boolean · candidate only');
+      setHostProof(report);
+    }catch(err){
+      setHostError(err instanceof Error?err.message:'Host cut failed');
+    }finally{setHostBusy(false);}
+  }
   async function previewNativeAssembly() {
     if (!fusion || !modelId || !branchId || !headHash) return;
     setAssemblyBusy(true); setAssemblyError(''); setAssemblyEvidence(null);
@@ -304,6 +346,16 @@ export function NorthstarStudio(props: NorthstarProps) {
     void previewNativeAssembly();
   },[fusion,modelId,branchId,headHash]);
 
+  useEffect(()=>{
+    if(typeof window==='undefined'||!import.meta.env.DEV||
+      new URLSearchParams(window.location.search).get('northstar-qa')!=='1'||
+      new URLSearchParams(window.location.search).get('stage')!=='F12'||
+      qaHostTriggered.current||!fusion||!modelId||!branchId||!headHash||
+      !currentHost||!hostHasDimensions)return;
+    qaHostTriggered.current=true;
+    void previewHostedWallCut();
+  },[fusion,modelId,branchId,headHash,currentHost,hostHasDimensions]);
+
   return (
     <section className="northstar" data-focus={focus} aria-label="Plasma Northstar spatial studio">
       <div className="northstar-toolbar">
@@ -391,6 +443,19 @@ export function NorthstarStudio(props: NorthstarProps) {
               <span>{geometryInfo || 'Supported: single centred rectangle sketch + extrusion only'}</span>
             </div>
             {geometryError && <p role="alert" className="northstar-error">{geometryError}</p>}
+            <div className="northstar-hosting" data-testid="fusion-hosting-instrument">
+              <button type="button" onClick={()=>void previewHostedWallCut()}
+                disabled={!currentHost || !hostHasDimensions || !fusion || !modelId || !branchId || !headHash || hostBusy}>
+                {hostBusy?'Cutting native wall opening…':'Preview hosted window cut in native OCCT'}
+              </button>
+              {hostProof && <span data-testid="fusion-hosting-passed">
+                OpenCascade wall cut · removed {(hostProof.openingVolumeMm3/1e6).toFixed(1)} L ·
+                remaining {(hostProof.remainingWallVolumeMm3/1e6).toFixed(1)} L ·
+                jambs {hostProof.jambsMm.left}/{hostProof.jambsMm.right} mm ·
+                mass Δ {(hostProof.relativeVolumeError*100).toFixed(4)}%
+              </span>}
+              {hostError && <span role="alert">{hostError}</span>}
+            </div>
             <div className="northstar-assembly" data-testid="fusion-assembly-instrument">
               <button type="button" onClick={() => void previewNativeAssembly()}
                 disabled={!fusion || !modelId || !branchId || !headHash || assemblyBusy}>
