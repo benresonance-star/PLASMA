@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowLeftRight, CheckCircle2, FileDiff, GitCommitHorizontal, RotateCcw, ShieldAlert } from 'lucide-react';
 import type { FusionContext } from './FusionStudio.js';
 import type { DisplayMeshInput } from '../mesh-bridge.js';
@@ -84,9 +84,15 @@ export function FusionRevisionWorkbench(props: FusionRevisionProps) {
   const [notice, setNotice] = useState('');
   const [sectionY, setSectionY] = useState('0');
   const [lookupBusy, setLookupBusy] = useState(false);
+  const [lookupComplete, setLookupComplete] = useState(false);
+  const qaSaved = useRef(false);
+  const qaReviewed = useRef(false);
+  const qaAccepted = useRef(false);
+  const headAfterSave = useRef<string | null>(null);
+  const candidateRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
     let active = true;
-    setCandidate(null); setError(''); setNotice(''); setWorkspace(null);
+    setCandidate(null); setError(''); setNotice(''); setWorkspace(null); setLookupComplete(false);
     if (!fusion || !modelId || !branchId) return;
     setLookupBusy(true);
     void (async () => {
@@ -119,7 +125,7 @@ export function FusionRevisionWorkbench(props: FusionRevisionProps) {
         }
       } catch {
         // The operator can still attempt to save sources explicitly.
-      } finally { if (active) setLookupBusy(false); }
+      } finally { if (active) { setLookupBusy(false); setLookupComplete(true); } }
     })();
     return () => { active = false; };
   }, [fusion, modelId, branchId]);
@@ -143,6 +149,7 @@ export function FusionRevisionWorkbench(props: FusionRevisionProps) {
         revision: number;
       };
       setWorkspace({ id: data.workspaceId, sourceHashes: data.sourceHashes, revision: data.revision });
+      headAfterSave.current = data.headHash;
       setNotice('Linked sources saved as a versioned Plasma source workspace.');
       onHeadUpdated({
         headHash: data.headHash, eventId: data.eventId, action: 'Saved Build / Loft source workspace',
@@ -215,6 +222,32 @@ export function FusionRevisionWorkbench(props: FusionRevisionProps) {
   }
   const enabled = Boolean(workspace && fusion && headHash && link && props.buildParameterId &&
     props.nextValue.trim() && Number.isFinite(Number(props.nextValue)) && !busy);
+  useEffect(() => {
+    if (typeof window === 'undefined' || !import.meta.env.DEV ||
+        new URLSearchParams(window.location.search).get('northstar-qa') !== '1' ||
+        new URLSearchParams(window.location.search).get('stage') !== 'F09' ||
+        !lookupComplete || busy || !fusion || !headHash) return;
+    if (!workspace && !qaSaved.current) {
+      qaSaved.current = true;
+      void save();
+    } else if (workspace && !candidate && !qaReviewed.current &&
+        link && props.buildParameterId && props.nextValue.trim() &&
+        (!headAfterSave.current || headHash === headAfterSave.current)) {
+      qaReviewed.current = true;
+      void review();
+    } else if (candidate && !qaAccepted.current &&
+        new URLSearchParams(window.location.search).get('accept') === '1') {
+      qaAccepted.current = true;
+      void accept();
+    }
+  }, [lookupComplete, busy, fusion, headHash, workspace, candidate, link, props.buildParameterId, props.nextValue]);
+  useEffect(() => {
+    if (candidate && candidateRef.current &&
+        typeof window !== 'undefined' && import.meta.env.DEV &&
+        new URLSearchParams(window.location.search).get('stage') === 'F09') {
+      candidateRef.current.scrollIntoView({ behavior: 'instant', block: 'center' });
+    }
+  }, [candidate]);
   return (
     <section className="fusion-revision" aria-label="Controlled parametric source revision" data-testid="fusion-revision-workbench">
       <div className="fusion-revision-heading">
@@ -240,7 +273,7 @@ export function FusionRevisionWorkbench(props: FusionRevisionProps) {
       </>}
       {error && <p className="fusion-revision-error" role="alert">{error}</p>}
       {notice && <p className="fusion-revision-notice" role="status">{notice}</p>}
-      {candidate && <div className="fusion-revision-candidate" data-testid="fusion-revision-candidate">
+      {candidate && <section ref={candidateRef} className="fusion-revision-candidate" data-testid="fusion-revision-candidate">
         <div className="fusion-revision-candidate-status">CANDIDATE · NOT COMMITTED</div>
         <div className="fusion-revision-metrics">
           <div><small>Build entities</small><strong>{candidate.affectedBuildEntities.length}</strong></div>
@@ -267,7 +300,7 @@ export function FusionRevisionWorkbench(props: FusionRevisionProps) {
           <button type="button" className="accept" data-testid="fusion-revision-accept"
             disabled={busy} onClick={() => void accept()}><FileDiff size={14}/> Accept source revision</button>
         </div>
-      </div>}
+      </section>}
     </section>
   );
 }
