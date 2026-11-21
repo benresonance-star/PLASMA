@@ -61,7 +61,7 @@ export function NorthstarStudio(props: NorthstarProps) {
   const [focus, setFocus] = useState<Focus>(() => {
     if (typeof window === 'undefined' || !import.meta.env.DEV) return 'design';
     const stage = new URLSearchParams(window.location.search).get('stage');
-    return stage === 'F06' ? 'place' : stage === 'F07' || stage === 'F08' ? 'reason' : 'design';
+    return stage === 'F06' ? 'place' : stage === 'F07' || stage === 'F08' || stage === 'F09' ? 'reason' : 'design';
   });
   const [media, setMedia] = useState<LocalMedia | null>(null);
   const [mediaError, setMediaError] = useState('');
@@ -120,6 +120,23 @@ export function NorthstarStudio(props: NorthstarProps) {
     return options;
   }, [preview, selectedParameter]);
   const events = useMemo(() => [...sessionEvents].sort((a,b) => b.atMs - a.atMs).slice(0,8), [sessionEvents]);
+  useEffect(() => {
+    // Only the synthetic DEV fixture seeds a controlled visual test edit.
+    if (typeof window === 'undefined' || !import.meta.env.DEV ||
+        new URLSearchParams(window.location.search).get('northstar-qa') !== '1' ||
+        new URLSearchParams(window.location.search).get('stage') !== 'F09' ||
+        !preview) return;
+    if (!parameterId) {
+      const width = preview.parameters.find((p) => p.editableBy.includes('user') && p.quantity.unit === 'mm');
+      if (width) {
+        setParameterId(width.id);
+        setDraftValue(String(width.quantity.value + 45));
+      }
+    } else if (!linkKey && linkOptions.length) {
+      const mapped = linkOptions.find((x) => x.loftParameter === 'W') ?? linkOptions[0];
+      if (mapped) setLinkKey(mapped.key);
+    }
+  }, [preview, parameterId, linkKey, linkOptions]);
 
   async function addMedia(file: File | undefined) {
     if (!file) return;
