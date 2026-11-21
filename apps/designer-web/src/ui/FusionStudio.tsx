@@ -75,7 +75,7 @@ export function FusionStudio({
   async function preview(): Promise<void> {
     if (!build || !loft) return;
     setBusy(true); setError(''); setResult(null);
-    const occurrence = loftInstances.find((x) => x.assembly + '\u0000' + x.instance === selectedOccurrence);
+    const occurrence = loftInstances.find((x) => JSON.stringify([x.assembly, x.instance]) === selectedOccurrence);
     const bindings = selectedBuild && occurrence
       ? [{ buildEntityId: selectedBuild, loftAssemblyId: occurrence.assembly, loftInstanceId: occurrence.instance }]
       : [];
@@ -142,7 +142,7 @@ export function FusionStudio({
               <select aria-label="Loft part occurrence" value={selectedOccurrence} onChange={(e) => setSelectedOccurrence(e.target.value)}
                 className="mt-1 block w-full rounded border bg-background p-2">
                 <option value="">Unbound</option>
-                {loftInstances.map((x) => <option key={x.assembly + x.instance} value={x.assembly + '\u0000' + x.instance}>
+                {loftInstances.map((x) => <option key={x.assembly + x.instance} value={JSON.stringify([x.assembly, x.instance])}>
                   {x.assembly} / {x.instance}
                 </option>)}
               </select>
