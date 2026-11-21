@@ -42,7 +42,8 @@
     "fastify": "^5.11.3",
     "postgres": "^3.4.9",
     "zod": "^4.4.3",
-    "@spds/import-core": "workspace:*"
+    "@spds/import-core": "workspace:*",
+    "@spds/geometry-contracts": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",
