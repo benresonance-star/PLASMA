@@ -198,9 +198,9 @@ function appendMeshesToRoot(
     };
 
     const faceMat = new MeshStandardMaterial({
-      color: faceColor,
-      metalness: 0.05,
-      roughness: 0.72,
+      color: architectureMaterialColor(m.material,faceColor),
+      metalness: m.material === 'metal' ? 0.55 : m.material === 'glass' ? 0.18 : 0.05,
+      roughness: m.material === 'glass' ? 0.2 : m.material === 'metal' ? 0.4 : 0.72,
       side: DoubleSide,
       emissive: 0x000000,
       emissiveIntensity: 0,
