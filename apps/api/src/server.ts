@@ -1,4 +1,5 @@
 import Fastify from 'fastify';
+import { registerFusionPreviewRoute } from './fusion-preview.js';
 import cors from '@fastify/cors';
 import { InMemoryVersionStore, asPromise, type VersionStore } from '@spds/version-core';
 import {
@@ -146,6 +147,7 @@ export function buildServer(
   const remoteArtifacts = minioCfg ? new MinioObjectStore(minioCfg) : undefined;
 
   app.get('/health', async () => ({ status: 'ok', service: 'spds-api' }));
+  registerFusionPreviewRoute(app);
 
   app.post<{ Body: { name: string } }>('/models', async (req, reply) => {
     const model = await asPromise(store.createModel(req.body.name));
