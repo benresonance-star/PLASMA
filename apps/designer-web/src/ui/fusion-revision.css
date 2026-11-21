@@ -1,0 +1,32 @@
+.fusion-revision { margin:14px 0 2px; background:#e6ebe6; border:1px solid #b6c4bb; padding:12px; }
+.fusion-revision-heading { display:flex; gap:9px; align-items:start; border-bottom:1px solid #b9c6bd; padding-bottom:11px; color:#253d40; }
+.fusion-revision-heading>svg { color:#ae563e; margin-top:1px; flex:0 0 auto; }
+.fusion-revision-heading div { display:flex; flex-direction:column; gap:4px; }
+.fusion-revision-heading strong { font-size:10px; letter-spacing:.085em; }
+.fusion-revision-heading span { font-size:10px; color:#647473; line-height:1.5; }
+.fusion-revision-state { display:flex; align-items:center; gap:7px; margin:11px 0; font-size:10px; color:#566b67; }
+.fusion-revision-state>svg { flex:0 0 auto; color:#aa5138; }
+.fusion-revision-field { display:flex; flex-direction:column; gap:5px; margin:8px 0; font-size:10px; }
+.fusion-revision-field input { width:100%; padding:7px; border:1px solid #b3c0ba; border-radius:3px; color:#1b2c31; background:#fff; font-size:11px; }
+.fusion-revision-action { display:flex; gap:8px; align-items:center; justify-content:center; width:100%; padding:11px 9px; border:0; border-radius:3px; background:#263a40; color:#f7f8f2; font-size:11px; line-height:1.35; text-align:center; }
+.fusion-revision-action:hover:not(:disabled) { background:#40555a; }
+.fusion-revision-action:disabled { opacity:.5; }
+.fusion-revision-notice,.fusion-revision-error { font-size:10px; line-height:1.5; padding:9px; margin:10px 0 0; border-left:3px solid #537b68; background:#f3f9f1; }
+.fusion-revision-error { color:#8f3d33; border-left-color:#bd543c; background:#f7e7dc; }
+.fusion-revision-candidate { margin-top:11px; padding:11px; border:1px solid #ccaf9f; background:#f3f1e9; }
+.fusion-revision-candidate-status { color:#a05740; font-size:10px; font-weight:800; letter-spacing:.08em; }
+.fusion-revision-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px; margin:10px 0; }
+.fusion-revision-metrics div { display:flex; flex-direction:column; gap:5px; background:#fff; padding:8px 5px; border:1px solid #d9ded4; }
+.fusion-revision-metrics small { font-size:8px; color:#5c706a; }
+.fusion-revision-metrics strong { font-size:13px; }
+.fusion-revision-links { display:grid; grid-template-columns:repeat(2,1fr); gap:5px; margin:10px 0; }
+.fusion-revision-links button { background:#e9e9e0; border:1px solid #b5c2b8; border-radius:3px; padding:8px 5px; color:#354b4a; font-size:9px; }
+.fusion-revision-links button:hover { background:#d3dfd7; }
+.fusion-revision-sheets { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; margin:8px 0; }
+.fusion-revision-sheets img { width:100%; border:1px solid #c5c8bd; background:white; }
+.fusion-revision-warning { font-size:9px; line-height:1.55; color:#8e5e4b; }
+.fusion-revision-decision { display:grid; grid-template-columns:1fr 1.35fr; gap:5px; margin-top:11px; }
+.fusion-revision-decision button { display:flex; align-items:center; justify-content:center; gap:6px; font-size:10px; padding:10px 4px; border-radius:3px; }
+.fusion-revision-decision .reject { border:1px solid #9caea7; background:#e7eae5; color:#36504c; }
+.fusion-revision-decision .accept { background:#b55037; color:white; }
+.fusion-revision-decision .accept:disabled { opacity:.5; }
