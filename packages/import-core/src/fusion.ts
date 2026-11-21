@@ -88,7 +88,7 @@ export function composeFirstFusion(input: {
     .map((v) => parseParameter(v));
   const buildRelations = array(graph['relationships'], 'Build.relationships')
     .map((v) => parseRelationship(v));
-  const buildIds = new Set([...buildEntities, ...buildParameters].map((o) => o.id));
+  const buildIds = new Set<string>([...buildEntities, ...buildParameters].map((o) => o.id));
   for (const parameter of buildParameters) {
     for (const id of parameter.affects) {
       if (!buildIds.has(id)) throw new Error('Build: orphan parameter.affects: ' + id);
