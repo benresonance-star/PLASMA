@@ -198,7 +198,6 @@ export interface HotelScene {
   readonly drawings:HotelArchitectureDocuments & {
     readonly planSvg:string;readonly sectionSvg:string;
     readonly planHash:string;readonly sectionHash:string;
-    readonly issueStatus:'schematic-not-for-construction';
   };
   readonly unresolved:readonly string[];
 }
