@@ -248,3 +248,7 @@
 .hotel-window-schedule th{background:#dee9df;font-size:10px;text-transform:uppercase;letter-spacing:.04em}
 @media(max-width:850px){.hotel-document-strip{flex-basis:145px}.hotel-drawing-card img{height:93px}}
 @media(max-width:410px){.hotel-document-strip{flex-basis:130px}.hotel-drawing-card img{height:80px}.hotel-doc-heading{font-size:8px}.hotel-doc-heading small{display:none}}
+
+.hotel-proposal-claim{display:flex;gap:7px;align-items:center;justify-content:space-between;padding:7px 0;border-top:1px solid #dcc6b8}
+.hotel-proposal-claim span{font-size:9px;color:#685c54}
+.hotel-proposal-claim strong{font-size:10px;color:#a25339;text-align:right}
