@@ -58,7 +58,7 @@ export function makeHotelWindowProposal(hotel:ResolvedHotel,
   if(jambAfter<200)throw new Error('HOTEL_PROPOSAL_INSUFFICIENT_JAMB');
   const projectId=hotel.hotelId;
   const windowId=hotelModuleId('window-a4');
-  const impacted=['suite-standard','suite-accessible','suite-corner']
+  const impacted=(['suite-standard','suite-accessible','suite-corner'] as const)
     .map(hotelModuleId);
   const sourceIds=[windowId,...impacted];
   const claims:ReasonClaim[]=[
