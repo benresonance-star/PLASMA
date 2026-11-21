@@ -5,6 +5,10 @@ import { loadMeshes, setViewportChrome } from './viewport.js';
 export interface DisplayMeshInput {
   readonly representationId: string;
   readonly semanticOwner: string;
+  /** Optional source material classification for architecture-oriented B-rep display. */
+  readonly material?: string;
+  /** Linked Loft subproject identifier; never a native B-rep topology path. */
+  readonly sourceModuleId?: string;
   readonly vertices: readonly (readonly [number, number, number])[];
   readonly indices: readonly number[];
 }
