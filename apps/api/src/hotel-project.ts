@@ -167,7 +167,7 @@ export function makeHotelLoftSource(key:HotelModuleKey,windowWidthMm=1800):Hotel
     box(parts,instances,'FacadeSill','Terracotta','facade',
       windowWidthMm,160,720,0,yFacade,180);
     box(parts,instances,'FacadeHead','Terracotta','facade',
-      windowWidthMm,160,670,0,yFacade,2730);
+      windowWidthMm,160,650,0,yFacade,2750);
     box(parts,instances,'Balcony','Concrete','balcony',
       R_W-120,750,160,0,R_D+375,0);
     const bW=accessible?2500:2100;
@@ -313,7 +313,10 @@ export async function reviseHotelWindows(
     targetIds:moduleIds,
     reason:'Update A4 window width and three hosted suite opening sources together',
     mutate:items=>{
-      for(const {id,next} of nextRecords){
+      // Preflight every source before writing any object. InMemoryVersionStore
+      // mutates the supplied map directly, so a throwing validation pass must
+      // never leave a partially updated linked module library.
+      for(const {id} of nextRecords){
         const old=items.get(id);
         if(!old||old['semanticType']!=='plasma.loft.subproject')
           throw new Error('HOTEL_LINKED_MODULE_CHANGED');
@@ -321,7 +324,9 @@ export async function reviseHotelWindows(
         const expected=hotel.modules.get(id);
         if(source.sourceHash!==expected?.sourceHash||source.revision!==expected.revision)
           throw new Error('HOTEL_LINKED_SOURCE_STALE');
-        items.set(id,{...old,updatedAt:now,metadata:next});
+      }
+      for(const {id,next} of nextRecords){
+        items.set(id,{...items.get(id)!,updatedAt:now,metadata:next});
       }
       return moduleIds;
     },
