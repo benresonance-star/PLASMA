@@ -100,6 +100,15 @@ describe('F13 hotel linked subprojects and atomic design revision',()=>{
     expect(scene.meshes.some((m:{semanticOwner:string})=>
       m.semanticOwner.includes(':L03N12'))).toBe(true);
     expect(scene.modules).toHaveLength(5);
+    const isolated=await s.app.inject({method:'POST',url:endpoint+'/scene',payload:{
+      branchId:s.branchId,expectedHeadHash:originalHead,kernel:'exact-adapter',
+      mode:'floor',selectedLevel:3,
+    }});
+    expect(isolated.statusCode,isolated.body.slice(0,500)).toBe(200);
+    expect(isolated.json().sceneObjectCount).toBeLessThan(scene.sceneObjectCount);
+    expect(isolated.json().meshes.filter((m:{semanticOwner:string})=>
+      m.semanticOwner.startsWith(RIVERSIDE_HOTEL_ID+':L')).
+      every((m:{semanticOwner:string})=>m.semanticOwner.includes(':L03'))).toBe(true);
     expect((await s.store.getBranchHead(s.branchId)).headHash).toBe(originalHead);
     const edit=await s.app.inject({method:'POST',url:endpoint+'/revise-window',
       payload:{branchId:s.branchId,expectedHeadHash:originalHead,nextWidthMm:2100}});
