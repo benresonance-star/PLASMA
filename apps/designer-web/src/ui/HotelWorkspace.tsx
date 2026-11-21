@@ -84,7 +84,7 @@ function roomName(room:Room):string{
 function isQa():boolean{
   return typeof window!=='undefined'&&import.meta.env.DEV&&
     new URLSearchParams(window.location.search).get('northstar-qa')==='1'&&
-    new URLSearchParams(window.location.search).get('stage')==='F13';
+    ['F13','F21'].includes(new URLSearchParams(window.location.search).get('stage')??'');
 }
 const MODULE_ORDER=['building-shell','suite-standard','suite-accessible',
   'suite-corner','window-a4'] as const;
