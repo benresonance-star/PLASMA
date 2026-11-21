@@ -97,7 +97,7 @@ describe('F12 Build-hosted opening native constructive wall geometry',()=>{
     expect(()=>planFusionHostOpening({
       ...source,expectedSourceHashes:{build:q.sources[0]!.sourceHash,loft:q.sources[1]!.sourceHash},
     })).toThrow(/INSUFFICIENT_JAMB_WIDTH/);
-    expect(()=>planFusionHostOpening(input()==null?source:{
+    expect(()=>planFusionHostOpening({
       ...source,expectedSourceHashes:{build:'stale',loft:source.expectedSourceHashes.loft},
     })).toThrow(/SOURCE_STALE/);
   });
