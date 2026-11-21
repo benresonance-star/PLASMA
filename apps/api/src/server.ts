@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import { registerFusionPreviewRoute } from './fusion-preview.js';
 import { registerFusionChangeRoute } from './fusion-change.js';
+import { registerFusionGeometryRoute } from './fusion-geometry.js';
 import cors from '@fastify/cors';
 import { InMemoryVersionStore, asPromise, type VersionStore } from '@spds/version-core';
 import {
@@ -150,6 +151,7 @@ export function buildServer(
   app.get('/health', async () => ({ status: 'ok', service: 'spds-api' }));
   registerFusionPreviewRoute(app);
   registerFusionChangeRoute(app, store);
+  registerFusionGeometryRoute(app, store);
 
   app.post<{ Body: { name: string } }>('/models', async (req, reply) => {
     const model = await asPromise(store.createModel(req.body.name));
