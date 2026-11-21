@@ -83,14 +83,16 @@ jobs:
             "http://127.0.0.1:5173/?northstar-qa=1&stage=F05" >/dev/null 2>/tmp/chrome-mobile.err
           test -s northstar-snapshots/F05-mobile.png
           python3 - <<'PY'
-          import os
-          from PIL import Image
+          import os,struct
           files=[f for f in os.listdir('northstar-snapshots') if f.endswith('.png')]
-          assert len(files)==7
+          assert len(files)==7, 'expected six desktop and one narrow-width PNG'
           for f in files:
-              im=Image.open('northstar-snapshots/'+f)
-              im.verify()
-          print('Verified',len(files),'rendered PNG snapshot files')
+              with open('northstar-snapshots/'+f,'rb') as fp:
+                  header=fp.read(24)
+              assert header[:8]==bytes.fromhex('89504e470d0a1a0a'), f+' missing PNG signature'
+              width,height=struct.unpack('>II',header[16:24])
+              assert width>300 and height>300, f+' empty/small viewport'
+          print('Verified',len(files),'rendered PNG headers and dimensions')
           PY
       - uses: actions/upload-artifact@v4
         if: success()
