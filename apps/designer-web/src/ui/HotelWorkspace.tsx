@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { ViewportCanvas } from './ViewportCanvas.js';
 import { HotelPlaceLens } from './HotelPlaceLens.js';
+import { HotelAssemblyLens } from './HotelAssemblyLens.js';
 import { cadZUpMeshesToViewportYUp } from './northstar-coordinate.js';
 import { apiBaseUrl } from '../api-client.js';
 import type { DisplayMeshInput } from '../mesh-bridge.js';
@@ -391,6 +392,11 @@ export function HotelWorkspace({
             chrome="candidate"
           />:<div className="hotel-loading-scene"><RefreshCw size={25}/>
               Generating source-linked geometric scene…</div>}
+          <div className="hotel-assembly-overlay">
+            <HotelAssemblyLens modelId={modelId} branchId={branchId}
+              headHash={scene?.headHash??headHash}
+              moduleId={activeModule} selectedRoomId={selectedRoomId}/>
+          </div>
           <div className="hotel-viewport-brand"><span>PL / B-REP STUDY</span><strong>RIVERSIDE / 168</strong></div>
           <div className="hotel-viewport-overlays">
             <span><span className="hotel-green-dot"/> 5 LINKED LOFT PROJECTS</span>
@@ -502,6 +508,15 @@ export function HotelWorkspace({
               <div><span>Façade system</span><strong>A4 / thermally broken study</strong></div>
               <div><span>Room grid</span><strong>3900 × 8100 mm</strong></div>
               <div><span>Window opening</span><strong>{scene?.windowWidthMm??'—'} × 1850 mm</strong></div>
+            </div>
+            <div className="hotel-room-nav-grid" aria-label="Select a guestroom on the current level">
+              {scene?.manifest.rooms.filter(room=>room.level===level).map(room=>
+                <button key={room.id} type="button"
+                  className={selectedRoomId===room.id?'selected':''}
+                  onClick={()=>pickRoom(room.id)}
+                  aria-label={'Select suite '+roomName(room)}>
+                  {room.side==='north'?'N':'S'}{String(room.bay+1).padStart(2,'0')}
+                </button>)}
             </div>
             <button type="button" className="hotel-select-corner" onClick={()=>{
               const corner=scene?.manifest.rooms.find(room=>room.level===level&&room.bay===11&&room.side==='north');
