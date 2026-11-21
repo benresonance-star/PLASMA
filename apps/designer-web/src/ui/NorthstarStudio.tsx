@@ -64,8 +64,13 @@ export function NorthstarStudio(props: NorthstarProps) {
   const [impactError, setImpactError] = useState('');
   const [running, setRunning] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
+  const [geometryMeshes, setGeometryMeshes] = useState<DisplayMeshInput[]>([]);
+  const [geometryInfo, setGeometryInfo] = useState('');
+  const [geometryError, setGeometryError] = useState('');
+  const [geometryBusy, setGeometryBusy] = useState(false);
   useEffect(() => () => { if (media) URL.revokeObjectURL(media.url); }, [media]);
-  useEffect(() => { setImpact(null); setImpactError(''); setParameterId(''); setLinkKey(''); }, [fusion]);
+  useEffect(() => { setImpact(null); setImpactError(''); setParameterId(''); setLinkKey(''); setGeometryMeshes([]); setGeometryInfo(''); }, [fusion]);
+  useEffect(() => { setGeometryMeshes([]); setGeometryInfo(''); }, [headHash]);
 
   const preview = fusion?.preview;
   const selection = preview?.objects.find((o) => o.id === selectedSemanticId);
@@ -73,6 +78,8 @@ export function NorthstarStudio(props: NorthstarProps) {
     (preview?.relationships ?? []).filter((r) => r.from === selectedSemanticId || r.to === selectedSemanticId).slice(0, 12),
   [preview, selectedSemanticId]);
   const selectedParameter = preview?.parameters.find((p) => p.id === parameterId);
+  const selectedLoftOccurrence = preview?.objects.find((o) => o.id === selectedSemanticId && o.semanticType === 'geometry.loft.occurrence');
+  const canPreviewGeometry = Boolean(fusion && selectedLoftOccurrence && preview?.bindings.some((b) => b.loftOccurrenceId === selectedLoftOccurrence.id) && modelId && branchId && headHash && !geometryBusy);
   const linkOptions = useMemo((): LinkOption[] => {
     if (!preview || !selectedParameter) return [];
     const options: LinkOption[] = [];
@@ -157,6 +164,31 @@ export function NorthstarStudio(props: NorthstarProps) {
     }
   }
   const canPropose = Boolean(fusion && modelId && branchId && headHash && selectedParameter && !running);
+  async function previewLoftGeometry() {
+    if (!fusion || !selectedLoftOccurrence || !modelId || !branchId || !headHash) return;
+    setGeometryBusy(true); setGeometryError(''); setGeometryMeshes([]); setGeometryInfo('');
+    try {
+      const response = await fetch(apiBaseUrl() + '/imports/fusion/geometry-preview', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          buildProject: fusion.buildProject, loftProject: fusion.loftProject,
+          bindings: fusion.bindings, loftOccurrenceId: selectedLoftOccurrence.id,
+          expectedSourceHashes: {
+            build: fusion.preview.sources.find((s) => s.system === 'build')?.sourceHash,
+            loft: fusion.preview.sources.find((s) => s.system === 'loft')?.sourceHash,
+          },
+          modelId, branchId, expectedHeadHash: headHash,
+        }),
+      });
+      const data: unknown = await response.json();
+      if (!response.ok) throw new Error(String(object(data)?.['summary'] ?? object(data)?.['failureCode'] ?? 'Unsupported Loft solid'));
+      const output = data as { readonly meshes: readonly DisplayMeshInput[]; readonly kernel: string; readonly nativeBrep: boolean };
+      setGeometryMeshes([...output.meshes]);
+      setGeometryInfo(output.kernel + ' mesh · native B-rep not verified · candidate only');
+    } catch (err) {
+      setGeometryError(err instanceof Error ? err.message : 'Geometry preview failed');
+    } finally { setGeometryBusy(false); }
+  }
 
   return (
     <section className="northstar" data-focus={focus} aria-label="Plasma Northstar spatial studio">
@@ -220,7 +252,7 @@ export function NorthstarStudio(props: NorthstarProps) {
           </header>
           <div className="northstar-viewport">
             <ViewportCanvas
-              meshes={meshes} geometryServiceMeshes={serviceMeshes}
+              meshes={meshes} geometryServiceMeshes={[...serviceMeshes, ...geometryMeshes]}
               selectedSemanticId={selectedSemanticId}
               onPickSemantic={onSelectSemantic}
               {...(chrome ? { chrome } : {})}
@@ -231,6 +263,12 @@ export function NorthstarStudio(props: NorthstarProps) {
             </div>
           </div>
           <div className="northstar-design-footer">
+            <div className="northstar-geometry-actions">
+              <button type="button" onClick={() => void previewLoftGeometry()} disabled={!canPreviewGeometry}>
+                {geometryBusy ? 'Building preview…' : 'Preview selected Loft solid'}</button>
+              <span>{geometryInfo || 'Supported: single centred rectangle sketch + extrusion only'}</span>
+            </div>
+            {geometryError && <p role="alert" className="northstar-error">{geometryError}</p>}
             <div className="northstar-meta"><span>Selected semantic ID</span><strong>{short(selectedSemanticId)}</strong></div>
             <div className="northstar-meta"><span>Imported source geometry</span><strong>Not compiled into this viewport</strong></div>
           </div>
