@@ -171,7 +171,8 @@ import { MeasureHud } from './MeasureHud.js';
 import { ModelMenu } from './ModelMenu.js';
 import { PanelResizeHandle } from './PanelResizeHandle.js';
 import { PlasmaBrand } from './PlasmaBrand.js';
-import { FusionStudio } from './FusionStudio.js';
+import { FusionStudio, type FusionContext } from './FusionStudio.js';
+import { NorthstarStudio } from './NorthstarStudio.js';
 import { RightPane } from './RightPane.js';
 import { SettingsMenu } from './SettingsMenu.js';
 import { viewportBackgroundCssHex } from './three-scene.js';
@@ -249,6 +250,8 @@ function substrateToIndexedGraph(objects: readonly SubstrateGraphObject[]): Inde
 export function App() {
   const [session, setSession] = useState(() => createAppSession());
   const [fusionOpen, setFusionOpen] = useState(false);
+  const [northstarOpen, setNorthstarOpen] = useState(false);
+  const [fusionContext, setFusionContext] = useState<FusionContext | null>(null);
   const [liveStatus, setLiveStatus] = useState<string>('bootstrapping');
   const [aiIntent, setAiIntent] = useState(
     'Propose a safe lengthMm update for y:demo:01 (500–4000 mm)',
@@ -1730,6 +1733,9 @@ export function App() {
           </nav>
 
           <div className="spds-header-actions">
+            <Button type="button" size="sm" variant={northstarOpen ? "default" : "outline"}
+              aria-pressed={northstarOpen} aria-label="Toggle Northstar spatial design studio"
+              onClick={() => setNorthstarOpen((open) => !open)}>Northstar</Button>
             <Button type="button" size="sm" variant="outline"
               aria-label="Open Loft and Build fusion preview"
               onClick={() => setFusionOpen(true)}>Fusion</Button>
@@ -1962,6 +1968,22 @@ export function App() {
         </HelpTooltipScope>
       </header>
 
+      {northstarOpen ? (
+        <NorthstarStudio
+          onClose={() => setNorthstarOpen(false)}
+          onOpenFusion={() => setFusionOpen(true)}
+          fusion={fusionContext}
+          selectedSemanticId={selected}
+          onSelectSemantic={(id) => update((s) => appSelect(s, id, 'graph', Date.now()))}
+          meshes={session.g8.meshes}
+          serviceMeshes={serviceMeshes}
+          chrome={session.g8.chrome}
+          modelId={session.modelId}
+          branchId={session.aiBranchId ?? session.branchId}
+          headHash={session.headHash}
+          sessionEvents={session.timeline}
+        />
+      ) : (
       <div
         className={[
           'spds-shell',
@@ -2331,7 +2353,9 @@ export function App() {
           </div>
         ) : null}
       </div>
-      <FusionStudio open={fusionOpen} onClose={() => setFusionOpen(false)} />
+      )}
+      <FusionStudio open={fusionOpen} onClose={() => setFusionOpen(false)}
+        onPreview={(context) => setFusionContext(context)} />
       {/* Keep indicative analysis helper referenced for product UX smoke. */}
       <span className="sr-only">{appAnalysisIndicative(session) ? 'indicative' : ''}</span>
     </main>
