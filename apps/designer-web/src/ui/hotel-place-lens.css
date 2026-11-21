@@ -1,0 +1,28 @@
+.hotel-place-lens{display:flex;flex-direction:column;gap:0;background:#e9ede7}
+.hotel-capture-stage{height:245px;background:radial-gradient(ellipse at 40% 30%,#506963,#203238);position:relative;overflow:hidden;border-bottom:1px solid #768c82}
+.hotel-capture-stage>img,.hotel-capture-stage>video{height:100%;width:100%;object-fit:cover;display:block}
+.hotel-capture-idle{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;color:#d6dfd8}
+.hotel-capture-idle svg{color:#d39a6f}
+.hotel-capture-idle strong{letter-spacing:.08em;font-size:10px}
+.hotel-capture-idle span{font-size:9px;color:#a8bcb2}
+.hotel-capture-stamp{position:absolute;left:9px;bottom:9px;right:9px;display:flex;flex-direction:column;align-items:start;gap:3px;pointer-events:none}
+.hotel-capture-stamp span,.hotel-capture-stamp strong{background:#172d33db;color:#e7e9dd;padding:4px 7px;font-size:9px}
+.hotel-capture-stamp strong{color:#e2aa84}
+.hotel-capture-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:8px 10px;background:#dce6dd;border-bottom:1px solid #bac8ba}
+.hotel-capture-upload,.hotel-capture-toolbar button{display:flex;justify-content:center;align-items:center;gap:6px;padding:10px 7px;background:#f6f7f1;border:1px solid #adc0b5;color:#3e6655;border-radius:4px;font-size:10px;cursor:pointer;font-weight:750;text-align:center}
+.hotel-capture-toolbar input[type=file]{position:absolute;clip-path:inset(50%);height:1px;width:1px}
+.hotel-capture-status{padding:8px 10px;color:#825f49;background:#f4ebdc;font-size:10px;line-height:1.5}
+.hotel-capture-records{padding:9px 11px;border-bottom:1px solid #cad4ca}
+.hotel-capture-records>div:first-child{display:flex;align-items:center;gap:7px;font-size:10px;color:#526f5d;font-weight:800}
+.hotel-capture-records b{margin-left:auto}
+.hotel-capture-records p{margin:8px 0 0;font-size:10px;line-height:1.5;color:#78887d}
+.hotel-capture-record{display:flex;align-items:center;gap:6px;padding:7px 0;border-top:1px solid #d3dbd0}
+.hotel-capture-record span{font-size:10px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hotel-capture-record strong{font-size:9px;color:#9d6046}
+.hotel-fit-editor{margin:8px;padding:11px;background:#f6f6f1;border:1px solid #b9cabc;display:flex;flex-direction:column;gap:9px;border-radius:4px}
+.hotel-fit-editor>strong{font-size:10px;color:#435f50}
+.hotel-fit-editor p{font-size:10px;line-height:1.45;color:#6a7b6b;margin:0}
+.hotel-fit-editor label{display:flex;flex-direction:column;gap:5px;font-size:9px;font-weight:750}
+.hotel-fit-editor input,.hotel-fit-editor textarea{width:100%;border:1px solid #b5c7b8;border-radius:3px;background:#fff;padding:8px;color:#2b4938;font-size:10px;resize:vertical}
+.hotel-fit-editor button{display:flex;justify-content:center;align-items:center;gap:7px;background:#375c4a;color:white;border-radius:4px;padding:10px;font-size:10px}
+.hotel-fit-editor .hotel-fit-error{display:flex;gap:6px;color:#9d4d36}
