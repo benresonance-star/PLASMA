@@ -6,6 +6,7 @@ import type { PublicationChrome } from '../viewport.js';
 import { ViewportCanvas } from './ViewportCanvas.js';
 import { apiBaseUrl } from '../api-client.js';
 import { ContinuityInspector } from './ContinuityInspector.js';
+import { FusionRevisionWorkbench } from './FusionRevisionWorkbench.js';
 import './northstar.css';
 
 type Focus = 'place' | 'design' | 'reason';
@@ -16,6 +17,7 @@ interface NorthstarProps {
   readonly fusion: FusionContext | null;
   readonly selectedSemanticId: string | null;
   readonly onSelectSemantic: (id: string) => void;
+  readonly onRevisionUpdated?: (result: { readonly headHash: string; readonly eventId: string; readonly action: string; readonly fusion?: FusionContext }) => void;
   readonly meshes: readonly DisplayMeshInput[];
   readonly serviceMeshes: readonly DisplayMeshInput[];
   readonly chrome?: PublicationChrome;
@@ -54,12 +56,12 @@ function object(value: unknown): Record<string, unknown> | null {
 export function NorthstarStudio(props: NorthstarProps) {
   const {
     onClose, onOpenFusion, fusion, selectedSemanticId, onSelectSemantic,
-    meshes, serviceMeshes, chrome, modelId, branchId, headHash, sessionEvents, qaSiteIllustration,
+    meshes, serviceMeshes, chrome, modelId, branchId, headHash, sessionEvents, qaSiteIllustration, onRevisionUpdated,
   } = props;
   const [focus, setFocus] = useState<Focus>(() => {
     if (typeof window === 'undefined' || !import.meta.env.DEV) return 'design';
     const stage = new URLSearchParams(window.location.search).get('stage');
-    return stage === 'F06' ? 'place' : stage === 'F07' || stage === 'F08' ? 'reason' : 'design';
+    return stage === 'F06' ? 'place' : stage === 'F07' || stage === 'F08' || stage === 'F09' ? 'reason' : 'design';
   });
   const [media, setMedia] = useState<LocalMedia | null>(null);
   const [mediaError, setMediaError] = useState('');
@@ -118,6 +120,23 @@ export function NorthstarStudio(props: NorthstarProps) {
     return options;
   }, [preview, selectedParameter]);
   const events = useMemo(() => [...sessionEvents].sort((a,b) => b.atMs - a.atMs).slice(0,8), [sessionEvents]);
+  useEffect(() => {
+    // Only the synthetic DEV fixture seeds a controlled visual test edit.
+    if (typeof window === 'undefined' || !import.meta.env.DEV ||
+        new URLSearchParams(window.location.search).get('northstar-qa') !== '1' ||
+        new URLSearchParams(window.location.search).get('stage') !== 'F09' ||
+        !preview) return;
+    if (!parameterId) {
+      const width = preview.parameters.find((p) => p.editableBy.includes('user') && p.quantity.unit === 'mm');
+      if (width) {
+        setParameterId(width.id);
+        setDraftValue(String(width.quantity.value + 45));
+      }
+    } else if (!linkKey && linkOptions.length) {
+      const mapped = linkOptions.find((x) => x.loftParameter === 'W') ?? linkOptions[0];
+      if (mapped) setLinkKey(mapped.key);
+    }
+  }, [preview, parameterId, linkKey, linkOptions]);
 
   async function addMedia(file: File | undefined) {
     if (!file) return;
@@ -332,12 +351,6 @@ export function NorthstarStudio(props: NorthstarProps) {
                     <ArrowRight size={14}/>
                   </button>))}
             </div>
-            <ContinuityInspector
-              fusion={fusion} selectedSemanticId={selectedSemanticId}
-              onSelectSemantic={onSelectSemantic}
-              modelId={modelId} branchId={branchId} headHash={headHash}
-              onDetail={setDetailSvg} onRegistration={setSiteFit}
-            />
             <div className="northstar-proposal">
               <div className="northstar-subheading">Design change / F02</div>
               <p className="northstar-note">Draft one typed Build parameter change. A Loft driver is linked only when you explicitly select it.</p>
@@ -378,7 +391,23 @@ export function NorthstarStudio(props: NorthstarProps) {
                 <small>{impact.impactedBuildEntities.length} Build entities · {impact.impactedLoftOccurrences.length} Loft occurrences</small>
                 <ul>{impact.unresolved.map((x) => <li key={x}>{x}</li>)}</ul>
               </div>}
+              <FusionRevisionWorkbench
+                fusion={fusion} modelId={modelId} branchId={branchId} headHash={headHash}
+                buildParameterId={parameterId} nextValue={draftValue}
+                link={linkOptions.find((x) => x.key === linkKey) ?? null}
+                onHeadUpdated={(result) => onRevisionUpdated?.(result)}
+                onShowGeometry={(sourceMeshes, description) => {
+                  setGeometryMeshes([...sourceMeshes]); setGeometryInfo(description);
+                }}
+                onShowDetail={setDetailSvg}
+              />
             </div>
+            <ContinuityInspector
+              fusion={fusion} selectedSemanticId={selectedSemanticId}
+              onSelectSemantic={onSelectSemantic}
+              modelId={modelId} branchId={branchId} headHash={headHash}
+              onDetail={setDetailSvg} onRegistration={setSiteFit}
+            />
           </div>
         </section>
       </div>

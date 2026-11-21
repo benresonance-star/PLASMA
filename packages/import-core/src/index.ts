@@ -178,3 +178,5 @@ export { proposeFirstFusionChange, type FusionChangeInput, type FusionChangePrev
 export { auditFusionConstruction, traceFusionCausality, assessHotelReadiness, type ConstructionReview, type CausalTrace, type HotelReadiness } from './fusion-review.js';
 export { createFusionSectionSheet, type FusionSectionSheet, type SectionRegion } from './fusion-section.js';
 export { estimateSiteRegistration, type SiteTiePoint, type SiteRegistrationPreview } from './site-registration.js';
+
+export { deriveFusionSourceRevision, type FusionRevisionInput, type FusionDerivedRevision } from './fusion-revision.js';

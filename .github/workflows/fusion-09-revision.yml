@@ -1,0 +1,104 @@
+name: Fusion 09 Controlled Revisions
+
+on:
+  pull_request:
+    paths:
+      - 'packages/import-core/**'
+      - 'apps/api/src/fusion-*'
+      - 'apps/api/src/server.ts'
+      - 'apps/designer-web/src/ui/**'
+      - 'apps/designer-web/src/main.tsx'
+      - '.github/workflows/fusion-09-revision.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  revision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install locked workspace
+        run: pnpm install --frozen-lockfile
+      - name: Build API dependencies
+        run: pnpm --filter '@spds/api^...' build
+      - name: Validate F09 source revisions
+        run: pnpm --filter @spds/import-core exec vitest run src/fusion-revision.test.ts src/fusion-change.test.ts
+      - name: Validate F09 API and stale-head protection
+        run: pnpm --filter @spds/api exec vitest run src/fusion-workspaces.test.ts src/fusion-continuity.test.ts
+      - name: Validate Northstar UI
+        run: |
+          pnpm --filter '@spds/designer-web^...' build
+          pnpm --filter @spds/designer-web typecheck
+          pnpm --filter @spds/designer-web lint
+      - name: Build runnable frontend and backend
+        run: |
+          pnpm --filter @spds/api build
+          pnpm --filter @spds/designer-web build
+
+      - name: Verify live F09 source review and acceptance in browser
+        shell: bash
+        env:
+          SPDS_API_LISTEN: '1'
+          PORT: '3001'
+        run: |
+          set -euo pipefail
+          mkdir -p f09-verified-snapshots
+          node apps/api/dist/index.js >/tmp/plasma-f09-api.log 2>&1 &
+          API_PID=$!
+          pnpm --filter @spds/designer-web exec vite --host 127.0.0.1 --port 5173 >/tmp/plasma-f09-vite.log 2>&1 &
+          VITE_PID=$!
+          trap 'kill "$API_PID" "$VITE_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do
+            if curl -fs http://127.0.0.1:3001/health >/dev/null &&
+               curl -fs http://127.0.0.1:5173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          BROWSER=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
+          test -n "$BROWSER" || exit 1
+          FLAGS="--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu --hide-scrollbars --virtual-time-budget=14000"
+          for mode in review accept; do
+            URL="http://127.0.0.1:5173/?northstar-qa=1&stage=F09"
+            [ "$mode" = accept ] && URL="$URL&accept=1"
+            "$BROWSER" $FLAGS --window-size=1660,1040 --dump-dom "$URL" > "f09-verified-snapshots/$mode-dom.html" 2>/tmp/f09-chrome.err
+            grep -q 'northstar-qa-banner' "f09-verified-snapshots/$mode-dom.html"
+            grep -q 'fusion-revision-workbench' "f09-verified-snapshots/$mode-dom.html"
+            if [ "$mode" = review ]; then
+              grep -q 'fusion-revision-candidate' "f09-verified-snapshots/$mode-dom.html" ||
+                { echo "F09 review candidate not rendered"; exit 1; }
+            else
+              grep -q 'Accepted source revision 1' "f09-verified-snapshots/$mode-dom.html" ||
+                { echo "F09 versioned acceptance not reflected in Worldline"; exit 1; }
+            fi
+            "$BROWSER" $FLAGS --window-size=1660,1040 --screenshot="f09-verified-snapshots/F09-$mode-desktop.png" "$URL" >/dev/null 2>/tmp/f09-chrome-shot.err
+            echo "PASS F09 $mode"
+          done
+          "$BROWSER" $FLAGS --window-size=430,920 --screenshot="f09-verified-snapshots/F09-review-mobile.png" \
+            "http://127.0.0.1:5173/?northstar-qa=1&stage=F09" >/dev/null 2>/tmp/f09-mobile.err
+          python3 - <<'PY'
+          import os,struct
+          files=[f for f in os.listdir('f09-verified-snapshots') if f.endswith('.png')]
+          assert len(files)==3
+          for f in files:
+              with open('f09-verified-snapshots/'+f,'rb') as fh:
+                  header=fh.read(24)
+              assert header[:8]==bytes.fromhex('89504e470d0a1a0a'),f
+              width,height=struct.unpack('>II',header[16:24])
+              assert width>300 and height>300,f
+          print('Validated',len(files),'browser screenshots')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: F09-northstar-verified-revision-snapshots
+          path: f09-verified-snapshots/*.png
+          retention-days: 14

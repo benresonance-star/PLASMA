@@ -3,6 +3,7 @@ import { registerFusionPreviewRoute } from './fusion-preview.js';
 import { registerFusionChangeRoute } from './fusion-change.js';
 import { registerFusionGeometryRoute } from './fusion-geometry.js';
 import { registerFusionContinuityRoute } from './fusion-continuity.js';
+import { registerFusionWorkspaceRoutes } from './fusion-workspaces.js';
 import cors from '@fastify/cors';
 import { InMemoryVersionStore, asPromise, type VersionStore } from '@spds/version-core';
 import {
@@ -154,6 +155,7 @@ export function buildServer(
   registerFusionChangeRoute(app, store);
   registerFusionGeometryRoute(app, store);
   registerFusionContinuityRoute(app, store);
+  registerFusionWorkspaceRoutes(app, store);
 
   app.post<{ Body: { name: string } }>('/models', async (req, reply) => {
     const model = await asPromise(store.createModel(req.body.name));
