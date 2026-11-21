@@ -100,6 +100,10 @@ export interface ViewportCanvasProps {
   readonly onViewportPrefsChanged?: () => void;
   /** Custom viewport clear colour (`#rrggbb`); null/undefined uses theme defaults. */
   readonly backgroundHex?: string | null;
+  /** Fit a newly generated source candidate when its spatial extents change. */
+  readonly autoFitOnGeometryChange?: boolean;
+  /** Show a generated native candidate at full opacity, hiding the reference layer without mutating saved engine preferences. */
+  readonly focusServiceGeometry?: boolean;
 }
 
 function readDarkTheme(): boolean {
@@ -139,6 +143,7 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
   const [cubeOrient, setCubeOrient] = useState({ rotX: -28, rotY: 32 });
   const [dark, setDark] = useState(readDarkTheme);
   const serviceAvailable = (props.geometryServiceMeshes?.length ?? 0) > 0;
+  const focusService = Boolean(props.focusServiceGeometry && serviceAvailable);
   const [initialPrefs] = useState(loadViewportPrefs);
   const [referenceLayer, setReferenceLayer] = useState<EngineLayerState>(
     () => initialPrefs.engines.reference,
@@ -146,6 +151,8 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
   const [serviceLayer, setServiceLayer] = useState<EngineLayerState>(
     () => initialPrefs.engines.geometryService,
   );
+  const shownReferenceLayer: EngineLayerState = focusService ? { visible: false, opacity: 0 } : referenceLayer;
+  const shownServiceLayer: EngineLayerState = focusService ? { visible: true, opacity: 1 } : serviceLayer;
   const cameraPoseRef = useRef<PersistedViewportCamera | null>(initialPrefs.camera);
   const persistCameraTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onViewportPrefsChangedRef = useRef(props.onViewportPrefsChanged);
@@ -200,12 +207,12 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
 
   useEffect(() => {
     if (referenceRootRef.current) {
-      setEngineLayerAppearance(referenceRootRef.current, referenceLayer);
+      setEngineLayerAppearance(referenceRootRef.current, shownReferenceLayer);
     }
     if (serviceRootRef.current) {
-      setEngineLayerAppearance(serviceRootRef.current, serviceLayer);
+      setEngineLayerAppearance(serviceRootRef.current, shownServiceLayer);
     }
-  }, [referenceLayer, serviceLayer, props.meshes, props.geometryServiceMeshes]);
+  }, [referenceLayer, serviceLayer, props.meshes, props.geometryServiceMeshes, focusService]);
 
   useEffect(() => {
     persistEngineLayers({
@@ -324,9 +331,9 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
     referenceRootRef.current = referenceRoot;
     serviceRootRef.current = geometryServiceRoot;
     sceneRef.current = scene;
-    setEngineLayerAppearance(referenceRoot, referenceLayer);
+    setEngineLayerAppearance(referenceRoot, shownReferenceLayer);
     if (geometryServiceRoot) {
-      setEngineLayerAppearance(geometryServiceRoot, serviceLayer);
+      setEngineLayerAppearance(geometryServiceRoot, shownServiceLayer);
     }
     const renderer = new WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -349,7 +356,8 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
     const damping0 = controls.enableDamping;
     controls.enableDamping = false;
     const fitted = fitCameraToObject(camera, root);
-    const savedPose = cameraPoseRef.current;
+    const savedPose = props.autoFitOnGeometryChange && (props.geometryServiceMeshes?.length ?? 0) > 0
+      ? null : cameraPoseRef.current;
     if (savedPose) {
       camera.position.set(
         savedPose.position[0],
@@ -578,7 +586,7 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
       renderer.dispose();
       host.replaceChildren();
     };
-  }, [props.meshes, props.geometryServiceMeshes, chrome]);
+  }, [props.meshes, props.geometryServiceMeshes, chrome, props.autoFitOnGeometryChange]);
 
   return (
     <div className="spds-viewport" data-chrome={chrome}>

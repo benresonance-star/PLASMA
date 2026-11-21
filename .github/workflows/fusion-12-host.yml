@@ -1,0 +1,89 @@
+name: Fusion 12 Native Hosted Openings
+
+on:
+  pull_request:
+    paths:
+      - 'apps/api/src/fusion-host-opening*'
+      - 'apps/api/src/server.ts'
+      - 'apps/designer-web/src/ui/NorthstarStudio.tsx'
+      - 'apps/designer-web/src/ui/NorthstarVisualQA.tsx'
+      - 'apps/designer-web/src/ui/northstar.css'
+      - '.github/workflows/fusion-12-host.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  host-cut:
+    runs-on: ubuntu-latest
+    timeout-minutes: 23
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build native geometry API and designer dependencies
+        run: |
+          pnpm --filter '@spds/api^...' build
+          pnpm --filter @spds/api build
+          pnpm --filter '@spds/geometry-occt^...' build
+          pnpm --filter @spds/geometry-occt build
+          pnpm --filter '@spds/designer-web^...' build
+          pnpm --filter @spds/designer-web typecheck
+          pnpm --filter @spds/designer-web lint
+      - name: Verify Loft Z-up to Northstar Y-up scene conversion
+        run: pnpm --filter @spds/designer-web exec vitest run src/ui/northstar-coordinate.test.ts
+      - name: Inspect Build relation and native Boolean test constraints
+        run: pnpm --filter @spds/api exec vitest run src/fusion-host-opening.test.ts
+      - name: Actual OpenCascade Boolean with Northstar screenshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p f12-verified-snapshots
+          GEOMETRY_KERNEL=occt-native PORT=7080 node services/geometry-occt/dist/server-main.js >/tmp/f12-native.log 2>&1 &
+          NATIVE_PID=$!
+          SPDS_API_LISTEN=1 GEOMETRY_URL=http://127.0.0.1:7080 PORT=3001 node apps/api/dist/index.js >/tmp/f12-api.log 2>&1 &
+          API_PID=$!
+          pnpm --filter @spds/designer-web exec vite --host 127.0.0.1 --port 5173 >/tmp/f12-vite.log 2>&1 &
+          VITE_PID=$!
+          trap 'kill "$NATIVE_PID" "$API_PID" "$VITE_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 110); do
+            if curl -fs http://127.0.0.1:7080/health >/dev/null &&
+               curl -fs http://127.0.0.1:3001/health >/dev/null &&
+               curl -fs http://127.0.0.1:5173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fs http://127.0.0.1:7080/health || { cat /tmp/f12-native.log; exit 1; }
+          curl -fs http://127.0.0.1:3001/health || { cat /tmp/f12-api.log; exit 1; }
+          GEOMETRY_URL=http://127.0.0.1:7080 pnpm --filter @spds/api exec vitest run src/fusion-host-opening.test.ts
+          BROWSER=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
+          test -n "$BROWSER"
+          FLAGS="--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu --hide-scrollbars --virtual-time-budget=22000"
+          URL="http://127.0.0.1:5173/?northstar-qa=1&stage=F12"
+          "$BROWSER" $FLAGS --window-size=1660,1040 --dump-dom "$URL" > f12-verified-snapshots/F12-dom.html 2>/tmp/f12-chrome.err
+          grep -q 'northstar-qa-banner' f12-verified-snapshots/F12-dom.html
+          grep -q 'fusion-hosting-passed' f12-verified-snapshots/F12-dom.html || {
+            echo 'Live F12 hosting evidence missing'
+            tail -40 /tmp/f12-api.log; tail -25 /tmp/f12-chrome.err; exit 1;
+          }
+          "$BROWSER" $FLAGS --window-size=1660,1040 --screenshot=f12-verified-snapshots/F12-native-host-desktop.png "$URL" >/dev/null 2>/tmp/f12-shot.err
+          python3 - <<'PY'
+          import struct
+          with open('f12-verified-snapshots/F12-native-host-desktop.png','rb') as fp:b=fp.read(24)
+          assert b[:8]==bytes.fromhex('89504e470d0a1a0a')
+          assert struct.unpack('>II',b[16:24])==(1660,1040)
+          print('Verified actual native Build-hosted window cut in Northstar')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: F12-native-host-opening-verified-snapshot
+          path: f12-verified-snapshots/*.png
+          retention-days: 14

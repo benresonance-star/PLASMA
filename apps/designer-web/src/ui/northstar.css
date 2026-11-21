@@ -200,3 +200,9 @@
 .northstar-assembly button:disabled { opacity:.5; }
 .northstar-assembly span { color:#356f5a; line-height:1.5; font-size:10px; }
 .northstar-assembly span[role=alert] { color:#a64432; }
+
+.northstar-hosting { display:flex; flex-wrap:wrap; align-items:center; gap:8px; padding:9px 0; border-top:1px solid #bed1c5; border-bottom:1px solid #bed1c5; }
+.northstar-hosting button { border:1px solid #a9563e; background:#e9d2c4; color:#85462e; border-radius:3px; padding:9px 11px; font-size:10px; }
+.northstar-hosting button:disabled { opacity:.48; }
+.northstar-hosting span { color:#3f7966; font-size:10px; line-height:1.5; }
+.northstar-hosting span[role=alert] { color:#9a3c2d; }

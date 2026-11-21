@@ -13,8 +13,10 @@ const buildProject = {
   app: 'Build', schemaVersion: 2, savedAt: at,
   authoritativeGraph: {
     entities: [
-      entity('entity:qa:wall', 'architecture.wall-front', 'Facade wall A4'),
-      entity('entity:qa:window', 'architecture.hosted-opening', 'Guestroom window W-04'),
+      { ...entity('entity:qa:wall', 'architecture.wall-front', 'Facade wall A4'),
+        metadata: { geometryMm: { width: 3000, height: 2800, thickness: 200 } } },
+      { ...entity('entity:qa:window', 'architecture.hosted-opening', 'Guestroom window W-04'),
+        metadata: { openingMm: { width: 150, height: 350, sill: 1000, centerX: 150, minimumJamb: 200 } } },
     ],
     parameters: [{
       id: 'parameter:qa:window-width', kind: 'Parameter', name: 'Window width',
