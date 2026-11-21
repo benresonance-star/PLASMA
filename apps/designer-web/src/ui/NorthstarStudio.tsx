@@ -422,6 +422,7 @@ export function NorthstarStudio(props: NorthstarProps) {
           <div className="northstar-viewport">
             <ViewportCanvas
               meshes={meshes} geometryServiceMeshes={[...serviceMeshes, ...geometryMeshes]}
+              autoFitOnGeometryChange
               selectedSemanticId={selectedSemanticId}
               backgroundHex="#26363b"
               onPickSemantic={onSelectSemantic}
