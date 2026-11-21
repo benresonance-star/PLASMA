@@ -238,7 +238,8 @@ export async function resolveHotel(store:VersionStore,branchId:string,
      manifest.rooms.some(r=>!modules.has(r.moduleId)||!modules.has(r.windowModuleId)))
     throw new Error('HOTEL_ROOM_SOURCE_LINK_BROKEN');
   const width=modules.get(hotelModuleId('window-a4'))!.windowWidthMm;
-  for(const source of modules.values())if(source.windowWidthMm!==width)
+  for(const source of modules.values())if(source.moduleKey!=='building-shell' &&
+    source.windowWidthMm!==width)
     throw new Error('HOTEL_UNSYNCHRONISED_WINDOW_DRIVERS');
   return {hotelId,manifest,modules};
 }
