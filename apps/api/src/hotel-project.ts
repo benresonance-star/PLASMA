@@ -133,6 +133,12 @@ export function makeHotelLoftSource(key:HotelModuleKey,windowWidthMm=1800):Hotel
     box(parts,instances,'FrameHead','Bronze aluminium','frame',w,110,t,0,0,h-t);
     box(parts,instances,'FrameSill','Bronze aluminium','frame',w,110,t,0,0,0);
     box(parts,instances,'CentreMullion','Bronze aluminium','frame',60,100,h,0,0,0);
+    box(parts,instances,'InnerSashLeft','Anodised bronze','sash',45,40,h-120,-w/2+145,95,65);
+    box(parts,instances,'InnerSashRight','Anodised bronze','sash',45,40,h-120,w/2-145,95,65);
+    box(parts,instances,'InnerSashRail','Anodised bronze','sash',w-280,40,40,0,95,h/2);
+    box(parts,instances,'ThermalBreakHead','Thermal isolation','thermal-break',w-180,35,35,0,75,h-105);
+    box(parts,instances,'ThermalBreakSill','Thermal isolation','thermal-break',w-180,35,35,0,75,65);
+    box(parts,instances,'SillDrip','Bronze aluminium','flashing',w+120,180,22,0,-70,-38);
   }else if(key==='building-shell'){
     box(parts,instances,'PodiumSlab','Concrete','shell',49400,22400,360,0,0,-360);
     box(parts,instances,'LobbyRoof','Concrete','shell',47200,20000,220,0,0,FIRST-220);
@@ -149,6 +155,35 @@ export function makeHotelLoftSource(key:HotelModuleKey,windowWidthMm=1800):Hotel
     box(parts,instances,'LobbyGlazingSouth','Glazing','lobby-glazing',46500,130,FIRST-600,0,-10350,0);
     box(parts,instances,'EntranceCanopy','Bronze aluminium','canopy',
       8200,3200,220,0,-12000,3000);
+    // Readable podium, roof-garden edges and serviced roof.
+    box(parts,instances,'PodiumTerraceWest','Limestone','terrace',
+      9900,17600,140,-30000,0,-140);
+    box(parts,instances,'PodiumTerraceEast','Limestone','terrace',
+      9900,17600,140,30000,0,-140);
+    for(let i=0;i<6;i++){
+      box(parts,instances,'TerracePlanter'+i,'Charcoal precast','planter',
+        1300,1800,620,(i-2.5)*7300,12100,-80);
+    }
+    for(let i=0;i<4;i++){
+      box(parts,instances,'RoofGardenPlanter'+i,'Charcoal precast','roof-garden',
+        3100,850,640,(i-1.5)*11800,9100,FIRST+7*STOREY+270);
+    }
+    box(parts,instances,'LiftOverrun','Limestone','roof-service',5200,5400,3200,
+      -5100,0,FIRST+7*STOREY+280);
+    box(parts,instances,'PlantScreen','Perforated bronze','roof-screen',12400,190,2500,
+      5200,-5500,FIRST+7*STOREY+270);
+    box(parts,instances,'LobbyFeatureWall','Dark stone','lobby-wall',
+      9200,250,3400,-13700,-9300,0);
+    box(parts,instances,'EntranceDoor','Glazing','entrance',3200,70,3280,
+      0,-10750,0);
+    box(parts,instances,'CanopyFasciaFront','Bronze aluminium','canopy-edge',
+      8200,140,340,0,-13530,3000);
+    box(parts,instances,'CanopyFasciaSides','Bronze aluminium','canopy-edge',
+      140,3200,340,-4150,-12000,3000);
+    box(parts,instances,'RoofParapetNorth','Limestone','parapet',
+      48400,280,620,0,10380,FIRST+7*STOREY+280);
+    box(parts,instances,'RoofParapetSouth','Limestone','parapet',
+      48400,280,620,0,-10380,FIRST+7*STOREY+280);
   }else{
     const accessible=key==='suite-accessible';
     const corner=key==='suite-corner';
@@ -175,6 +210,25 @@ export function makeHotelLoftSource(key:HotelModuleKey,windowWidthMm=1800):Hotel
       bW,2200,2580,corner?420:-420,1750,180);
     box(parts,instances,'BedPlatform','Timber','interior',
       1850,2200,360,0,5400,180);
+    // Build a more legible, constructible elevation around the actual
+    // window aperture. Parts are still parametric Loft sketch/extrude solids,
+    // not drawn-on decorative textures.
+    box(parts,instances,'WindowRevealLeft','Dark stone','reveal',70,210,1850,
+      -windowWidthMm/2-42,yFacade-90,900);
+    box(parts,instances,'WindowRevealRight','Dark stone','reveal',70,210,1850,
+      windowWidthMm/2+42,yFacade-90,900);
+    box(parts,instances,'WindowSillFlash','Anodised bronze','flashing',
+      windowWidthMm+120,400,35,0,yFacade-40,866);
+    box(parts,instances,'WindowHeadFlash','Anodised bronze','flashing',
+      windowWidthMm+120,360,35,0,yFacade-30,2750);
+    box(parts,instances,'FacadeFinnedLeft','Anodised bronze','facade-fin',
+      95,410,3000,-R_W/2+130,yFacade-180,220);
+    box(parts,instances,'FacadeFinnedRight','Anodised bronze','facade-fin',
+      95,410,3000,R_W/2-130,yFacade-180,220);
+    box(parts,instances,'BalconyEdge','Dark stone','balcony-edge',
+      R_W-120,90,190,0,R_D+720,0);
+    box(parts,instances,'SpandrelBand','Limestone','spandrel',
+      R_W-80,170,110,0,yFacade+40,2990);
     if(corner)box(parts,instances,'CornerFin','Bronze aluminium','facade-fin',
       90,350,3220,R_W/2-50,R_D-290,180);
   }
