@@ -274,6 +274,7 @@ export function NorthstarStudio(props: NorthstarProps) {
             <ViewportCanvas
               meshes={meshes} geometryServiceMeshes={[...serviceMeshes, ...geometryMeshes]}
               selectedSemanticId={selectedSemanticId}
+              backgroundHex="#26363b"
               onPickSemantic={onSelectSemantic}
               {...(chrome ? { chrome } : {})}
             />
@@ -331,6 +332,12 @@ export function NorthstarStudio(props: NorthstarProps) {
                     <ArrowRight size={14}/>
                   </button>))}
             </div>
+            <ContinuityInspector
+              fusion={fusion} selectedSemanticId={selectedSemanticId}
+              onSelectSemantic={onSelectSemantic}
+              modelId={modelId} branchId={branchId} headHash={headHash}
+              onDetail={setDetailSvg} onRegistration={setSiteFit}
+            />
             <div className="northstar-proposal">
               <div className="northstar-subheading">Design change / F02</div>
               <p className="northstar-note">Draft one typed Build parameter change. A Loft driver is linked only when you explicitly select it.</p>
@@ -372,12 +379,6 @@ export function NorthstarStudio(props: NorthstarProps) {
                 <ul>{impact.unresolved.map((x) => <li key={x}>{x}</li>)}</ul>
               </div>}
             </div>
-            <ContinuityInspector
-              fusion={fusion} selectedSemanticId={selectedSemanticId}
-              onSelectSemantic={onSelectSemantic}
-              modelId={modelId} branchId={branchId} headHash={headHash}
-              onDetail={setDetailSvg} onRegistration={setSiteFit}
-            />
           </div>
         </section>
       </div>
