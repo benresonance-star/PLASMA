@@ -41,6 +41,8 @@ jobs:
         run: pnpm --filter @spds/import-core exec vitest run src/fusion.test.ts src/fusion-change.test.ts
       - name: Fusion HTTP and geometry integration tests
         run: pnpm --filter @spds/api exec vitest run src/fusion-preview.test.ts src/fusion-change.test.ts src/fusion-geometry.test.ts
+      - name: Northstar UI markup smoke
+        run: pnpm --filter @spds/designer-web exec vitest run src/ui/NorthstarStudio.test.ts
       - name: Northstar UI typecheck
         run: pnpm --filter @spds/designer-web typecheck
       - name: Northstar UI lint
