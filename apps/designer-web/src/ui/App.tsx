@@ -1979,9 +1979,16 @@ export function App() {
           serviceMeshes={serviceMeshes}
           chrome={session.g8.chrome}
           modelId={session.modelId}
-          branchId={session.aiBranchId ?? session.branchId}
+          branchId={session.branchId}
           headHash={session.headHash}
           sessionEvents={session.timeline}
+          onRevisionUpdated={({ headHash, eventId, action, fusion }) => {
+            if (fusion) setFusionContext(fusion);
+            update((s) => ({
+              ...appSetHead(s, headHash),
+              timeline: [...s.timeline, { id: eventId, kind: 'fusion-source', label: action, atMs: Date.now() }],
+            }));
+          }}
         />
       ) : (
       <div
