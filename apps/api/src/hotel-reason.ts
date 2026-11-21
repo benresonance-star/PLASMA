@@ -154,13 +154,28 @@ export function registerHotelReasonRoutes(app:FastifyInstance,store:VersionStore
           req.body.nextWidthMm);
         if(!req.body.candidateHash||candidate.candidateHash!==req.body.candidateHash)
           return reply.code(409).send({failureCode:'HOTEL_PROPOSAL_STALE'});
+        // F20: capture the accepted comparison boundaries. The before
+        // snapshot is taken only after the proposal fingerprint has passed;
+        // the after snapshot is generated from the newly committed head.
+        const before=await asPromise(store.snapshot(req.body.branchId,
+          'Before A4 window '+candidate.windowWidthBeforeMm+' mm'));
         const result=await reviseHotelWindows(store,{
           modelId:req.params.modelId,branchId:req.body.branchId,
           expectedHeadHash:req.body.expectedHeadHash,hotelId:RIVERSIDE_HOTEL_ID,
           nextWidthMm:req.body.nextWidthMm,
         });
+        let afterSnapshotId:string|null=null;
+        try{
+          const after=await asPromise(store.snapshot(req.body.branchId,
+            'After A4 window '+candidate.windowWidthAfterMm+' mm'));
+          afterSnapshotId=after.snapshotId;
+        }catch{
+          // The commit is authoritative even if nonessential snapshot
+          // storage fails. Do not pretend the comparison exists.
+        }
         return reply.send({
-          ...result,proposalHash:candidate.candidateHash,
+          ...result,beforeSnapshotId:before.snapshotId,afterSnapshotId,
+          proposalHash:candidate.candidateHash,
           proposalDisposition:'human-accepted',
           engineeringApproved:false,publicationReady:false,
         });
