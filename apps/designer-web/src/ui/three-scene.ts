@@ -95,7 +95,7 @@ const HOTEL_MATERIAL_TINT: Readonly<Record<string,number>> = {
   facade:0xa79079,concrete:0xbbc0b9,glass:0x7197a0,
   metal:0x778382,bronze:0x886b52,stone:0xd4cabe,
   'dark-stone':0x666b68,insulation:0xc2b68f,planting:0x557453,
-  timber:0xa0815e,plaster:0xe2dcd0,
+  ceramic:0xe2ded1,timber:0xa0815e,plaster:0xe2dcd0,
 };
 function architectureMaterialColor(material:string|undefined,fallback:number):number {
   return material ? HOTEL_MATERIAL_TINT[material] ?? fallback : fallback;
