@@ -87,8 +87,8 @@ export function previewSupportedLoftSolid(input: {
   }
   const placement = record(instance['placement'] ?? {}, 'Loft.placement');
   const [tx,ty,tz] = translate(placement['translation'] ?? [0,0,0]);
-  if (placement['rotation'] !== undefined || placement['scale'] !== undefined) {
-    throw new Error('FUSION_PLACEMENT_UNSUPPORTED: rotations and scaling must not be omitted');
+  if (Object.keys(placement).some((key) => key !== 'translation')) {
+    throw new Error('FUSION_PLACEMENT_UNSUPPORTED: only translation may be bridged');
   }
   const cx = tx + dx;
   const cy = ty + dy;
