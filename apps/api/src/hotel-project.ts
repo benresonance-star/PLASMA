@@ -205,11 +205,42 @@ export function makeHotelLoftSource(key:HotelModuleKey,windowWidthMm=1800):Hotel
       windowWidthMm,160,650,0,yFacade,2750);
     box(parts,instances,'Balcony','Concrete','balcony',
       R_W-120,750,160,0,R_D+375,0);
-    const bW=accessible?2500:2100;
-    box(parts,instances,'BathroomPod','Timber','interior',
-      bW,2200,2580,corner?420:-420,1750,180);
-    box(parts,instances,'BedPlatform','Timber','interior',
+    // F15: a bathroom is a physically assembled system, never an opaque cube.
+    const bW=accessible?2500:2100, bx=corner?420:-420, by=1750;
+    box(parts,instances,'WetAreaTray','Ceramic','wet-area',
+      bW,2200,70,bx,by,180);
+    box(parts,instances,'WetWallLeft','Warm plaster','wet-wall',
+      80,2200,2530,bx-bW/2+40,by,250);
+    box(parts,instances,'WetWallRight','Warm plaster','wet-wall',
+      80,2200,2530,bx+bW/2-40,by,250);
+    box(parts,instances,'WetWallRear','Warm plaster','wet-wall',
+      bW,85,2530,bx,by+1057,250);
+    box(parts,instances,'WetWallEntryLeft','Warm plaster','wet-wall',
+      310,85,2530,bx-bW/2+155,by-1057,250);
+    box(parts,instances,'WetWallEntryRight','Warm plaster','wet-wall',
+      310,85,2530,bx+bW/2-155,by-1057,250);
+    box(parts,instances,'ShowerScreen','Glazing','wet-screen',
+      1000,25,1990,bx+350,by+275,250);
+    box(parts,instances,'VanityJoinery','Timber','joinery',
+      900,560,780,bx-430,by-550,250);
+    box(parts,instances,'Basin','Ceramic','sanitary',
+      540,410,180,bx-430,by-550,1020);
+    box(parts,instances,'ToiletPan','Ceramic','sanitary',
+      390,680,400,bx+350,by-600,250);
+    box(parts,instances,'BathroomEntryDoor','Timber','door',
+      780,45,2200,bx,by-1050,250);
+    box(parts,instances,'BedPlatform','Timber','bed-base',
       1850,2200,360,0,5400,180);
+    box(parts,instances,'BedMattress','Warm plaster','soft-furnishing',
+      1850,2200,250,0,5400,540);
+    box(parts,instances,'BedHead','Timber','joinery',
+      2100,170,1080,0,6540,180);
+    box(parts,instances,'Desk','Timber','joinery',
+      1300,550,50,R_W/2-760,5000,920);
+    box(parts,instances,'Wardrobe','Timber','joinery',
+      900,620,2490,-R_W/2+620,3320,180);
+    box(parts,instances,'EntryDoor','Timber','door',
+      900,55,2250,R_W/2-530,110,180);
     // Build a more legible, constructible elevation around the actual
     // window aperture. Parts are still parametric Loft sketch/extrude solids,
     // not drawn-on decorative textures.
