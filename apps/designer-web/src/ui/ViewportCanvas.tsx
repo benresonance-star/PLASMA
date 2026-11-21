@@ -100,6 +100,8 @@ export interface ViewportCanvasProps {
   readonly onViewportPrefsChanged?: () => void;
   /** Custom viewport clear colour (`#rrggbb`); null/undefined uses theme defaults. */
   readonly backgroundHex?: string | null;
+  /** Fit a newly generated source candidate when its spatial extents change. */
+  readonly autoFitOnGeometryChange?: boolean;
 }
 
 function readDarkTheme(): boolean {
@@ -349,7 +351,8 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
     const damping0 = controls.enableDamping;
     controls.enableDamping = false;
     const fitted = fitCameraToObject(camera, root);
-    const savedPose = cameraPoseRef.current;
+    const savedPose = props.autoFitOnGeometryChange && (props.geometryServiceMeshes?.length ?? 0) > 0
+      ? null : cameraPoseRef.current;
     if (savedPose) {
       camera.position.set(
         savedPose.position[0],
@@ -578,7 +581,7 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
       renderer.dispose();
       host.replaceChildren();
     };
-  }, [props.meshes, props.geometryServiceMeshes, chrome]);
+  }, [props.meshes, props.geometryServiceMeshes, chrome, props.autoFitOnGeometryChange]);
 
   return (
     <div className="spds-viewport" data-chrome={chrome}>
