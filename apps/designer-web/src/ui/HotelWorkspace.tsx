@@ -1,7 +1,7 @@
 import { useCallback,useEffect,useMemo,useRef,useState } from 'react';
 import {
   ArrowLeft,ArrowRight,Box,Building2,Check,ChevronDown,Eye,FileText,
-  FolderTree,GitCommitHorizontal,Layers,
+  FolderTree,GitCommitHorizontal,Layers,MapPin,
   Network,RefreshCw,Scan,ShieldAlert,SlidersHorizontal,
 } from 'lucide-react';
 import { ViewportCanvas } from './ViewportCanvas.js';
