@@ -1,10 +1,11 @@
 import { useCallback,useEffect,useMemo,useRef,useState } from 'react';
 import {
   ArrowLeft,ArrowRight,Box,Building2,Check,ChevronDown,Eye,FileText,
-  FolderTree,GitBranch,GitCommitHorizontal,Layers,MapPin,
+  FolderTree,GitBranch,GitCommitHorizontal,Layers,
   Network,RefreshCw,Scan,ShieldAlert,SlidersHorizontal,
 } from 'lucide-react';
 import { ViewportCanvas } from './ViewportCanvas.js';
+import { HotelPlaceLens } from './HotelPlaceLens.js';
 import { cadZUpMeshesToViewportYUp } from './northstar-coordinate.js';
 import { apiBaseUrl } from '../api-client.js';
 import type { DisplayMeshInput } from '../mesh-bridge.js';
@@ -331,22 +332,11 @@ export function HotelWorkspace({
         <div className="hotel-pane-heading"><div><span className="hotel-index">01 / PLACE & SOURCES</span>
           <h3><MapPin size={16}/> Reality Layer</h3></div>
           <span className="hotel-dot-warning">UNREGISTERED</span></div>
-        <div className="hotel-site">
-          <div className="hotel-site-grid"/>
-          <svg viewBox="0 0 330 194" aria-label="Schematic Riverside site outline, not registered or surveyed">
-            <path d="M 0 146 L 330 63 M 14 0 L 142 194" stroke="#8d9a95" strokeWidth="17" opacity=".32"/>
-            <rect x="87" y="30" width="176" height="119" rx="4" fill="#a8aaa0" stroke="#f2e5c9" strokeWidth="3"
-              transform="rotate(-12 175 90)"/>
-            <path d="M 121 45 L 242 20 L 266 136 L 144 160 Z" fill="#53625b" opacity=".8"/>
-            <path d="M 142 51 L 244 30 L 263 125 L 160 149 Z" stroke="#e8b18c" strokeWidth="3" fill="none"
-              strokeDasharray="6 4"/>
-            <circle cx="241" cy="45" r="5" fill="#e6a579"/>
-            <text x="24" y="178" fill="#f2f0e9" fontSize="11" letterSpacing="1">CONCEPT SITE / LOCAL XY ONLY</text>
-          </svg>
-          <span className="hotel-site-pin"><MapPin size={12}/> HOTEL / SYNTHETIC</span>
-        </div>
-        <div className="hotel-site-status"><ShieldAlert size={15}/>
-          <span>No surveyed georeference or captured site reality. Design coordinates are local millimetres.</span></div>
+        <HotelPlaceLens
+          modelId={modelId} branchId={branchId} headHash={headHash}
+          hotelId={overview?.hotelId??null}
+          onRevisionUpdated={onRevisionUpdated}
+        />
 
         <div className="hotel-section-title"><FolderTree size={14}/> Linked source projects
           <strong>{modulesSorted.length}</strong></div>
