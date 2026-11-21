@@ -66,7 +66,7 @@ export function NorthstarStudio(props: NorthstarProps) {
     return stage === 'F06' ? 'place' : stage === 'F07' || stage === 'F08' || stage === 'F09' ? 'reason' : 'design';
   });
   const [hotelOpen, setHotelOpen] = useState(() => typeof window !== 'undefined' && import.meta.env.DEV &&
-    new URLSearchParams(window.location.search).get('stage') === 'F13');
+    ['F13','F21'].includes(new URLSearchParams(window.location.search).get('stage') ?? ''));
   const [media, setMedia] = useState<LocalMedia | null>(null);
   const [mediaError, setMediaError] = useState('');
   const [parameterId, setParameterId] = useState('');
