@@ -41,6 +41,8 @@ jobs:
           pnpm --filter '@spds/designer-web^...' build
           pnpm --filter @spds/designer-web typecheck
           pnpm --filter @spds/designer-web lint
+      - name: Verify display-only site massing cannot corrupt authoritative native geometry
+        run: pnpm --filter @spds/designer-web exec vitest run src/ui/hotel-study-context.test.ts
       - name: Check F14-F21 source + construction + registration + docs + governance + history + interchange
         run: |
           pnpm --filter @spds/api exec vitest run \
