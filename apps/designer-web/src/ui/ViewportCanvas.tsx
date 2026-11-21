@@ -104,6 +104,8 @@ export interface ViewportCanvasProps {
   readonly autoFitOnGeometryChange?: boolean;
   /** Model-space fit margin (1.45 default). A lower value fills more of the viewport. */
   readonly fitOffset?: number;
+  /** Visual-only context, never included in source-model geometry or site evidence. */
+  readonly syntheticUrbanContext?: boolean;
   /** Show a generated native candidate at full opacity, hiding the reference layer without mutating saved engine preferences. */
   readonly focusServiceGeometry?: boolean;
 }
@@ -323,6 +325,7 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
       props.geometryServiceMeshes,
       chrome,
       initialDark,
+      props.syntheticUrbanContext ?? false,
     );
     const { scene, camera, root, referenceRoot, geometryServiceRoot } = built;
     scene.background = new Color(
@@ -590,7 +593,7 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
       renderer.dispose();
       host.replaceChildren();
     };
-  }, [props.meshes, props.geometryServiceMeshes, chrome, props.autoFitOnGeometryChange, props.fitOffset]);
+  }, [props.meshes, props.geometryServiceMeshes, chrome, props.autoFitOnGeometryChange, props.fitOffset, props.syntheticUrbanContext]);
 
   return (
     <div className="spds-viewport" data-chrome={chrome}>
