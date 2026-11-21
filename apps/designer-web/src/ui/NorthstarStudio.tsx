@@ -76,12 +76,15 @@ export function NorthstarStudio(props: NorthstarProps) {
   const [geometryInfo, setGeometryInfo] = useState('');
   const [geometryError, setGeometryError] = useState('');
   const [geometryBusy, setGeometryBusy] = useState(false);
+  const [nativeBusy, setNativeBusy] = useState(false);
+  const [nativeError, setNativeError] = useState('');
+  const [nativeProof, setNativeProof] = useState<{readonly kernel:string; readonly topologyElementCount:number;readonly maximumBoundingErrorMm:number;readonly relativeVolumeError:number;readonly sourceScope:string}|null>(null);
   const qaGeomTriggered = useRef(false);
   const [detailSvg, setDetailSvg] = useState<string|null>(null);
   const [siteFit, setSiteFit] = useState<{readonly rmsResidualMm:number;readonly pointCount:number}|null>(null);
   useEffect(() => () => { if (media) URL.revokeObjectURL(media.url); }, [media]);
   useEffect(() => { setImpact(null); setImpactError(''); setParameterId(''); setLinkKey(''); setGeometryMeshes([]); setGeometryInfo(''); }, [fusion]);
-  useEffect(() => { setGeometryMeshes([]); setGeometryInfo(''); }, [headHash]);
+  useEffect(() => { setGeometryMeshes([]); setGeometryInfo(''); setNativeProof(null); setNativeError(''); }, [headHash, fusion, selectedSemanticId]);
 
   const preview = fusion?.preview;
   const selection = preview?.objects.find((o) => o.id === selectedSemanticId);
@@ -192,6 +195,29 @@ export function NorthstarStudio(props: NorthstarProps) {
     }
   }
   const canPropose = Boolean(fusion && modelId && branchId && headHash && selectedParameter && !running);
+  async function verifyNativeOpenCascade() {
+    if (!fusion || !selectedLoftOccurrence || !modelId || !branchId || !headHash) return;
+    setNativeBusy(true); setNativeError(''); setNativeProof(null);
+    try {
+      const response = await fetch(apiBaseUrl() + '/imports/fusion/native-parity', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          buildProject: fusion.buildProject, loftProject: fusion.loftProject,
+          bindings: fusion.bindings, loftOccurrenceId: selectedLoftOccurrence.id,
+          expectedSourceHashes: {
+            build: fusion.preview.sources.find((s) => s.system === 'build')?.sourceHash,
+            loft: fusion.preview.sources.find((s) => s.system === 'loft')?.sourceHash,
+          },
+          modelId, branchId, expectedHeadHash: headHash,
+        }),
+      });
+      const data:unknown = await response.json();
+      if (!response.ok) throw new Error(String(object(data)?.['summary'] ?? object(data)?.['failureCode'] ?? 'Native OCC service unavailable'));
+      setNativeProof(data as NonNullable<typeof nativeProof>);
+    } catch (err) {
+      setNativeError(err instanceof Error ? err.message : 'Native verification failed');
+    } finally { setNativeBusy(false); }
+  }
   async function previewLoftGeometry() {
     if (!fusion || !selectedLoftOccurrence || !modelId || !branchId || !headHash) return;
     setGeometryBusy(true); setGeometryError(''); setGeometryMeshes([]); setGeometryInfo('');
@@ -313,6 +339,19 @@ export function NorthstarStudio(props: NorthstarProps) {
               <span>{geometryInfo || 'Supported: single centred rectangle sketch + extrusion only'}</span>
             </div>
             {geometryError && <p role="alert" className="northstar-error">{geometryError}</p>}
+            <div className="northstar-native">
+              <button type="button" data-testid="fusion-native-verify"
+                onClick={() => void verifyNativeOpenCascade()}
+                disabled={!canPreviewGeometry || nativeBusy}>
+                {nativeBusy ? 'Checking native OCCT…' : 'Verify actual OpenCascade B-rep'}
+              </button>
+              {nativeError && <span role="alert">{nativeError}</span>}
+              {nativeProof && <span data-testid="fusion-native-passed">
+                OCCT {nativeProof.kernel} · {nativeProof.topologyElementCount} topology elements ·
+                extents Δ {nativeProof.maximumBoundingErrorMm.toFixed(3)} mm ·
+                volume Δ {(nativeProof.relativeVolumeError*100).toFixed(4)}% · scoped proof only
+              </span>}
+            </div>
             <div className="northstar-meta"><span>Selected semantic ID</span><strong>{short(selectedSemanticId)}</strong></div>
             <div className="northstar-meta"><span>Imported source geometry</span><strong>Not compiled into this viewport</strong></div>
           </div>
