@@ -7,9 +7,9 @@ export interface FusionPreview {
   readonly publicationReady: false;
   readonly geometryStatus: string;
   readonly sources: readonly { readonly system: string; readonly projectId: string; readonly sourceHash: string }[];
-  readonly objects: readonly { readonly id: string; readonly name: string; readonly semanticType: string }[];
-  readonly parameters: readonly unknown[];
-  readonly relationships: readonly unknown[];
+  readonly objects: readonly { readonly id: string; readonly name: string; readonly semanticType: string; readonly metadata?: Readonly<Record<string, unknown>> }[];
+  readonly parameters: readonly { readonly id: string; readonly name: string; readonly role: string; readonly quantity: { readonly value: number; readonly unit: string }; readonly affects: readonly string[]; readonly editableBy: readonly string[]; readonly domain?: { readonly min?: number; readonly max?: number } }[];
+  readonly relationships: readonly { readonly id: string; readonly relationType: string; readonly from: string; readonly to: string }[];
   readonly bindings: readonly { readonly buildEntityId: string; readonly loftOccurrenceId: string }[];
   readonly unresolved: readonly string[];
 }
