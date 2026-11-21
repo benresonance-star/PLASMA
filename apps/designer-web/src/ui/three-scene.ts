@@ -91,6 +91,14 @@ const SECONDARY_EMISSIVE_INTENSITY = 0.22;
 
 const FACE_TINT_REFERENCE = 0xffffff;
 const FACE_TINT_SERVICE = 0xd8e4f0;
+const HOTEL_MATERIAL_TINT: Readonly<Record<string,number>> = {
+  facade:0xa68b76,concrete:0xc4c5bc,glass:0x517688,
+  metal:0x816a54,stone:0x999992,timber:0x9b795b,
+  plaster:0xd5d2c5,
+};
+function architectureMaterialColor(material:string|undefined,fallback:number):number {
+  return material ? HOTEL_MATERIAL_TINT[material] ?? fallback : fallback;
+}
 
 export type EngineLayerId = 'reference' | 'geometry-service';
 
