@@ -102,6 +102,8 @@ export interface ViewportCanvasProps {
   readonly backgroundHex?: string | null;
   /** Fit a newly generated source candidate when its spatial extents change. */
   readonly autoFitOnGeometryChange?: boolean;
+  /** Model-space fit margin (1.45 default). A lower value fills more of the viewport. */
+  readonly fitOffset?: number;
   /** Show a generated native candidate at full opacity, hiding the reference layer without mutating saved engine preferences. */
   readonly focusServiceGeometry?: boolean;
 }
@@ -253,7 +255,7 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
     // Disable damping so residual orbit deltas cannot fight the extents fit.
     const damping = controls.enableDamping;
     controls.enableDamping = false;
-    const { target, distance } = fitCameraToObject(camera, root);
+    const { target, distance } = fitCameraToObject(camera, root, props.fitOffset ?? 1.45);
     distanceRef.current = distance;
     controls.target.copy(target);
     controls.minDistance = Math.max(distance / 50, 0.1);
@@ -355,7 +357,9 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
 
     const damping0 = controls.enableDamping;
     controls.enableDamping = false;
-    const fitted = fitCameraToObject(camera, root);
+    camera.aspect=(host.clientWidth || 640)/(host.clientHeight || 400);
+    camera.updateProjectionMatrix();
+    const fitted = fitCameraToObject(camera, root, props.fitOffset ?? 1.45);
     const savedPose = props.autoFitOnGeometryChange && (props.geometryServiceMeshes?.length ?? 0) > 0
       ? null : cameraPoseRef.current;
     if (savedPose) {
@@ -586,7 +590,7 @@ export function ViewportCanvas(props: ViewportCanvasProps) {
       renderer.dispose();
       host.replaceChildren();
     };
-  }, [props.meshes, props.geometryServiceMeshes, chrome, props.autoFitOnGeometryChange]);
+  }, [props.meshes, props.geometryServiceMeshes, chrome, props.autoFitOnGeometryChange, props.fitOffset]);
 
   return (
     <div className="spds-viewport" data-chrome={chrome}>
