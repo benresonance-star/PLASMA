@@ -91,36 +91,35 @@ export function NorthstarVisualQA(){
   const [selection,setSelection]=useState<string|null>('entity:qa:window');
   const [error,setError]=useState('');
   const [sourceOpen,setSourceOpen]=useState(false);
-  const started=useRef(false);
+  const startup=useRef<Promise<{context:FusionContext;model:ModelFixture}>|null>(null);
   useEffect(()=>{
-    if(started.current)return;
-    started.current=true;
     let active=true;
-    async function load(){
-      try{
-        const create=await fetch('/api/models',{
-          method:'POST',headers:{'content-type':'application/json'},
-          body:JSON.stringify({name:'SYNTHETIC / NORTHSTAR VISUAL QA'}),
-        });
-        if(!create.ok)throw new Error('API model bootstrap unavailable');
-        const data=await create.json() as {model:{modelId:string};branchId:string;headHash:string};
-        const result=await fetch('/api/imports/fusion/preview',{
-          method:'POST',headers:{'content-type':'application/json'},
-          body:JSON.stringify({buildProject,loftProject,bindings}),
-        });
-        const payload:unknown=await result.json();
-        if(!result.ok)throw new Error('Source reconciliation rejected: '+JSON.stringify(payload));
-        if(active && new URLSearchParams(window.location.search).get('stage') === 'F03') {
-          const bound = (payload as FusionContext['preview']).bindings[0]?.loftOccurrenceId;
-          if(bound)setSelection(bound);
-        }
-        if(active)setState({
-          context:{preview:payload as FusionContext['preview'],buildProject,loftProject,bindings},
-          model:{modelId:data.model.modelId,branchId:data.branchId,headHash:data.headHash},
-        });
-      }catch(err){if(active)setError(err instanceof Error?err.message:'Fixture unavailable');}
-    }
-    void load();
+    if(!startup.current) startup.current=(async()=>{
+      const create=await fetch('/api/models',{
+        method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({name:'SYNTHETIC / NORTHSTAR VISUAL QA'}),
+      });
+      if(!create.ok)throw new Error('API model bootstrap unavailable');
+      const data=await create.json() as {model:{modelId:string};branchId:string;headHash:string};
+      const result=await fetch('/api/imports/fusion/preview',{
+        method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({buildProject,loftProject,bindings}),
+      });
+      const payload:unknown=await result.json();
+      if(!result.ok)throw new Error('Source reconciliation rejected: '+JSON.stringify(payload));
+      return {
+        context:{preview:payload as FusionContext['preview'],buildProject,loftProject,bindings},
+        model:{modelId:data.model.modelId,branchId:data.branchId,headHash:data.headHash},
+      };
+    })();
+    void startup.current.then(value=>{
+      if(!active)return;
+      if(new URLSearchParams(window.location.search).get('stage')==='F03') {
+        const bound=value.context.preview.bindings[0]?.loftOccurrenceId;
+        if(bound)setSelection(bound);
+      }
+      setState(value);
+    }).catch(err=>{if(active)setError(err instanceof Error?err.message:'Fixture unavailable');});
     return()=>{active=false;};
   },[]);
   return <main style={{
