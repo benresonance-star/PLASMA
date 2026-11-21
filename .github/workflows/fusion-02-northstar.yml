@@ -1,0 +1,47 @@
+name: Fusion 02 Northstar Integration
+
+on:
+  pull_request:
+    paths:
+      - 'packages/import-core/**'
+      - 'apps/api/src/fusion-*'
+      - 'apps/api/src/server.ts'
+      - 'apps/api/package.json'
+      - 'apps/designer-web/src/ui/NorthstarStudio.tsx'
+      - 'apps/designer-web/src/ui/northstar.css'
+      - 'apps/designer-web/src/ui/FusionStudio.tsx'
+      - 'apps/designer-web/src/ui/App.tsx'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/fusion-02-northstar.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 16
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install locked workspace
+        run: pnpm install --frozen-lockfile
+      - name: Build API dependencies
+        run: pnpm --filter '@spds/api^...' build
+      - name: Build designer dependencies
+        run: pnpm --filter '@spds/designer-web^...' build
+      - name: Fusion parameter and mapping tests
+        run: pnpm --filter @spds/import-core exec vitest run src/fusion.test.ts src/fusion-change.test.ts
+      - name: Fusion HTTP and geometry integration tests
+        run: pnpm --filter @spds/api exec vitest run src/fusion-preview.test.ts src/fusion-change.test.ts src/fusion-geometry.test.ts
+      - name: Northstar UI typecheck
+        run: pnpm --filter @spds/designer-web typecheck
+      - name: Northstar UI lint
+        run: pnpm --filter @spds/designer-web lint
