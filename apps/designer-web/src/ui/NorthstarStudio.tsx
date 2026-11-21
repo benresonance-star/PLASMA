@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight, Box, FileClock, GitBranch, Image as ImageIcon, Link2, MapPinned, Network, ShieldAlert, Upload, X } from 'lucide-react';
 import type { FusionContext } from './FusionStudio.js';
 import type { DisplayMeshInput } from '../mesh-bridge.js';
@@ -74,6 +74,7 @@ export function NorthstarStudio(props: NorthstarProps) {
   const [geometryInfo, setGeometryInfo] = useState('');
   const [geometryError, setGeometryError] = useState('');
   const [geometryBusy, setGeometryBusy] = useState(false);
+  const qaGeomTriggered = useRef(false);
   const [detailSvg, setDetailSvg] = useState<string|null>(null);
   const [siteFit, setSiteFit] = useState<{readonly rmsResidualMm:number;readonly pointCount:number}|null>(null);
   useEffect(() => () => { if (media) URL.revokeObjectURL(media.url); }, [media]);
@@ -197,6 +198,14 @@ export function NorthstarStudio(props: NorthstarProps) {
       setGeometryError(err instanceof Error ? err.message : 'Geometry preview failed');
     } finally { setGeometryBusy(false); }
   }
+  useEffect(() => {
+    if(typeof window==='undefined'||!import.meta.env.DEV||
+      new URLSearchParams(window.location.search).get('northstar-qa')!=='1'||
+      new URLSearchParams(window.location.search).get('stage')!=='F03'||
+      qaGeomTriggered.current||!canPreviewGeometry)return;
+    qaGeomTriggered.current=true;
+    void previewLoftGeometry();
+  }, [canPreviewGeometry, fusion, selectedSemanticId, headHash]);
 
   return (
     <section className="northstar" data-focus={focus} aria-label="Plasma Northstar spatial studio">
