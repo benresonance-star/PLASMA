@@ -5,6 +5,7 @@ import type { DisplayMeshInput } from '../mesh-bridge.js';
 import type { PublicationChrome } from '../viewport.js';
 import { ViewportCanvas } from './ViewportCanvas.js';
 import { apiBaseUrl } from '../api-client.js';
+import { ContinuityInspector } from './ContinuityInspector.js';
 import './northstar.css';
 
 type Focus = 'place' | 'design' | 'reason';
@@ -68,6 +69,8 @@ export function NorthstarStudio(props: NorthstarProps) {
   const [geometryInfo, setGeometryInfo] = useState('');
   const [geometryError, setGeometryError] = useState('');
   const [geometryBusy, setGeometryBusy] = useState(false);
+  const [detailSvg, setDetailSvg] = useState<string|null>(null);
+  const [siteFit, setSiteFit] = useState<{readonly rmsResidualMm:number;readonly pointCount:number}|null>(null);
   useEffect(() => () => { if (media) URL.revokeObjectURL(media.url); }, [media]);
   useEffect(() => { setImpact(null); setImpactError(''); setParameterId(''); setLinkKey(''); setGeometryMeshes([]); setGeometryInfo(''); }, [fusion]);
   useEffect(() => { setGeometryMeshes([]); setGeometryInfo(''); }, [headHash]);
@@ -214,7 +217,7 @@ export function NorthstarStudio(props: NorthstarProps) {
         <section className="northstar-pane northstar-place" aria-label="Place observation">
           <header>
             <div><span className="northstar-index">01 / OBSERVE</span><h3><MapPinned size={17}/> Place</h3></div>
-            <span className="northstar-signal pending">UNREGISTERED</span>
+            <span className="northstar-signal pending">{siteFit ? "LOCAL FIT · UNVERIFIED" : "UNREGISTERED"}</span>
           </header>
           <div className="northstar-place-media">
             {media ? (
@@ -235,7 +238,7 @@ export function NorthstarStudio(props: NorthstarProps) {
           <div className="northstar-place-details">
             <div className="northstar-meta"><span>Capture</span><strong>{media?.file.name ?? 'No capture loaded'}</strong></div>
             <div className="northstar-meta"><span>Recorded</span><strong>{media ? new Date(media.file.lastModified).toLocaleString() : '—'}</strong></div>
-            <div className="northstar-meta"><span>Registration</span><strong>Not surveyed or aligned</strong></div>
+            <div className="northstar-meta"><span>Registration</span><strong>{siteFit ? `Estimated local fit · RMS ${siteFit.rmsResidualMm.toFixed(1)} mm · ${siteFit.pointCount} ties` : "Not surveyed or aligned"}</strong></div>
           </div>
           <label className="northstar-upload">
             <Upload size={15}/> {media ? 'Replace site capture' : 'Open local capture'}
@@ -257,6 +260,10 @@ export function NorthstarStudio(props: NorthstarProps) {
               onPickSemantic={onSelectSemantic}
               {...(chrome ? { chrome } : {})}
             />
+            {detailSvg && <div className="northstar-sheet-overlay" role="region" aria-label="F05 derived detail sheet">
+              <button type="button" onClick={() => setDetailSvg(null)}>Close drawing study</button>
+              <img src={"data:image/svg+xml;charset=utf-8," + encodeURIComponent(detailSvg)} alt="Loft source-derived construction section, not for construction"/>
+            </div>}
             <div className="northstar-viewport-title">
               <span>ACTIVE PLASMA MODEL</span>
               <strong>{short(modelId)}</strong>
@@ -348,6 +355,12 @@ export function NorthstarStudio(props: NorthstarProps) {
                 <ul>{impact.unresolved.map((x) => <li key={x}>{x}</li>)}</ul>
               </div>}
             </div>
+            <ContinuityInspector
+              fusion={fusion} selectedSemanticId={selectedSemanticId}
+              onSelectSemantic={onSelectSemantic}
+              modelId={modelId} branchId={branchId} headHash={headHash}
+              onDetail={setDetailSvg} onRegistration={setSiteFit}
+            />
           </div>
         </section>
       </div>
