@@ -170,3 +170,5 @@ export function placeImportedInAssembly(input: {
     parametricClaim: 'reference-only',
   };
 }
+
+export { composeFirstFusion, type FirstFusionPreview, type FusionBinding } from './fusion.js';
