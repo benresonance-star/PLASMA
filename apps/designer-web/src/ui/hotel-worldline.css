@@ -1,0 +1,32 @@
+.hotel-worldline-v2{flex:0 0 185px;min-height:0;display:flex;flex-direction:column;background:#1c292f;color:#dce9e2;border-top:2px solid #bb6643;overflow:hidden}
+.hotel-worldline-v2-head{min-height:43px;display:flex;justify-content:space-between;align-items:center;padding:7px 13px;gap:12px;border-bottom:1px solid #3c5151}
+.hotel-worldline-v2-head>div:first-child{display:flex;align-items:center;gap:9px}
+.hotel-worldline-v2-head svg{color:#d58d63}
+.hotel-worldline-v2-head>div:first-child span{display:flex;flex-direction:column;gap:3px}
+.hotel-worldline-v2-head strong{font-size:12px}
+.hotel-worldline-v2-head small{font-size:8px;letter-spacing:.08em;color:#a0b5ae}
+.hotel-worldline-v2-actions{display:flex;align-items:center;gap:11px}
+.hotel-worldline-v2-actions button{display:flex;align-items:center;gap:5px;background:#304a47;border:1px solid #688777;color:#cce3d2;border-radius:4px;padding:7px 9px;font-size:9px}
+.hotel-worldline-v2-actions span{font-size:9px;color:#95aca5}
+.hotel-worldline-v2-grid{display:grid;grid-template-columns:minmax(0,1fr) 265px;min-height:0;flex:1}
+.hotel-worldline-tracks{overflow:auto;padding:5px 13px;display:grid;grid-template-rows:repeat(6,minmax(15px,1fr))}
+.hotel-worldline-track{display:grid;grid-template-columns:97px minmax(0,1fr);gap:8px;align-items:center;min-height:16px}
+.hotel-worldline-track>button{background:transparent;color:#a6b9b3;text-align:left;padding:2px 5px;font-size:8px;font-weight:760;letter-spacing:.07em}
+.hotel-worldline-track.is-selected>button{color:#f0d8bc}
+.hotel-worldline-track-flow{position:relative;height:1px;border-top:1px solid;display:flex;align-items:center;justify-content:flex-start;gap:min(5vw,45px);padding-left:20px}
+.hotel-worldline-track-flow button{z-index:1;width:12px;height:12px;display:grid;place-items:center;border:2px solid;border-radius:50%;box-shadow:0 0 0 3px #1c292f;padding:0}
+.hotel-worldline-track-flow button.is-active{width:16px;height:16px;box-shadow:0 0 0 3px #1c292f,0 0 0 5px #e7b58f}
+.hotel-worldline-track-flow button span{font-size:0}
+.hotel-worldline-no-data{font-size:8px;background:#1c292f;color:#647b75;padding:0 7px}
+.hotel-worldline-selected{background:#28383d;border-left:1px solid #49605b;display:flex;flex-direction:column;gap:6px;padding:9px 12px;overflow:auto}
+.hotel-worldline-selected>div:first-child{display:flex;gap:6px;align-items:center;font-size:8px;font-weight:750;color:#e8b58f}
+.hotel-worldline-selected>strong{font-size:10px;color:#e0e7dd;line-height:1.4}
+.hotel-worldline-selected>small{font-size:8px;color:#9fb4ad}
+.hotel-worldline-commit{font-size:9px;display:flex;align-items:center;gap:7px;color:#b2d1bd}
+.hotel-worldline-diff{display:flex;flex-direction:column;gap:3px;padding:7px;background:#385248}
+.hotel-worldline-diff strong{font-size:8px;color:#b8d5be}
+.hotel-worldline-diff span{font-size:10px}
+.hotel-worldline-diff small{font-size:8px;color:#c3d2c4}
+.hotel-worldline-selected p{display:flex;gap:5px;color:#e5b6a3;font-size:9px}
+@media(max-width:850px){.hotel-worldline-v2{flex-basis:155px}.hotel-worldline-v2-grid{grid-template-columns:minmax(0,1fr) 145px}.hotel-worldline-track{grid-template-columns:65px minmax(0,1fr);gap:4px}.hotel-worldline-selected{padding:6px}.hotel-worldline-v2-actions span{display:none}}
+@media(max-width:410px){.hotel-worldline-v2{flex-basis:145px}.hotel-worldline-v2-grid{grid-template-columns:minmax(0,1fr) 105px}.hotel-worldline-v2-actions button{font-size:8px;padding:5px}.hotel-worldline-no-data{font-size:6px}.hotel-worldline-track>button{font-size:7px}}
