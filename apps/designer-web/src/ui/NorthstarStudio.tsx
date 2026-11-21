@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowLeft, ArrowRight, Box, FileClock, GitBranch, Image as ImageIcon, Link2, MapPinned, Network, ShieldAlert, Upload, X } from 'lucide-react';
+import { ArrowRight, Box, FileClock, GitBranch, Image as ImageIcon, Link2, MapPinned, Network, ShieldAlert, Upload, X } from 'lucide-react';
 import type { FusionContext } from './FusionStudio.js';
 import type { DisplayMeshInput } from '../mesh-bridge.js';
 import type { PublicationChrome } from '../viewport.js';
