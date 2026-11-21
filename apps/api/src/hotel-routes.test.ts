@@ -92,7 +92,7 @@ describe('F13 hotel linked subprojects and atomic design revision',()=>{
     expect(original.json()).toMatchObject({
       kernel:'exact-adapter',nativeVerified:false,
       roomCount:168,windowWidthMm:1800,
-      drawings:{issueStatus:'schematic-not-for-construction'},
+      drawings:{issueStatus:'study-not-for-construction'},
     });
     const scene=original.json();
     expect(scene.sceneObjectCount).toBeGreaterThan(500);

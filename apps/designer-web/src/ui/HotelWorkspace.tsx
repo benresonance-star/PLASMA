@@ -1,10 +1,14 @@
 import { useCallback,useEffect,useMemo,useRef,useState } from 'react';
 import {
   ArrowLeft,ArrowRight,Box,Building2,Check,ChevronDown,Eye,FileText,
-  FolderTree,GitBranch,GitCommitHorizontal,Layers,MapPin,
+  FolderTree,GitCommitHorizontal,Layers,MapPin,
   Network,RefreshCw,Scan,ShieldAlert,SlidersHorizontal,
 } from 'lucide-react';
 import { ViewportCanvas } from './ViewportCanvas.js';
+import { HotelPlaceLens } from './HotelPlaceLens.js';
+import { HotelAssemblyLens } from './HotelAssemblyLens.js';
+import { HotelCausalLens, type HotelProposal } from './HotelCausalLens.js';
+import { HotelWorldline } from './HotelWorldline.js';
 import { cadZUpMeshesToViewportYUp } from './northstar-coordinate.js';
 import { apiBaseUrl } from '../api-client.js';
 import type { DisplayMeshInput } from '../mesh-bridge.js';
@@ -42,6 +46,14 @@ interface HotelScene {
   readonly drawings:{
     readonly planSvg:string;readonly sectionSvg:string;
     readonly planHash:string;readonly sectionHash:string;
+    readonly elevationSvg:string;readonly elevationHash:string;
+    readonly junctionSvg:string;readonly junctionHash:string;
+    readonly scheduleHash:string;
+    readonly scheduleRows:readonly {
+      id:string;description:string;quantity:number;nominalWidthMm:number;
+      nominalHeightMm:number;nominalGlazingAreaM2:number;sourceId:string;
+    }[];
+    readonly registry:readonly {id:string;name:string;revision:number;sourceHash:string}[];
     readonly issueStatus:'schematic-not-for-construction';
   };
   readonly unresolved:readonly string[];
@@ -72,7 +84,7 @@ function roomName(room:Room):string{
 function isQa():boolean{
   return typeof window!=='undefined'&&import.meta.env.DEV&&
     new URLSearchParams(window.location.search).get('northstar-qa')==='1'&&
-    new URLSearchParams(window.location.search).get('stage')==='F13';
+    ['F13','F21'].includes(new URLSearchParams(window.location.search).get('stage')??'');
 }
 const MODULE_ORDER=['building-shell','suite-standard','suite-accessible',
   'suite-corner','window-a4'] as const;
@@ -114,10 +126,11 @@ export function HotelWorkspace({
   const [activeModule,setActiveModule]=useState('entity:hotel:loft:window-a4');
   const [windowDraft,setWindowDraft]=useState('1800');
   const [candidate,setCandidate]=useState<number|null>(null);
-  const [drawing,setDrawing]=useState<'plan'|'section'>('plan');
+  const [proposal,setProposal]=useState<HotelProposal|null>(null);
+  const [drawing,setDrawing]=useState<'plan'|'section'|'elevation'|'junction'|'schedule'>('plan');
   const [sheetExpanded,setSheetExpanded]=useState(false);
   const [openEvidence,setOpenEvidence]=useState(false);
-  const [worldlineFocus,setWorldlineFocus]=useState('design');
+  const [snapshotPair,setSnapshotPair]=useState<{beforeSnapshotId:string;afterSnapshotId:string|null}|null>(null);
   const bootstrapAttempt=useRef(false);
   const nativeQaHead=useRef<string|null>(null);
   const qaEditAttempt=useRef(false);
@@ -202,14 +215,14 @@ export function HotelWorkspace({
       ||qaEditAttempt.current||!scene?.nativeVerified||scene.windowWidthMm!==1800||busy)return;
     qaEditAttempt.current=true;
     setWindowDraft('2100');
-    setCandidate(2100);
+    void requestProposal(2100);
   },[scene,busy]);
   useEffect(()=>{
     if(!isQa()||new URLSearchParams(window.location.search).get('edit')!=='1'
-      ||qaAcceptAttempt.current||!scene?.nativeVerified||candidate!==2100||busy)return;
+      ||qaAcceptAttempt.current||!scene?.nativeVerified||candidate!==2100||!proposal||busy)return;
     qaAcceptAttempt.current=true;
     void acceptChange();
-  },[candidate,scene,busy]);
+  },[candidate,scene,busy,proposal]);
 
   async function beginHotel(){
     if(!modelId||!branchId||!headHash)return;
@@ -234,33 +247,88 @@ export function HotelWorkspace({
     }catch(err){setError(err instanceof Error?err.message:'Bootstrap rejected');}
     finally{setBusy(false);}
   }
+  async function exportHotelPackage(){
+    if(!branchId||!modelId)return;
+    setError('');
+    try{
+      const result=await fetch(base+'/riverside/export-package?branchId='+encodeURIComponent(branchId));
+      if(!result.ok)throw new Error('Hotel package export unavailable');
+      const json=await result.text();
+      const blob=new Blob([json],{type:'application/json'});
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');
+      link.href=url;link.download='Riverside-Hotel-Loft-Subprojects.plasma.json';
+      document.body.appendChild(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),2000);
+      setNotice('Portable Plasma package exported. Contains source definitions, room identities and hashes; not IFC.');
+    }catch(e){setError(e instanceof Error?e.message:'Hotel package export failed');}
+  }
+  async function importHotelPackage(file:File|undefined){
+    if(!file||!branchId||!modelId||!headHash)return;
+    setBusy(true);setError('');
+    try{
+      if(file.size>3_000_000)throw new Error('Package exceeds the 3 MB source limit');
+      const pkg:unknown=JSON.parse(await file.text());
+      const result=await apiJson<{headHash:string;eventId:string;roomCount:number}>(
+        base+'/import-package',{
+          method:'POST',headers:{'content-type':'application/json'},
+          body:JSON.stringify({branchId,expectedHeadHash:headHash,package:pkg}),
+        });
+      onRevisionUpdated?.({
+        headHash:result.headHash,eventId:result.eventId,
+        action:'Imported portable Riverside source package / '+result.roomCount+' rooms',
+      });
+      setNotice('Linked Loft project successfully imported with 168 stable room identities.');
+      if(!onRevisionUpdated){
+        const loaded=await apiJson<Overview>(base+'/riverside?branchId='+encodeURIComponent(branchId));
+        setOverview(loaded);
+        await loadScene(result.headHash,'exact-adapter',level,mode);
+      }
+    }catch(e){setError(e instanceof Error?e.message:'Package import rejected');}
+    finally{setBusy(false);}
+  }
+
   function changeView(nextLevel:number,nextMode:'exterior'|'floor'){
     setLevel(nextLevel);setMode(nextMode);
     if(scene&&branchId)void loadScene(scene.headHash,scene.kernel,nextLevel,nextMode);
   }
+  async function requestProposal(target:number){
+    setCandidate(null);setProposal(null);setError('');
+    if(!scene||!branchId||!Number.isFinite(target)||target===scene.windowWidthMm)return;
+    setBusy(true);
+    try{
+      const result=await apiJson<HotelProposal>(base+'/riverside/window-proposal',{
+        method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({
+          branchId,expectedHeadHash:scene.headHash,nextWidthMm:target,
+        }),
+      });
+      setProposal(result);setCandidate(result.windowWidthAfterMm);
+      setNotice('Computed geometry impacts and explicit unresolved gates. Proposal is uncommitted.');
+    }catch(e){setError(e instanceof Error?e.message:'Proposal review rejected');}
+    finally{setBusy(false);}
+  }
   function reviewChange(){
-    setCandidate(null);setError('');
     if(!scene||!isValidWidth)return;
-    const target=Number(windowDraft);
-    if(target===scene.windowWidthMm){setError('Choose a different window width.');return;}
-    setCandidate(target);
-    setNotice('Linked change is a proposal. Nothing in the version store has changed.');
+    void requestProposal(Number(windowDraft));
   }
   async function acceptChange(){
-    if(!modelId||!branchId||!scene||candidate===null)return;
+    if(!modelId||!branchId||!scene||candidate===null||!proposal)return;
     setBusy(true);setError('');
     try{
       const update=await apiJson<{
         headHash:string;eventId:string;oldWidthMm:number;newWidthMm:number;
         affectedRoomCount:number;revisedModuleIds:readonly string[];
-      }>(base+'/riverside/revise-window',{
+        beforeSnapshotId:string;afterSnapshotId:string|null;
+      }>(base+'/riverside/accept-reviewed-window',{
         method:'POST',headers:{'content-type':'application/json'},
         body:JSON.stringify({
           branchId,expectedHeadHash:scene.headHash,
-          nextWidthMm:candidate,
+          nextWidthMm:candidate,candidateHash:proposal.candidateHash,
         }),
       });
-      setCandidate(null);
+      setCandidate(null);setProposal(null);
+      setSnapshotPair({beforeSnapshotId:update.beforeSnapshotId,afterSnapshotId:update.afterSnapshotId});
       setNotice('Accepted one atomic source revision: '+update.affectedRoomCount+
         ' room windows, '+update.revisedModuleIds.length+
         ' Loft subprojects. Plans and sections regenerate from the new dimensions.');
@@ -283,8 +351,10 @@ export function HotelWorkspace({
     const room=scene?.manifest.rooms.find(item=>item.id===id);
     if(room)setActiveModule(room.moduleId);
   }
-  const sectionIsSelected=drawing==='section';
-  const activeDrawing=sectionIsSelected?scene?.drawings.sectionSvg:scene?.drawings.planSvg;
+  const activeDrawing=drawing==='plan'?scene?.drawings.planSvg:
+    drawing==='section'?scene?.drawings.sectionSvg:
+    drawing==='elevation'?scene?.drawings.elevationSvg:
+    drawing==='junction'?scene?.drawings.junctionSvg:null;
   if(!modelId||!branchId||!headHash)return <div className="hotel-empty">
     <h2><Building2 size={26}/> Riverside Hotel</h2>
     <p>Open or create a versioned Plasma model to link modular Loft sub-projects.</p>
@@ -308,6 +378,8 @@ export function HotelWorkspace({
         <span className="hotel-revision">DESIGN / {compact(scene?.headHash??headHash)}</span>
       </div>
       <div className="hotel-header-actions">
+        {scene&&<button type="button" onClick={()=>void exportHotelPackage()}
+          data-testid="hotel-export-package"><FileText size={14}/> Export source package</button>}
         <button type="button" onClick={onBack}><ArrowLeft size={15}/> Back to Plasma</button>
       </div>
     </header>
@@ -325,28 +397,23 @@ export function HotelWorkspace({
         data-testid="hotel-create">
         {busy?'Creating linked source project…':'Create Riverside Hotel project'} <ArrowRight size={17}/>
       </button>
+      <label className="hotel-import-label" htmlFor="hotel-import-source-package">
+        Or import an existing Riverside .plasma.json source package
+        <input id="hotel-import-source-package" type="file"
+          accept=".json,.plasma.json,application/json" disabled={busy}
+          onChange={event=>void importHotelPackage(event.target.files?.[0])}/>
+      </label>
       <small>Demo geometry and synthetic site context. No survey, issued BIM, approvals or engineering certification.</small>
     </div>:<div className="hotel-main">
       <aside className="hotel-pane hotel-place" aria-label="Reality layer and linked projects">
         <div className="hotel-pane-heading"><div><span className="hotel-index">01 / PLACE & SOURCES</span>
           <h3><MapPin size={16}/> Reality Layer</h3></div>
           <span className="hotel-dot-warning">UNREGISTERED</span></div>
-        <div className="hotel-site">
-          <div className="hotel-site-grid"/>
-          <svg viewBox="0 0 330 194" aria-label="Schematic Riverside site outline, not registered or surveyed">
-            <path d="M 0 146 L 330 63 M 14 0 L 142 194" stroke="#8d9a95" strokeWidth="17" opacity=".32"/>
-            <rect x="87" y="30" width="176" height="119" rx="4" fill="#a8aaa0" stroke="#f2e5c9" strokeWidth="3"
-              transform="rotate(-12 175 90)"/>
-            <path d="M 121 45 L 242 20 L 266 136 L 144 160 Z" fill="#53625b" opacity=".8"/>
-            <path d="M 142 51 L 244 30 L 263 125 L 160 149 Z" stroke="#e8b18c" strokeWidth="3" fill="none"
-              strokeDasharray="6 4"/>
-            <circle cx="241" cy="45" r="5" fill="#e6a579"/>
-            <text x="24" y="178" fill="#f2f0e9" fontSize="11" letterSpacing="1">CONCEPT SITE / LOCAL XY ONLY</text>
-          </svg>
-          <span className="hotel-site-pin"><MapPin size={12}/> HOTEL / SYNTHETIC</span>
-        </div>
-        <div className="hotel-site-status"><ShieldAlert size={15}/>
-          <span>No surveyed georeference or captured site reality. Design coordinates are local millimetres.</span></div>
+        <HotelPlaceLens
+          modelId={modelId} branchId={branchId} headHash={headHash}
+          hotelId={overview?.hotelId??null}
+          onRevisionUpdated={onRevisionUpdated}
+        />
 
         <div className="hotel-section-title"><FolderTree size={14}/> Linked source projects
           <strong>{modulesSorted.length}</strong></div>
@@ -395,16 +462,23 @@ export function HotelWorkspace({
             selectedSemanticId={selectedRoomId}
             onPickSemantic={pickRoom}
             autoFitOnGeometryChange
-            fitOffset={typeof window !== 'undefined'&&window.innerWidth<850?1.34:1.11}
+            fitOffset={typeof window !== 'undefined'&&window.innerWidth<850?1.13:0.78}
+            syntheticUrbanContext={mode==='exterior'}
             focusServiceGeometry
-            backgroundHex="#27353a"
+            backgroundHex={mode==='exterior'?'#758d91':'#33474a'}
             chrome="candidate"
           />:<div className="hotel-loading-scene"><RefreshCw size={25}/>
               Generating source-linked geometric scene…</div>}
+          <div className="hotel-assembly-overlay">
+            <HotelAssemblyLens modelId={modelId} branchId={branchId}
+              headHash={scene?.headHash??headHash}
+              moduleId={activeModule} selectedRoomId={selectedRoomId}/>
+          </div>
           <div className="hotel-viewport-brand"><span>PL / B-REP STUDY</span><strong>RIVERSIDE / 168</strong></div>
           <div className="hotel-viewport-overlays">
             <span><span className="hotel-green-dot"/> 5 LINKED LOFT PROJECTS</span>
             <span>{scene?.nativeVerified?'TRUE OCCT SOURCE SOLIDS':'EXACT-ADAPTER SOURCE STUDY'}</span>
+            {mode==='exterior'&&<span>SYNTHETIC CITY MASSING / NOT A SURVEY</span>}
           </div>
           {sceneBusy&&<div className="hotel-viewport-progress">Regenerating geometry…</div>}
           <div className="hotel-selected-float">
@@ -436,13 +510,30 @@ export function HotelWorkspace({
               <small>SCHEMATIC</small></span>
             {scene&&<img src={svgUrl(scene.drawings.sectionSvg)} alt="Source-linked schematic building section"/>}
           </button>
+          <button className={'hotel-drawing-card '+(drawing==='junction'?'selected':'')}
+            onClick={()=>{setDrawing('junction');setSheetExpanded(true);}} type="button"
+            data-testid="hotel-detail-card">
+            <span className="hotel-doc-heading"><Scan size={14}/> A-514 / WINDOW HEAD
+              <small>STUDY</small></span>
+            {scene&&<img src={svgUrl(scene.drawings.junctionSvg)}
+              alt="Source-derived A4 head junction with material thicknesses"/>}
+          </button>
         </div>
-        {sheetExpanded&&scene&&activeDrawing&&
-          <div className="hotel-sheet-modal" role="dialog" aria-label="Linked source schematic drawing">
-            <div><strong>LINKED DOCUMENT STUDY / {drawing.toUpperCase()}</strong>
+        {sheetExpanded&&scene&&(activeDrawing||drawing==='schedule')&&
+          <div className="hotel-sheet-modal" role="dialog" aria-label="Source linked architecture drawing">
+            <div><strong>ARCHITECTURE / {drawing.toUpperCase()} / SOURCE LINKED</strong>
               <button onClick={()=>setSheetExpanded(false)} type="button">Close</button></div>
-            <img src={svgUrl(activeDrawing)} alt="Source-derived schematic drawing, not for construction"/>
-            <small>Regenerates with the hotel module sources. This is not an issued architectural drawing.</small>
+            {activeDrawing?<img src={svgUrl(activeDrawing)}
+              alt="Source-derived architectural design study, not an issued drawing"/>:
+              <table className="hotel-window-schedule">
+                <thead><tr><th>Suite type</th><th>Count</th><th>Window W × H</th><th>Glass m²</th></tr></thead>
+                <tbody>{scene.drawings.scheduleRows.map(row=><tr key={row.id}>
+                  <td>{row.description}</td><td>{row.quantity}</td>
+                  <td>{row.nominalWidthMm} × {row.nominalHeightMm}</td>
+                  <td>{row.nominalGlazingAreaM2.toFixed(1)}</td>
+                </tr>)}</tbody>
+              </table>}
+            <small>Source-derived · revision-tracked · design study only. Not a coordinated issued drawing.</small>
           </div>}
       </main>
 
@@ -456,25 +547,20 @@ export function HotelWorkspace({
             <strong>Modular guest suites with source-linked envelope and façade systems.</strong>
             <p>Change one design parameter and propagate to every room occurrence, module source and schematic drawing.</p>
           </div>
-          <div className="hotel-trace">
-            <div className="hotel-section-title"><Network size={14}/> Causal link / A4 window</div>
-            <div className="hotel-trace-inputs">
-              <span>Suite geometry</span><span>Window A4</span><span>Hotel shell</span>
-            </div>
-            <div className="hotel-trace-arrow"><ArrowRight size={17}/></div>
-            <div className="hotel-trace-center"><Box size={17}/> 168 window occurrences</div>
-            <div className="hotel-trace-arrow"><ArrowRight size={17}/></div>
-            <div className="hotel-trace-outputs">
-              <span>Façade model</span><span>Room plan</span><span>Section study</span>
-            </div>
-          </div>
+          <HotelCausalLens proposal={proposal}
+            baselineWidth={scene?.windowWidthMm}
+            windowRevision={windowModule?.revision??0}
+            documentCount={scene?.drawings.registry.length??0}
+            roomCount={scene?.roomCount??168}/>
           <div className="hotel-editor">
             <div className="hotel-section-title"><SlidersHorizontal size={14}/> Parametric change / sub-project
               <strong>F13</strong></div>
             <label htmlFor="hotel-window-width">A4 window width · mm</label>
             <div className="hotel-width-row">
               <input id="hotel-window-width" type="number" min="1200" max="2500" step="50"
-                value={windowDraft} onChange={e=>{setWindowDraft(e.target.value);setCandidate(null);}}
+                value={windowDraft} onChange={e=>{
+                  setWindowDraft(e.target.value);setCandidate(null);setProposal(null);
+                }}
                 data-testid="hotel-window-width"/>
               <span>H {WINDOW_HEIGHT} mm</span>
             </div>
@@ -492,14 +578,28 @@ export function HotelWorkspace({
               <strong>PROPOSED / NOT COMMITTED</strong>
               <span>{scene.windowWidthMm} → {candidate} mm</span>
               <p>Update three suite opening definitions and one window source in a single Plasma version event.</p>
-              <small>Change in nominal glass opening area across 168 rooms:
-                {' '+(((candidate-scene.windowWidthMm)*WINDOW_HEIGHT*168)/1e6).toFixed(1)} m²</small>
+              {proposal?.claims.map(claim=><div className="hotel-proposal-claim" key={claim.id}>
+                <span>{claim.label}</span>
+                <strong>{claim.delta>0?'+':''}{claim.delta.toFixed(2)} {claim.unit}</strong>
+              </div>)}
+              <small>Dimensions and quantities computed from Loft source geometry.
+                No verified thermal/daylight, weather or structural result.</small>
               <div className="hotel-decision">
                 <button type="button" onClick={()=>setCandidate(null)}>Discard</button>
                 <button type="button" disabled={busy} onClick={()=>void acceptChange()}
                   data-testid="hotel-accept-change"><GitCommitHorizontal size={13}/> Accept revision</button>
               </div>
             </div>}
+          </div>
+          <div className="hotel-documents-index" data-testid="hotel-documents-index">
+            <div className="hotel-section-title"><FileText size={14}/> Drawing registry
+              <strong>{scene?.drawings.registry.length??0} source studies</strong>
+            </div>
+            {scene?.drawings.registry.map((item,i)=><button type="button" key={item.id}
+              onClick={()=>{setDrawing(i===0?'elevation':i===1?'junction':'schedule');setSheetExpanded(true);}}>
+              <span>{item.id.split(':').pop()}</span>
+              <strong>{item.name}</strong><small>r{item.revision}</small>
+            </button>)}
           </div>
           <div className="hotel-inspector">
             <div className="hotel-section-title"><Box size={14}/> Selected guest suite</div>
@@ -512,6 +612,15 @@ export function HotelWorkspace({
               <div><span>Façade system</span><strong>A4 / thermally broken study</strong></div>
               <div><span>Room grid</span><strong>3900 × 8100 mm</strong></div>
               <div><span>Window opening</span><strong>{scene?.windowWidthMm??'—'} × 1850 mm</strong></div>
+            </div>
+            <div className="hotel-room-nav-grid" aria-label="Select a guestroom on the current level">
+              {scene?.manifest.rooms.filter(room=>room.level===level).map(room=>
+                <button key={room.id} type="button"
+                  className={selectedRoomId===room.id?'selected':''}
+                  onClick={()=>pickRoom(room.id)}
+                  aria-label={'Select suite '+roomName(room)}>
+                  {room.side==='north'?'N':'S'}{String(room.bay+1).padStart(2,'0')}
+                </button>)}
             </div>
             <button type="button" className="hotel-select-corner" onClick={()=>{
               const corner=scene?.manifest.rooms.find(room=>room.level===level&&room.bay===11&&room.side==='north');
@@ -531,25 +640,11 @@ export function HotelWorkspace({
       </aside>
     </div>}
 
-    {overview&&<footer className="hotel-worldline">
-      <div className="hotel-worldline-label"><GitBranch size={18}/>
-        <div><strong>Worldline</strong><small>VERSIONED MODEL EVENTS</small></div></div>
-      <div className="hotel-phases">
-        {['place','design','validate','construct','operate'].map(phase=>
-          <button key={phase} type="button" className={worldlineFocus===phase?'selected':''}
-            onClick={()=>setWorldlineFocus(phase)}>
-            {phase.toUpperCase()}
-          </button>)}
-      </div>
-      <div className="hotel-events" data-testid="hotel-worldline">
-        {events.map(event=><div key={event.id} title={event.label}
-          className="hotel-event"><span/><strong>{event.label}</strong>
-          <small>{event.kind}</small></div>)}
-        {!events.length&&<span className="hotel-event-empty">No recorded model events</span>}
-      </div>
-      <div className="hotel-head"><span>ACTIVE BRANCH HEAD</span>
-        <strong>{compact(scene?.headHash??headHash)}</strong></div>
-    </footer>}
+    {overview&&<HotelWorldline
+      modelId={modelId} branchId={branchId}
+      headHash={scene?.headHash??headHash}
+      snapshotPair={snapshotPair}
+    />}
     {isQa()&&<div className="hotel-qa-banner" data-testid="hotel-qa-banner">
       AUTOMATED VISUAL QA · SYNTHETIC HOTEL / NO SURVEY / NOT ISSUED BIM
       {scene?.nativeVerified && scene.windowWidthMm===2100 &&

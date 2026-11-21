@@ -57,6 +57,31 @@ export function registerHotelRoutes(app:FastifyInstance,store:VersionStore):void
       }catch(err){return rejection(reply,err);}
     },
   );
+  app.get<{Params:RouteParams & {moduleKey:string};Querystring:{branchId:string}}>(
+    '/models/:modelId/hotels/riverside/modules/:moduleKey',async(req,reply)=>{
+      try{
+        const head=await asPromise(store.getBranchHead(req.query.branchId));
+        if(head.modelId!==req.params.modelId)throw new Error('HOTEL_HEAD_CONFLICT');
+        const hotel=await resolveHotel(store,req.query.branchId,RIVERSIDE_HOTEL_ID);
+        const key=req.params.moduleKey;
+        if(!['suite-standard','suite-accessible','suite-corner','window-a4','building-shell'].includes(key))
+          throw new Error('HOTEL_MODULE_UNSUPPORTED');
+        const module=hotel.modules.get('entity:hotel:loft:'+key);
+        if(!module)throw new Error('HOTEL_MODULE_NOT_FOUND');
+        return reply.send({
+          moduleId:'entity:hotel:loft:'+key,headHash:head.headHash,
+          revision:module.revision,sourceHash:module.sourceHash,
+          sourceProjectId:module.sourceProjectId,windowWidthMm:module.windowWidthMm,
+          parts:module.loftProject.parts.map(part=>({
+            id:part.id,material:part.material,role:part.role,
+            dimensionsMm:part.parameters,
+          })),
+          placementMode:'linked-definition-not-independent-copy',
+          designStudyOnly:true,
+        });
+      }catch(err){return rejection(reply,err);}
+    },
+  );
   app.post<{
     Params:RouteParams;
     Body:HotelBase & {kernel?:'occt-native'|'exact-adapter';

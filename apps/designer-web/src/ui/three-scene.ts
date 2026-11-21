@@ -23,6 +23,7 @@ import {
 import { parseBoxFeaturePath, type FaceKey } from '@spds/geometry-contracts/measure';
 import type { FieldInfluenceOverlay } from '@spds/graph-projection';
 import type { DisplayMeshInput } from '../mesh-bridge.js';
+import { createSyntheticHotelSurroundings } from './hotel-study-context.js';
 
 export interface ScenePickHit {
   readonly meshId: string;
@@ -92,9 +93,10 @@ const SECONDARY_EMISSIVE_INTENSITY = 0.22;
 const FACE_TINT_REFERENCE = 0xffffff;
 const FACE_TINT_SERVICE = 0xd8e4f0;
 const HOTEL_MATERIAL_TINT: Readonly<Record<string,number>> = {
-  facade:0xa68b76,concrete:0xc4c5bc,glass:0x517688,
-  metal:0x816a54,stone:0x999992,timber:0x9b795b,
-  plaster:0xd5d2c5,
+  facade:0xa79079,concrete:0xbbc0b9,glass:0x7197a0,
+  metal:0x778382,bronze:0x886b52,stone:0xd4cabe,
+  'dark-stone':0x666b68,insulation:0xc2b68f,planting:0x557453,
+  ceramic:0xe2ded1,timber:0xa0815e,plaster:0xe2dcd0,
 };
 function architectureMaterialColor(material:string|undefined,fallback:number):number {
   return material ? HOTEL_MATERIAL_TINT[material] ?? fallback : fallback;
@@ -199,15 +201,20 @@ function appendMeshesToRoot(
 
     const faceMat = new MeshStandardMaterial({
       color: architectureMaterialColor(m.material,faceColor),
-      metalness: m.material === 'metal' ? 0.55 : m.material === 'glass' ? 0.18 : 0.05,
-      roughness: m.material === 'glass' ? 0.2 : m.material === 'metal' ? 0.4 : 0.72,
+      metalness: ['metal','bronze'].includes(m.material ?? '') ? 0.7 : m.material === 'glass' ? 0.15 : 0.02,
+      roughness: m.material === 'glass' ? 0.14 : m.material === 'bronze' ? 0.32 :
+        m.material === 'stone' ? 0.85 : 0.65,
       side: DoubleSide,
       emissive: 0x000000,
       emissiveIntensity: 0,
       transparent: false,
       opacity: 1,
     });
-    const edgeMat = new LineBasicMaterial({ color: EDGE_COLOR });
+    const edgeMat = new LineBasicMaterial({
+      color: m.material === 'glass' ? 0x4d666e :
+        m.material === 'bronze' ? 0x554538 : 0x67716c,
+      transparent:true,opacity:m.material === 'glass' ? 0.38 : 0.24,
+    });
 
     const mesh = new Mesh(geo, faceMat);
     mesh.userData = part.userData;
@@ -229,6 +236,7 @@ export function buildDualEngineScene(
   geometryServiceMeshes: readonly DisplayMeshInput[] | undefined,
   chrome: ViewportChrome = 'candidate',
   dark = true,
+  syntheticUrbanContext = false,
 ): {
   readonly scene: Scene;
   readonly camera: PerspectiveCamera;
@@ -242,10 +250,14 @@ export function buildDualEngineScene(
   camera.position.set(400, 300, 500);
   camera.lookAt(0, 0, 0);
 
-  scene.add(new AmbientLight(0xffffff, 0.7));
-  const key = new DirectionalLight(0xffffff, 0.55);
-  key.position.set(200, 400, 200);
+  // A broad daylight rig is deliberately independent of native B-rep evidence.
+  scene.add(new AmbientLight(0xcfe2e4, 0.95));
+  const key = new DirectionalLight(0xffead6, 2.0);
+  key.position.set(-48000, 78000, 52000);
   scene.add(key);
+  const bounce = new DirectionalLight(0xc7dded, 0.5);
+  bounce.position.set(42000, 20000, -38000);
+  scene.add(bounce);
 
   const root = new Group();
   root.name = 'semantic-display-root';
@@ -272,6 +284,10 @@ export function buildDualEngineScene(
   }
 
   scene.add(root);
+  if(syntheticUrbanContext){
+    // Display-only city illustration; not surveyed or native B-rep evidence.
+    scene.add(createSyntheticHotelSurroundings());
+  }
   return { scene, camera, root, referenceRoot, geometryServiceRoot };
 }
 

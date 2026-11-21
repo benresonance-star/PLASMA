@@ -77,6 +77,7 @@ export interface AssemblySourcePart {
   readonly semanticOwner:string;
   readonly sourcePartId:string;
   readonly material:string;
+  readonly sourceRole:string;
   readonly sourceAssemblyId:string;
   readonly sourceInstanceId:string;
   readonly boundBuildEntityId:string|null;
@@ -183,6 +184,7 @@ export function planFusionNativeAssembly(source:Source):{
     parts.push({
       semanticOwner:occurrence.id,
       sourcePartId:partId,
+      sourceRole:String(def['role']??'unclassified'),
       sourceAssemblyId:assemblyId,
       sourceInstanceId:instanceId,
       material:String(def['material']??'Unclassified'),

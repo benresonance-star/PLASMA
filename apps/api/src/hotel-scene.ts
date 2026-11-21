@@ -7,6 +7,7 @@ import {
   planFusionNativeAssembly, verifyFusionNativeAssembly,
   type AssemblySourcePart,
 } from './fusion-assembly.js';
+import { deriveHotelArchitectureDocuments, type HotelArchitectureDocuments } from './hotel-documents.js';
 import {
   hotelModuleId, type HotelManifest, type HotelRoom, type HotelSourceModule,
   type ResolvedHotel,
@@ -34,15 +35,21 @@ const demoBuild={
   authoritativeGraph:{entities:[],parameters:[],relationships:[]},
 };
 const moduleCache=new Map<string,Promise<SourceCompiled>>();
+const MAX_COMPILED_MODULE_CACHE=24;
 export function clearHotelCompilerCache(){moduleCache.clear();}
 function classify(material:string):string{
   const x=material.toLowerCase();
   if(x.includes('glaz'))return 'glass';
+  if(x.includes('bronze')||x.includes('anodised'))return 'bronze';
   if(x.includes('alumini'))return 'metal';
   if(x.includes('terracotta'))return 'facade';
   if(x.includes('concrete'))return 'concrete';
-  if(x.includes('stone'))return 'stone';
+  if(x.includes('charcoal')||x.includes('dark stone'))return 'dark-stone';
+  if(x.includes('stone')||x.includes('limestone'))return 'stone';
+  if(x.includes('insulation')||x.includes('thermal'))return 'insulation';
   if(x.includes('timber'))return 'timber';
+  if(x.includes('ceramic'))return 'ceramic';
+  if(x.includes('plant')||x.includes('green'))return 'planting';
   return 'plaster';
 }
 function sourceInput(module:HotelSourceModule){
@@ -83,6 +90,11 @@ async function compileModule(module:HotelSourceModule,kernel:'exact-adapter'|'oc
       };
     })();
     moduleCache.set(cacheKey,promise);
+    while(moduleCache.size>MAX_COMPILED_MODULE_CACHE){
+      const oldest=moduleCache.keys().next().value;
+      if(!oldest)break;
+      moduleCache.delete(oldest);
+    }
     void promise.catch(()=>moduleCache.delete(cacheKey));
   }
   return promise;
@@ -124,10 +136,13 @@ function makeRoomMeshes(room:HotelRoom,module:SourceCompiled,windows:SourceCompi
     for(const solid of compiled.meshes){
       const part=owners.get(solid.semanticOwner);
       if(!part)throw new Error('HOTEL_NATIVE_PART_LINEAGE_MISSING');
-      const sourceRole=part.sourcePartId.toLowerCase();
+      const sourceRole=part.sourceRole.toLowerCase();
       const material=classify(part.material);
-      const isInternal=['bathroompod','bedplatform','partywallleft','partywallright',
-        'guestroomslab'].some(t=>sourceRole===t);
+      const hiddenExteriorRoles=new Set([
+        'floor','partition','interior','wet-area','wet-wall','wet-screen',
+        'sanitary','door','joinery','bed-base','soft-furnishing',
+      ]);
+      const isInternal=hiddenExteriorRoles.has(sourceRole);
       if(!allowed(sourceRole)||(!fullInterior&&isInternal))continue;
       const placed=transform(solid,room,offset,material,compiled.moduleId);
       const list=sourceGroups.get(material)??[];
@@ -168,13 +183,21 @@ export interface HotelScene {
     readonly sourceHash:string;readonly partCount:number;readonly nativeVerified:boolean;
   }[];
   readonly compiledUniqueSolidCount:number;
+  readonly performance:{
+    readonly uniqueSourceSolidCount:number;
+    readonly roomInstances:number;
+    readonly groupedDisplayMeshes:number;
+    readonly vertexCount:number;
+    readonly approximateBufferBytes:number;
+    readonly cachedSourceVariants:number;
+    readonly budgetPassed:true;
+  };
   readonly roomCount:number;
   readonly sceneObjectCount:number;
   readonly meshes:readonly HotelDisplayMesh[];
-  readonly drawings:{
+  readonly drawings:HotelArchitectureDocuments & {
     readonly planSvg:string;readonly sectionSvg:string;
     readonly planHash:string;readonly sectionHash:string;
-    readonly issueStatus:'schematic-not-for-construction';
   };
   readonly unresolved:readonly string[];
 }
@@ -212,7 +235,19 @@ export async function buildHotelScene(input:{
     meshes.push(...makeRoomMeshes(room,suite,windows,mode==='floor'&&room.level===selectedLevel));
   }
   const panel=hotel.modules.get(hotelModuleId('window-a4'))!;
-  const drawings=hotelDrawings(hotel.manifest,panel.windowWidthMm,selectedLevel);
+  const documentSet=deriveHotelArchitectureDocuments(hotel.manifest,{
+    window:hotel.modules.get(hotelModuleId('window-a4'))!,
+    standard:hotel.modules.get(hotelModuleId('suite-standard'))!,
+    accessible:hotel.modules.get(hotelModuleId('suite-accessible'))!,
+    corner:hotel.modules.get(hotelModuleId('suite-corner'))!,
+  });
+  const drawings={...hotelDrawings(hotel.manifest,panel.windowWidthMm,selectedLevel),
+    ...documentSet};
+  const vertexCount=meshes.reduce((n,m)=>n+m.vertices.length,0);
+  const indexCount=meshes.reduce((n,m)=>n+m.indices.length,0);
+  const bufferBytes=vertexCount*12+indexCount*4;
+  if(meshes.length>2600||vertexCount>1_000_000||bufferBytes>64_000_000)
+    throw new Error('HOTEL_SCENE_RESOURCE_BUDGET_EXCEEDED');
   return {
     status:'linked-hotel-scene',kernel,nativeVerified:kernel==='occt-native',
     hotelId:hotel.hotelId,headHash:input.headHash,manifest:hotel.manifest,
@@ -223,6 +258,13 @@ export async function buildHotelScene(input:{
       nativeVerified:compiled.get(id)!.nativeVerified,
     })),
     compiledUniqueSolidCount:[...compiled.values()].reduce((n,c)=>n+c.partCount,0),
+    performance:{
+      uniqueSourceSolidCount:[...compiled.values()].reduce((n,c)=>n+c.partCount,0),
+      roomInstances:hotel.manifest.rooms.length,
+      groupedDisplayMeshes:meshes.length,vertexCount,
+      approximateBufferBytes:bufferBytes,cachedSourceVariants:moduleCache.size,
+      budgetPassed:true,
+    },
     roomCount:hotel.manifest.rooms.length,
     sceneObjectCount:meshes.length,
     meshes,drawings,
