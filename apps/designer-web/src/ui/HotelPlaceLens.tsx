@@ -16,9 +16,9 @@ export interface PlaceLensProps {
   readonly branchId:string|null;
   readonly headHash:string|null;
   readonly hotelId:string|null;
-  readonly onRevisionUpdated?:(result:{
+  readonly onRevisionUpdated?:((result:{
     readonly headHash:string;readonly eventId:string;readonly action:string;
-  })=>void;
+  })=>void)|undefined;
 }
 type CaptureKind='photo'|'video'|'gaussian-splat'|'point-cloud';
 function isControlArray(x:unknown):x is readonly {
