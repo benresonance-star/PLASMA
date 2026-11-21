@@ -247,6 +247,47 @@ export function HotelWorkspace({
     }catch(err){setError(err instanceof Error?err.message:'Bootstrap rejected');}
     finally{setBusy(false);}
   }
+  async function exportHotelPackage(){
+    if(!branchId||!modelId)return;
+    setError('');
+    try{
+      const result=await fetch(base+'/riverside/export-package?branchId='+encodeURIComponent(branchId));
+      if(!result.ok)throw new Error('Hotel package export unavailable');
+      const json=await result.text();
+      const blob=new Blob([json],{type:'application/json'});
+      const url=URL.createObjectURL(blob);
+      const link=document.createElement('a');
+      link.href=url;link.download='Riverside-Hotel-Loft-Subprojects.plasma.json';
+      document.body.appendChild(link);link.click();link.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),2000);
+      setNotice('Portable Plasma package exported. Contains source definitions, room identities and hashes; not IFC.');
+    }catch(e){setError(e instanceof Error?e.message:'Hotel package export failed');}
+  }
+  async function importHotelPackage(file:File|undefined){
+    if(!file||!branchId||!modelId||!headHash)return;
+    setBusy(true);setError('');
+    try{
+      if(file.size>3_000_000)throw new Error('Package exceeds the 3 MB source limit');
+      const pkg:unknown=JSON.parse(await file.text());
+      const result=await apiJson<{headHash:string;eventId:string;roomCount:number}>(
+        base+'/import-package',{
+          method:'POST',headers:{'content-type':'application/json'},
+          body:JSON.stringify({branchId,expectedHeadHash:headHash,package:pkg}),
+        });
+      onRevisionUpdated?.({
+        headHash:result.headHash,eventId:result.eventId,
+        action:'Imported portable Riverside source package / '+result.roomCount+' rooms',
+      });
+      setNotice('Linked Loft project successfully imported with 168 stable room identities.');
+      if(!onRevisionUpdated){
+        const loaded=await apiJson<Overview>(base+'/riverside?branchId='+encodeURIComponent(branchId));
+        setOverview(loaded);
+        await loadScene(result.headHash,'exact-adapter',level,mode);
+      }
+    }catch(e){setError(e instanceof Error?e.message:'Package import rejected');}
+    finally{setBusy(false);}
+  }
+
   function changeView(nextLevel:number,nextMode:'exterior'|'floor'){
     setLevel(nextLevel);setMode(nextMode);
     if(scene&&branchId)void loadScene(scene.headHash,scene.kernel,nextLevel,nextMode);
@@ -337,6 +378,8 @@ export function HotelWorkspace({
         <span className="hotel-revision">DESIGN / {compact(scene?.headHash??headHash)}</span>
       </div>
       <div className="hotel-header-actions">
+        {scene&&<button type="button" onClick={()=>void exportHotelPackage()}
+          data-testid="hotel-export-package"><FileText size={14}/> Export source package</button>}
         <button type="button" onClick={onBack}><ArrowLeft size={15}/> Back to Plasma</button>
       </div>
     </header>
@@ -354,6 +397,12 @@ export function HotelWorkspace({
         data-testid="hotel-create">
         {busy?'Creating linked source project…':'Create Riverside Hotel project'} <ArrowRight size={17}/>
       </button>
+      <label className="hotel-import-label" htmlFor="hotel-import-source-package">
+        Or import an existing Riverside .plasma.json source package
+        <input id="hotel-import-source-package" type="file"
+          accept=".json,.plasma.json,application/json" disabled={busy}
+          onChange={event=>void importHotelPackage(event.target.files?.[0])}/>
+      </label>
       <small>Demo geometry and synthetic site context. No survey, issued BIM, approvals or engineering certification.</small>
     </div>:<div className="hotel-main">
       <aside className="hotel-pane hotel-place" aria-label="Reality layer and linked projects">
