@@ -1,0 +1,22 @@
+.hotel-causal-lens{background:#edf1ea;border:1px solid #c2d2c4;border-radius:5px;padding:10px;margin:10px}
+.hotel-causal-lens>header{display:flex;align-items:center;gap:7px;font-size:10px;font-weight:800;color:#4d6758;letter-spacing:.04em;padding-bottom:10px}
+.hotel-causal-lens>header svg{color:#b75b3b}
+.hotel-causal-lens>header small{margin-left:auto;color:#9a674f;font-size:8px}
+.hotel-causal-driver{background:#f3e2d3;border:1px solid #ca9d7f;color:#4b5144;padding:9px;display:flex;flex-direction:column;gap:5px;text-align:center}
+.hotel-causal-driver span{font-size:8px;color:#a4583b;letter-spacing:.08em;font-weight:800}
+.hotel-causal-driver strong{font-size:14px;color:#b2573b}
+.hotel-causal-driver small{font-size:9px;color:#87776d}
+.hotel-causal-arrow{display:grid;place-items:center;color:#b65e3c;transform:rotate(90deg);height:20px}
+.hotel-causal-defs,.hotel-causal-reps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.hotel-causal-defs span,.hotel-causal-reps span{display:grid;place-items:center;min-height:38px;text-align:center;background:#f8f9f5;border:1px solid #c6d3c8;color:#435c52;padding:5px 3px;font-size:9px}
+.hotel-causal-occurrences{display:flex;align-items:center;justify-content:center;gap:7px;background:#dce9df;border:1px solid #a6c5ac;color:#487354;font-size:11px;font-weight:800;padding:9px}
+.hotel-causal-reps span{background:#dfebe7;border-color:#b7ccc4;font-size:8px;font-weight:780}
+.hotel-causal-claims{margin-top:12px;border-top:1px solid #b4c6b8;padding-top:10px}
+.hotel-causal-claims-title{display:flex;align-items:center;gap:6px;color:#4a7659;font-size:9px;font-weight:800;margin-bottom:8px}
+.hotel-causal-claim{padding:8px 0;border-bottom:1px solid #d1d9d1;display:grid;grid-template-columns:1fr auto;gap:4px}
+.hotel-causal-claim span{font-size:9px;color:#4b6254}
+.hotel-causal-claim strong{font-size:11px;color:#a45f43}
+.hotel-causal-claim strong.decrease{color:#457e68}
+.hotel-causal-claim small{grid-column:1/-1;font-size:8px;color:#829185}
+.hotel-causal-unknown{display:flex;align-items:start;gap:6px;margin-top:9px;padding:9px;background:#f7e7d9;color:#9d654a;font-size:9px;line-height:1.5}
+.hotel-causal-unknown svg{flex:0 0 auto}
