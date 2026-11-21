@@ -172,3 +172,5 @@ export function placeImportedInAssembly(input: {
 }
 
 export { composeFirstFusion, type FirstFusionPreview, type FusionBinding } from './fusion.js';
+
+export { proposeFirstFusionChange, type FusionChangeInput, type FusionChangePreview, type FusionParameterLink } from './fusion-change.js';

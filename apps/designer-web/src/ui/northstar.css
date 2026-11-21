@@ -1,0 +1,157 @@
+/* Northstar: a place-grounded worktable, deliberately distinct from the legacy CAD shell. */
+.northstar {
+  --ns-paper: #e8e8e1;
+  --ns-surface: #f5f5f0;
+  --ns-ink: #18232a;
+  --ns-muted: #59656a;
+  --ns-line: #c4c9c3;
+  --ns-accent: #b75139;
+  flex: 1 1 auto;
+  display: flex;
+  min-height: 0;
+  min-width: 0;
+  flex-direction: column;
+  background: var(--ns-paper);
+  color: var(--ns-ink);
+  overflow: hidden;
+  font-family: "Geist Variable", Geist, system-ui, sans-serif;
+}
+.northstar button { cursor: pointer; }
+.northstar button:disabled { cursor: not-allowed; opacity: .55; }
+.northstar-toolbar {
+  flex: none;
+  display: grid;
+  grid-template-columns: minmax(200px, 1fr) auto minmax(200px, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-height: 70px;
+  padding: 10px 18px;
+  background: #1a242a;
+  color: #f6f7f3;
+  border-bottom: 2px solid var(--ns-accent);
+}
+.northstar-heading .northstar-serial { font-size: 9px; letter-spacing: .19em; color: #bfc9c8; }
+.northstar-heading h2 { margin: 4px 0 0; font-size: 18px; font-weight: 600; letter-spacing: -.045em; line-height: 1.15; }
+.northstar-heading h2 span { color: #a8b4b5; font-size: 12px; font-weight: 400; letter-spacing: 0; }
+.northstar-navigation { display: flex; align-items: center; gap: 3px; background: #10171b; border: 1px solid #3d4a50; padding: 3px; border-radius: 7px; }
+.northstar-navigation button { border: 0; background: transparent; padding: 8px 17px; border-radius: 5px; color: #b9c4c4; text-transform: uppercase; font-size: 10px; letter-spacing: .1em; }
+.northstar-navigation button.selected { background: #e9e9e2; color: #1a252a; font-weight: 700; }
+.northstar-actions { display:flex; gap: 6px; justify-content: end; align-items: center; }
+.northstar-actions button { display: flex; align-items: center; gap: 7px; color: #e3e7e4; background: #2a353b; border: 1px solid #475459; border-radius: 6px; padding: 9px 11px; font-size: 11px; }
+.northstar-actions button:hover { background: #39454a; }
+.northstar-workspaces {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(190px, 25%) minmax(300px, 1fr) minmax(235px, 26%);
+  transition: grid-template-columns .2s ease-out;
+}
+.northstar[data-focus=place] .northstar-workspaces { grid-template-columns: minmax(270px, 38%) minmax(270px, 1fr) minmax(220px, 22%); }
+.northstar[data-focus=reason] .northstar-workspaces { grid-template-columns: minmax(180px, 19%) minmax(270px, 1fr) minmax(300px, 36%); }
+.northstar-pane { display: flex; flex-direction: column; min-width: 0; min-height: 0; position: relative; background: var(--ns-surface); border-right: 1px solid var(--ns-line); overflow: hidden; }
+.northstar-pane > header { padding: 14px 15px 11px; flex: none; display: flex; align-items: end; justify-content: space-between; gap: 6px; border-bottom: 1px solid var(--ns-line); }
+.northstar-index, .northstar-subheading { display: block; font-size: 9px; font-weight: 650; letter-spacing: .14em; text-transform: uppercase; color: #677378; }
+.northstar-pane h3 { display: flex; align-items: center; gap: 7px; margin: 6px 0 0; font-size: 18px; font-weight: 600; letter-spacing: -.035em; }
+.northstar-signal { white-space: nowrap; text-transform: uppercase; font-size: 8px; letter-spacing: .08em; padding: 5px 6px; border: 1px solid #c3c9c4; border-radius: 3px; color: #5d696a; }
+.northstar-signal.pending { background: #f3e5dc; border-color: #dbc3b6; color: #934e39; }
+.northstar-place { background: #ebece7; }
+.northstar-place-media { position: relative; flex: 1 1 auto; min-height: 130px; margin: 11px; border: 1px solid #b7bfb9; background: #c6cdc7; overflow: hidden; }
+.northstar-place-media > img, .northstar-place-media > video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.northstar-image-label { position: absolute; bottom: 8px; left: 8px; background: rgba(17,28,33,.85); color: #fff; font-size: 9px; padding: 6px; letter-spacing: .07em; }
+.northstar-empty-media { height: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 20px; flex-direction: column; text-align: center; background: radial-gradient(circle at 55% 45%, #e1e5de, #b8c2bc); color: #43534f; }
+.northstar-empty-media strong { font-size: 14px; }
+.northstar-empty-media p { max-width: 200px; font-size: 11px; line-height: 1.5; }
+.northstar-place-details, .northstar-design-footer { flex: none; padding: 4px 12px; }
+.northstar-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 7px 1px; border-bottom: 1px solid var(--ns-line); font-size: 10px; }
+.northstar-meta span { color: var(--ns-muted); white-space: nowrap; }
+.northstar-meta strong { font-weight: 650; text-align: right; overflow-wrap: anywhere; }
+.northstar-upload { display:flex; gap:8px; justify-content: center; align-items: center; padding: 10px 8px; margin: 10px 12px 5px; border: 1px solid #4e6362; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: 600; background: #e5e9e3; }
+.northstar-upload input { display: none; }
+.northstar-upload:hover { background: #d2dcd5; }
+.northstar-note { display: flex; gap: 5px; align-items: start; font-size: 10px; line-height: 1.55; color: #657174; margin: 7px 12px 10px; }
+.northstar-design { background: #d9ddd6; }
+.northstar-viewport { position: relative; flex: 1 1 auto; min-height: 200px; overflow: hidden; background: #d2d8d1; }
+.northstar-viewport > div { width: 100%; height: 100%; }
+.northstar-viewport-title { position:absolute; top:12px; left:12px; pointer-events:none; display:flex; flex-direction:column; gap: 3px; padding: 8px; background: rgba(246,247,241,.88); border:1px solid rgba(68,82,85,.25); }
+.northstar-viewport-title span { font-size: 9px; letter-spacing: .1em; }
+.northstar-viewport-title strong { font-size: 11px; }
+.northstar-design-footer { background: #f0f1ec; }
+.northstar-source-list { flex: none; border-top: 1px solid var(--ns-line); background: #eff0eb; padding: 10px 13px; }
+.northstar-source-scroller { margin-top:7px; display:flex; gap:7px; overflow-x:auto; padding-bottom:3px; }
+.northstar-source-scroller button { display:flex; flex-direction:column; flex: 0 0 auto; max-width:170px; gap: 3px; text-align:left; border:1px solid #c5cbc5; padding:8px 10px; font-size:10px; background:#fafaf7; border-radius:4px; overflow:hidden; text-overflow:ellipsis; }
+.northstar-source-scroller button.active { border-color:var(--ns-accent); box-shadow: inset 2px 0 var(--ns-accent); }
+.northstar-source-scroller button span { color:var(--ns-muted); font-size:9px; }
+.northstar-reason { background: #f0f1ed; }
+.northstar-reason-scroll { overflow-y:auto; min-height:0; padding: 0 13px 15px; }
+.northstar-selected { margin-top: 12px; padding: 13px; background: #1b2b30; color: #fff; border-left: 3px solid var(--ns-accent); display: flex; flex-direction:column; gap: 5px; }
+.northstar-selected .northstar-subheading { color: #a4b1af; }
+.northstar-selected strong { overflow-wrap:anywhere; font-size: 12px; }
+.northstar-selected small { font-size:10px; color: #b6c2bf; }
+.northstar-relations { margin-top: 17px; }
+.northstar-relations button { border:1px solid #cbd0cc; display:flex; gap: 8px; align-items:center; width:100%; text-align:left; margin-top:6px; padding: 9px; background: white; border-radius:3px; }
+.northstar-relations button span { min-width:0; color:var(--ns-accent); font-size:10px; }
+.northstar-relations button strong { flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; font-size:10px; font-weight:600; }
+.northstar-proposal { margin-top: 18px; border-top: 1px solid #c6cdc7; padding-top: 16px; }
+.northstar-proposal .northstar-note, .northstar-relations .northstar-note { margin-left:0; margin-right:0; }
+.northstar-proposal label { display:block; font-size:10px; color:#586568; margin: 13px 0; font-weight:650; }
+.northstar-proposal select, .northstar-proposal input { margin-top:5px; display:block; width:100%; min-width:0; font-size:11px; color:#18232a; border:1px solid #b9c2bd; border-radius:4px; padding:9px; background:#fff; }
+.northstar-review { width: 100%; display:flex; justify-content:space-between; align-items:center; padding:11px; background:#af513a; color:#fff; border:0; border-radius:4px; font-size:11px; font-weight:650; }
+.northstar-review:hover { background:#954630; }
+.northstar-error { margin: 9px 12px; color:#a62d2d; font-size:11px; }
+.northstar-impact { margin-top:12px; padding:12px; border:1px solid #b5c5b5; background: #e5ece2; font-size:11px; }
+.northstar-impact strong { color:#355b47; letter-spacing:.07em; font-size:9px; }
+.northstar-impact p { font-size:18px; margin:10px 0 3px; }
+.northstar-impact small { font-size:10px; }
+.northstar-impact ul { list-style: disc; padding-left:15px; margin-top:10px; color:#57635d; font-size:10px; line-height:1.5; }
+.northstar-worldline { min-height: 104px; max-height: 135px; flex:none; display:grid; grid-template-columns: 180px minmax(0,1fr) 155px; gap:10px; padding:12px 16px; background: #182329; color:#e1e7e5; border-top:3px solid #b75139; }
+.northstar-worldline-label { display:flex; flex-direction:column; align-items:start; gap:3px; }
+.northstar-worldline-label > span { font-size:9px; letter-spacing:.12em; color:#c99583; }
+.northstar-worldline-label strong { font-size:12px; }
+.northstar-worldline-label small { color:#91a0a2; font-size:9px; }
+.northstar-events { display:flex; overflow-x:auto; min-width:0; gap:9px; align-items:stretch; }
+.northstar-events button { display:flex; flex:0 0 135px; align-items:start; flex-direction:column; gap:4px; padding:10px; background:#28373d; color:#c9d5d2; border:1px solid #3e4e52; border-top:3px solid #68837e; text-align:left; font-size:9px; overflow:hidden; }
+.northstar-events button.selected { border-top-color:#ca8066; background:#354348; }
+.northstar-events button strong { font-size:10px; color:#f2f2ed; overflow:hidden; white-space:nowrap; max-width:100%; text-overflow:ellipsis; }
+.northstar-no-events { color:#a9b9b6; font-size:11px; align-self:center; }
+.northstar-current { border-left:1px solid #4b585b; padding:13px; display:flex; flex-direction:column; justify-content:center; gap:7px; }
+.northstar-current span { color:#a2b1ae; font-size:9px; letter-spacing:.12em; }
+.northstar-current strong { color:white; font-size:12px; overflow-wrap:anywhere; }
+@media (max-width: 1100px) {
+  .northstar-workspaces,
+  .northstar[data-focus=place] .northstar-workspaces,
+  .northstar[data-focus=reason] .northstar-workspaces {
+    grid-template-columns: minmax(180px, 27%) minmax(270px, 1fr) minmax(210px, 30%);
+  }
+  .northstar-toolbar { grid-template-columns: 1fr auto; }
+  .northstar-navigation { grid-row: 2; grid-column: 1 / -1; justify-self:start; }
+  .northstar-actions { grid-column:2; grid-row:1; }
+}
+@media (max-width: 720px) {
+  .northstar { overflow-y:auto; }
+  .northstar-toolbar { gap:8px; padding:12px; }
+  .northstar-heading h2 span { display:none; }
+  .northstar-navigation { justify-self:stretch; justify-content:space-between; }
+  .northstar-navigation button { flex:1; padding:8px; }
+  .northstar-workspaces,
+  .northstar[data-focus=place] .northstar-workspaces,
+  .northstar[data-focus=reason] .northstar-workspaces {
+    display:flex; flex-direction:column; flex:none; min-height:auto;
+  }
+  .northstar-pane { min-height:380px; flex:none; }
+  .northstar-place-media { min-height:240px; max-height:300px; }
+  .northstar-design { min-height:560px; }
+  .northstar-viewport { min-height:350px; }
+  .northstar-reason { min-height:480px; }
+  .northstar-reason-scroll { max-height:570px; }
+  .northstar-worldline { grid-template-columns:1fr; max-height:none; gap:15px; }
+  .northstar-worldline-label { flex-direction:row; align-items:center; gap:9px; }
+  .northstar-worldline-label small { display:none; }
+  .northstar-current { border-left:0; border-top:1px solid #475559; padding:8px 0; }
+}
+@media (prefers-reduced-motion: reduce) { .northstar-workspaces { transition:none; } }
+
+.northstar-geometry-actions { display:flex; align-items:center; gap:9px; padding:8px 0 3px; }
+.northstar-geometry-actions button { background:#1c2c31; color:#f8f8f3; border:1px solid #506068; border-radius:4px; padding:9px 11px; font-size:10px; white-space:nowrap; }
+.northstar-geometry-actions button:hover { background:#354a4e; }
+.northstar-geometry-actions span { color:#5a696b; font-size:9px; line-height:1.4; }
+@media(max-width:650px) { .northstar-geometry-actions { flex-direction:column; align-items:stretch; } }

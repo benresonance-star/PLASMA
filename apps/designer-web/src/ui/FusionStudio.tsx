@@ -2,18 +2,24 @@ import { useState } from 'react';
 import { apiBaseUrl } from '../api-client.js';
 
 type SourceObject = Record<string, unknown>;
-interface FusionPreview {
+export interface FusionPreview {
   readonly status: 'preview-only';
   readonly publicationReady: false;
   readonly geometryStatus: string;
   readonly sources: readonly { readonly system: string; readonly projectId: string; readonly sourceHash: string }[];
-  readonly objects: readonly { readonly id: string; readonly name: string; readonly semanticType: string }[];
-  readonly parameters: readonly unknown[];
-  readonly relationships: readonly unknown[];
+  readonly objects: readonly { readonly id: string; readonly name: string; readonly semanticType: string; readonly metadata?: Readonly<Record<string, unknown>> }[];
+  readonly parameters: readonly { readonly id: string; readonly name: string; readonly role: string; readonly quantity: { readonly value: number; readonly unit: string }; readonly affects: readonly string[]; readonly editableBy: readonly string[]; readonly domain?: { readonly min?: number; readonly max?: number } }[];
+  readonly relationships: readonly { readonly id: string; readonly relationType: string; readonly from: string; readonly to: string }[];
   readonly bindings: readonly { readonly buildEntityId: string; readonly loftOccurrenceId: string }[];
   readonly unresolved: readonly string[];
 }
 
+export interface FusionContext {
+  readonly preview: FusionPreview;
+  readonly buildProject: unknown;
+  readonly loftProject: unknown;
+  readonly bindings: readonly { readonly buildEntityId: string; readonly loftAssemblyId: string; readonly loftInstanceId: string }[];
+}
 function object(input: unknown): SourceObject | null {
   return input !== null && typeof input === 'object' && !Array.isArray(input)
     ? (input as SourceObject) : null;
@@ -43,8 +49,9 @@ function sourceOccurrences(input: unknown): Array<{ assembly: string; instance: 
 }
 
 export function FusionStudio({
-  open, onClose,
-}: { readonly open: boolean; readonly onClose: () => void }) {
+  open, onClose, onPreview,
+}: { readonly open: boolean; readonly onClose: () => void;
+  readonly onPreview?: (context: FusionContext) => void }) {
   const [build, setBuild] = useState<unknown>(null);
   const [loft, setLoft] = useState<unknown>(null);
   const [selectedBuild, setSelectedBuild] = useState('');
@@ -89,7 +96,9 @@ export function FusionStudio({
         const diagnostic = object(payload);
         throw new Error(String(diagnostic?.['summary'] ?? 'Fusion preview rejected'));
       }
-      setResult(payload as FusionPreview);
+      const validated = payload as FusionPreview;
+      setResult(validated);
+      onPreview?.({ buildProject: build, loftProject: loft, bindings, preview: validated });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Fusion preview unavailable');
     } finally {
