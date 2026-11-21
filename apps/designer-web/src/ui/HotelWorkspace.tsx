@@ -462,9 +462,10 @@ export function HotelWorkspace({
             selectedSemanticId={selectedRoomId}
             onPickSemantic={pickRoom}
             autoFitOnGeometryChange
-            fitOffset={typeof window !== 'undefined'&&window.innerWidth<850?1.34:1.11}
+            fitOffset={typeof window !== 'undefined'&&window.innerWidth<850?1.13:0.78}
+            syntheticUrbanContext={mode==='exterior'}
             focusServiceGeometry
-            backgroundHex="#27353a"
+            backgroundHex={mode==='exterior'?'#758d91':'#33474a'}
             chrome="candidate"
           />:<div className="hotel-loading-scene"><RefreshCw size={25}/>
               Generating source-linked geometric scene…</div>}
@@ -477,6 +478,7 @@ export function HotelWorkspace({
           <div className="hotel-viewport-overlays">
             <span><span className="hotel-green-dot"/> 5 LINKED LOFT PROJECTS</span>
             <span>{scene?.nativeVerified?'TRUE OCCT SOURCE SOLIDS':'EXACT-ADAPTER SOURCE STUDY'}</span>
+            {mode==='exterior'&&<span>SYNTHETIC CITY MASSING / NOT A SURVEY</span>}
           </div>
           {sceneBusy&&<div className="hotel-viewport-progress">Regenerating geometry…</div>}
           <div className="hotel-selected-float">
