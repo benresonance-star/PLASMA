@@ -155,3 +155,7 @@
 .northstar-geometry-actions button:hover { background:#354a4e; }
 .northstar-geometry-actions span { color:#5a696b; font-size:9px; line-height:1.4; }
 @media(max-width:650px) { .northstar-geometry-actions { flex-direction:column; align-items:stretch; } }
+
+.northstar-sheet-overlay { position:absolute; z-index:12; inset:18px; background:#e8e9e4; border:1px solid #a0aaa5; padding:11px; display:flex; flex-direction:column; box-shadow:0 12px 34px rgba(15,28,34,.28); overflow:auto; }
+.northstar-sheet-overlay > button { color:#f8f8f4; background:#25363e; padding:8px 12px; font-size:10px; align-self:flex-end; border:0; margin-bottom:9px; }
+.northstar-sheet-overlay > img { min-height:0; max-height:100%; max-width:100%; width:100%; object-fit:contain; background:white; }
