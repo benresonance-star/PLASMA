@@ -7,11 +7,11 @@ import {
 } from '@spds/geometry-contracts';
 import { previewSupportedLoftSolid } from './fusion-geometry.js';
 
-interface NativeInput extends Parameters<typeof previewSupportedLoftSolid>[0] {
+type NativeInput = Parameters<typeof previewSupportedLoftSolid>[0] & {
   readonly modelId: string;
   readonly branchId: string;
   readonly expectedHeadHash: string;
-}
+};
 function record(input: unknown, label: string): Record<string, unknown> {
   if (!input || typeof input !== 'object' || Array.isArray(input))
     throw new Error(label + ': expected object');
