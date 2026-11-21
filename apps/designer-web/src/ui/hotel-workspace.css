@@ -252,3 +252,10 @@
 .hotel-proposal-claim{display:flex;gap:7px;align-items:center;justify-content:space-between;padding:7px 0;border-top:1px solid #dcc6b8}
 .hotel-proposal-claim span{font-size:9px;color:#685c54}
 .hotel-proposal-claim strong{font-size:10px;color:#a25339;text-align:right}
+
+.hotel-header-actions{display:flex;gap:7px;align-items:center}
+.hotel-header-actions button:first-child:not(:last-child){background:#425e50;border-color:#77977e}
+.hotel-import-label{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:11px;color:#cadbd2}
+.hotel-import-label input{border:1px solid #718c7b;background:#f1f4ee;border-radius:4px;color:#344e42;padding:9px;width:min(480px,90vw);font-size:10px}
+@media(max-width:1200px){.hotel-header-actions button{font-size:9px;padding:7px 7px}}
+@media(max-width:850px){.hotel-header-actions button:first-child:not(:last-child){display:none}}
