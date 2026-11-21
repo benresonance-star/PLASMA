@@ -35,6 +35,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@spds/import-core':
+        specifier: workspace:*
+        version: link:../../packages/import-core
       '@fastify/cors':
         specifier: ^11.3.0
         version: 11.3.0
@@ -560,6 +563,9 @@ importers:
 
   packages/import-core:
     dependencies:
+      '@spds/semantic-core':
+        specifier: workspace:*
+        version: link:../semantic-core
       '@spds/failure-taxonomy':
         specifier: workspace:*
         version: link:../failure-taxonomy
