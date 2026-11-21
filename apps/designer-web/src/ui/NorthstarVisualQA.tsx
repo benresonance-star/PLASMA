@@ -91,6 +91,11 @@ export function NorthstarVisualQA(){
   const [selection,setSelection]=useState<string|null>('entity:qa:window');
   const [error,setError]=useState('');
   const [sourceOpen,setSourceOpen]=useState(false);
+  const [qaEvents,setQaEvents]=useState([
+    {id:'qa:observation',kind:'QA capture',label:'Synthetic site fixture',atMs:100},
+    {id:'qa:model',kind:'QA model',label:'Junction test assembly',atMs:200},
+    {id:'qa:parameter',kind:'QA proposal',label:'Width review fixture',atMs:300},
+  ]);
   const startup=useRef<Promise<{context:FusionContext;model:ModelFixture}>|null>(null);
   useEffect(()=>{
     let active=true;
@@ -144,11 +149,16 @@ export function NorthstarVisualQA(){
       modelId={state.model.modelId}
       branchId={state.model.branchId}
       headHash={state.model.headHash}
-      sessionEvents={[
-        {id:'qa:observation',kind:'QA capture',label:'Synthetic site fixture',atMs:100},
-        {id:'qa:model',kind:'QA model',label:'Junction test assembly',atMs:200},
-        {id:'qa:parameter',kind:'QA proposal',label:'Width review fixture',atMs:300},
-      ]}
+      sessionEvents={qaEvents}
+      onRevisionUpdated={({headHash,eventId,action,fusion})=>{
+        setState((current)=>current?({
+          context:fusion ?? current.context,
+          model:{...current.model,headHash},
+        }):current);
+        setQaEvents((events)=>[...events,{
+          id:eventId,kind:'fusion-source',label:action,atMs:Date.now(),
+        }]);
+      }}
     />}
     {sourceOpen&&<div role="dialog" aria-label="Controlled source mappings" style={{
       position:'fixed',inset:0,background:'rgba(0,0,0,.75)',zIndex:999,
