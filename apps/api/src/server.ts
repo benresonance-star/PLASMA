@@ -7,6 +7,7 @@ import { registerFusionWorkspaceRoutes } from './fusion-workspaces.js';
 import { registerFusionNativeRoute } from './fusion-native.js';
 import { registerFusionAssemblyRoute } from './fusion-assembly.js';
 import { registerFusionHostRoute } from './fusion-host-opening.js';
+import { registerHotelRoutes } from './hotel-routes.js';
 import cors from '@fastify/cors';
 import { InMemoryVersionStore, asPromise, type VersionStore } from '@spds/version-core';
 import {
@@ -162,6 +163,7 @@ export function buildServer(
   registerFusionNativeRoute(app, store);
   registerFusionAssemblyRoute(app, store);
   registerFusionHostRoute(app, store);
+  registerHotelRoutes(app, store);
 
   app.post<{ Body: { name: string } }>('/models', async (req, reply) => {
     const model = await asPromise(store.createModel(req.body.name));

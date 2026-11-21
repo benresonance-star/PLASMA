@@ -136,7 +136,9 @@ export function NorthstarVisualQA(){
     <header data-testid="northstar-qa-banner" style={{
       flex:'0 0 auto',minHeight:32,padding:'8px 16px',fontSize:11,
       letterSpacing:'.06em',background:'#aa4e35',color:'#fff',
-    }}>VISUAL QA / SYNTHETIC WINDOW-JUNCTION FIXTURE — NOT A SURVEYED SITE, REAL HOTEL OR ISSUED BIM MODEL</header>
+    }}>{new URLSearchParams(window.location.search).get('stage') === 'F13'
+      ? 'VISUAL QA / SYNTHETIC RIVERSIDE HOTEL — NATIVE GEOMETRY, NO SURVEY OR ISSUED BIM'
+      : 'VISUAL QA / SYNTHETIC WINDOW-JUNCTION FIXTURE — NOT A SURVEYED SITE, REAL HOTEL OR ISSUED BIM MODEL'}</header>
     {error && <p role="alert" style={{margin:15}}>{error}</p>}
     {!state && !error && <p style={{margin:20}}>Loading controlled Build / Loft / Plasma fixture…</p>}
     {state && <NorthstarStudio

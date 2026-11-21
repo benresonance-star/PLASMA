@@ -1,0 +1,111 @@
+name: Fusion 13 Linked Hotel Studio
+
+on:
+  pull_request:
+    paths:
+      - 'apps/api/src/hotel-*'
+      - 'apps/api/src/server.ts'
+      - 'apps/designer-web/src/ui/HotelWorkspace.tsx'
+      - 'apps/designer-web/src/ui/hotel-workspace.css'
+      - 'apps/designer-web/src/ui/NorthstarStudio.tsx'
+      - 'apps/designer-web/src/ui/three-scene.ts'
+      - 'apps/designer-web/src/mesh-bridge.ts'
+      - '.github/workflows/fusion-13-hotel.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  hotel:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install locked workspace
+        run: pnpm install --frozen-lockfile
+      - name: Build native geometry, API and Northstar frontend
+        run: |
+          pnpm --filter '@spds/api^...' build
+          pnpm --filter @spds/api build
+          pnpm --filter '@spds/geometry-occt^...' build
+          pnpm --filter @spds/geometry-occt build
+          pnpm --filter '@spds/designer-web^...' build
+          pnpm --filter @spds/designer-web typecheck
+          pnpm --filter @spds/designer-web lint
+      - name: Hotel contract, linked source history, and 168-window atomic edits
+        run: pnpm --filter @spds/api exec vitest run src/hotel-routes.test.ts
+      - name: Actual OpenCascade hotel source compilation and Northstar screenshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p f13-verified-hotel
+          GEOMETRY_KERNEL=occt-native PORT=7080 node services/geometry-occt/dist/server-main.js > /tmp/f13-native.log 2>&1 &
+          NATIVE_PID=$!
+          SPDS_API_LISTEN=1 GEOMETRY_URL=http://127.0.0.1:7080 PORT=3001 \
+            node apps/api/dist/index.js > /tmp/f13-api.log 2>&1 &
+          API_PID=$!
+          pnpm --filter @spds/designer-web exec vite --host 127.0.0.1 --port 5173 > /tmp/f13-vite.log 2>&1 &
+          VITE_PID=$!
+          trap 'kill "$NATIVE_PID" "$API_PID" "$VITE_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 110); do
+            if curl -fs http://127.0.0.1:7080/health >/dev/null &&
+               curl -fs http://127.0.0.1:3001/health >/dev/null &&
+               curl -fs http://127.0.0.1:5173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fs http://127.0.0.1:7080/health || { cat /tmp/f13-native.log; exit 1; }
+          curl -fs http://127.0.0.1:3001/health || { cat /tmp/f13-api.log; exit 1; }
+          GEOMETRY_URL=http://127.0.0.1:7080 \
+            pnpm --filter @spds/api exec vitest run src/hotel-routes.test.ts
+          BROWSER=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
+          test -n "$BROWSER"
+          FLAGS="--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu --hide-scrollbars --virtual-time-budget=45000"
+          URL="http://127.0.0.1:5173/?northstar-qa=1&stage=F13"
+          "$BROWSER" $FLAGS --window-size=1720,1080 --dump-dom "$URL" > f13-verified-hotel/F13-dom.html 2>/tmp/f13-chrome.err
+          grep -q 'hotel-qa-banner' f13-verified-hotel/F13-dom.html || { echo 'Hotel UI missing'; exit 1; }
+          grep -q 'hotel-module-library' f13-verified-hotel/F13-dom.html || { echo 'Loft subproject tree missing'; exit 1; }
+          grep -q 'OCCT NATIVE VERIFIED' f13-verified-hotel/F13-dom.html || {
+            echo 'Actual native OCCT hotel qualification not reflected in UI'
+            tail -55 /tmp/f13-api.log
+            tail -30 /tmp/f13-chrome.err
+            exit 1
+          }
+          "$BROWSER" $FLAGS --window-size=1720,1080 \
+            --screenshot=f13-verified-hotel/F13-hotel-desktop.png "$URL" >/dev/null 2>/tmp/f13-desktop.err
+          EDIT_URL="$URL&edit=1"
+          "$BROWSER" $FLAGS --window-size=1720,1080 --dump-dom "$EDIT_URL" > f13-verified-hotel/F13-edit-dom.html 2>/tmp/f13-edit.err
+          grep -q 'hotel-qa-edit-accepted' f13-verified-hotel/F13-edit-dom.html || {
+            echo 'Live linked-window commit/Worldline/native recompilation evidence missing'
+            tail -60 /tmp/f13-api.log
+            tail -35 /tmp/f13-edit.err
+            exit 1
+          }
+          "$BROWSER" $FLAGS --window-size=1720,1080 \
+            --screenshot=f13-verified-hotel/F13-hotel-after-linked-edit.png "$EDIT_URL" >/dev/null 2>/tmp/f13-edit-shot.err
+          "$BROWSER" $FLAGS --window-size=430,920 \
+            --screenshot=f13-verified-hotel/F13-hotel-mobile.png "$URL" >/dev/null 2>/tmp/f13-mobile.err
+          python3 - <<'PY'
+          import os,struct
+          for file in ['F13-hotel-desktop.png','F13-hotel-after-linked-edit.png','F13-hotel-mobile.png']:
+              path='f13-verified-hotel/'+file
+              with open(path,'rb') as f:header=f.read(24)
+              assert header[:8]==bytes.fromhex('89504e470d0a1a0a'),file
+              w,h=struct.unpack('>II',header[16:24])
+              assert w>300 and h>300,file
+              assert os.stat(path).st_size>80000,file
+              print('Verified F13 native hotel UI screenshot',file,w,h,os.stat(path).st_size)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: F13-actual-linked-hotel-verified-desktop-and-mobile
+          path: f13-verified-hotel/*.png
+          retention-days: 14
