@@ -10,6 +10,7 @@ import { registerFusionHostRoute } from './fusion-host-opening.js';
 import { registerHotelRoutes } from './hotel-routes.js';
 import { registerHotelSiteRoutes } from './hotel-site.js';
 import { registerHotelReasonRoutes } from './hotel-reason.js';
+import { registerHotelWorldlineRoutes } from './hotel-worldline.js';
 import cors from '@fastify/cors';
 import { InMemoryVersionStore, asPromise, type VersionStore } from '@spds/version-core';
 import {
@@ -168,6 +169,7 @@ export function buildServer(
   registerHotelRoutes(app, store);
   registerHotelSiteRoutes(app, store);
   registerHotelReasonRoutes(app, store);
+  registerHotelWorldlineRoutes(app, store);
 
   app.post<{ Body: { name: string } }>('/models', async (req, reply) => {
     const model = await asPromise(store.createModel(req.body.name));
