@@ -7,6 +7,7 @@ import {
 import { ViewportCanvas } from './ViewportCanvas.js';
 import { HotelPlaceLens } from './HotelPlaceLens.js';
 import { HotelAssemblyLens } from './HotelAssemblyLens.js';
+import { HotelCausalLens, type HotelProposal } from './HotelCausalLens.js';
 import { cadZUpMeshesToViewportYUp } from './northstar-coordinate.js';
 import { apiBaseUrl } from '../api-client.js';
 import type { DisplayMeshInput } from '../mesh-bridge.js';
@@ -124,6 +125,7 @@ export function HotelWorkspace({
   const [activeModule,setActiveModule]=useState('entity:hotel:loft:window-a4');
   const [windowDraft,setWindowDraft]=useState('1800');
   const [candidate,setCandidate]=useState<number|null>(null);
+  const [proposal,setProposal]=useState<HotelProposal|null>(null);
   const [drawing,setDrawing]=useState<'plan'|'section'|'elevation'|'junction'|'schedule'>('plan');
   const [sheetExpanded,setSheetExpanded]=useState(false);
   const [openEvidence,setOpenEvidence]=useState(false);
@@ -212,14 +214,14 @@ export function HotelWorkspace({
       ||qaEditAttempt.current||!scene?.nativeVerified||scene.windowWidthMm!==1800||busy)return;
     qaEditAttempt.current=true;
     setWindowDraft('2100');
-    setCandidate(2100);
+    void requestProposal(2100);
   },[scene,busy]);
   useEffect(()=>{
     if(!isQa()||new URLSearchParams(window.location.search).get('edit')!=='1'
-      ||qaAcceptAttempt.current||!scene?.nativeVerified||candidate!==2100||busy)return;
+      ||qaAcceptAttempt.current||!scene?.nativeVerified||candidate!==2100||!proposal||busy)return;
     qaAcceptAttempt.current=true;
     void acceptChange();
-  },[candidate,scene,busy]);
+  },[candidate,scene,busy,proposal]);
 
   async function beginHotel(){
     if(!modelId||!branchId||!headHash)return;
@@ -248,29 +250,41 @@ export function HotelWorkspace({
     setLevel(nextLevel);setMode(nextMode);
     if(scene&&branchId)void loadScene(scene.headHash,scene.kernel,nextLevel,nextMode);
   }
+  async function requestProposal(target:number){
+    setCandidate(null);setProposal(null);setError('');
+    if(!scene||!branchId||!Number.isFinite(target)||target===scene.windowWidthMm)return;
+    setBusy(true);
+    try{
+      const result=await apiJson<HotelProposal>(base+'/riverside/window-proposal',{
+        method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({
+          branchId,expectedHeadHash:scene.headHash,nextWidthMm:target,
+        }),
+      });
+      setProposal(result);setCandidate(result.windowWidthAfterMm);
+      setNotice('Computed geometry impacts and explicit unresolved gates. Proposal is uncommitted.');
+    }catch(e){setError(e instanceof Error?e.message:'Proposal review rejected');}
+    finally{setBusy(false);}
+  }
   function reviewChange(){
-    setCandidate(null);setError('');
     if(!scene||!isValidWidth)return;
-    const target=Number(windowDraft);
-    if(target===scene.windowWidthMm){setError('Choose a different window width.');return;}
-    setCandidate(target);
-    setNotice('Linked change is a proposal. Nothing in the version store has changed.');
+    void requestProposal(Number(windowDraft));
   }
   async function acceptChange(){
-    if(!modelId||!branchId||!scene||candidate===null)return;
+    if(!modelId||!branchId||!scene||candidate===null||!proposal)return;
     setBusy(true);setError('');
     try{
       const update=await apiJson<{
         headHash:string;eventId:string;oldWidthMm:number;newWidthMm:number;
         affectedRoomCount:number;revisedModuleIds:readonly string[];
-      }>(base+'/riverside/revise-window',{
+      }>(base+'/riverside/accept-reviewed-window',{
         method:'POST',headers:{'content-type':'application/json'},
         body:JSON.stringify({
           branchId,expectedHeadHash:scene.headHash,
-          nextWidthMm:candidate,
+          nextWidthMm:candidate,candidateHash:proposal.candidateHash,
         }),
       });
-      setCandidate(null);
+      setCandidate(null);setProposal(null);
       setNotice('Accepted one atomic source revision: '+update.affectedRoomCount+
         ' room windows, '+update.revisedModuleIds.length+
         ' Loft subprojects. Plans and sections regenerate from the new dimensions.');
@@ -479,25 +493,20 @@ export function HotelWorkspace({
             <strong>Modular guest suites with source-linked envelope and façade systems.</strong>
             <p>Change one design parameter and propagate to every room occurrence, module source and schematic drawing.</p>
           </div>
-          <div className="hotel-trace">
-            <div className="hotel-section-title"><Network size={14}/> Causal link / A4 window</div>
-            <div className="hotel-trace-inputs">
-              <span>Suite geometry</span><span>Window A4</span><span>Hotel shell</span>
-            </div>
-            <div className="hotel-trace-arrow"><ArrowRight size={17}/></div>
-            <div className="hotel-trace-center"><Box size={17}/> 168 window occurrences</div>
-            <div className="hotel-trace-arrow"><ArrowRight size={17}/></div>
-            <div className="hotel-trace-outputs">
-              <span>Façade model</span><span>Room plan</span><span>Section study</span>
-            </div>
-          </div>
+          <HotelCausalLens proposal={proposal}
+            baselineWidth={scene?.windowWidthMm}
+            windowRevision={windowModule?.revision??0}
+            documentCount={scene?.drawings.registry.length??0}
+            roomCount={scene?.roomCount??168}/>
           <div className="hotel-editor">
             <div className="hotel-section-title"><SlidersHorizontal size={14}/> Parametric change / sub-project
               <strong>F13</strong></div>
             <label htmlFor="hotel-window-width">A4 window width · mm</label>
             <div className="hotel-width-row">
               <input id="hotel-window-width" type="number" min="1200" max="2500" step="50"
-                value={windowDraft} onChange={e=>{setWindowDraft(e.target.value);setCandidate(null);}}
+                value={windowDraft} onChange={e=>{
+                  setWindowDraft(e.target.value);setCandidate(null);setProposal(null);
+                }}
                 data-testid="hotel-window-width"/>
               <span>H {WINDOW_HEIGHT} mm</span>
             </div>
@@ -515,8 +524,12 @@ export function HotelWorkspace({
               <strong>PROPOSED / NOT COMMITTED</strong>
               <span>{scene.windowWidthMm} → {candidate} mm</span>
               <p>Update three suite opening definitions and one window source in a single Plasma version event.</p>
-              <small>Change in nominal glass opening area across 168 rooms:
-                {' '+(((candidate-scene.windowWidthMm)*WINDOW_HEIGHT*168)/1e6).toFixed(1)} m²</small>
+              {proposal?.claims.map(claim=><div className="hotel-proposal-claim" key={claim.id}>
+                <span>{claim.label}</span>
+                <strong>{claim.delta>0?'+':''}{claim.delta.toFixed(2)} {claim.unit}</strong>
+              </div>)}
+              <small>Dimensions and quantities computed from Loft source geometry.
+                No verified thermal/daylight, weather or structural result.</small>
               <div className="hotel-decision">
                 <button type="button" onClick={()=>setCandidate(null)}>Discard</button>
                 <button type="button" disabled={busy} onClick={()=>void acceptChange()}
