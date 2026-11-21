@@ -217,6 +217,6 @@
 .hotel-level-select select{font-size:9px;max-width:128px}
 .hotel-viewport{flex-basis:310px;min-height:310px}
 .hotel-design{min-height:590px}
-.hotel-selected-float{bottom:51px;right:7px}
+.hotel-selected-float{bottom:53px;right:6px;max-width:140px;padding:7px 8px}.hotel-selected-float strong{font-size:12px}.hotel-selected-float small{font-size:8px}
 .hotel-site{min-height:150px}
 }
