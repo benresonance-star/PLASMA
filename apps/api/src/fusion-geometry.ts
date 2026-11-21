@@ -125,6 +125,7 @@ export function previewSupportedLoftSolid(input: {
     publicationReady: false as const,
     semanticOwner: input.loftOccurrenceId,
     compileHash: compiled.compileHash,
+    compileRequest: request,
     sourceHashes: { build: buildHash, loft: loftHash },
     meshes: compiled.meshes,
     unresolved: [
