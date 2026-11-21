@@ -7,6 +7,7 @@ import { ViewportCanvas } from './ViewportCanvas.js';
 import { apiBaseUrl } from '../api-client.js';
 import { ContinuityInspector } from './ContinuityInspector.js';
 import { FusionRevisionWorkbench } from './FusionRevisionWorkbench.js';
+import { HotelWorkspace } from './HotelWorkspace.js';
 import { cadZUpMeshesToViewportYUp } from './northstar-coordinate.js';
 import './northstar.css';
 
@@ -64,6 +65,8 @@ export function NorthstarStudio(props: NorthstarProps) {
     const stage = new URLSearchParams(window.location.search).get('stage');
     return stage === 'F06' ? 'place' : stage === 'F07' || stage === 'F08' || stage === 'F09' ? 'reason' : 'design';
   });
+  const [hotelOpen, setHotelOpen] = useState(() => typeof window !== 'undefined' && import.meta.env.DEV &&
+    new URLSearchParams(window.location.search).get('stage') === 'F13');
   const [media, setMedia] = useState<LocalMedia | null>(null);
   const [mediaError, setMediaError] = useState('');
   const [parameterId, setParameterId] = useState('');
@@ -357,6 +360,13 @@ export function NorthstarStudio(props: NorthstarProps) {
     void previewHostedWallCut();
   },[fusion,modelId,branchId,headHash,currentHost,hostHasDimensions]);
 
+  if (hotelOpen) return <HotelWorkspace
+    modelId={modelId} branchId={branchId} headHash={headHash}
+    onBack={() => setHotelOpen(false)}
+    onRevisionUpdated={(result) => onRevisionUpdated?.(result)}
+    sessionEvents={sessionEvents}
+  />;
+
   return (
     <section className="northstar" data-focus={focus} aria-label="Plasma Northstar spatial studio">
       <div className="northstar-toolbar">
@@ -372,6 +382,7 @@ export function NorthstarStudio(props: NorthstarProps) {
           ))}
         </div>
         <div className="northstar-actions">
+          <button type="button" onClick={() => setHotelOpen(true)} data-testid="northstar-open-hotel"><Box size={14}/> Riverside Hotel / Loft modules</button>
           <button type="button" onClick={onOpenFusion}><Link2 size={14}/> {fusion ? 'Sources linked' : 'Connect sources'}</button>
           <button type="button" aria-label="Return to standard Plasma designer" onClick={onClose}><X size={16}/></button>
         </div>
