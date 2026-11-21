@@ -187,3 +187,10 @@
   .northstar-events button { flex-basis:115px; }
   .northstar-current { display:none; }
 }
+
+.northstar-native { display:flex; align-items:start; gap:9px; padding:8px 0; border-top:1px solid #c0cbc3; font-size:10px; }
+.northstar-native button { flex:0 0 auto; padding:8px 10px; border-radius:3px; background:#38534b; color:#f5f9f3; border:1px solid #4e7265; font-size:10px; }
+.northstar-native button:disabled { opacity:.52; }
+.northstar-native span { line-height:1.5; color:#426c51; }
+.northstar-native span[role=alert] { color:#a34a37; }
+@media(max-width:850px) { .northstar-native { flex-direction:column; align-items:stretch; } }

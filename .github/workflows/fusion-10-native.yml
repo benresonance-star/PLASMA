@@ -1,0 +1,95 @@
+name: Fusion 10 Native OpenCascade
+
+on:
+  pull_request:
+    paths:
+      - 'apps/api/src/fusion-native*'
+      - 'apps/api/src/fusion-geometry.ts'
+      - 'apps/api/src/server.ts'
+      - 'apps/designer-web/src/ui/NorthstarStudio.tsx'
+      - 'apps/designer-web/src/ui/NorthstarVisualQA.tsx'
+      - 'apps/designer-web/src/ui/northstar.css'
+      - '.github/workflows/fusion-10-native.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  constructive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install reproducibly
+        run: pnpm install --frozen-lockfile
+      - name: Build API and native geometry dependencies
+        run: |
+          pnpm --filter '@spds/api^...' build
+          pnpm --filter @spds/api build
+          pnpm --filter '@spds/geometry-occt^...' build
+          pnpm --filter @spds/geometry-occt build
+      - name: Verify native parity validation rejects impostors
+        run: pnpm --filter @spds/api exec vitest run src/fusion-native.test.ts
+      - name: Verify Northstar UI type safety
+        run: |
+          pnpm --filter '@spds/designer-web^...' build
+          pnpm --filter @spds/designer-web typecheck
+          pnpm --filter @spds/designer-web lint
+      - name: Qualify against actual OpenCascade B-rep service and capture UI
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p f10-verified-snapshot
+          GEOMETRY_KERNEL=occt-native PORT=7080 node services/geometry-occt/dist/server-main.js >/tmp/f10-native.log 2>&1 &
+          NATIVE_PID=$!
+          SPDS_API_LISTEN=1 GEOMETRY_URL=http://127.0.0.1:7080 PORT=3001 \
+            node apps/api/dist/index.js >/tmp/f10-api.log 2>&1 &
+          API_PID=$!
+          pnpm --filter @spds/designer-web exec vite --host 127.0.0.1 --port 5173 >/tmp/f10-vite.log 2>&1 &
+          VITE_PID=$!
+          trap 'kill "$NATIVE_PID" "$API_PID" "$VITE_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 100); do
+            if curl -fs http://127.0.0.1:7080/health >/dev/null &&
+              curl -fs http://127.0.0.1:3001/health >/dev/null &&
+              curl -fs http://127.0.0.1:5173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fs http://127.0.0.1:7080/health ||
+            { cat /tmp/f10-native.log; exit 1; }
+          curl -fs http://127.0.0.1:3001/health ||
+            { cat /tmp/f10-api.log; exit 1; }
+          GEOMETRY_URL=http://127.0.0.1:7080 \
+            pnpm --filter @spds/api exec vitest run src/fusion-native.test.ts
+          BROWSER=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
+          test -n "$BROWSER"
+          FLAGS="--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu --hide-scrollbars --virtual-time-budget=16000"
+          URL="http://127.0.0.1:5173/?northstar-qa=1&stage=F10"
+          "$BROWSER" $FLAGS --window-size=1660,1040 --dump-dom "$URL" >f10-verified-snapshot/F10-dom.html 2>/tmp/f10-chrome.err
+          grep -q 'northstar-qa-banner' f10-verified-snapshot/F10-dom.html
+          grep -q 'fusion-native-passed' f10-verified-snapshot/F10-dom.html ||
+            { echo 'Native UI evidence missing'; tail -40 /tmp/f10-api.log; exit 1; }
+          "$BROWSER" $FLAGS --window-size=1660,1040 \
+            --screenshot=f10-verified-snapshot/F10-native-desktop.png "$URL" >/dev/null 2>/tmp/f10-screenshot.err
+          python3 - <<'PY'
+          import struct
+          p='f10-verified-snapshot/F10-native-desktop.png'
+          with open(p,'rb') as f:header=f.read(24)
+          assert header[:8]==bytes.fromhex('89504e470d0a1a0a')
+          width,height=struct.unpack('>II',header[16:24])
+          assert width>1000 and height>600
+          print('Native OpenCascade visual proof screenshot:',width,height)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: F10-native-OCCT-verified-snapshot
+          path: f10-verified-snapshot/*.png
+          retention-days: 14

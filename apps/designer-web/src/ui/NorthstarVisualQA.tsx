@@ -119,7 +119,7 @@ export function NorthstarVisualQA(){
     })();
     void startup.current.then(value=>{
       if(!active)return;
-      if(new URLSearchParams(window.location.search).get('stage')==='F03') {
+      if(['F03','F10'].includes(new URLSearchParams(window.location.search).get('stage')??'')) {
         const bound=value.context.preview.bindings[0]?.loftOccurrenceId;
         if(bound)setSelection(bound);
       }
