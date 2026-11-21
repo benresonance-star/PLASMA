@@ -38,11 +38,15 @@ export function clearHotelCompilerCache(){moduleCache.clear();}
 function classify(material:string):string{
   const x=material.toLowerCase();
   if(x.includes('glaz'))return 'glass';
+  if(x.includes('bronze')||x.includes('anodised'))return 'bronze';
   if(x.includes('alumini'))return 'metal';
   if(x.includes('terracotta'))return 'facade';
   if(x.includes('concrete'))return 'concrete';
-  if(x.includes('stone'))return 'stone';
+  if(x.includes('charcoal')||x.includes('dark stone'))return 'dark-stone';
+  if(x.includes('stone')||x.includes('limestone'))return 'stone';
+  if(x.includes('insulation')||x.includes('thermal'))return 'insulation';
   if(x.includes('timber'))return 'timber';
+  if(x.includes('plant')||x.includes('green'))return 'planting';
   return 'plaster';
 }
 function sourceInput(module:HotelSourceModule){
