@@ -1,0 +1,46 @@
+name: Fusion 09 Controlled Revisions
+
+on:
+  pull_request:
+    paths:
+      - 'packages/import-core/**'
+      - 'apps/api/src/fusion-*'
+      - 'apps/api/src/server.ts'
+      - 'apps/designer-web/src/ui/**'
+      - 'apps/designer-web/src/main.tsx'
+      - '.github/workflows/fusion-09-revision.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  revision:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install locked workspace
+        run: pnpm install --frozen-lockfile
+      - name: Build API dependencies
+        run: pnpm --filter '@spds/api^...' build
+      - name: Validate F09 source revisions
+        run: pnpm --filter @spds/import-core exec vitest run src/fusion-revision.test.ts src/fusion-change.test.ts
+      - name: Validate F09 API and stale-head protection
+        run: pnpm --filter @spds/api exec vitest run src/fusion-workspaces.test.ts src/fusion-continuity.test.ts
+      - name: Validate Northstar UI
+        run: |
+          pnpm --filter '@spds/designer-web^...' build
+          pnpm --filter @spds/designer-web typecheck
+          pnpm --filter @spds/designer-web lint
+      - name: Build runnable frontend and backend
+        run: |
+          pnpm --filter @spds/api build
+          pnpm --filter @spds/designer-web build
