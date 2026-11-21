@@ -94,7 +94,7 @@ jobs:
             --screenshot=f13-verified-hotel/F13-hotel-mobile.png "$URL" >/dev/null 2>/tmp/f13-mobile.err
           python3 - <<'PY'
           import os,struct
-          for file in ['F13-hotel-desktop.png','F13-hotel-mobile.png']:
+          for file in ['F13-hotel-desktop.png','F13-hotel-after-linked-edit.png','F13-hotel-mobile.png']:
               path='f13-verified-hotel/'+file
               with open(path,'rb') as f:header=f.read(24)
               assert header[:8]==bytes.fromhex('89504e470d0a1a0a'),file
