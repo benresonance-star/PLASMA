@@ -198,8 +198,15 @@ export async function buildHotelScene(input:{
   if(compiled.size!==5)throw new Error('HOTEL_SUBPROJECT_COMPILATION_INCOMPLETE');
   const shell=compiled.get(hotelModuleId('building-shell'))!;
   const windows=compiled.get(hotelModuleId('window-a4'))!;
-  const meshes:HotelDisplayMesh[]=[...shellMeshes(shell)];
+  // Exterior: all 168 façade modules. Floor study: isolate exactly one
+  // level and its supporting slab so interiors are inspectable, not hidden
+  // behind the roof or upper storeys.
+  const selectedSlab=selectedLevel===1?'LobbyRoof':'FloorBand'+(selectedLevel-1);
+  const meshes:HotelDisplayMesh[]=mode==='floor'
+    ?shellMeshes(shell).filter(mesh=>mesh.representationId.includes(':'+selectedSlab+':'))
+    :shellMeshes(shell);
   for(const room of hotel.manifest.rooms){
+    if(mode==='floor' && room.level!==selectedLevel)continue;
     const suite=compiled.get(room.moduleId);
     if(!suite)throw new Error('HOTEL_ROOM_SUBPROJECT_UNRESOLVED');
     meshes.push(...makeRoomMeshes(room,suite,windows,mode==='floor'&&room.level===selectedLevel));
