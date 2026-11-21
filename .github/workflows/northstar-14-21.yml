@@ -1,0 +1,116 @@
+name: Northstar F14-F21 Experience Convergence
+
+on:
+  pull_request:
+    paths:
+      - 'apps/api/src/hotel-*'
+      - 'apps/api/src/fusion-assembly.ts'
+      - 'apps/api/src/server.ts'
+      - 'apps/designer-web/src/ui/Hotel*'
+      - 'apps/designer-web/src/ui/hotel-*'
+      - 'apps/designer-web/src/ui/NorthstarStudio.tsx'
+      - 'apps/designer-web/src/ui/NorthstarVisualQA.tsx'
+      - 'apps/designer-web/src/ui/three-scene.ts'
+      - '.github/workflows/northstar-14-21.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  northstar-experience:
+    runs-on: ubuntu-latest
+    timeout-minutes: 38
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install locked dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build versioned API, native OpenCascade and real Northstar UI
+        run: |
+          pnpm --filter '@spds/api^...' build
+          pnpm --filter @spds/api build
+          pnpm --filter '@spds/geometry-occt^...' build
+          pnpm --filter @spds/geometry-occt build
+          pnpm --filter '@spds/designer-web^...' build
+          pnpm --filter @spds/designer-web typecheck
+          pnpm --filter @spds/designer-web lint
+      - name: Check F14-F21 source + construction + registration + docs + governance + history + interchange
+        run: |
+          pnpm --filter @spds/api exec vitest run \
+            src/hotel-routes.test.ts \
+            src/hotel-documents.test.ts \
+            src/hotel-site.test.ts \
+            src/hotel-reason.test.ts \
+            src/hotel-worldline.test.ts \
+            src/hotel-package.test.ts
+      - name: Live OpenCascade hotel and Northstar desktop + mobile verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p northstar-f21-snapshots
+          GEOMETRY_KERNEL=occt-native PORT=7080 node services/geometry-occt/dist/server-main.js > /tmp/f21-native.log 2>&1 &
+          NATIVE_PID=$!
+          SPDS_API_LISTEN=1 GEOMETRY_URL=http://127.0.0.1:7080 PORT=3001 \
+            node apps/api/dist/index.js > /tmp/f21-api.log 2>&1 &
+          API_PID=$!
+          pnpm --filter @spds/designer-web exec vite --host 127.0.0.1 --port 5173 > /tmp/f21-vite.log 2>&1 &
+          VITE_PID=$!
+          trap 'kill "$NATIVE_PID" "$API_PID" "$VITE_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 120); do
+            if curl -fs http://127.0.0.1:7080/health >/dev/null &&
+               curl -fs http://127.0.0.1:3001/health >/dev/null &&
+               curl -fs http://127.0.0.1:5173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          curl -fs http://127.0.0.1:7080/health || { cat /tmp/f21-native.log; exit 1; }
+          curl -fs http://127.0.0.1:3001/health || { cat /tmp/f21-api.log; exit 1; }
+          GEOMETRY_URL=http://127.0.0.1:7080 \
+            pnpm --filter @spds/api exec vitest run src/hotel-routes.test.ts
+          BROWSER=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
+          test -n "$BROWSER"
+          FLAGS="--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu --hide-scrollbars --virtual-time-budget=85000"
+          URL="http://127.0.0.1:5173/?northstar-qa=1&stage=F21"
+          "$BROWSER" $FLAGS --window-size=1720,1080 --dump-dom "$URL" >northstar-f21-snapshots/desktop-dom.html 2>/tmp/f21-chrome.err
+          for marker in hotel-qa-banner hotel-place-lens hotel-assembly-lens hotel-documents-index hotel-causal-lens hotel-worldline; do
+            grep -q "$marker" northstar-f21-snapshots/desktop-dom.html || {
+              echo "Northstar visual instrument missing: $marker"; cat /tmp/f21-chrome.err; exit 1;
+            }
+          done
+          grep -q 'OCCT NATIVE VERIFIED' northstar-f21-snapshots/desktop-dom.html || {
+            echo 'Native hotel geometry not verified'; tail -40 /tmp/f21-api.log; exit 1;
+          }
+          "$BROWSER" $FLAGS --window-size=1720,1080 \
+            --screenshot=northstar-f21-snapshots/Northstar-F21-hotel-desktop.png "$URL" >/dev/null 2>/tmp/f21-shot.err
+          EDIT_URL="$URL&edit=1"
+          "$BROWSER" $FLAGS --window-size=1720,1080 --dump-dom "$EDIT_URL" >northstar-f21-snapshots/edit-dom.html 2>/tmp/f21-edit.err
+          grep -q 'hotel-qa-edit-accepted' northstar-f21-snapshots/edit-dom.html || {
+            echo 'F21 reviewed window change did not recompile natively / update Worldline'
+            tail -60 /tmp/f21-api.log; tail -30 /tmp/f21-edit.err; exit 1;
+          }
+          "$BROWSER" $FLAGS --window-size=1720,1080 \
+            --screenshot=northstar-f21-snapshots/Northstar-F21-after-reviewed-edit.png "$EDIT_URL" >/dev/null 2>/tmp/f21-edit-shot.err
+          "$BROWSER" $FLAGS --window-size=430,920 \
+            --screenshot=northstar-f21-snapshots/Northstar-F21-mobile.png "$URL" >/dev/null 2>/tmp/f21-mobile.err
+          python3 - <<'PY'
+          import os,struct
+          for f in ['Northstar-F21-hotel-desktop.png','Northstar-F21-after-reviewed-edit.png','Northstar-F21-mobile.png']:
+              path='northstar-f21-snapshots/'+f
+              with open(path,'rb') as p: data=p.read(24)
+              assert data[:8]==bytes.fromhex('89504e470d0a1a0a'),f
+              w,h=struct.unpack('>II',data[16:24])
+              assert w>300 and h>300 and os.stat(path).st_size>80000,f
+              print('VISUAL QA VERIFIED',f,w,h)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: northstar-f14-f21-native-verified
+          path: northstar-f21-snapshots/*.png
+          retention-days: 14
