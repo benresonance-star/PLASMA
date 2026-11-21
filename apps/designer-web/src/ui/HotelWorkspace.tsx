@@ -119,7 +119,9 @@ export function HotelWorkspace({
   const [openEvidence,setOpenEvidence]=useState(false);
   const [worldlineFocus,setWorldlineFocus]=useState('design');
   const bootstrapAttempt=useRef(false);
-  const nativeQaAttempt=useRef(false);
+  const nativeQaHead=useRef<string|null>(null);
+  const qaEditAttempt=useRef(false);
+  const qaAcceptAttempt=useRef(false);
   const loadToken=useRef(0);
   const currentHead=useRef(headHash);
   currentHead.current=headHash;
@@ -188,11 +190,26 @@ export function HotelWorkspace({
   },[modelId,branchId,headHash]);
 
   useEffect(()=>{
-    if(!isQa()||nativeQaAttempt.current||!scene||scene.kernel==='occt-native'
-      ||sceneBusy||!headHash||scene.headHash!==headHash)return;
-    nativeQaAttempt.current=true;
+    if(!isQa()||!scene||scene.kernel==='occt-native'
+      ||sceneBusy||!headHash||scene.headHash!==headHash||
+      nativeQaHead.current===headHash)return;
+    nativeQaHead.current=headHash;
     void loadScene(headHash,'occt-native',level,mode);
   },[scene,sceneBusy,headHash,level,mode,loadScene]);
+
+  useEffect(()=>{
+    if(!isQa()||new URLSearchParams(window.location.search).get('edit')!=='1'
+      ||qaEditAttempt.current||!scene?.nativeVerified||scene.windowWidthMm!==1800||busy)return;
+    qaEditAttempt.current=true;
+    setWindowDraft('2100');
+    setCandidate(2100);
+  },[scene,busy]);
+  useEffect(()=>{
+    if(!isQa()||new URLSearchParams(window.location.search).get('edit')!=='1'
+      ||qaAcceptAttempt.current||!scene?.nativeVerified||candidate!==2100||busy)return;
+    qaAcceptAttempt.current=true;
+    void acceptChange();
+  },[candidate,scene,busy]);
 
   async function beginHotel(){
     if(!modelId||!branchId||!headHash)return;
@@ -378,6 +395,7 @@ export function HotelWorkspace({
             selectedSemanticId={selectedRoomId}
             onPickSemantic={pickRoom}
             autoFitOnGeometryChange
+            fitOffset={typeof window !== 'undefined'&&window.innerWidth<850?1.34:1.11}
             focusServiceGeometry
             backgroundHex="#27353a"
             chrome="candidate"
@@ -534,6 +552,9 @@ export function HotelWorkspace({
     </footer>}
     {isQa()&&<div className="hotel-qa-banner" data-testid="hotel-qa-banner">
       AUTOMATED VISUAL QA · SYNTHETIC HOTEL / NO SURVEY / NOT ISSUED BIM
+      {scene?.nativeVerified && scene.windowWidthMm===2100 &&
+        events.some(event=>event.label.includes('A4 window')) &&
+        <span data-testid="hotel-qa-edit-accepted"> · LINKED WINDOW REVISION ACCEPTED AND NATIVE RECOMPILED</span>}
     </div>}
   </section>;
 }
