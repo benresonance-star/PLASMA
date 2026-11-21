@@ -110,6 +110,10 @@ export function NorthstarVisualQA(){
         });
         const payload:unknown=await result.json();
         if(!result.ok)throw new Error('Source reconciliation rejected: '+JSON.stringify(payload));
+        if(active && new URLSearchParams(window.location.search).get('stage') === 'F03') {
+          const bound = (payload as FusionContext['preview']).bindings[0]?.loftOccurrenceId;
+          if(bound)setSelection(bound);
+        }
         if(active)setState({
           context:{preview:payload as FusionContext['preview'],buildProject,loftProject,bindings},
           model:{modelId:data.model.modelId,branchId:data.branchId,headHash:data.headHash},
