@@ -7,6 +7,7 @@ import { ViewportCanvas } from './ViewportCanvas.js';
 import { apiBaseUrl } from '../api-client.js';
 import { ContinuityInspector } from './ContinuityInspector.js';
 import { FusionRevisionWorkbench } from './FusionRevisionWorkbench.js';
+import { cadZUpMeshesToViewportYUp } from './northstar-coordinate.js';
 import './northstar.css';
 
 type Focus = 'place' | 'design' | 'reason';
@@ -235,7 +236,7 @@ export function NorthstarStudio(props: NorthstarProps) {
         readonly relativeVolumeError:number;readonly openingVolumeMm3:number;
         readonly jambsMm:{readonly left:number;readonly right:number};
       };
-      setGeometryMeshes([report.mesh]);
+      setGeometryMeshes(cadZUpMeshesToViewportYUp([report.mesh]));
       setGeometryInfo('Real OpenCascade wall-opening Boolean · candidate only');
       setHostProof(report);
     }catch(err){
@@ -265,7 +266,7 @@ export function NorthstarStudio(props: NorthstarProps) {
         readonly meshes:readonly DisplayMeshInput[];
         readonly partCount:number;readonly materials:readonly string[];readonly kernel:string;
       };
-      setGeometryMeshes([...proof.meshes]);
+      setGeometryMeshes(cadZUpMeshesToViewportYUp(proof.meshes));
       setAssemblyEvidence({partCount:proof.partCount,materials:proof.materials,kernel:proof.kernel});
       setGeometryInfo(proof.partCount+' actual native OCCT parts · candidate only');
     }catch(err){
@@ -314,7 +315,7 @@ export function NorthstarStudio(props: NorthstarProps) {
       const data: unknown = await response.json();
       if (!response.ok) throw new Error(String(object(data)?.['summary'] ?? object(data)?.['failureCode'] ?? 'Unsupported Loft solid'));
       const output = data as { readonly meshes: readonly DisplayMeshInput[]; readonly kernel: string; readonly nativeBrep: boolean };
-      setGeometryMeshes([...output.meshes]);
+      setGeometryMeshes(cadZUpMeshesToViewportYUp(output.meshes));
       setGeometryInfo(output.kernel + ' mesh · native B-rep not verified · candidate only');
     } catch (err) {
       setGeometryError(err instanceof Error ? err.message : 'Geometry preview failed');
@@ -566,7 +567,7 @@ export function NorthstarStudio(props: NorthstarProps) {
                 link={linkOptions.find((x) => x.key === linkKey) ?? null}
                 onHeadUpdated={(result) => onRevisionUpdated?.(result)}
                 onShowGeometry={(sourceMeshes, description) => {
-                  setGeometryMeshes([...sourceMeshes]); setGeometryInfo(description);
+                  setGeometryMeshes(cadZUpMeshesToViewportYUp(sourceMeshes)); setGeometryInfo(description);
                 }}
                 onShowDetail={setDetailSvg}
               />
