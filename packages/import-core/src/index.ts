@@ -174,3 +174,7 @@ export function placeImportedInAssembly(input: {
 export { composeFirstFusion, type FirstFusionPreview, type FusionBinding } from './fusion.js';
 
 export { proposeFirstFusionChange, type FusionChangeInput, type FusionChangePreview, type FusionParameterLink } from './fusion-change.js';
+
+export { auditFusionConstruction, traceFusionCausality, assessHotelReadiness, type ConstructionReview, type CausalTrace, type HotelReadiness } from './fusion-review.js';
+export { createFusionSectionSheet, type FusionSectionSheet, type SectionRegion } from './fusion-section.js';
+export { estimateSiteRegistration, type SiteTiePoint, type SiteRegistrationPreview } from './site-registration.js';

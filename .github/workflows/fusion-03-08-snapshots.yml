@@ -1,0 +1,102 @@
+name: Fusion 03-08 Northstar Snapshots
+
+on:
+  pull_request:
+    paths:
+      - 'packages/import-core/**'
+      - 'apps/api/src/fusion-*'
+      - 'apps/api/src/server.ts'
+      - 'apps/designer-web/**'
+      - '.github/workflows/fusion-03-08-snapshots.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  stages:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: pnpm
+      - name: Install
+        run: pnpm install --frozen-lockfile
+      - name: Build API prerequisites
+        run: pnpm --filter '@spds/api^...' build
+      - name: Build app prerequisites
+        run: pnpm --filter '@spds/designer-web^...' build
+      - name: Validate Fusion F01-F08 core and API
+        run: |
+          pnpm --filter @spds/import-core exec vitest run src/fusion.test.ts src/fusion-change.test.ts src/fusion-milestones.test.ts
+          pnpm --filter @spds/api exec vitest run src/fusion-preview.test.ts src/fusion-change.test.ts src/fusion-geometry.test.ts src/fusion-continuity.test.ts
+      - name: Validate Northstar source
+        run: |
+          pnpm --filter @spds/designer-web typecheck
+          pnpm --filter @spds/designer-web lint
+          pnpm --filter @spds/designer-web exec vitest run src/ui/NorthstarStudio.test.ts
+      - name: Build UI and API
+        run: |
+          pnpm --filter @spds/api build
+          pnpm --filter @spds/designer-web build
+      - name: Verify live UI and capture successful F03-F08 frames
+        shell: bash
+        env:
+          SPDS_API_LISTEN: '1'
+          PORT: '3001'
+        run: |
+          set -euo pipefail
+          mkdir -p northstar-snapshots
+          node apps/api/dist/index.js > /tmp/plasma-api.log 2>&1 &
+          API_PID=$!
+          pnpm --filter @spds/designer-web exec vite --host 127.0.0.1 --port 5173 > /tmp/plasma-vite.log 2>&1 &
+          VITE_PID=$!
+          trap 'kill "$API_PID" "$VITE_PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 50); do
+            curl -fs http://127.0.0.1:3001/health >/dev/null && curl -fs http://127.0.0.1:5173/ >/dev/null && break || sleep 1
+          done
+          BROWSER=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
+          test -n "$BROWSER" || { echo "No headless Chrome available"; exit 1; }
+          FLAGS="--headless=new --no-sandbox --disable-dev-shm-usage --disable-gpu --hide-scrollbars --virtual-time-budget=9500"
+          for stage in F03 F04 F05 F06 F07 F08; do
+            URL="http://127.0.0.1:5173/?northstar-qa=1&stage=$stage"
+            "$BROWSER" $FLAGS --window-size=1660,1040 --dump-dom "$URL" > "northstar-snapshots/$stage-dom.html" 2> /tmp/chrome-dom.err
+            grep -q 'northstar-qa-banner' "northstar-snapshots/$stage-dom.html" || { echo "QA banner missing: $stage"; exit 1; }
+            grep -q 'northstar-workspaces' "northstar-snapshots/$stage-dom.html" || { echo "Northstar workspace missing: $stage"; exit 1; }
+            if [ "$stage" = F03 ]; then
+              grep -q 'exact-adapter mesh' "northstar-snapshots/$stage-dom.html" || { echo "Exact-adapter bridge preview missing"; exit 1; }
+            else
+              grep -q 'continuity-results' "northstar-snapshots/$stage-dom.html" || { echo "Stage instrument did not return results: $stage"; exit 1; }
+            fi
+            "$BROWSER" $FLAGS --window-size=1660,1040 \
+              --screenshot="northstar-snapshots/$stage-desktop.png" "$URL" >/dev/null 2>/tmp/chrome-shot.err
+            test -s "northstar-snapshots/$stage-desktop.png"
+            echo "PASS $stage desktop screenshot"
+          done
+          "$BROWSER" $FLAGS --window-size=430,920 --screenshot="northstar-snapshots/F05-mobile.png" \
+            "http://127.0.0.1:5173/?northstar-qa=1&stage=F05" >/dev/null 2>/tmp/chrome-mobile.err
+          test -s northstar-snapshots/F05-mobile.png
+          python3 - <<'PY'
+          import os,struct
+          files=[f for f in os.listdir('northstar-snapshots') if f.endswith('.png')]
+          assert len(files)==7, 'expected six desktop and one narrow-width PNG'
+          for f in files:
+              with open('northstar-snapshots/'+f,'rb') as fp:
+                  header=fp.read(24)
+              assert header[:8]==bytes.fromhex('89504e470d0a1a0a'), f+' missing PNG signature'
+              width,height=struct.unpack('>II',header[16:24])
+              assert width>300 and height>300, f+' empty/small viewport'
+          print('Verified',len(files),'rendered PNG headers and dimensions')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: northstar-F03-F08-verified-snapshots
+          path: northstar-snapshots/*.png
+          retention-days: 14

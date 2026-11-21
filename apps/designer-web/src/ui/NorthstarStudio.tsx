@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowRight, Box, FileClock, GitBranch, Image as ImageIcon, Link2, MapPinned, Network, ShieldAlert, Upload, X } from 'lucide-react';
 import type { FusionContext } from './FusionStudio.js';
 import type { DisplayMeshInput } from '../mesh-bridge.js';
 import type { PublicationChrome } from '../viewport.js';
 import { ViewportCanvas } from './ViewportCanvas.js';
 import { apiBaseUrl } from '../api-client.js';
+import { ContinuityInspector } from './ContinuityInspector.js';
 import './northstar.css';
 
 type Focus = 'place' | 'design' | 'reason';
@@ -18,6 +19,7 @@ interface NorthstarProps {
   readonly meshes: readonly DisplayMeshInput[];
   readonly serviceMeshes: readonly DisplayMeshInput[];
   readonly chrome?: PublicationChrome;
+  readonly qaSiteIllustration?: string;
   readonly modelId: string | null;
   readonly branchId: string | null;
   readonly headHash: string | null;
@@ -52,9 +54,13 @@ function object(value: unknown): Record<string, unknown> | null {
 export function NorthstarStudio(props: NorthstarProps) {
   const {
     onClose, onOpenFusion, fusion, selectedSemanticId, onSelectSemantic,
-    meshes, serviceMeshes, chrome, modelId, branchId, headHash, sessionEvents,
+    meshes, serviceMeshes, chrome, modelId, branchId, headHash, sessionEvents, qaSiteIllustration,
   } = props;
-  const [focus, setFocus] = useState<Focus>('design');
+  const [focus, setFocus] = useState<Focus>(() => {
+    if (typeof window === 'undefined' || !import.meta.env.DEV) return 'design';
+    const stage = new URLSearchParams(window.location.search).get('stage');
+    return stage === 'F06' ? 'place' : stage === 'F07' || stage === 'F08' ? 'reason' : 'design';
+  });
   const [media, setMedia] = useState<LocalMedia | null>(null);
   const [mediaError, setMediaError] = useState('');
   const [parameterId, setParameterId] = useState('');
@@ -68,6 +74,9 @@ export function NorthstarStudio(props: NorthstarProps) {
   const [geometryInfo, setGeometryInfo] = useState('');
   const [geometryError, setGeometryError] = useState('');
   const [geometryBusy, setGeometryBusy] = useState(false);
+  const qaGeomTriggered = useRef(false);
+  const [detailSvg, setDetailSvg] = useState<string|null>(null);
+  const [siteFit, setSiteFit] = useState<{readonly rmsResidualMm:number;readonly pointCount:number}|null>(null);
   useEffect(() => () => { if (media) URL.revokeObjectURL(media.url); }, [media]);
   useEffect(() => { setImpact(null); setImpactError(''); setParameterId(''); setLinkKey(''); setGeometryMeshes([]); setGeometryInfo(''); }, [fusion]);
   useEffect(() => { setGeometryMeshes([]); setGeometryInfo(''); }, [headHash]);
@@ -189,6 +198,14 @@ export function NorthstarStudio(props: NorthstarProps) {
       setGeometryError(err instanceof Error ? err.message : 'Geometry preview failed');
     } finally { setGeometryBusy(false); }
   }
+  useEffect(() => {
+    if(typeof window==='undefined'||!import.meta.env.DEV||
+      new URLSearchParams(window.location.search).get('northstar-qa')!=='1'||
+      new URLSearchParams(window.location.search).get('stage')!=='F03'||
+      qaGeomTriggered.current||!canPreviewGeometry)return;
+    qaGeomTriggered.current=true;
+    void previewLoftGeometry();
+  }, [canPreviewGeometry, fusion, selectedSemanticId, headHash]);
 
   return (
     <section className="northstar" data-focus={focus} aria-label="Plasma Northstar spatial studio">
@@ -214,7 +231,7 @@ export function NorthstarStudio(props: NorthstarProps) {
         <section className="northstar-pane northstar-place" aria-label="Place observation">
           <header>
             <div><span className="northstar-index">01 / OBSERVE</span><h3><MapPinned size={17}/> Place</h3></div>
-            <span className="northstar-signal pending">UNREGISTERED</span>
+            <span className="northstar-signal pending">{siteFit ? "LOCAL FIT · UNVERIFIED" : "UNREGISTERED"}</span>
           </header>
           <div className="northstar-place-media">
             {media ? (
@@ -224,6 +241,9 @@ export function NorthstarStudio(props: NorthstarProps) {
                   : <img src={media.url} alt={'Local site observation: ' + media.file.name}/>}
                 <div className="northstar-image-label">SOURCE CAPTURE / LOCAL DEVICE</div>
               </>
+            ) : qaSiteIllustration ? (
+              <><img src={qaSiteIllustration} alt="Synthetic site diagram for visual QA — not an observed site"/>
+                <div className="northstar-image-label">SYNTHETIC SITE ILLUSTRATION · NOT PHOTOGRAPHY</div></>
             ) : (
               <div className="northstar-empty-media">
                 <ImageIcon size={32} strokeWidth={1.1}/>
@@ -233,9 +253,9 @@ export function NorthstarStudio(props: NorthstarProps) {
             )}
           </div>
           <div className="northstar-place-details">
-            <div className="northstar-meta"><span>Capture</span><strong>{media?.file.name ?? 'No capture loaded'}</strong></div>
+            <div className="northstar-meta"><span>Capture</span><strong>{media?.file.name ?? (qaSiteIllustration ? "QA illustration · not captured" : "No capture loaded")}</strong></div>
             <div className="northstar-meta"><span>Recorded</span><strong>{media ? new Date(media.file.lastModified).toLocaleString() : '—'}</strong></div>
-            <div className="northstar-meta"><span>Registration</span><strong>Not surveyed or aligned</strong></div>
+            <div className="northstar-meta"><span>Registration</span><strong>{siteFit ? `Estimated local fit · RMS ${siteFit.rmsResidualMm.toFixed(1)} mm · ${siteFit.pointCount} ties` : "Not surveyed or aligned"}</strong></div>
           </div>
           <label className="northstar-upload">
             <Upload size={15}/> {media ? 'Replace site capture' : 'Open local capture'}
@@ -254,9 +274,14 @@ export function NorthstarStudio(props: NorthstarProps) {
             <ViewportCanvas
               meshes={meshes} geometryServiceMeshes={[...serviceMeshes, ...geometryMeshes]}
               selectedSemanticId={selectedSemanticId}
+              backgroundHex="#26363b"
               onPickSemantic={onSelectSemantic}
               {...(chrome ? { chrome } : {})}
             />
+            {detailSvg && <div className="northstar-sheet-overlay" role="region" aria-label="F05 derived detail sheet">
+              <button type="button" onClick={() => setDetailSvg(null)}>Close drawing study</button>
+              <img src={"data:image/svg+xml;charset=utf-8," + encodeURIComponent(detailSvg)} alt="Loft source-derived construction section, not for construction"/>
+            </div>}
             <div className="northstar-viewport-title">
               <span>ACTIVE PLASMA MODEL</span>
               <strong>{short(modelId)}</strong>
@@ -307,6 +332,12 @@ export function NorthstarStudio(props: NorthstarProps) {
                     <ArrowRight size={14}/>
                   </button>))}
             </div>
+            <ContinuityInspector
+              fusion={fusion} selectedSemanticId={selectedSemanticId}
+              onSelectSemantic={onSelectSemantic}
+              modelId={modelId} branchId={branchId} headHash={headHash}
+              onDetail={setDetailSvg} onRegistration={setSiteFit}
+            />
             <div className="northstar-proposal">
               <div className="northstar-subheading">Design change / F02</div>
               <p className="northstar-note">Draft one typed Build parameter change. A Loft driver is linked only when you explicitly select it.</p>

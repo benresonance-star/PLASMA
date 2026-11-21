@@ -1,0 +1,32 @@
+.continuity { margin: 18px 0 0; padding: 14px 0 3px; border-top: 2px solid #aab7b3; color:#20313a; }
+.continuity-header { display:flex; justify-content:space-between; gap:6px; margin-bottom:10px; font-size:9px; letter-spacing:.12em; }
+.continuity-header span { color:#8e6353; }
+.continuity-tabs { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:3px; }
+.continuity-tabs button { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; border:1px solid #bcc5c1; background:#e5e9e4; border-radius:3px; font-size:8px; padding:8px 2px; color:#5a6969; }
+.continuity-tabs button.active { border-color:#b6513b; background:#f0e3db; color:#98442f; }
+.continuity-intro { font-size:10px; color:#5a686b; line-height:1.55; padding:9px 1px 6px; }
+.continuity-intro p { margin:0; }
+.continuity-field { display:block; font-size:10px; color:#536169; margin:11px 0; }
+.continuity-field input,.continuity-field textarea { display:block; width:100%; margin-top:5px; padding:9px; background:white; border:1px solid #bbc5c0; border-radius:3px; color:#1f2b31; font: 11px/1.5 monospace; }
+.continuity-field span { display:block; margin-top:5px; font-size:9px; line-height:1.4; }
+.continuity-run { background:#25363e; color:#f5f5f0; padding:10px 12px; margin:5px 0; display:flex; gap:10px; justify-content:space-between; align-items:center; width:100%; font-size:11px; border-radius:3px; }
+.continuity-run:hover { background:#3b4f56; }
+.continuity-run:disabled { opacity:.5; }
+.continuity-error { font-size:10px; border-left:3px solid #aa563f; padding:9px; background:#f4e5db; line-height:1.5; }
+.continuity-results { border:1px solid #bcc7c0; background:#f9faf6; margin-top:9px; padding:10px; }
+.continuity-status { display:flex; align-items:center; gap:5px; font-size:9px; color:#50695e; border-bottom:1px solid #d5ddd7; padding-bottom:8px; margin-bottom:9px; }
+.continuity-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin:9px 0; }
+.continuity-metrics>div { border:1px solid #d4dcd7; padding:8px; display:flex; flex-direction:column; gap:5px; min-width:0; }
+.continuity-metrics span { font-size:8px; color:#65726e; }
+.continuity-metrics strong { font-size:14px; }
+.continuity-finding { display:flex; align-items:flex-start; gap:7px; border-bottom:1px solid #e0e3dd; padding:9px 0; font-size:10px; line-height:1.5; }
+.continuity-finding svg { color:#b45b43; flex:0 0 auto; margin-top:2px; }
+.continuity-finding span { display:flex; flex-direction:column; gap:2px; }
+.continuity-finding strong { font-size:9px; color:#845842; }
+.continuity-drawing { width:100%; height:auto; margin:7px 0; border:1px solid #c4c8c3; background:white; }
+.continuity-alert { border-left:3px solid #b6573c; background:#f0e4dc; padding:8px; font-size:10px; line-height:1.5; }
+.continuity-graph { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px; }
+.continuity-graph button { padding:8px; text-align:left; background:#f2f3ef; border:1px solid #c4ccc7; display:flex; flex-direction:column; gap:3px; overflow-wrap:anywhere; font-size:10px; }
+.continuity-graph button.active { border-color:#b7553c; background:#f6e9df; }
+.continuity-graph button small { color:#6d7673; font-size:9px; }
+.continuity-results > p { font-size:10px; line-height:1.5; color:#5d696a; }

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="650" viewBox="0 0 800 650">
+<defs><pattern id="dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="0.6" fill="#6f948b"/></pattern>
+<linearGradient id="river" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#adc7c5"/><stop offset="1" stop-color="#80aaa8"/></linearGradient></defs>
+<rect width="800" height="650" fill="#bdc7b6"/>
+<path d="M0 20 Q220 60 330 30T800 20 L800 100Q500 78 270 118L0 96Z" fill="url(#river)"/>
+<path d="M0 94 Q250 130 420 95T800 96" stroke="#ecf1e9" stroke-width="3" fill="none"/>
+<path d="M-120 195 L890 620" stroke="#6f7771" stroke-width="92"/>
+<path d="M-120 195 L890 620" stroke="#b1ada3" stroke-width="76"/>
+<path d="M-120 195 L890 620" stroke="#e5ded0" stroke-width="2.5" stroke-dasharray="16 17"/>
+<path d="M-60 585L560 -80" stroke="#5e6b64" stroke-width="95"/>
+<path d="M-60 585L560 -80" stroke="#bbb7ab" stroke-width="77"/>
+<path d="M-60 585L560 -80" stroke="#e9e5dc" stroke-width="2.5" stroke-dasharray="15 18"/>
+<g transform="rotate(-17 480 345)">
+<rect x="260" y="210" width="375" height="264" rx="8" fill="#92a39c" stroke="#d9e5dd" stroke-width="6"/>
+<rect x="277" y="227" width="341" height="226" fill="#cad1c6" stroke="#687c73" stroke-width="2" stroke-dasharray="9 6"/>
+<rect x="312" y="251" width="270" height="160" fill="#4d5b5e" stroke="#e1e3d8" stroke-width="5"/>
+<rect x="331" y="267" width="235" height="126" fill="#667478"/>
+<path d="M331 281H566M331 320H566M331 359H566M375 267V393M425 267V393M470 267V393M515 267V393" stroke="#9baaa7" stroke-width="2"/>
+<path d="M312 251L331 267H566L582 251" fill="#c1c5bb" stroke="#e5e7dc" stroke-width="2"/>
+<path d="M582 251V411L566 393" fill="#aab3af"/>
+<rect x="299" y="242" width="292" height="176" fill="none" stroke="#be5b3b" stroke-width="5" stroke-dasharray="15 7"/>
+</g>
+<g fill="#42674d" stroke="#b6c8b5" stroke-width="3"><circle cx="170" cy="178" r="41"/><circle cx="103" cy="274" r="35"/><circle cx="681" cy="234" r="39"/><circle cx="701" cy="521" r="44"/><circle cx="129" cy="524" r="38"/><circle cx="655" cy="127" r="31"/></g>
+<g fill="none" stroke="#dce7d5" stroke-width="2" opacity=".65"><path d="M142 173q31 -44 58 0"/><path d="M75 273q25 -38 49 2"/><path d="M664 224q25 -31 42 0"/><path d="M695 516q27 -38 42 5"/></g>
+<g font-family="Arial, sans-serif">
+<rect x="18" y="16" width="345" height="74" rx="3" fill="#1f2c31" fill-opacity=".94"/>
+<text x="32" y="39" fill="#edf0ea" font-size="18" font-weight="700">SITE CONTEXT / QA STUDY</text>
+<text x="32" y="60" fill="#a4b5b2" font-size="12">ILLUSTRATIVE VECTOR · NOT PHOTOGRAPHY</text>
+<text x="32" y="78" fill="#cc8b74" font-size="11">NO SURVEY, CONTROL POINTS OR GAUSSIAN CAPTURE</text>
+<rect x="455" y="479" width="305" height="53" fill="#24343a" fill-opacity=".94"/>
+<text x="471" y="501" fill="#ffffff" font-size="15" font-weight="700">HOTEL / JUNCTION TEST SITE</text>
+<text x="471" y="522" fill="#d8c4b7" font-size="12">SYNTHETIC DISPLAY FIXTURE</text>
+</g>
+<g transform="translate(740,45)" stroke="#273c43" stroke-width="3" fill="#273c43"><path d="M0 44L0 0M-9 15L0 0L9 15"/><text x="-6" y="-5" font-size="16" font-family="Arial">N</text></g>
+</svg>

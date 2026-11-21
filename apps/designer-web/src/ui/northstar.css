@@ -155,3 +155,35 @@
 .northstar-geometry-actions button:hover { background:#354a4e; }
 .northstar-geometry-actions span { color:#5a696b; font-size:9px; line-height:1.4; }
 @media(max-width:650px) { .northstar-geometry-actions { flex-direction:column; align-items:stretch; } }
+
+.northstar-sheet-overlay { position:absolute; z-index:12; inset:18px; background:#e8e9e4; border:1px solid #a0aaa5; padding:11px; display:flex; flex-direction:column; box-shadow:0 12px 34px rgba(15,28,34,.28); overflow:auto; }
+.northstar-sheet-overlay > button { color:#f8f8f4; background:#25363e; padding:8px 12px; font-size:10px; align-self:flex-end; border:0; margin-bottom:9px; }
+.northstar-sheet-overlay > img { min-height:0; max-height:100%; max-width:100%; width:100%; object-fit:contain; background:white; }
+
+/* The mobile focus controls select one actual work surface; they no longer just
+   reshape three vertically stacked desktops. Desktop retains tri-pane review. */
+@media (max-width: 720px) {
+  .northstar { overflow: hidden; }
+  .northstar-workspaces,
+  .northstar[data-focus=place] .northstar-workspaces,
+  .northstar[data-focus=design] .northstar-workspaces,
+  .northstar[data-focus=reason] .northstar-workspaces {
+    display:block; flex:1 1 auto; min-height:0; height:100%; overflow:hidden;
+  }
+  .northstar-workspaces > .northstar-pane { display:none; height:100%; min-height:0; width:100%; }
+  .northstar[data-focus=place] .northstar-place,
+  .northstar[data-focus=design] .northstar-design,
+  .northstar[data-focus=reason] .northstar-reason { display:flex; }
+  .northstar-place-media { min-height:90px; max-height:none; flex:1 1 auto; }
+  .northstar-design { min-height:0; }
+  .northstar-viewport { min-height:120px; flex:1 1 auto; }
+  .northstar-reason { min-height:0; }
+  .northstar-reason-scroll { max-height:none; flex:1 1 auto; overflow-y:auto; }
+  .northstar-worldline { min-height:82px; max-height:125px; flex:0 0 auto;
+    display:grid; grid-template-columns:100px minmax(0,1fr); gap:7px; padding:8px; }
+  .northstar-worldline-label { align-items:flex-start; flex-direction:column; gap:2px; justify-content:center; }
+  .northstar-worldline-label span { font-size:8px; }
+  .northstar-worldline-label strong { font-size:10px; }
+  .northstar-events button { flex-basis:115px; }
+  .northstar-current { display:none; }
+}
