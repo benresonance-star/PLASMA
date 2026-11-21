@@ -38,6 +38,8 @@ jobs:
           pnpm --filter '@spds/designer-web^...' build
           pnpm --filter @spds/designer-web typecheck
           pnpm --filter @spds/designer-web lint
+      - name: Verify Loft Z-up to Northstar Y-up scene conversion
+        run: pnpm --filter @spds/designer-web exec vitest run src/ui/northstar-coordinate.test.ts
       - name: Inspect Build relation and native Boolean test constraints
         run: pnpm --filter @spds/api exec vitest run src/fusion-host-opening.test.ts
       - name: Actual OpenCascade Boolean with Northstar screenshot
