@@ -6,6 +6,7 @@ import type { PublicationChrome } from '../viewport.js';
 import { ViewportCanvas } from './ViewportCanvas.js';
 import { apiBaseUrl } from '../api-client.js';
 import { ContinuityInspector } from './ContinuityInspector.js';
+import { FusionRevisionWorkbench } from './FusionRevisionWorkbench.js';
 import './northstar.css';
 
 type Focus = 'place' | 'design' | 'reason';
@@ -16,6 +17,7 @@ interface NorthstarProps {
   readonly fusion: FusionContext | null;
   readonly selectedSemanticId: string | null;
   readonly onSelectSemantic: (id: string) => void;
+  readonly onRevisionUpdated?: (result: { readonly headHash: string; readonly eventId: string; readonly action: string; readonly fusion?: FusionContext }) => void;
   readonly meshes: readonly DisplayMeshInput[];
   readonly serviceMeshes: readonly DisplayMeshInput[];
   readonly chrome?: PublicationChrome;
@@ -54,7 +56,7 @@ function object(value: unknown): Record<string, unknown> | null {
 export function NorthstarStudio(props: NorthstarProps) {
   const {
     onClose, onOpenFusion, fusion, selectedSemanticId, onSelectSemantic,
-    meshes, serviceMeshes, chrome, modelId, branchId, headHash, sessionEvents, qaSiteIllustration,
+    meshes, serviceMeshes, chrome, modelId, branchId, headHash, sessionEvents, qaSiteIllustration, onRevisionUpdated,
   } = props;
   const [focus, setFocus] = useState<Focus>(() => {
     if (typeof window === 'undefined' || !import.meta.env.DEV) return 'design';
@@ -332,12 +334,6 @@ export function NorthstarStudio(props: NorthstarProps) {
                     <ArrowRight size={14}/>
                   </button>))}
             </div>
-            <ContinuityInspector
-              fusion={fusion} selectedSemanticId={selectedSemanticId}
-              onSelectSemantic={onSelectSemantic}
-              modelId={modelId} branchId={branchId} headHash={headHash}
-              onDetail={setDetailSvg} onRegistration={setSiteFit}
-            />
             <div className="northstar-proposal">
               <div className="northstar-subheading">Design change / F02</div>
               <p className="northstar-note">Draft one typed Build parameter change. A Loft driver is linked only when you explicitly select it.</p>
@@ -378,7 +374,23 @@ export function NorthstarStudio(props: NorthstarProps) {
                 <small>{impact.impactedBuildEntities.length} Build entities · {impact.impactedLoftOccurrences.length} Loft occurrences</small>
                 <ul>{impact.unresolved.map((x) => <li key={x}>{x}</li>)}</ul>
               </div>}
+              <FusionRevisionWorkbench
+                fusion={fusion} modelId={modelId} branchId={branchId} headHash={headHash}
+                buildParameterId={parameterId} nextValue={draftValue}
+                link={linkOptions.find((x) => x.key === linkKey) ?? null}
+                onHeadUpdated={(result) => onRevisionUpdated?.(result)}
+                onShowGeometry={(sourceMeshes, description) => {
+                  setGeometryMeshes([...sourceMeshes]); setGeometryInfo(description);
+                }}
+                onShowDetail={setDetailSvg}
+              />
             </div>
+            <ContinuityInspector
+              fusion={fusion} selectedSemanticId={selectedSemanticId}
+              onSelectSemantic={onSelectSemantic}
+              modelId={modelId} branchId={branchId} headHash={headHash}
+              onDetail={setDetailSvg} onRegistration={setSiteFit}
+            />
           </div>
         </section>
       </div>
