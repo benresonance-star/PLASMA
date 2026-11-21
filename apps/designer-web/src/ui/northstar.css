@@ -149,3 +149,9 @@
   .northstar-current { border-left:0; border-top:1px solid #475559; padding:8px 0; }
 }
 @media (prefers-reduced-motion: reduce) { .northstar-workspaces { transition:none; } }
+
+.northstar-geometry-actions { display:flex; align-items:center; gap:9px; padding:8px 0 3px; }
+.northstar-geometry-actions button { background:#1c2c31; color:#f8f8f3; border:1px solid #506068; border-radius:4px; padding:9px 11px; font-size:10px; white-space:nowrap; }
+.northstar-geometry-actions button:hover { background:#354a4e; }
+.northstar-geometry-actions span { color:#5a696b; font-size:9px; line-height:1.4; }
+@media(max-width:650px) { .northstar-geometry-actions { flex-direction:column; align-items:stretch; } }
