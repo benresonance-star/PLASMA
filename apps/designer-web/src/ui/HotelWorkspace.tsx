@@ -44,6 +44,14 @@ interface HotelScene {
   readonly drawings:{
     readonly planSvg:string;readonly sectionSvg:string;
     readonly planHash:string;readonly sectionHash:string;
+    readonly elevationSvg:string;readonly elevationHash:string;
+    readonly junctionSvg:string;readonly junctionHash:string;
+    readonly scheduleHash:string;
+    readonly scheduleRows:readonly {
+      id:string;description:string;quantity:number;nominalWidthMm:number;
+      nominalHeightMm:number;nominalGlazingAreaM2:number;sourceId:string;
+    }[];
+    readonly registry:readonly {id:string;name:string;revision:number;sourceHash:string}[];
     readonly issueStatus:'schematic-not-for-construction';
   };
   readonly unresolved:readonly string[];
@@ -116,7 +124,7 @@ export function HotelWorkspace({
   const [activeModule,setActiveModule]=useState('entity:hotel:loft:window-a4');
   const [windowDraft,setWindowDraft]=useState('1800');
   const [candidate,setCandidate]=useState<number|null>(null);
-  const [drawing,setDrawing]=useState<'plan'|'section'>('plan');
+  const [drawing,setDrawing]=useState<'plan'|'section'|'elevation'|'junction'|'schedule'>('plan');
   const [sheetExpanded,setSheetExpanded]=useState(false);
   const [openEvidence,setOpenEvidence]=useState(false);
   const [worldlineFocus,setWorldlineFocus]=useState('design');
@@ -285,8 +293,10 @@ export function HotelWorkspace({
     const room=scene?.manifest.rooms.find(item=>item.id===id);
     if(room)setActiveModule(room.moduleId);
   }
-  const sectionIsSelected=drawing==='section';
-  const activeDrawing=sectionIsSelected?scene?.drawings.sectionSvg:scene?.drawings.planSvg;
+  const activeDrawing=drawing==='plan'?scene?.drawings.planSvg:
+    drawing==='section'?scene?.drawings.sectionSvg:
+    drawing==='elevation'?scene?.drawings.elevationSvg:
+    drawing==='junction'?scene?.drawings.junctionSvg:null;
   if(!modelId||!branchId||!headHash)return <div className="hotel-empty">
     <h2><Building2 size={26}/> Riverside Hotel</h2>
     <p>Open or create a versioned Plasma model to link modular Loft sub-projects.</p>
@@ -432,13 +442,30 @@ export function HotelWorkspace({
               <small>SCHEMATIC</small></span>
             {scene&&<img src={svgUrl(scene.drawings.sectionSvg)} alt="Source-linked schematic building section"/>}
           </button>
+          <button className={'hotel-drawing-card '+(drawing==='junction'?'selected':'')}
+            onClick={()=>{setDrawing('junction');setSheetExpanded(true);}} type="button"
+            data-testid="hotel-detail-card">
+            <span className="hotel-doc-heading"><Scan size={14}/> A-514 / WINDOW HEAD
+              <small>STUDY</small></span>
+            {scene&&<img src={svgUrl(scene.drawings.junctionSvg)}
+              alt="Source-derived A4 head junction with material thicknesses"/>}
+          </button>
         </div>
-        {sheetExpanded&&scene&&activeDrawing&&
-          <div className="hotel-sheet-modal" role="dialog" aria-label="Linked source schematic drawing">
-            <div><strong>LINKED DOCUMENT STUDY / {drawing.toUpperCase()}</strong>
+        {sheetExpanded&&scene&&(activeDrawing||drawing==='schedule')&&
+          <div className="hotel-sheet-modal" role="dialog" aria-label="Source linked architecture drawing">
+            <div><strong>ARCHITECTURE / {drawing.toUpperCase()} / SOURCE LINKED</strong>
               <button onClick={()=>setSheetExpanded(false)} type="button">Close</button></div>
-            <img src={svgUrl(activeDrawing)} alt="Source-derived schematic drawing, not for construction"/>
-            <small>Regenerates with the hotel module sources. This is not an issued architectural drawing.</small>
+            {activeDrawing?<img src={svgUrl(activeDrawing)}
+              alt="Source-derived architectural design study, not an issued drawing"/>:
+              <table className="hotel-window-schedule">
+                <thead><tr><th>Suite type</th><th>Count</th><th>Window W × H</th><th>Glass m²</th></tr></thead>
+                <tbody>{scene.drawings.scheduleRows.map(row=><tr key={row.id}>
+                  <td>{row.description}</td><td>{row.quantity}</td>
+                  <td>{row.nominalWidthMm} × {row.nominalHeightMm}</td>
+                  <td>{row.nominalGlazingAreaM2.toFixed(1)}</td>
+                </tr>)}</tbody>
+              </table>}
+            <small>Source-derived · revision-tracked · design study only. Not a coordinated issued drawing.</small>
           </div>}
       </main>
 
@@ -496,6 +523,16 @@ export function HotelWorkspace({
                   data-testid="hotel-accept-change"><GitCommitHorizontal size={13}/> Accept revision</button>
               </div>
             </div>}
+          </div>
+          <div className="hotel-documents-index" data-testid="hotel-documents-index">
+            <div className="hotel-section-title"><FileText size={14}/> Drawing registry
+              <strong>{scene?.drawings.registry.length??0} source studies</strong>
+            </div>
+            {scene?.drawings.registry.map((item,i)=><button type="button" key={item.id}
+              onClick={()=>{setDrawing(i===0?'elevation':i===1?'junction':'schedule');setSheetExpanded(true);}}>
+              <span>{item.id.split(':').pop()}</span>
+              <strong>{item.name}</strong><small>r{item.revision}</small>
+            </button>)}
           </div>
           <div className="hotel-inspector">
             <div className="hotel-section-title"><Box size={14}/> Selected guest suite</div>
