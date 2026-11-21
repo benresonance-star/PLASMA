@@ -19,6 +19,7 @@ interface NorthstarProps {
   readonly meshes: readonly DisplayMeshInput[];
   readonly serviceMeshes: readonly DisplayMeshInput[];
   readonly chrome?: PublicationChrome;
+  readonly qaSiteIllustration?: string;
   readonly modelId: string | null;
   readonly branchId: string | null;
   readonly headHash: string | null;
@@ -53,9 +54,13 @@ function object(value: unknown): Record<string, unknown> | null {
 export function NorthstarStudio(props: NorthstarProps) {
   const {
     onClose, onOpenFusion, fusion, selectedSemanticId, onSelectSemantic,
-    meshes, serviceMeshes, chrome, modelId, branchId, headHash, sessionEvents,
+    meshes, serviceMeshes, chrome, modelId, branchId, headHash, sessionEvents, qaSiteIllustration,
   } = props;
-  const [focus, setFocus] = useState<Focus>('design');
+  const [focus, setFocus] = useState<Focus>(() => {
+    if (typeof window === 'undefined' || !import.meta.env.DEV) return 'design';
+    const stage = new URLSearchParams(window.location.search).get('stage');
+    return stage === 'F06' ? 'place' : stage === 'F07' || stage === 'F08' ? 'reason' : 'design';
+  });
   const [media, setMedia] = useState<LocalMedia | null>(null);
   const [mediaError, setMediaError] = useState('');
   const [parameterId, setParameterId] = useState('');
@@ -227,6 +232,9 @@ export function NorthstarStudio(props: NorthstarProps) {
                   : <img src={media.url} alt={'Local site observation: ' + media.file.name}/>}
                 <div className="northstar-image-label">SOURCE CAPTURE / LOCAL DEVICE</div>
               </>
+            ) : qaSiteIllustration ? (
+              <><img src={qaSiteIllustration} alt="Synthetic site diagram for visual QA — not an observed site"/>
+                <div className="northstar-image-label">SYNTHETIC SITE ILLUSTRATION · NOT PHOTOGRAPHY</div></>
             ) : (
               <div className="northstar-empty-media">
                 <ImageIcon size={32} strokeWidth={1.1}/>
@@ -236,7 +244,7 @@ export function NorthstarStudio(props: NorthstarProps) {
             )}
           </div>
           <div className="northstar-place-details">
-            <div className="northstar-meta"><span>Capture</span><strong>{media?.file.name ?? 'No capture loaded'}</strong></div>
+            <div className="northstar-meta"><span>Capture</span><strong>{media?.file.name ?? (qaSiteIllustration ? "QA illustration · not captured" : "No capture loaded")}</strong></div>
             <div className="northstar-meta"><span>Recorded</span><strong>{media ? new Date(media.file.lastModified).toLocaleString() : '—'}</strong></div>
             <div className="northstar-meta"><span>Registration</span><strong>{siteFit ? `Estimated local fit · RMS ${siteFit.rmsResidualMm.toFixed(1)} mm · ${siteFit.pointCount} ties` : "Not surveyed or aligned"}</strong></div>
           </div>
