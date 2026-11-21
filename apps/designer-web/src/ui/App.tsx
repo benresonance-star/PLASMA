@@ -171,6 +171,7 @@ import { MeasureHud } from './MeasureHud.js';
 import { ModelMenu } from './ModelMenu.js';
 import { PanelResizeHandle } from './PanelResizeHandle.js';
 import { PlasmaBrand } from './PlasmaBrand.js';
+import { FusionStudio } from './FusionStudio.js';
 import { RightPane } from './RightPane.js';
 import { SettingsMenu } from './SettingsMenu.js';
 import { viewportBackgroundCssHex } from './three-scene.js';
@@ -247,6 +248,7 @@ function substrateToIndexedGraph(objects: readonly SubstrateGraphObject[]): Inde
 
 export function App() {
   const [session, setSession] = useState(() => createAppSession());
+  const [fusionOpen, setFusionOpen] = useState(false);
   const [liveStatus, setLiveStatus] = useState<string>('bootstrapping');
   const [aiIntent, setAiIntent] = useState(
     'Propose a safe lengthMm update for y:demo:01 (500–4000 mm)',
@@ -1728,6 +1730,9 @@ export function App() {
           </nav>
 
           <div className="spds-header-actions">
+            <Button type="button" size="sm" variant="outline"
+              aria-label="Open Loft and Build fusion preview"
+              onClick={() => setFusionOpen(true)}>Fusion</Button>
             <div className="spds-center-mode" role="group" aria-label="Center workspace">
               <HelpTooltip content={HEADER_TOOLTIPS.geometry}>
                 <Button
@@ -2326,6 +2331,7 @@ export function App() {
           </div>
         ) : null}
       </div>
+      <FusionStudio open={fusionOpen} onClose={() => setFusionOpen(false)} />
       {/* Keep indicative analysis helper referenced for product UX smoke. */}
       <span className="sr-only">{appAnalysisIndicative(session) ? 'indicative' : ''}</span>
     </main>
