@@ -1,7 +1,7 @@
 import { useCallback,useEffect,useMemo,useRef,useState } from 'react';
 import {
   ArrowLeft,ArrowRight,Box,Building2,Check,ChevronDown,Eye,FileText,
-  FolderTree,GitBranch,GitCommitHorizontal,Layers,Link2,MapPin,
+  FolderTree,GitBranch,GitCommitHorizontal,Layers,MapPin,
   Network,RefreshCw,Scan,ShieldAlert,SlidersHorizontal,
 } from 'lucide-react';
 import { ViewportCanvas } from './ViewportCanvas.js';
@@ -185,7 +185,6 @@ export function HotelWorkspace({
     })();
     return()=>{active=false;};
     // A stable parent head triggers an authoritative source refresh.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[modelId,branchId,headHash]);
 
   useEffect(()=>{
@@ -209,10 +208,12 @@ export function HotelWorkspace({
         headHash:result.headHash,eventId:result.eventId,
         action:'Created linked 168-key hotel · '+result.moduleCount+' Loft subprojects',
       });
-      const loaded=await apiJson<Overview>(base+'/riverside?branchId='+encodeURIComponent(branchId));
-      setOverview(loaded);
       setNotice('Parent hotel and five Loft module projects created in one versioned event.');
-      await loadScene(result.headHash,'exact-adapter',level,mode);
+      if(!onRevisionUpdated){
+        const loaded=await apiJson<Overview>(base+'/riverside?branchId='+encodeURIComponent(branchId));
+        setOverview(loaded);
+        await loadScene(result.headHash,'exact-adapter',level,mode);
+      }
     }catch(err){setError(err instanceof Error?err.message:'Bootstrap rejected');}
     finally{setBusy(false);}
   }
@@ -251,10 +252,12 @@ export function HotelWorkspace({
         action:'A4 window '+update.oldWidthMm+' → '+update.newWidthMm+
           ' mm · 168 suites updated',
       });
-      const newOverview=await apiJson<Overview>(
-        base+'/riverside?branchId='+encodeURIComponent(branchId));
-      setOverview(newOverview);
-      await loadScene(update.headHash,scene.kernel,level,mode);
+      if(!onRevisionUpdated){
+        const newOverview=await apiJson<Overview>(
+          base+'/riverside?branchId='+encodeURIComponent(branchId));
+        setOverview(newOverview);
+        await loadScene(update.headHash,scene.kernel,level,mode);
+      }
     }catch(e){setError(e instanceof Error?e.message:'Source acceptance rejected');}
     finally{setBusy(false);}
   }
