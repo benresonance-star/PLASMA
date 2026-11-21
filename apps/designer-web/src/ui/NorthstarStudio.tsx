@@ -80,6 +80,7 @@ export function NorthstarStudio(props: NorthstarProps) {
   const [nativeError, setNativeError] = useState('');
   const [nativeProof, setNativeProof] = useState<{readonly kernel:string; readonly topologyElementCount:number;readonly maximumBoundingErrorMm:number;readonly relativeVolumeError:number;readonly sourceScope:string}|null>(null);
   const qaGeomTriggered = useRef(false);
+  const qaNativeTriggered = useRef(false);
   const [detailSvg, setDetailSvg] = useState<string|null>(null);
   const [siteFit, setSiteFit] = useState<{readonly rmsResidualMm:number;readonly pointCount:number}|null>(null);
   useEffect(() => () => { if (media) URL.revokeObjectURL(media.url); }, [media]);
@@ -250,6 +251,14 @@ export function NorthstarStudio(props: NorthstarProps) {
       qaGeomTriggered.current||!canPreviewGeometry)return;
     qaGeomTriggered.current=true;
     void previewLoftGeometry();
+  }, [canPreviewGeometry, fusion, selectedSemanticId, headHash]);
+  useEffect(() => {
+    if(typeof window==='undefined'||!import.meta.env.DEV||
+      new URLSearchParams(window.location.search).get('northstar-qa')!=='1'||
+      new URLSearchParams(window.location.search).get('stage')!=='F10'||
+      qaNativeTriggered.current||!canPreviewGeometry)return;
+    qaNativeTriggered.current=true;
+    void verifyNativeOpenCascade();
   }, [canPreviewGeometry, fusion, selectedSemanticId, headHash]);
 
   return (
