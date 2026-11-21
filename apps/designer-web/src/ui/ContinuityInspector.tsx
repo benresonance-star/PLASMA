@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AlertTriangle, ArrowRight, FileCheck, FileText, Gauge, GitBranch, MapPinned, Network, ShieldCheck } from 'lucide-react';
 import type { FusionContext } from './FusionStudio.js';
 import { apiBaseUrl } from '../api-client.js';
@@ -42,7 +42,12 @@ const EXAMPLE = JSON.stringify([
 ],null,2);
 export function ContinuityInspector(props:ViewerProps){
   const {fusion,selectedSemanticId,onSelectSemantic,modelId,branchId,headHash,onDetail,onRegistration}=props;
-  const [stage,setStage]=useState<Stage>('F04');
+  const [stage,setStage]=useState<Stage>(()=>{
+    if(typeof window==='undefined'||!import.meta.env.DEV)return 'F04';
+    const value=new URLSearchParams(window.location.search).get('stage');
+    return value==='F04'||value==='F05'||value==='F06'||value==='F07'||value==='F08'?value:'F04';
+  });
+  const qaTriggered=useRef(false);
   const [review,setReview]=useState<Review|null>(null);
   const [running,setRunning]=useState(false);
   const [error,setError]=useState('');
@@ -99,6 +104,15 @@ export function ContinuityInspector(props:ViewerProps){
   const edges=Array.isArray(review?.['edges']) ? review['edges'] as {from:string;to:string;type:string}[] : [];
   const sheet=obj(review?.['before']) as SectionSheet|null;
   const registration=stage==='F06' && review ? review as unknown as Registration : null;
+  useEffect(()=>{
+    if(typeof window==='undefined'||!import.meta.env.DEV||
+      new URLSearchParams(window.location.search).get('northstar-qa')!=='1'||
+      qaTriggered.current||!fusion||!modelId||!headHash)return;
+    if(stage==='F06' && !controlText.trim()) { setControlText(EXAMPLE); return; }
+    if(stage==='F07'&&!selectedSemanticId)return;
+    qaTriggered.current=true;
+    void run();
+  },[fusion,modelId,headHash,stage,controlText,selectedSemanticId]);
   return (
     <section className="continuity" aria-label="Fusion architectural continuity instruments">
       <div className="continuity-header">
