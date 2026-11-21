@@ -33,6 +33,7 @@ jobs:
       - name: Build API and native geometry dependencies
         run: |
           pnpm --filter '@spds/api^...' build
+          pnpm --filter @spds/api build
           pnpm --filter '@spds/geometry-occt^...' build
           pnpm --filter @spds/geometry-occt build
       - name: Verify native parity validation rejects impostors
@@ -63,6 +64,8 @@ jobs:
           done
           curl -fs http://127.0.0.1:7080/health ||
             { cat /tmp/f10-native.log; exit 1; }
+          curl -fs http://127.0.0.1:3001/health ||
+            { cat /tmp/f10-api.log; exit 1; }
           GEOMETRY_URL=http://127.0.0.1:7080 \
             pnpm --filter @spds/api exec vitest run src/fusion-native.test.ts
           BROWSER=$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)
