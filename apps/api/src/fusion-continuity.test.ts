@@ -75,8 +75,9 @@ describe('Northstar continuity API F04–F08',()=>{
       ]}});
     expect(res.statusCode).toBe(200);
     expect(res.json()).toMatchObject({
-      stage:'F06',surveyCertified:false,splatRegistered:false,mmPerPixel:20,
+      stage:'F06',surveyCertified:false,splatRegistered:false,
     });
+    expect(res.json().mmPerPixel).toBeCloseTo(20, 9);
     await app.close();
   });
 });
