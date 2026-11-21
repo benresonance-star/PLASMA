@@ -80,6 +80,16 @@ jobs:
           }
           "$BROWSER" $FLAGS --window-size=1720,1080 \
             --screenshot=f13-verified-hotel/F13-hotel-desktop.png "$URL" >/dev/null 2>/tmp/f13-desktop.err
+          EDIT_URL="$URL&edit=1"
+          "$BROWSER" $FLAGS --window-size=1720,1080 --dump-dom "$EDIT_URL" > f13-verified-hotel/F13-edit-dom.html 2>/tmp/f13-edit.err
+          grep -q 'hotel-qa-edit-accepted' f13-verified-hotel/F13-edit-dom.html || {
+            echo 'Live linked-window commit/Worldline/native recompilation evidence missing'
+            tail -60 /tmp/f13-api.log
+            tail -35 /tmp/f13-edit.err
+            exit 1
+          }
+          "$BROWSER" $FLAGS --window-size=1720,1080 \
+            --screenshot=f13-verified-hotel/F13-hotel-after-linked-edit.png "$EDIT_URL" >/dev/null 2>/tmp/f13-edit-shot.err
           "$BROWSER" $FLAGS --window-size=430,920 \
             --screenshot=f13-verified-hotel/F13-hotel-mobile.png "$URL" >/dev/null 2>/tmp/f13-mobile.err
           python3 - <<'PY'
