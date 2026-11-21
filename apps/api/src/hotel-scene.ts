@@ -35,6 +35,7 @@ const demoBuild={
   authoritativeGraph:{entities:[],parameters:[],relationships:[]},
 };
 const moduleCache=new Map<string,Promise<SourceCompiled>>();
+const MAX_COMPILED_MODULE_CACHE=24;
 export function clearHotelCompilerCache(){moduleCache.clear();}
 function classify(material:string):string{
   const x=material.toLowerCase();
@@ -89,6 +90,11 @@ async function compileModule(module:HotelSourceModule,kernel:'exact-adapter'|'oc
       };
     })();
     moduleCache.set(cacheKey,promise);
+    while(moduleCache.size>MAX_COMPILED_MODULE_CACHE){
+      const oldest=moduleCache.keys().next().value;
+      if(!oldest)break;
+      moduleCache.delete(oldest);
+    }
     void promise.catch(()=>moduleCache.delete(cacheKey));
   }
   return promise;
@@ -177,6 +183,15 @@ export interface HotelScene {
     readonly sourceHash:string;readonly partCount:number;readonly nativeVerified:boolean;
   }[];
   readonly compiledUniqueSolidCount:number;
+  readonly performance:{
+    readonly uniqueSourceSolidCount:number;
+    readonly roomInstances:number;
+    readonly groupedDisplayMeshes:number;
+    readonly vertexCount:number;
+    readonly approximateBufferBytes:number;
+    readonly cachedSourceVariants:number;
+    readonly budgetPassed:true;
+  };
   readonly roomCount:number;
   readonly sceneObjectCount:number;
   readonly meshes:readonly HotelDisplayMesh[];
@@ -229,6 +244,11 @@ export async function buildHotelScene(input:{
   });
   const drawings={...hotelDrawings(hotel.manifest,panel.windowWidthMm,selectedLevel),
     ...documentSet};
+  const vertexCount=meshes.reduce((n,m)=>n+m.vertices.length,0);
+  const indexCount=meshes.reduce((n,m)=>n+m.indices.length,0);
+  const bufferBytes=vertexCount*12+indexCount*4;
+  if(meshes.length>2600||vertexCount>1_000_000||bufferBytes>64_000_000)
+    throw new Error('HOTEL_SCENE_RESOURCE_BUDGET_EXCEEDED');
   return {
     status:'linked-hotel-scene',kernel,nativeVerified:kernel==='occt-native',
     hotelId:hotel.hotelId,headHash:input.headHash,manifest:hotel.manifest,
@@ -239,6 +259,13 @@ export async function buildHotelScene(input:{
       nativeVerified:compiled.get(id)!.nativeVerified,
     })),
     compiledUniqueSolidCount:[...compiled.values()].reduce((n,c)=>n+c.partCount,0),
+    performance:{
+      uniqueSourceSolidCount:[...compiled.values()].reduce((n,c)=>n+c.partCount,0),
+      roomInstances:hotel.manifest.rooms.length,
+      groupedDisplayMeshes:meshes.length,vertexCount,
+      approximateBufferBytes:bufferBytes,cachedSourceVariants:moduleCache.size,
+      budgetPassed:true,
+    },
     roomCount:hotel.manifest.rooms.length,
     sceneObjectCount:meshes.length,
     meshes,drawings,
