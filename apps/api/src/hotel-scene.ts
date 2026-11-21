@@ -7,6 +7,7 @@ import {
   planFusionNativeAssembly, verifyFusionNativeAssembly,
   type AssemblySourcePart,
 } from './fusion-assembly.js';
+import { deriveHotelArchitectureDocuments, type HotelArchitectureDocuments } from './hotel-documents.js';
 import {
   hotelModuleId, type HotelManifest, type HotelRoom, type HotelSourceModule,
   type ResolvedHotel,
@@ -179,7 +180,7 @@ export interface HotelScene {
   readonly roomCount:number;
   readonly sceneObjectCount:number;
   readonly meshes:readonly HotelDisplayMesh[];
-  readonly drawings:{
+  readonly drawings:HotelArchitectureDocuments & {
     readonly planSvg:string;readonly sectionSvg:string;
     readonly planHash:string;readonly sectionHash:string;
     readonly issueStatus:'schematic-not-for-construction';
@@ -220,7 +221,14 @@ export async function buildHotelScene(input:{
     meshes.push(...makeRoomMeshes(room,suite,windows,mode==='floor'&&room.level===selectedLevel));
   }
   const panel=hotel.modules.get(hotelModuleId('window-a4'))!;
-  const drawings=hotelDrawings(hotel.manifest,panel.windowWidthMm,selectedLevel);
+  const documentSet=deriveHotelArchitectureDocuments(hotel.manifest,{
+    window:hotel.modules.get(hotelModuleId('window-a4'))!,
+    standard:hotel.modules.get(hotelModuleId('suite-standard'))!,
+    accessible:hotel.modules.get(hotelModuleId('suite-accessible'))!,
+    corner:hotel.modules.get(hotelModuleId('suite-corner'))!,
+  });
+  const drawings={...hotelDrawings(hotel.manifest,panel.windowWidthMm,selectedLevel),
+    ...documentSet};
   return {
     status:'linked-hotel-scene',kernel,nativeVerified:kernel==='occt-native',
     hotelId:hotel.hotelId,headHash:input.headHash,manifest:hotel.manifest,
