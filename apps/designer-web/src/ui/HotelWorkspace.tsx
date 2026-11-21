@@ -1,13 +1,14 @@
 import { useCallback,useEffect,useMemo,useRef,useState } from 'react';
 import {
   ArrowLeft,ArrowRight,Box,Building2,Check,ChevronDown,Eye,FileText,
-  FolderTree,GitBranch,GitCommitHorizontal,Layers,
+  FolderTree,GitCommitHorizontal,Layers,
   Network,RefreshCw,Scan,ShieldAlert,SlidersHorizontal,
 } from 'lucide-react';
 import { ViewportCanvas } from './ViewportCanvas.js';
 import { HotelPlaceLens } from './HotelPlaceLens.js';
 import { HotelAssemblyLens } from './HotelAssemblyLens.js';
 import { HotelCausalLens, type HotelProposal } from './HotelCausalLens.js';
+import { HotelWorldline } from './HotelWorldline.js';
 import { cadZUpMeshesToViewportYUp } from './northstar-coordinate.js';
 import { apiBaseUrl } from '../api-client.js';
 import type { DisplayMeshInput } from '../mesh-bridge.js';
@@ -129,7 +130,7 @@ export function HotelWorkspace({
   const [drawing,setDrawing]=useState<'plan'|'section'|'elevation'|'junction'|'schedule'>('plan');
   const [sheetExpanded,setSheetExpanded]=useState(false);
   const [openEvidence,setOpenEvidence]=useState(false);
-  const [worldlineFocus,setWorldlineFocus]=useState('design');
+  const [snapshotPair,setSnapshotPair]=useState<{beforeSnapshotId:string;afterSnapshotId:string|null}|null>(null);
   const bootstrapAttempt=useRef(false);
   const nativeQaHead=useRef<string|null>(null);
   const qaEditAttempt=useRef(false);
@@ -277,6 +278,7 @@ export function HotelWorkspace({
       const update=await apiJson<{
         headHash:string;eventId:string;oldWidthMm:number;newWidthMm:number;
         affectedRoomCount:number;revisedModuleIds:readonly string[];
+        beforeSnapshotId:string;afterSnapshotId:string|null;
       }>(base+'/riverside/accept-reviewed-window',{
         method:'POST',headers:{'content-type':'application/json'},
         body:JSON.stringify({
@@ -285,6 +287,7 @@ export function HotelWorkspace({
         }),
       });
       setCandidate(null);setProposal(null);
+      setSnapshotPair({beforeSnapshotId:update.beforeSnapshotId,afterSnapshotId:update.afterSnapshotId});
       setNotice('Accepted one atomic source revision: '+update.affectedRoomCount+
         ' room windows, '+update.revisedModuleIds.length+
         ' Loft subprojects. Plans and sections regenerate from the new dimensions.');
@@ -586,25 +589,11 @@ export function HotelWorkspace({
       </aside>
     </div>}
 
-    {overview&&<footer className="hotel-worldline">
-      <div className="hotel-worldline-label"><GitBranch size={18}/>
-        <div><strong>Worldline</strong><small>VERSIONED MODEL EVENTS</small></div></div>
-      <div className="hotel-phases">
-        {['place','design','validate','construct','operate'].map(phase=>
-          <button key={phase} type="button" className={worldlineFocus===phase?'selected':''}
-            onClick={()=>setWorldlineFocus(phase)}>
-            {phase.toUpperCase()}
-          </button>)}
-      </div>
-      <div className="hotel-events" data-testid="hotel-worldline">
-        {events.map(event=><div key={event.id} title={event.label}
-          className="hotel-event"><span/><strong>{event.label}</strong>
-          <small>{event.kind}</small></div>)}
-        {!events.length&&<span className="hotel-event-empty">No recorded model events</span>}
-      </div>
-      <div className="hotel-head"><span>ACTIVE BRANCH HEAD</span>
-        <strong>{compact(scene?.headHash??headHash)}</strong></div>
-    </footer>}
+    {overview&&<HotelWorldline
+      modelId={modelId} branchId={branchId}
+      headHash={scene?.headHash??headHash}
+      snapshotPair={snapshotPair}
+    />}
     {isQa()&&<div className="hotel-qa-banner" data-testid="hotel-qa-banner">
       AUTOMATED VISUAL QA · SYNTHETIC HOTEL / NO SURVEY / NOT ISSUED BIM
       {scene?.nativeVerified && scene.windowWidthMm===2100 &&
