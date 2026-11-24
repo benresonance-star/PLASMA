@@ -20,7 +20,7 @@
     "boundary:check": "pnpm --filter @spds/boundary-check test",
     "verify": "pnpm spec:check && pnpm atlas:check && pnpm licence:check && pnpm boundary:check && pnpm lint && pnpm typecheck && pnpm test && pnpm build",
     "spec:build": "node scripts/plasma-spec.mjs",
-    "spec:check": "node scripts/plasma-spec.mjs --check",
+    "spec:check": "node --test scripts/north-star-validate.test.mjs && node scripts/plasma-spec.mjs --check",
     "atlas:check": "node apps/system-atlas-preview/atlas-validate.mjs"
   },
   "devDependencies": {

@@ -1,0 +1,80 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "NorthStarEvidenceBindings",
+  "id": "PLS-NORTH-STAR-EVIDENCE",
+  "version": "1.0.0",
+  "bindings": [
+    {
+      "requirement": "NS-01",
+      "evidenceIds": [
+        "ev-transaction-rollback",
+        "ev-agent-boundary",
+        "ev-cross-agent-conflict"
+      ],
+      "remainingProof": "Actual cross-studio shared entity and revision test"
+    },
+    {
+      "requirement": "NS-02",
+      "evidenceIds": [
+        "ev-geometry-candidate-boundary",
+        "ev-slice-terrain-site"
+      ],
+      "remainingProof": "Actual Site, Architecture and Loft common compute integration"
+    },
+    {
+      "requirement": "NS-03",
+      "evidenceIds": [
+        "ev-geometry-candidate-boundary",
+        "ev-representation-freshness"
+      ],
+      "remainingProof": "Cross-renderer artifact and coordinate conformance"
+    },
+    {
+      "requirement": "NS-04",
+      "evidenceIds": [
+        "ev-interaction-boundary",
+        "ev-wall-at-05"
+      ],
+      "remainingProof": "Blocked-worker input-to-pixel benchmark"
+    },
+    {
+      "requirement": "NS-05",
+      "evidenceIds": [
+        "ev-slice-window-resize",
+        "ev-slice-annotations-regeneration"
+      ],
+      "remainingProof": "Property-level invalidation and actual hotel instances"
+    },
+    {
+      "requirement": "NS-06",
+      "evidenceIds": [
+        "ev-stable-identity"
+      ],
+      "remainingProof": "Survey coordinates, exact tolerances and ambiguous topology"
+    },
+    {
+      "requirement": "NS-07",
+      "evidenceIds": [
+        "ev-representation-freshness"
+      ],
+      "remainingProof": "GPU scene deltas, instancing, culling and hardware qualification"
+    },
+    {
+      "requirement": "NS-08",
+      "evidenceIds": [
+        "ev-slice-solar-freshness",
+        "ev-wall-at-06"
+      ],
+      "remainingProof": "Cross-domain model and documentation revision coherence"
+    },
+    {
+      "requirement": "NS-09",
+      "evidenceIds": [
+        "ev-transaction-rollback",
+        "ev-recovery-benchmark",
+        "ev-wall-at-07"
+      ],
+      "remainingProof": "Native crash recovery and managed project reopen"
+    }
+  ]
+}

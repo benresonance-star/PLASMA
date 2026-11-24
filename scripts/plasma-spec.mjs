@@ -1,4 +1,6 @@
 import fs from 'node:fs';
+import { deriveNorthStarEvidence } from './north-star-evidence.mjs';
+import { validateNorthStar } from './north-star-validate.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -68,6 +70,8 @@ const constitution = read(registry.constitution);
 const componentCatalog = read(registry.atlas.components);
 const relationshipCatalog = read(registry.atlas.relationships);
 const contracts = registry.atlas.contracts.map(p => ({ path: p, record: read(p) }));
+const northStar = read(registry.northStar);
+errors.push(...validateNorthStar(northStar, constitution, contracts.map(x => x.record), readText('spec/NORTH_STAR.md')));
 const capabilities = registry.capabilities.map(p => ({ path: p, record: read(p) }));
 const domains = registry.domains.map(p => ({ path: p, record: read(p) }));
 const verticalSlices = registry.verticalSlices.map(p => ({ path: p, record: read(p) }));
@@ -75,6 +79,8 @@ const research = registry.research.map(p => ({ path: p, record: read(p) }));
 const releases = registry.releases.map(p => ({ path: p, record: read(p) }));
 const slicesCatalog = read(registry.atlas.slices);
 const evidenceCatalog = read(registry.atlas.evidence);
+const northStarEvidence = deriveNorthStarEvidence(northStar, read(registry.northStarEvidence), evidenceCatalog);
+errors.push(...northStarEvidence.errors);
 const languages = read(registry.atlas.languages);
 const transactions = read(registry.atlas.transactions);
 const integration = read(registry.atlas.integration);
@@ -363,9 +369,11 @@ const html = `<!doctype html>
 <p>One canonical specification graph → generated Atlas, readiness, dependency and human views.</p>
 <div class="card"><span class="pill">Spec System ${esc(system.version)}</span><span class="pill">Atlas ${esc(atlas.meta.version)}</span><span class="pill">${records.length} canonical records</span><span class="pill">${blockers.length} build blockers</span></div>
 <div class="card"><h2>Constitution</h2><ol>${constitution.invariants.map(x=>`<li><b>${esc(x.id)}</b> — ${esc(x.rule)}</li>`).join('')}</ol></div>
+<div class="card"><h2>North Star conformance</h2><p class="muted">${esc(northStarEvidence.report.qualification)}</p><table><thead><tr><th>Requirement</th><th>Evidence links</th><th>Remaining proof</th><th>Conformance</th></tr></thead><tbody>${northStarEvidence.report.items.map(x=>`<tr><td><code>${esc(x.requirement)}</code></td><td>${x.links.map(y=>esc(y.id)+" ("+esc(y.catalogueStatus)+")").join(", ")}</td><td>${esc(x.remainingProof)}</td><td>${esc(x.conformance)}</td></tr>`).join("")}</tbody></table></div>
 <div class="card"><h2>Build readiness</h2><table><thead><tr><th>ID</th><th>Item</th><th>Architecture</th><th>Spec</th><th>Implementation</th><th>Derived readiness</th></tr></thead><tbody>${htmlRows}</tbody></table></div>
 <div class="card"><h2>Migration</h2><p>${esc(system.migration.rule)}</p></div></div></body></html>\n`;
 
+output('generated/spec-system/north-star-conformance.json', northStarEvidence.report);
 output(system.outputs.atlas, atlas);
 output(system.outputs.repositoryEvidence, repositoryEvidence.projection);
 output(system.outputs.status, statusOut);

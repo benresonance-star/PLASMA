@@ -100,5 +100,7 @@
     "spec/schemas/research.schema.json",
     "spec/schemas/release.schema.json",
     "spec/schemas/spec-system.schema.json"
-  ]
+  ],
+  "northStar": "spec/strategy/north-star.yaml",
+  "northStarEvidence": "spec/verification/bindings/north-star.yaml"
 }

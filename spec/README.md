@@ -35,3 +35,7 @@ pnpm spec:check
 ```
 
 `spec:check` validates identity, status values, hard dependency cycles, dependency direction, research isolation, exact-fallback rules, legacy manifest drift and generated-output drift.
+
+## North Star and engineering governance
+
+Review [North Star](NORTH_STAR.md), [foundation migration traceability](strategy/foundation-migration.md) and [mandatory agent workflow](../AGENTS.md) before substantive development. These proposed policy additions supplement the machine-readable graph; compiler integration and runtime conformance remain outstanding. The frozen constitution and accepted contracts retain precedence.
