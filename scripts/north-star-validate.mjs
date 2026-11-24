@@ -22,7 +22,7 @@ export function validateNorthStar(policy, constitution, contracts, markdown) {
     for (const id of p.requirements || []) covered.add(id);
     check(typeof p.completionEvidence === 'string' && p.completionEvidence.trim(), p.programme + ': missing completion evidence');
   }
-  check(programmes.size === 11 && covered.size === 9, 'programme traceability incomplete');
+  check(programmes.size === 12 && covered.size === 9, 'programme traceability incomplete');
   const t = policy.performanceTargets || {};
   check(t.navigationFps === 60 && t.previewP95Ms === 33 && t.selectionP95Ms === 50 && t.rigidDragGeometryRequests === 0 && t.staleCommits === 0, 'performance targets differ from reviewed policy');
   check(Array.isArray(policy.qualificationFixtures) && policy.qualificationFixtures.length >= 5, 'qualification fixtures missing');
