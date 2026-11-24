@@ -55,6 +55,26 @@ function isAllowlisted(file) {
 
 const violations = [];
 
+// NS-02: foundation packages must not depend on application or studio code.
+const foundationRoots = ['semantic-core','transaction-core','dependency-graph','execution-dag','artifact-core','geometry-contracts','representation-core','coordinate-frames','shared-units','topology-provenance'];
+for (const name of foundationRoots) {
+  const dir = path.join(root,'packages',name);
+  if (!fs.existsSync(dir)) { violations.push({file:dir,line:'missing foundational package'}); continue; }
+  const manifest = JSON.parse(fs.readFileSync(path.join(dir,'package.json'),'utf8'));
+  for (const dep of Object.keys({...manifest.dependencies,...manifest.peerDependencies,...manifest.optionalDependencies})) {
+    if (/(?:^|[/-])(?:studio|designer-web|api|dome-reference)(?:$|[/-])/.test(dep)) violations.push({file:path.relative(root,dir),line:'Forbidden foundational dependency: '+dep});
+  }
+  for (const file of walk(dir)) {
+    const source = fs.readFileSync(file,'utf8');
+    const imports = source.matchAll(/(?:\bfrom\s*|\bimport\s*(?:\(\s*)?|\brequire\s*\(\s*)['"]([^'"\n]+)['"]/g);
+    for (const [,specifier] of imports) {
+      const resolved = specifier.startsWith('.') ? path.resolve(path.dirname(file),specifier) : '';
+      const appRoot = path.join(root,'apps')+path.sep;
+      if (resolved.startsWith(appRoot) || /(?:^|[/-])(?:studio|designer-web|dome-reference)(?:$|[/-])/.test(specifier)) violations.push({file:path.relative(root,file),line:'NS-02 forbidden studio dependency: '+specifier});
+    }
+  }
+}
+
 for (const scanRoot of SCAN_ROOTS) {
   for (const file of walk(scanRoot)) {
     if (isAllowlisted(file)) continue;
