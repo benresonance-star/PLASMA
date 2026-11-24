@@ -1,0 +1,245 @@
+{
+  "apiVersion": "plasma.spec/v1",
+  "kind": "NorthStarPolicy",
+  "id": "PLS-NORTH-STAR",
+  "version": "1.0.0",
+  "status": "proposed",
+  "requirements": [
+    {
+      "id": "NS-01",
+      "rule": "One authoritative world per project; studios are contextual lenses, never independent model authorities. Human and agent writes use the same governed transaction path.",
+      "authority": [
+        "CONST-001",
+        "CONST-002",
+        "PLS-WORLD-01",
+        "PLS-TX-01",
+        "PLS-AGENT-01"
+      ],
+      "requiredProof": "Edit a shared entity in each studio; verify identical revision and identity, reject stale writes.",
+      "evidence": []
+    },
+    {
+      "id": "NS-02",
+      "rule": "Shared compute feeds all studios. Foundation depends on neutral interfaces, not studio implementations; registered evaluators may provide domain algorithms.",
+      "authority": [
+        "CONST-008",
+        "PLS-GR-01"
+      ],
+      "requiredProof": "Import boundary checks and actual Site, Architecture and Loft integrations.",
+      "evidence": []
+    },
+    {
+      "id": "NS-03",
+      "rule": "Derived artifacts carry source revision, dependency digest, evaluator version and precision policy. Renderers never independently author production geometry.",
+      "authority": [
+        "CONST-003",
+        "CONST-006",
+        "PLS-REP-01"
+      ],
+      "requiredProof": "Cross-renderer geometry, identity and coordinate tests.",
+      "evidence": []
+    },
+    {
+      "id": "NS-04",
+      "rule": "Interaction is independent of expensive exact computation; candidate previews are explicitly non-authoritative; failed or stale results cannot publish.",
+      "authority": [
+        "CONST-002",
+        "CONST-004",
+        "CONST-005",
+        "PLS-INT-01",
+        "PLS-TX-01"
+      ],
+      "requiredProof": "Drag while worker is blocked; cancel, conflict and failure tests.",
+      "evidence": []
+    },
+    {
+      "id": "NS-05",
+      "rule": "Property/region dependency invalidation and immutable reusable geometry definitions; occurrence transforms independent of geometry.",
+      "authority": [
+        "PLS-GR-01",
+        "PLS-REF-01"
+      ],
+      "requiredProof": "Compare incremental against full evaluation; unchanged dependencies not recomputed; actual hotel instance test.",
+      "evidence": []
+    },
+    {
+      "id": "NS-06",
+      "rule": "Explicit units, coordinate frames, tolerances and stable semantic/topology references; exact measurements use appropriate precision geometry.",
+      "authority": [
+        "PLS-GR-01",
+        "PLS-REP-01"
+      ],
+      "requiredProof": "Large survey coordinate, topology ambiguity and precision tests.",
+      "evidence": []
+    },
+    {
+      "id": "NS-07",
+      "rule": "Retained scene, revision-guarded deltas, instancing, culling and LOD; no separate world authority in any renderer.",
+      "authority": [
+        "CONST-003",
+        "CONST-004",
+        "PLS-REP-01"
+      ],
+      "requiredProof": "Scene replay, corrupted delta rejection, renderer parity and hardware tests.",
+      "evidence": []
+    },
+    {
+      "id": "NS-08",
+      "rule": "Analysis and documentation derive from compatible world and intent revisions with freshness evidence.",
+      "authority": [
+        "CONST-006",
+        "PLS-DOC-01",
+        "PLS-EVIDENCE-01"
+      ],
+      "requiredProof": "Cross-domain causal change and stale evidence tests.",
+      "evidence": []
+    },
+    {
+      "id": "NS-09",
+      "rule": "Preserve accepted state and history, including worker failure and recovery.",
+      "authority": [
+        "CONST-005",
+        "CONST-007"
+      ],
+      "requiredProof": "Crash recovery and save/reopen tests.",
+      "evidence": []
+    }
+  ],
+  "performanceTargets": {
+    "navigationFps": 60,
+    "previewP95Ms": 33,
+    "selectionP95Ms": 50,
+    "rigidDragGeometryRequests": 0,
+    "staleCommits": 0
+  },
+  "qualificationFixtures": [
+    "terrain",
+    "townhouse",
+    "168-suite hotel",
+    "Loft freeform",
+    "fabrication detail"
+  ],
+  "programmes": [
+    {
+      "programme": "R01–R17",
+      "requirements": [
+        "NS-03",
+        "NS-04",
+        "NS-05",
+        "NS-06",
+        "NS-07"
+      ],
+      "completionEvidence": "Site pilot plus native/browser/hardware evidence"
+    },
+    {
+      "programme": "U01–U06",
+      "requirements": [
+        "NS-01",
+        "NS-04",
+        "NS-06",
+        "NS-09"
+      ],
+      "completionEvidence": "Common authority, coordinate and dependency contracts"
+    },
+    {
+      "programme": "U07–U14",
+      "requirements": [
+        "NS-02",
+        "NS-03",
+        "NS-05",
+        "NS-06"
+      ],
+      "completionEvidence": "Shared evaluator, scheduler, artifacts, topology and instances"
+    },
+    {
+      "programme": "U15–U22",
+      "requirements": [
+        "NS-03",
+        "NS-05",
+        "NS-07"
+      ],
+      "completionEvidence": "Scene deltas, binary transport, renderer parity, GPU instancing and LOD"
+    },
+    {
+      "programme": "U23–U31",
+      "requirements": [
+        "NS-01",
+        "NS-04",
+        "NS-06",
+        "NS-09"
+      ],
+      "completionEvidence": "Shared interaction, selection, previews and history"
+    },
+    {
+      "programme": "U32–U39",
+      "requirements": [
+        "NS-01",
+        "NS-02",
+        "NS-08"
+      ],
+      "completionEvidence": "Actual cross-domain integration"
+    },
+    {
+      "programme": "U40–U48",
+      "requirements": [
+        "NS-03",
+        "NS-04",
+        "NS-06",
+        "NS-07",
+        "NS-09"
+      ],
+      "completionEvidence": "Qualification, compatibility and installation"
+    },
+    {
+      "programme": "FC01–FC03",
+      "requirements": [
+        "NS-02"
+      ],
+      "completionEvidence": "Full import and authority inventory; boundary tests"
+    },
+    {
+      "programme": "FC04–FC06",
+      "requirements": [
+        "NS-01",
+        "NS-02",
+        "NS-05",
+        "NS-09"
+      ],
+      "completionEvidence": "One transaction path, compute fabric and causal graph"
+    },
+    {
+      "programme": "FC07–FC09",
+      "requirements": [
+        "NS-03",
+        "NS-04",
+        "NS-06",
+        "NS-07"
+      ],
+      "completionEvidence": "Universal scene and interaction"
+    },
+    {
+      "programme": "FC10–FC15",
+      "requirements": [
+        "NS-01",
+        "NS-02",
+        "NS-08"
+      ],
+      "completionEvidence": "Site, architecture, Loft, fragments, documentation and agents"
+    },
+    {
+      "programme": "FC16–FC18",
+      "requirements": [
+        "NS-01",
+        "NS-02",
+        "NS-03",
+        "NS-04",
+        "NS-05",
+        "NS-06",
+        "NS-07",
+        "NS-08",
+        "NS-09"
+      ],
+      "completionEvidence": "Remove duplicate authorities; qualify cross-domain changes and performance"
+    }
+  ]
+}
