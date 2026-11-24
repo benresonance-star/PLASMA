@@ -369,6 +369,7 @@ const html = `<!doctype html>
 <p>One canonical specification graph → generated Atlas, readiness, dependency and human views.</p>
 <div class="card"><span class="pill">Spec System ${esc(system.version)}</span><span class="pill">Atlas ${esc(atlas.meta.version)}</span><span class="pill">${records.length} canonical records</span><span class="pill">${blockers.length} build blockers</span></div>
 <div class="card"><h2>Constitution</h2><ol>${constitution.invariants.map(x=>`<li><b>${esc(x.id)}</b> — ${esc(x.rule)}</li>`).join('')}</ol></div>
+<div class="card"><h2>North Star conformance</h2><p class="muted">${esc(northStarEvidence.report.qualification)}</p><table><thead><tr><th>Requirement</th><th>Evidence links</th><th>Remaining proof</th><th>Conformance</th></tr></thead><tbody>${northStarEvidence.report.items.map(x=>`<tr><td><code>${esc(x.requirement)}</code></td><td>${x.links.map(y=>esc(y.id)+" ("+esc(y.catalogueStatus)+")").join(", ")}</td><td>${esc(x.remainingProof)}</td><td>${esc(x.conformance)}</td></tr>`).join("")}</tbody></table></div>
 <div class="card"><h2>Build readiness</h2><table><thead><tr><th>ID</th><th>Item</th><th>Architecture</th><th>Spec</th><th>Implementation</th><th>Derived readiness</th></tr></thead><tbody>${htmlRows}</tbody></table></div>
 <div class="card"><h2>Migration</h2><p>${esc(system.migration.rule)}</p></div></div></body></html>\n`;
 
