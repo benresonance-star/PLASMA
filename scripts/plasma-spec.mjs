@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { deriveNorthStarEvidence } from './north-star-evidence.mjs';
 import { validateNorthStar } from './north-star-validate.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -78,6 +79,8 @@ const research = registry.research.map(p => ({ path: p, record: read(p) }));
 const releases = registry.releases.map(p => ({ path: p, record: read(p) }));
 const slicesCatalog = read(registry.atlas.slices);
 const evidenceCatalog = read(registry.atlas.evidence);
+const northStarEvidence = deriveNorthStarEvidence(northStar, read(registry.northStarEvidence), evidenceCatalog);
+errors.push(...northStarEvidence.errors);
 const languages = read(registry.atlas.languages);
 const transactions = read(registry.atlas.transactions);
 const integration = read(registry.atlas.integration);
