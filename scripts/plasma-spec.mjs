@@ -372,6 +372,7 @@ const html = `<!doctype html>
 <div class="card"><h2>Build readiness</h2><table><thead><tr><th>ID</th><th>Item</th><th>Architecture</th><th>Spec</th><th>Implementation</th><th>Derived readiness</th></tr></thead><tbody>${htmlRows}</tbody></table></div>
 <div class="card"><h2>Migration</h2><p>${esc(system.migration.rule)}</p></div></div></body></html>\n`;
 
+output('generated/spec-system/north-star-conformance.json', northStarEvidence.report);
 output(system.outputs.atlas, atlas);
 output(system.outputs.repositoryEvidence, repositoryEvidence.projection);
 output(system.outputs.status, statusOut);
