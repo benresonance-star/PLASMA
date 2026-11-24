@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { validateNorthStar } from './north-star-validate.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -68,6 +69,8 @@ const constitution = read(registry.constitution);
 const componentCatalog = read(registry.atlas.components);
 const relationshipCatalog = read(registry.atlas.relationships);
 const contracts = registry.atlas.contracts.map(p => ({ path: p, record: read(p) }));
+const northStar = read(registry.northStar);
+errors.push(...validateNorthStar(northStar, constitution, contracts.map(x => x.record), readText('spec/NORTH_STAR.md')));
 const capabilities = registry.capabilities.map(p => ({ path: p, record: read(p) }));
 const domains = registry.domains.map(p => ({ path: p, record: read(p) }));
 const verticalSlices = registry.verticalSlices.map(p => ({ path: p, record: read(p) }));
