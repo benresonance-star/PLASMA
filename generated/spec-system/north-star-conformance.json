@@ -1,0 +1,160 @@
+{
+  "policyVersion": "1.0.0",
+  "policyStatus": "proposed",
+  "qualification": "No system-wide proof inferred from catalogue links",
+  "items": [
+    {
+      "requirement": "NS-01",
+      "links": [
+        {
+          "id": "ev-transaction-rollback",
+          "name": "Transaction rollback contract",
+          "catalogueStatus": "unlinked"
+        },
+        {
+          "id": "ev-agent-boundary",
+          "name": "Agent authority boundary",
+          "catalogueStatus": "unlinked"
+        },
+        {
+          "id": "ev-cross-agent-conflict",
+          "name": "Cross-agent conflict suite",
+          "catalogueStatus": "unlinked"
+        }
+      ],
+      "remainingProof": "Actual cross-studio shared entity and revision test",
+      "conformance": "UNQUALIFIED"
+    },
+    {
+      "requirement": "NS-02",
+      "links": [
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "name": "Geometry candidate isolation",
+          "catalogueStatus": "unlinked"
+        },
+        {
+          "id": "ev-slice-terrain-site",
+          "name": "Terrain integration: grade pad and propagate",
+          "catalogueStatus": "unlinked"
+        }
+      ],
+      "remainingProof": "Actual Site, Architecture and Loft common compute integration",
+      "conformance": "UNQUALIFIED"
+    },
+    {
+      "requirement": "NS-03",
+      "links": [
+        {
+          "id": "ev-geometry-candidate-boundary",
+          "name": "Geometry candidate isolation",
+          "catalogueStatus": "unlinked"
+        },
+        {
+          "id": "ev-representation-freshness",
+          "name": "Representation freshness tracking",
+          "catalogueStatus": "unlinked"
+        }
+      ],
+      "remainingProof": "Cross-renderer artifact and coordinate conformance",
+      "conformance": "UNQUALIFIED"
+    },
+    {
+      "requirement": "NS-04",
+      "links": [
+        {
+          "id": "ev-interaction-boundary",
+          "name": "Interaction speculation boundary",
+          "catalogueStatus": "unlinked"
+        },
+        {
+          "id": "ev-wall-at-05",
+          "name": "WALL-AT-05 · Atomicity and stale work",
+          "catalogueStatus": "unlinked"
+        }
+      ],
+      "remainingProof": "Blocked-worker input-to-pixel benchmark",
+      "conformance": "UNQUALIFIED"
+    },
+    {
+      "requirement": "NS-05",
+      "links": [
+        {
+          "id": "ev-slice-window-resize",
+          "name": "Window integration: resize hosted window",
+          "catalogueStatus": "unlinked"
+        },
+        {
+          "id": "ev-slice-annotations-regeneration",
+          "name": "Annotation integration: survive regeneration",
+          "catalogueStatus": "unlinked"
+        }
+      ],
+      "remainingProof": "Property-level invalidation and actual hotel instances",
+      "conformance": "UNQUALIFIED"
+    },
+    {
+      "requirement": "NS-06",
+      "links": [
+        {
+          "id": "ev-stable-identity",
+          "name": "Stable identity continuity",
+          "catalogueStatus": "unlinked"
+        }
+      ],
+      "remainingProof": "Survey coordinates, exact tolerances and ambiguous topology",
+      "conformance": "UNQUALIFIED"
+    },
+    {
+      "requirement": "NS-07",
+      "links": [
+        {
+          "id": "ev-representation-freshness",
+          "name": "Representation freshness tracking",
+          "catalogueStatus": "unlinked"
+        }
+      ],
+      "remainingProof": "GPU scene deltas, instancing, culling and hardware qualification",
+      "conformance": "UNQUALIFIED"
+    },
+    {
+      "requirement": "NS-08",
+      "links": [
+        {
+          "id": "ev-slice-solar-freshness",
+          "name": "Solar integration: analysis freshness",
+          "catalogueStatus": "unlinked"
+        },
+        {
+          "id": "ev-wall-at-06",
+          "name": "WALL-AT-06 · Quantity and document coherence",
+          "catalogueStatus": "unlinked"
+        }
+      ],
+      "remainingProof": "Cross-domain model and documentation revision coherence",
+      "conformance": "UNQUALIFIED"
+    },
+    {
+      "requirement": "NS-09",
+      "links": [
+        {
+          "id": "ev-transaction-rollback",
+          "name": "Transaction rollback contract",
+          "catalogueStatus": "unlinked"
+        },
+        {
+          "id": "ev-recovery-benchmark",
+          "name": "Long-run recovery benchmark",
+          "catalogueStatus": "unlinked"
+        },
+        {
+          "id": "ev-wall-at-07",
+          "name": "WALL-AT-07 · Branch, undo and reopen",
+          "catalogueStatus": "unlinked"
+        }
+      ],
+      "remainingProof": "Native crash recovery and managed project reopen",
+      "conformance": "UNQUALIFIED"
+    }
+  ]
+}
