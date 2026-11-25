@@ -67,7 +67,14 @@ export function vectorSceneIsCurrent(scene: VectorScene, expected: VectorScene['
     scene.pins.producerVersion === expected.producerVersion;
 }
 function escapeXml(value: string): string {
-  return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/g, '\uFFFD').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+  // XML 1.0 allowed characters, including supplementary Unicode code points.
+  const valid = Array.from(value, char => {
+    const cp = char.codePointAt(0)!;
+    return cp === 9 || cp === 10 || cp === 13 ||
+      (cp >= 0x20 && cp <= 0xD7FF) || (cp >= 0xE000 && cp <= 0xFFFD) ||
+      (cp >= 0x10000 && cp <= 0x10FFFF) ? char : '\uFFFD';
+  }).join('');
+  return valid.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 function pair(p: readonly [number, number]): string {
   return p[0] + ' ' + p[1];
