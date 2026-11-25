@@ -34,6 +34,8 @@ import {
 } from '@spds/geometry-contracts';
 import { loadOcjs, type OcjsModule, type OcjsShape } from './occt-js.js';
 import { exportShapeToStep } from './native-step-export.js';
+import { NativeHlrRequestSchema, projectNativeAssemblyHlrOnce, type NativeHlrRequest } from './native-assembly-hlr.js';
+import { NativeLineProjectionRequestSchema, projectNativeStraightEdge, type NativeLineProjectionRequest } from './native-line-projection.js';
 
 type Vec3 = [number, number, number];
 
@@ -1066,6 +1068,51 @@ export class OcctNativeKernel {
       ...(solid.profileUp !== undefined ? { profileUp: solid.profileUp } : {}),
     });
     return representation;
+  }
+
+  /**
+   * Experimental read-only native edge projection. No HLR, no silhouette claim.
+   * Scoped to mapped straight edges; any unsupported edge fails the whole request.
+   * Existing topology mapping is provisional (bounds-matched), not durable identity proof.
+   */
+  projectMappedStraightEdges(input: NativeLineProjectionRequest) {
+    const frame = NativeLineProjectionRequestSchema.parse(input);
+    const oc = this.requireOc();
+    const record = this.solids.get(frame.representationId);
+    if (!record || record.representation.validationState !== 'geometry-generated' ||
+        !record.edgesByPath || record.edgesByPath.size === 0) {
+      throw new Error('Native mapped straight-edge source unavailable');
+    }
+    const paths = (record.representation.topologyElements ?? []).filter(e => e.kind === 'edge');
+    if (paths.length !== record.edgesByPath.size) throw new Error('Incomplete native edge mapping');
+    const edges = paths.map(({ path }) => {
+      const edge = record.edgesByPath?.get(path);
+      if (!edge) throw new Error('Unresolved native edge: ' + path);
+      const line = projectNativeStraightEdge(oc, edge, frame);
+      return { topologyPath: path, ...line, collapsed: Math.hypot(line.end[0] - line.start[0], line.end[1] - line.start[1]) <= 1e-9 };
+    });
+    const payload = {
+      representationId: record.representation.id,
+      semanticOwner: record.representation.semanticOwner,
+      kernel: this.kernelId, kernelVersion: this.version,
+      visibility: 'unclassified' as const,
+      provenance: 'bounds-matched-provisional' as const,
+      scope: 'mapped-straight-edges' as const,
+      frame, edges,
+    };
+    return { ...payload, projectionDigest: sha256Canonical(payload) };
+  }
+
+  /** Child-process diagnostic only, not a public HTTP or viewport API. */
+  projectStoredHlrDiagnostic(input: NativeHlrRequest) {
+    const frame=NativeHlrRequestSchema.parse(input);
+    const sources=frame.representationIds.map(id=>{
+      const record=this.solids.get(id);
+      if(!record || record.kind!=='extrude' || record.representation.validationState!=='geometry-generated')
+        throw new Error('Native planar extrusion source unavailable: '+id);
+      return { representationId:id,semanticOwner:record.representation.semanticOwner,shape:record.shape };
+    });
+    return projectNativeAssemblyHlrOnce(this.requireOc(),frame,sources,this.version);
   }
 
   get(representationId: string): GeometryRepresentation | undefined {

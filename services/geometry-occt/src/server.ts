@@ -11,6 +11,7 @@ import {
 } from '@spds/geometry-contracts';
 import { createGeometryKernel, type GeometryKernel } from './kernel-factory.js';
 import { OcctNativeKernel } from './occt-native-kernel.js';
+import { NativeLineProjectionRequestSchema } from './native-line-projection.js';
 import { OcctWasmKernel } from './occt-wasm-kernel.js';
 import { compileMeshesDual } from './compile-meshes.js';
 import { generateD01YFixtureSet } from './y-brep.js';
@@ -25,6 +26,21 @@ export function buildGeometryServer(kernel: GeometryKernel = createGeometryKerne
     kernel: kernel.kernelId,
     version: kernel.version,
   }));
+
+  // Experimental projection; never fall back to tessellated or synthetic geometry.
+  app.post('/v1/projection/mapped-lines', async (req, reply) => {
+    if (!(kernel instanceof OcctNativeKernel)) {
+      return reply.code(422).send({ code: 'OPERATOR_UNAVAILABLE', summary: 'Native projection requires occt-native', recoverable: true, affectedSemanticIds: [] });
+    }
+    const parsed = NativeLineProjectionRequestSchema.safeParse(req.body);
+    if (!parsed.success) return reply.code(400).send({ code: 'GEOMETRY_INVALID', summary: 'Invalid orthographic projection request', recoverable: true, affectedSemanticIds: [] });
+    try {
+      await kernel.ensureReady();
+      return reply.send(kernel.projectMappedStraightEdges(parsed.data));
+    } catch (err) {
+      return reply.code(422).send({ code: 'OPERATOR_UNAVAILABLE', summary: err instanceof Error ? err.message : 'Native projection failed', recoverable: true, affectedSemanticIds: [] });
+    }
+  });
 
   app.post('/v1/sweep', async (req, reply) => {
     const body = SweepRequestSchema.parse(req.body);

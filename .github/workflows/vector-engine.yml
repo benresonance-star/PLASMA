@@ -1,0 +1,83 @@
+name: vector-engine
+on:
+  pull_request:
+    paths:
+      - 'packages/representation-core/**'
+      - 'services/geometry-occt/**'
+      - 'scripts/vector-native-smoke.mjs'
+      - 'scripts/vector-hlr-binding-proof.mjs'
+      - 'scripts/vector-facade-hlr-proof.mjs'
+      - 'scripts/vector-stored-hlr-proof.mjs'
+      - '.github/workflows/vector-engine.yml'
+jobs:
+  vector-native:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --use-system-ca
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter @spds/geometry-occt... --filter @spds/representation-core...
+      - run: pnpm --filter @spds/geometry-occt... --filter @spds/representation-core... build
+      - run: pnpm --filter @spds/representation-core test
+      - run: pnpm --filter @spds/geometry-occt test -- occt-native-line-projection
+      - run: node scripts/vector-native-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vector-native-wireframe
+          path: vector-evidence/
+          if-no-files-found: error
+  hlr-binding-proof:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --use-system-ca
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter @spds/geometry-occt... --filter @spds/representation-core...
+      - run: pnpm --filter @spds/geometry-occt... --filter @spds/representation-core... build
+      - run: node scripts/vector-hlr-binding-proof.mjs
+      - run: node scripts/vector-facade-hlr-proof.mjs
+      - run: node scripts/vector-stored-hlr-proof.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vector-native-hlr-proof
+          path: hlr-evidence/
+          if-no-files-found: error
+  baseline-diagnostics:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --use-system-ca
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @spds/benchmarks... --filter @spds/geometry-contracts... --filter @spds/semantic-core... build
+      - name: Baseline geometry tests
+        run: pnpm --filter @spds/geometry-contracts exec vitest run src/compile.test.ts src/measure.test.ts
+      - name: Baseline semantic test
+        if: ${{ !cancelled() }}
+        run: pnpm --filter @spds/semantic-core exec vitest run src/schema-payload.test.ts
+      - name: Baseline release recovery test
+        if: ${{ !cancelled() }}
+        run: pnpm --filter @spds/benchmarks exec vitest run src/b17-recovery.test.ts
