@@ -1,6 +1,7 @@
 import { describe, expect, it, beforeAll } from 'vitest';
 import { OcctNativeKernel } from './occt-native-kernel.js';
 import { buildGeometryServer } from './server.js';
+import { createGeometryKernel } from './kernel-factory.js';
 import { NativeLineProjectionRequestSchema } from './native-line-projection.js';
 
 describe('OCCT native mapped-line projection', () => {
@@ -31,8 +32,22 @@ describe('OCCT native mapped-line projection', () => {
     expect(() => kernel.projectMappedStraightEdges(frame('unknown'))).toThrow(/source unavailable/);
     expect(() => NativeLineProjectionRequestSchema.parse({ ...frame('x'), down: [1,0,0] })).toThrow();
   });
+  it('returns real projected lines through the native HTTP route', async () => {
+    const rep = kernel.extrude({
+      semanticOwner: 'vector:http', pirOperationId: 'pir:vector:http',
+      profile: [[0,0,0],[40,0,0],[40,30,0],[0,30,0]], vector: [0,0,20],
+    });
+    const { app } = buildGeometryServer(kernel);
+    try {
+      const response = await app.inject({ method: 'POST', url: '/v1/projection/mapped-lines', payload: frame(rep.id) });
+      expect(response.statusCode).toBe(200);
+      expect(response.json()).toEqual(kernel.projectMappedStraightEdges(frame(rep.id)));
+      const missing = await app.inject({ method: 'POST', url: '/v1/projection/mapped-lines', payload: frame('unknown') });
+      expect(missing.statusCode).toBe(422);
+    } finally { await app.close(); }
+  });
   it('never substitutes a different kernel on the HTTP route', async () => {
-    const app = buildGeometryServer(kernel);
+    const { app } = buildGeometryServer(createGeometryKernel('exact-adapter'));
     try {
       const response = await app.inject({ method: 'POST', url: '/v1/projection/mapped-lines', payload: frame('unknown') });
       expect(response.statusCode).toBe(422);

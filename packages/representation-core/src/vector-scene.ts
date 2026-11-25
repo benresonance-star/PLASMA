@@ -5,7 +5,7 @@ const id = z.string().min(1);
 const finite = z.number().finite();
 const point = z.tuple([finite, finite]);
 const source = z.object({ semanticOwner: id, representationId: id, topologyPath: id.optional() });
-const role = z.enum(['silhouette', 'cut', 'component', 'detail', 'hidden']);
+const role = z.enum(['silhouette', 'cut', 'component', 'detail', 'hidden', 'unclassified']);
 const pins = z.object({
   buildingRevision: id, documentIntentRevision: id, viewDefinitionVersion: id,
   representationGrammarVersion: id, producerVersion: id,
@@ -21,12 +21,16 @@ export const VectorSceneSchema = z.object({
   projection: z.enum(['orthographic', 'axonometric']),
   evidence: z.discriminatedUnion('kind', [
     z.object({ kind: z.literal('fixture'), description: id }),
+    z.object({ kind: z.literal('native-wireframe-preview'), kernelId: z.literal('occt-native'), kernelVersion: id, projectionDigest: z.string().regex(/^[0-9a-f]{64}$/), visibility: z.literal('unclassified'), provenance: z.literal('bounds-matched-provisional') }),
     z.object({ kind: z.literal('approximate'), maxDeviationMm: finite.nonnegative() }),
     z.object({ kind: z.literal('kernel-projection'), kernelId: id, kernelVersion: id, toleranceMm: finite.positive() }),
   ]),
   frame: z.object({ x: finite, y: finite, width: finite.positive(), height: finite.positive(), scaleDenominator: finite.positive() }),
   primitives: z.array(VectorPrimitiveSchema),
 }).superRefine((scene, ctx) => {
+  if (scene.evidence.kind === 'native-wireframe-preview' && scene.primitives.some(p => p.role !== 'unclassified' || p.kind !== 'line')) {
+    ctx.addIssue({ code: 'custom', path: ['primitives'], message: 'Native wireframe preview cannot assert classified visibility or filled regions' });
+  }
   const seen = new Set<string>();
   scene.primitives.forEach((p, index) => {
     if (seen.has(p.id)) ctx.addIssue({ code: 'custom', path: ['primitives', index, 'id'], message: 'Duplicate vector identity' });
@@ -36,7 +40,7 @@ export const VectorSceneSchema = z.object({
 const color = z.string().regex(/^#[0-9a-fA-F]{6}$/);
 const pen = z.object({ stroke: color, paperWidthMm: finite.nonnegative() });
 export const VectorStyleSchema = z.object({
-  pens: z.object({ silhouette: pen, cut: pen, component: pen, detail: pen, hidden: pen }),
+  pens: z.object({ silhouette: pen, cut: pen, component: pen, detail: pen, hidden: pen, unclassified: pen.default({ stroke: '#68727c', paperWidthMm: 0.18 }) }),
   regionFill: color, hiddenVisible: z.boolean(),
 });
 export type VectorScene = z.infer<typeof VectorSceneSchema>;
@@ -49,20 +53,21 @@ export const DEFAULT_VECTOR_STYLE: VectorStyle = {
     component: { stroke: '#333333', paperWidthMm: 0.25 },
     detail: { stroke: '#555555', paperWidthMm: 0.13 },
     hidden: { stroke: '#777777', paperWidthMm: 0.13 },
+    unclassified: { stroke: '#68727c', paperWidthMm: 0.18 },
   }, regionFill: '#ffffff', hiddenVisible: false,
 };
 export function parseVectorScene(input: unknown): VectorScene {
   return VectorSceneSchema.parse(input);
 }
 export function vectorSceneIsCurrent(scene: VectorScene, expected: VectorScene['pins']): boolean {
-  return scene.pins.buildingRevision === expected.buildingRevision &&
+  return scene.evidence.kind !== 'native-wireframe-preview' && scene.pins.buildingRevision === expected.buildingRevision &&
     scene.pins.documentIntentRevision === expected.documentIntentRevision &&
     scene.pins.viewDefinitionVersion === expected.viewDefinitionVersion &&
     scene.pins.representationGrammarVersion === expected.representationGrammarVersion &&
     scene.pins.producerVersion === expected.producerVersion;
 }
 function escapeXml(value: string): string {
-  return value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+  return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\uFFFE\uFFFF]/g, '\uFFFD').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 }
 function pair(p: readonly [number, number]): string {
   return p[0] + ' ' + p[1];
@@ -91,6 +96,8 @@ export function renderVectorSvg(input: VectorScene, appearance: VectorStyle = DE
   const w = f.width / f.scaleDenominator, h = f.height / f.scaleDenominator;
   if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) throw new Error('Invalid physical page dimensions');
   const meta = JSON.stringify({ viewId: scene.viewId, pins: scene.pins, evidence: scene.evidence });
+  const preview = scene.evidence.kind === 'native-wireframe-preview';
+  const warning = preview ? '<title>Native wireframe preview — visibility unclassified; not for issue</title><text x="' + (f.x + 2 * f.scaleDenominator) + '" y="' + (f.y + 4 * f.scaleDenominator) + '" font-size="' + 2.5 * f.scaleDenominator + '" fill="#555555">WIREFRAME PREVIEW — NOT FOR ISSUE</text>' : '';
   return '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + 'mm" height="' + h +
-    'mm" viewBox="' + [f.x, f.y, f.width, f.height].join(' ') + '"><metadata>' + escapeXml(meta) + '</metadata>' + paths.join('') + '</svg>';
+    'mm" viewBox="' + [f.x, f.y, f.width, f.height].join(' ') + '"' + (preview ? ' data-publication="blocked"' : '') + '><metadata>' + escapeXml(meta) + '</metadata>' + paths.join('') + warning + '</svg>';
 }

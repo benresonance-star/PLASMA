@@ -1,0 +1,32 @@
+name: vector-engine
+on:
+  pull_request:
+    paths:
+      - 'packages/representation-core/**'
+      - 'services/geometry-occt/**'
+      - 'scripts/vector-native-smoke.mjs'
+      - '.github/workflows/vector-engine.yml'
+jobs:
+  vector-native:
+    runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --use-system-ca
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9.15.9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile --filter @spds/geometry-occt... --filter @spds/representation-core...
+      - run: pnpm --filter @spds/geometry-occt... --filter @spds/representation-core... build
+      - run: pnpm --filter @spds/representation-core test
+      - run: pnpm --filter @spds/geometry-occt test -- occt-native-line-projection
+      - run: node scripts/vector-native-smoke.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vector-native-wireframe
+          path: vector-evidence/
+          if-no-files-found: error
