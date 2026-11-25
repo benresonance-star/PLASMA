@@ -17,3 +17,5 @@
   type TopologyNode,
   type TopologyMapping,
 } from './domains.js';
+
+export * from './vector-scene.js';
