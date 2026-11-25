@@ -34,6 +34,7 @@ import {
 } from '@spds/geometry-contracts';
 import { loadOcjs, type OcjsModule, type OcjsShape } from './occt-js.js';
 import { exportShapeToStep } from './native-step-export.js';
+import { NativeLineProjectionRequestSchema, projectNativeStraightEdge, type NativeLineProjectionRequest } from './native-line-projection.js';
 
 type Vec3 = [number, number, number];
 
@@ -1066,6 +1067,39 @@ export class OcctNativeKernel {
       ...(solid.profileUp !== undefined ? { profileUp: solid.profileUp } : {}),
     });
     return representation;
+  }
+
+  /**
+   * Experimental read-only native edge projection. No HLR, no silhouette claim.
+   * Scoped to mapped straight edges; any unsupported edge fails the whole request.
+   * Existing topology mapping is provisional (bounds-matched), not durable identity proof.
+   */
+  projectMappedStraightEdges(input: NativeLineProjectionRequest) {
+    const frame = NativeLineProjectionRequestSchema.parse(input);
+    const oc = this.requireOc();
+    const record = this.solids.get(frame.representationId);
+    if (!record || record.representation.validationState !== 'geometry-generated' ||
+        !record.edgesByPath || record.edgesByPath.size === 0) {
+      throw new Error('Native mapped straight-edge source unavailable');
+    }
+    const paths = (record.representation.topologyElements ?? []).filter(e => e.kind === 'edge');
+    if (paths.length !== record.edgesByPath.size) throw new Error('Incomplete native edge mapping');
+    const edges = paths.map(({ path }) => {
+      const edge = record.edgesByPath?.get(path);
+      if (!edge) throw new Error('Unresolved native edge: ' + path);
+      const line = projectNativeStraightEdge(oc, edge, frame);
+      return { topologyPath: path, ...line, collapsed: Math.hypot(line.end[0] - line.start[0], line.end[1] - line.start[1]) <= 1e-9 };
+    });
+    const payload = {
+      representationId: record.representation.id,
+      semanticOwner: record.representation.semanticOwner,
+      kernel: this.kernelId, kernelVersion: this.version,
+      visibility: 'unclassified' as const,
+      provenance: 'bounds-matched-provisional' as const,
+      scope: 'mapped-straight-edges' as const,
+      frame, edges,
+    };
+    return { ...payload, projectionDigest: sha256Canonical(payload) };
   }
 
   get(representationId: string): GeometryRepresentation | undefined {
