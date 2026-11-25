@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { createGeometryKernel, buildGeometryServer } from '../services/geometry-occt/dist/index.js';
-import { nativeWireframePreview, renderVectorSvg, vectorSceneIsCurrent } from '../packages/representation-core/dist/index.js';
+import { nativeWireframePreview, renderVectorSvg, vectorSceneIsCurrent, DEFAULT_VECTOR_STYLE, parseVectorScene } from '../packages/representation-core/dist/index.js';
 
 const kernel = createGeometryKernel('occt-native');
 await kernel.ensureReady();
@@ -27,5 +27,21 @@ try {
   await writeFile('vector-evidence/native-prism-wireframe.svg', svg);
   await writeFile('vector-evidence/native-projection.json', JSON.stringify(payload, null, 2));
   await writeFile('vector-evidence/vector-scene.json', JSON.stringify(scene, null, 2));
+  // The HLR feature is not yet implemented. This isolated style fixture is intentionally
+  // synthetic, and must never be confused with the native unclassified artifact.
+  const fixture = parseVectorScene({
+    ...scene, evidence: { kind: 'fixture', description: 'Synthetic hidden-line style test — not native visibility evidence' },
+    viewId: 'synthetic-hidden-style',
+    primitives: scene.primitives.map((p, i) => ({ ...p, role: i % 3 === 0 ? 'hidden' : 'component' })),
+  });
+  const dashed = renderVectorSvg(fixture, { ...DEFAULT_VECTOR_STYLE, hiddenVisible: true,
+    hiddenLine: { patternPaperMm: [3, 1.5], opacity: 0.55, cap: 'butt' } });
+  assert.match(dashed, /stroke-dasharray="3 1.5"/);
+  assert.match(dashed, /stroke-opacity="0.55"/);
+  await writeFile('vector-evidence/SYNTHETIC-hidden-line-style.svg', dashed);
+  const oc = await (await import('../services/geometry-occt/dist/occt-js.js')).loadOcjs();
+  const hlrBindings = Object.getOwnPropertyNames(oc).filter(name => /^(HLR|BRepAdaptor_Curve)/.test(name)).sort();
+  await writeFile('vector-evidence/hlr-binding-inventory.json', JSON.stringify({ kernel: 'occt-native', note: 'Names only; availability is not proof of usable HLR methods', exports: hlrBindings }, null, 2));
+  console.log('HLR binding inventory:', hlrBindings.join(', '));
   console.log('Native B-rep → HTTP → vector scene → SVG: PASS (diagnostic wireframe only)');
 } finally { await app.close(); }

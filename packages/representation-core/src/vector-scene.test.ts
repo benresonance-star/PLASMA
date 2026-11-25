@@ -46,4 +46,44 @@ describe('derived vector boundary', () => {
   it('rejects unsupported paint', () => {
     expect(() => renderVectorSvg(fixture(), { ...DEFAULT_VECTOR_STYLE, regionFill: 'url(https://example.com)' })).toThrow();
   });
+  it('controls hidden dash length, gap, phase, opacity, cap and pen independently', () => {
+    const scene = fixture();
+    const before = JSON.stringify(scene);
+    const style = { ...DEFAULT_VECTOR_STYLE, hiddenVisible: true,
+      pens: { ...DEFAULT_VECTOR_STYLE.pens, hidden: { stroke: '#123456', paperWidthMm: 0.2 } },
+      hiddenLine: { patternPaperMm: [3, 1, 0.5, 1], offsetPaperMm: 0.5, opacity: 0.4, cap: 'butt' as const },
+    };
+    const svg = renderVectorSvg(scene, style);
+    const hiddenPath = svg.match(/<path [^>]*data-role="hidden"[^>]*\/>/)?.[0] ?? '';
+    expect(hiddenPath).toContain('stroke="#123456"');
+    expect(hiddenPath).toContain('stroke-width="2"');
+    expect(hiddenPath).toContain('stroke-dasharray="30 10 5 10"');
+    expect(hiddenPath).toContain('stroke-dashoffset="5"');
+    expect(hiddenPath).toContain('stroke-opacity="0.4"');
+    expect(hiddenPath).toContain('stroke-linecap="butt"');
+    expect(renderVectorSvg({ ...scene, frame: { ...scene.frame, scaleDenominator: 20 } }, style)).toContain('stroke-dasharray="60 20 10 20"');
+    expect(JSON.stringify(scene)).toBe(before);
+    expect(renderVectorSvg(scene, { ...style, hiddenVisible: false })).not.toContain('data-role="hidden"');
+  });
+  it('supports continuous hidden strokes, scoped selectors and legacy style inputs', () => {
+    const scene = fixture();
+    const style = { ...DEFAULT_VECTOR_STYLE, hiddenVisible: true,
+      hiddenLine: { ...DEFAULT_VECTOR_STYLE.hiddenLine, patternPaperMm: null } };
+    expect(renderVectorSvg(scene, style)).toContain('data-role="hidden"');
+    expect(renderVectorSvg(scene, style)).not.toContain('stroke-dasharray');
+    expect(renderVectorSvg(scene, { ...style, hiddenLine: { ...style.hiddenLine, ownerIds: ['other'] } })).not.toContain('data-role="hidden"');
+    expect(renderVectorSvg(scene, { ...style, hiddenLine: { ...style.hiddenLine, topologyPaths: ['edge:1'] } })).toContain('data-role="hidden"');
+    expect(renderVectorSvg(scene, { ...style, hiddenLine: { ...style.hiddenLine, topologyPaths: [] } })).not.toContain('data-role="hidden"');
+    const { pens, regionFill, hiddenVisible } = { ...DEFAULT_VECTOR_STYLE, hiddenVisible: true };
+    expect(renderVectorSvg(scene, { pens, regionFill, hiddenVisible })).toContain('stroke-dasharray="15 7.5"');
+  });
+  it('rejects invalid hidden patterns and opacity; does not fill hidden regions', () => {
+    const scene = fixture(), style = { ...DEFAULT_VECTOR_STYLE, hiddenVisible: true };
+    for (const patternPaperMm of [[0,1], [1,2,3], [-1,2], []]) {
+      expect(() => renderVectorSvg(scene, { ...style, hiddenLine: { patternPaperMm } })).toThrow();
+    }
+    expect(() => renderVectorSvg(scene, { ...style, hiddenLine: { opacity: 1.5 } })).toThrow();
+    const withHiddenRegion = parseVectorScene({ ...scene, primitives: [{ ...scene.primitives[2], role: 'hidden' }] });
+    expect(renderVectorSvg(withHiddenRegion, style)).toContain('fill="none"');
+  });
 });

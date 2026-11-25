@@ -39,9 +39,24 @@ export const VectorSceneSchema = z.object({
 });
 const color = z.string().regex(/^#[0-9a-fA-F]{6}$/);
 const pen = z.object({ stroke: color, paperWidthMm: finite.nonnegative() });
+/** Dash dimensions are physical paper millimetres, independent of model scale.
+ * null denotes continuous linework; an array alternates ink and gap lengths.
+ * Empty selector arrays deliberately select no hidden geometry.
+ */
+export const HiddenLineStyleSchema = z.object({
+  patternPaperMm: z.array(finite.positive().max(1000)).min(2).max(16)
+    .refine(pattern => pattern.length % 2 === 0, 'Dash pattern must contain ink/gap pairs').nullable().default([1.5, 0.75]),
+  offsetPaperMm: finite.min(-1000).max(1000).default(0),
+  opacity: finite.min(0).max(1).default(1),
+  cap: z.enum(['butt', 'round', 'square']).default('round'),
+  ownerIds: z.array(id).optional(),
+  topologyPaths: z.array(id).optional(),
+});
+export type HiddenLineStyle = z.infer<typeof HiddenLineStyleSchema>;
 export const VectorStyleSchema = z.object({
   pens: z.object({ silhouette: pen, cut: pen, component: pen, detail: pen, hidden: pen, unclassified: pen.default({ stroke: '#68727c', paperWidthMm: 0.18 }) }),
   regionFill: color, hiddenVisible: z.boolean(),
+  hiddenLine: HiddenLineStyleSchema.default({ patternPaperMm: [1.5, 0.75], offsetPaperMm: 0, opacity: 1, cap: 'round' }),
 });
 export type VectorScene = z.infer<typeof VectorSceneSchema>;
 export type VectorStyle = z.infer<typeof VectorStyleSchema>;
@@ -55,6 +70,7 @@ export const DEFAULT_VECTOR_STYLE: VectorStyle = {
     hidden: { stroke: '#777777', paperWidthMm: 0.13 },
     unclassified: { stroke: '#68727c', paperWidthMm: 0.18 },
   }, regionFill: '#ffffff', hiddenVisible: false,
+  hiddenLine: { patternPaperMm: [1.5, 0.75], offsetPaperMm: 0, opacity: 1, cap: 'round' },
 };
 export function parseVectorScene(input: unknown): VectorScene {
   return VectorSceneSchema.parse(input);
@@ -85,20 +101,36 @@ function pathData(p: VectorPrimitive): string {
   return p.loops.map(loop => 'M ' + loop.map(pair).join(' L ') + ' Z').join(' ');
 }
 /** Pure derived rendering. The producer supplies visibility and back-to-front paint order. */
-export function renderVectorSvg(input: VectorScene, appearance: VectorStyle = DEFAULT_VECTOR_STYLE): string {
+export function renderVectorSvg(input: VectorScene, appearance: z.input<typeof VectorStyleSchema> = DEFAULT_VECTOR_STYLE): string {
   const scene = parseVectorScene(input);
   const style = VectorStyleSchema.parse(appearance);
   const f = scene.frame;
-  const paths = scene.primitives.filter(p => p.role !== 'hidden' || style.hiddenVisible).map(p => {
+  const hidden = style.hiddenLine;
+  const selectedOwners = hidden.ownerIds === undefined ? undefined : new Set(hidden.ownerIds);
+  const selectedPaths = hidden.topologyPaths === undefined ? undefined : new Set(hidden.topologyPaths);
+  const scaled = (n: number) => {
+    const result = n * f.scaleDenominator;
+    if (!Number.isFinite(result) || (n !== 0 && result === 0)) throw new Error('Invalid scaled hidden-line dimension');
+    return result;
+  };
+  const paths = scene.primitives.filter(p => p.role !== 'hidden' || (
+    style.hiddenVisible &&
+    (selectedOwners === undefined || selectedOwners.has(p.source.semanticOwner)) &&
+    (selectedPaths === undefined || (p.source.topologyPath !== undefined && selectedPaths.has(p.source.topologyPath)))
+  )).map(p => {
     const pen = style.pens[p.role];
     const width = pen.paperWidthMm * f.scaleDenominator;
     if (!Number.isFinite(width)) throw new Error('Invalid scaled pen width');
-    const dash = p.role === 'hidden' ? ' stroke-dasharray="' + (1.5 * f.scaleDenominator) + ' ' + (0.75 * f.scaleDenominator) + '"' : '';
+    const isHidden = p.role === 'hidden';
+    const dash = isHidden && hidden.patternPaperMm !== null
+      ? ' stroke-dasharray="' + hidden.patternPaperMm.map(scaled).join(' ') + '" stroke-dashoffset="' + scaled(hidden.offsetPaperMm) + '"' : '';
+    const opacity = isHidden ? ' stroke-opacity="' + hidden.opacity + '"' : '';
+    const cap = isHidden ? hidden.cap : 'round';
     return '<path data-vector-id="' + escapeXml(p.id) + '" data-owner="' + escapeXml(p.source.semanticOwner) +
       '" data-representation="' + escapeXml(p.source.representationId) + '"' +
       (p.source.topologyPath ? ' data-topology-path="' + escapeXml(p.source.topologyPath) + '"' : '') +
-      ' data-role="' + p.role + '" d="' + pathData(p) + '" fill="' + (p.kind === 'region' ? style.regionFill : 'none') +
-      '" fill-rule="evenodd" stroke="' + pen.stroke + '" stroke-width="' + width + '" stroke-linejoin="round" stroke-linecap="round"' + dash + '/>';
+      ' data-role="' + p.role + '" d="' + pathData(p) + '" fill="' + (p.kind === 'region' && !isHidden ? style.regionFill : 'none') +
+      '" fill-rule="evenodd" stroke="' + pen.stroke + '" stroke-width="' + width + '" stroke-linejoin="round" stroke-linecap="' + cap + '"' + dash + opacity + '/>';
   });
   const w = f.width / f.scaleDenominator, h = f.height / f.scaleDenominator;
   if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) throw new Error('Invalid physical page dimensions');
