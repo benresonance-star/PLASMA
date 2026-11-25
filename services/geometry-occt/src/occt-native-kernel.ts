@@ -34,6 +34,7 @@ import {
 } from '@spds/geometry-contracts';
 import { loadOcjs, type OcjsModule, type OcjsShape } from './occt-js.js';
 import { exportShapeToStep } from './native-step-export.js';
+import { NativeHlrRequestSchema, projectNativeAssemblyHlrOnce, type NativeHlrRequest } from './native-assembly-hlr.js';
 import { NativeLineProjectionRequestSchema, projectNativeStraightEdge, type NativeLineProjectionRequest } from './native-line-projection.js';
 
 type Vec3 = [number, number, number];
@@ -1100,6 +1101,18 @@ export class OcctNativeKernel {
       frame, edges,
     };
     return { ...payload, projectionDigest: sha256Canonical(payload) };
+  }
+
+  /** Child-process diagnostic only, not a public HTTP or viewport API. */
+  projectStoredHlrDiagnostic(input: NativeHlrRequest) {
+    const frame=NativeHlrRequestSchema.parse(input);
+    const sources=frame.representationIds.map(id=>{
+      const record=this.solids.get(id);
+      if(!record || record.kind!=='extrude' || record.representation.validationState!=='geometry-generated')
+        throw new Error('Native planar extrusion source unavailable: '+id);
+      return { representationId:id,semanticOwner:record.representation.semanticOwner,shape:record.shape };
+    });
+    return projectNativeAssemblyHlrOnce(this.requireOc(),frame,sources,this.version);
   }
 
   get(representationId: string): GeometryRepresentation | undefined {

@@ -20,3 +20,4 @@
 
 export * from './vector-scene.js';
 export * from './native-wireframe-preview.js';
+export * from './native-hlr-preview.js';

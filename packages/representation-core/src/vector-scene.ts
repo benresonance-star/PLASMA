@@ -21,6 +21,7 @@ export const VectorSceneSchema = z.object({
   projection: z.enum(['orthographic', 'axonometric']),
   evidence: z.discriminatedUnion('kind', [
     z.object({ kind: z.literal('fixture'), description: id }),
+    z.object({ kind: z.literal('native-hlr-preview'), kernelId: z.literal('occt-native'), kernelVersion: id, projectionDigest: z.string().regex(/^[0-9a-f]{64}$/), provenance: z.literal('component-only-diagnostic') }),
     z.object({ kind: z.literal('native-wireframe-preview'), kernelId: z.literal('occt-native'), kernelVersion: id, projectionDigest: z.string().regex(/^[0-9a-f]{64}$/), visibility: z.literal('unclassified'), provenance: z.literal('bounds-matched-provisional') }),
     z.object({ kind: z.literal('approximate'), maxDeviationMm: finite.nonnegative() }),
     z.object({ kind: z.literal('kernel-projection'), kernelId: id, kernelVersion: id, toleranceMm: finite.positive() }),
@@ -30,6 +31,9 @@ export const VectorSceneSchema = z.object({
 }).superRefine((scene, ctx) => {
   if (scene.evidence.kind === 'native-wireframe-preview' && scene.primitives.some(p => p.role !== 'unclassified' || p.kind !== 'line')) {
     ctx.addIssue({ code: 'custom', path: ['primitives'], message: 'Native wireframe preview cannot assert classified visibility or filled regions' });
+  }
+  if (scene.evidence.kind === 'native-hlr-preview' && scene.primitives.some(p => p.kind !== 'line' || !['hidden','component'].includes(p.role) || p.source.topologyPath !== undefined)) {
+    ctx.addIssue({code:'custom',path:['primitives'],message:'Native HLR diagnostic supports component and hidden lines only; no topology anchors'});
   }
   const seen = new Set<string>();
   scene.primitives.forEach((p, index) => {
@@ -76,7 +80,7 @@ export function parseVectorScene(input: unknown): VectorScene {
   return VectorSceneSchema.parse(input);
 }
 export function vectorSceneIsCurrent(scene: VectorScene, expected: VectorScene['pins']): boolean {
-  return scene.evidence.kind !== 'native-wireframe-preview' && scene.pins.buildingRevision === expected.buildingRevision &&
+  return scene.evidence.kind !== 'native-wireframe-preview' && scene.evidence.kind !== 'native-hlr-preview' && scene.pins.buildingRevision === expected.buildingRevision &&
     scene.pins.documentIntentRevision === expected.documentIntentRevision &&
     scene.pins.viewDefinitionVersion === expected.viewDefinitionVersion &&
     scene.pins.representationGrammarVersion === expected.representationGrammarVersion &&
@@ -135,8 +139,9 @@ export function renderVectorSvg(input: VectorScene, appearance: z.input<typeof V
   const w = f.width / f.scaleDenominator, h = f.height / f.scaleDenominator;
   if (!Number.isFinite(w) || !Number.isFinite(h) || w <= 0 || h <= 0) throw new Error('Invalid physical page dimensions');
   const meta = JSON.stringify({ viewId: scene.viewId, pins: scene.pins, evidence: scene.evidence });
-  const preview = scene.evidence.kind === 'native-wireframe-preview';
-  const warning = preview ? '<title>Native wireframe preview — visibility unclassified; not for issue</title><text x="' + (f.x + 2 * f.scaleDenominator) + '" y="' + (f.y + 4 * f.scaleDenominator) + '" font-size="' + 2.5 * f.scaleDenominator + '" fill="#555555">WIREFRAME PREVIEW — NOT FOR ISSUE</text>' : '';
+  const preview = scene.evidence.kind === 'native-wireframe-preview' || scene.evidence.kind === 'native-hlr-preview';
+  const warningText = scene.evidence.kind === 'native-hlr-preview' ? 'NATIVE HLR PREVIEW — NOT FOR ISSUE' : 'WIREFRAME PREVIEW — NOT FOR ISSUE';
+  const warning = preview ? '<title>' + warningText + '</title><text x="' + (f.x + 2 * f.scaleDenominator) + '" y="' + (f.y + 4 * f.scaleDenominator) + '" font-size="' + 2.5 * f.scaleDenominator + '" fill="#555555">' + warningText + '</text>' : '';
   return '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + 'mm" height="' + h +
     'mm" viewBox="' + [f.x, f.y, f.width, f.height].join(' ') + '"' + (preview ? ' data-publication="blocked"' : '') + '><metadata>' + escapeXml(meta) + '</metadata>' + paths.join('') + warning + '</svg>';
 }
