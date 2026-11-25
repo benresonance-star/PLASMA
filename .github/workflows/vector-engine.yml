@@ -6,6 +6,7 @@ on:
       - 'services/geometry-occt/**'
       - 'scripts/vector-native-smoke.mjs'
       - 'scripts/vector-hlr-binding-proof.mjs'
+      - 'scripts/vector-facade-hlr-proof.mjs'
       - '.github/workflows/vector-engine.yml'
 jobs:
   vector-native:
@@ -47,6 +48,7 @@ jobs:
       - run: pnpm install --frozen-lockfile --filter @spds/geometry-occt... --filter @spds/representation-core...
       - run: pnpm --filter @spds/geometry-occt... --filter @spds/representation-core... build
       - run: node scripts/vector-hlr-binding-proof.mjs
+      - run: node scripts/vector-facade-hlr-proof.mjs
       - uses: actions/upload-artifact@v4
         with:
           name: vector-native-hlr-proof
